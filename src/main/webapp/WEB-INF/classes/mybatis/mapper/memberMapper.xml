@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.MemberMapper">
+	<select id="loginMember" parameterType="map" resultType="com.hs.model.MemberDTO">
+		SELECT memberIdx, m1.userId, userPwd, userName, userLevel, profile_photo, 
+			register_date, modify_date
+		FROM member1 m1
+		LEFT OUTER JOIN member2 m2 ON m1.userId = m2.userId
+		WHERE m1.userId = #{userId} AND userPwd = #{userPwd} AND enabled = 1
+	</select>
+	
+</mapper>
