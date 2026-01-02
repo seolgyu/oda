@@ -72,6 +72,9 @@ public class MemberController {
 
 			// 세션에 member이라는 이름으로 저장
 			session.setAttribute("member", info);
+			
+			// 로그인 성공 여부
+			session.setAttribute("loginSuccess", true);
 
 			String preLoginURI = (String)session.getAttribute("preLoginURI");
 			session.removeAttribute("preLoginURI");
