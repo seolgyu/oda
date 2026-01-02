@@ -9,6 +9,10 @@ import com.hs.model.MemberDTO;
 public interface MemberMapper {
 	public MemberDTO loginMember(Map<String, Object> map);
 	
+	// 회원가입
+	public void insertMember(MemberDTO dto) throws Exception;
+	
+	
 	public void insertMember1(MemberDTO dto) throws SQLException;
 	public void insertMember2(MemberDTO dto) throws SQLException;
 	public void insertMember12(MemberDTO dto) throws SQLException;

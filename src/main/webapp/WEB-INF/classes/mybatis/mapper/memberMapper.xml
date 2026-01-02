@@ -2,12 +2,27 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hs.mapper.MemberMapper">
+
 	<select id="loginMember" parameterType="map" resultType="com.hs.model.MemberDTO">
-		SELECT memberIdx, m1.userId, userPwd, userName, userLevel, profile_photo, 
-			register_date, modify_date
-		FROM member1 m1
-		LEFT OUTER JOIN member2 m2 ON m1.userId = m2.userId
-		WHERE m1.userId = #{userId} AND userPwd = #{userPwd} AND enabled = 1
+		SELECT 
+			user_id AS memberIdx,   username AS userId,     password AS userPwd,    nickname AS userName,   email,
+			created_at AS register_date
+		FROM users
+		WHERE username = #{userId} AND password = #{userPwd}
 	</select>
+	
+	<insert id="insertMember" parameterType="com.hs.model.MemberDTO">
+		INSERT INTO users (
+			user_id, 
+			username, 
+			password, 
+			email, 
+			nickname, 
+			status, 
+			created_at
+		) VALUES (
+			users_seq.NEXTVAL, 
+			#{userId},      #{userPwd},     #{email},       #{userName},    'ACTIVE',       SYSDATE         )
+	</insert>
 	
 </mapper>

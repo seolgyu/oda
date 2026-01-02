@@ -102,10 +102,12 @@ public class LoginFilter implements Filter {
 		String []uris = {
 				"/index.jsp", "/main", 
 				"/member/login", "/member/logout",
+				"/member/signup",
 				"/member/account", "/member/userIdCheck", "/member/complete",
 				"/notice/list",
 				"/uploads/photo/**",
-				"/dist/**"
+				"/dist/**",
+				"/resources/**"
 		};
 		
 		if(uri.length() <= 1) {

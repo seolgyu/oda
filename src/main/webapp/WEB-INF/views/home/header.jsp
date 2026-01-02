@@ -10,7 +10,7 @@
         </div>
 
         <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-custom-outline btn-sm d-none d-lg-block">회원가입</button>
+            <button class="btn btn-custom-outline btn-sm d-none d-lg-block" onclick="location.href='${pageContext.request.contextPath}/member/signup';">회원가입</button>
             <button class="btn btn-custom-primary btn-sm d-none d-lg-block" onclick="location.href='${pageContext.request.contextPath}/member/login'">로그인</button>
 
             <div class="vr mx-2 text-secondary" style="height: 24px;"></div>

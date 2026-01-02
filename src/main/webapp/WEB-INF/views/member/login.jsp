@@ -84,9 +84,13 @@
 						style="font-size: 0.85rem;">
 						<a href="#"
 							class="text-decoration-none text-secondary hover-text-white transition-colors">
-							Forgot Password? </a> <a href="#"
+							Forgot Password? 
+						</a> 
+							
+						<a href="${pageContext.request.contextPath}/member/signup"
 							class="text-decoration-none text-white fw-bold hover-text-white transition-colors">
-							Sign Up </a>
+							Sign Up 
+						</a>
 					</div>
 
 					<div class="d-flex align-items-center gap-3 w-100 my-2">

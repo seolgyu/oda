@@ -25,8 +25,13 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public void insertMember(MemberDTO dto) throws Exception {
-		// TODO Auto-generated method stub
 		
+		try {
+			mapper.insertMember(dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 	@Override

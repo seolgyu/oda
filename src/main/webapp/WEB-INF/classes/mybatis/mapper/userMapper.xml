@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.UserMapper">
+	<insert id="insertUser" parameterType="com.hs.dto.UserDTO">
+		INSERT INTO users (
+			user_id, 
+			username, 
+			password, 
+			email, 
+			nickname, 
+			created_at
+		) VALUES (
+			users_seq.NEXTVAL, 
+			#{username}, 
+			#{password}, 
+			#{email}, 
+			#{nickname}, 
+			SYSDATE
+		)
+	</insert>
+
+    <select id="loginUser" parameterType="String" resultType="com.hs.dto.UserDTO">
+        SELECT user_id, username, nickname, password 
+        FROM users 
+        WHERE username = #{username}
+    </select>
+	
+</mapper>
