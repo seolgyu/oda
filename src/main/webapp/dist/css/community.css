@@ -1,0 +1,36 @@
+@charset "UTF-8";
+
+.app-main {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.neon-card {
+    background: linear-gradient(145deg, rgba(20, 21, 26, 0.95) 0%, rgba(10, 11, 15, 0.98) 100%) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.custom-input {
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white;
+    transition: all 0.2s;
+}
+.custom-input:focus {
+    border-color: #a855f7 !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    outline: none;
+}
+
+.privacy-card { border: 2px solid transparent !important; transition: all 0.2s; }
+.card-unselected { border-color: rgba(255, 255, 255, 0.1) !important; background: rgba(255, 255, 255, 0.05) !important; }
+.card-selected { border-color: #a855f7 !important; background: rgba(168, 85, 247, 0.08) !important; }
+
+.icon-public-active { color: #4ade80 !important; }
+.icon-private-active { color: #f472b6 !important; }
+.icon-inactive { color: #6b7280 !important; }
