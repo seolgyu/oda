@@ -1,0 +1,46 @@
+@charset "UTF-8";
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-toggle .arrow {
+  margin-left: auto;
+  font-size: 20px;
+  transition: transform 0.2s ease;
+}
+
+.nav-sub {
+  display: none;
+  flex-direction: column;
+  padding-left: 36px;
+  margin-top: 4px;
+  gap: 2px;
+}
+
+.nav-sub-item {
+  font-size: 0.85rem;
+  color: #9da6b9;
+  padding: 6px 0;
+  text-decoration: none;
+}
+
+.nav-sub-item:hover {
+  color: #ffffff;
+}
+
+/* 열렸을 때 */
+.nav-group.open .nav-sub {
+  display: flex;
+}
+
+.nav-group.open .arrow {
+  transform: rotate(180deg);
+}

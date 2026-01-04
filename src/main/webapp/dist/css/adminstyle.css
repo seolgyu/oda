@@ -1,0 +1,265 @@
+@charset "UTF-8";
+
+
+body {
+  font-family: "Inter", "Noto Sans KR", sans-serif;
+}
+
+/* 공통부분 */
+/* [4] 헤더 영역 (최신 Glassmorphism 디자인) */
+.app-header {
+	height: var(--header-height);
+	background-color: rgba(5, 5, 5, 0.8);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border-bottom: 1px solid var(--border-color);
+	padding: 0 1.5rem;
+	z-index: 1000;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	position: relative;
+}
+
+.brand-logo {
+	font-weight: 700;
+	font-size: 1.5rem;
+	color: #fff;
+	text-decoration: none;
+	letter-spacing: -0.5px;
+}
+
+.search-bar {
+	width: 100%;
+	max-width: 400px;
+	background-color: rgba(255, 255, 255, 0.07);
+	border: 1px solid var(--border-color);
+	color: #fff;
+	border-radius: 20px;
+	padding: 0.5rem 1rem;
+	transition: all 0.2s;
+}
+
+.search-bar:focus {
+	background-color: rgba(255, 255, 255, 0.12);
+	border-color: var(--primary-color);
+	outline: none;
+	box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+}
+
+/* [5] 사이드바 영역 (최초의 sidebar-btn 기능 유지 + 최신 레이아웃) */
+.app-sidebar {
+	width: var(--sidebar-width);
+	background-color: var(--background-dark);
+	border-right: 1px solid var(--border-color);
+	display: flex;
+	flex-direction: column;
+	padding: 1.5rem 1rem;
+	z-index: 900;
+	overflow-y: auto;
+}
+
+/* [5] 사이드바 영역 (최초의 sidebar-btn 기능 유지 + 최신 레이아웃) */
+.app-sidebar {
+	width: var(--sidebar-width);
+	background-color: var(--background-dark);
+	border-right: 1px solid var(--border-color);
+	display: flex;
+	flex-direction: column;
+	padding: 1.5rem 1rem;
+	z-index: 900;
+	overflow-y: auto;
+}
+
+.glass-toast {
+    position: fixed;
+    top: -100px; /* 처음에 위로 숨김 */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    min-width: 320px;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    opacity: 0;
+}
+
+/* [10] 아바타 및 구분선 (크기별 세팅 유지) */
+.avatar-img {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	object-fit: cover;
+	background: linear-gradient(45deg, #8B5CF6, #EC4899);
+}
+
+.avatar-sm {
+	width: 28px;
+	height: 28px;
+	font-size: 0.75rem;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.avatar-md {
+	width: 32px;
+	height: 32px;
+	font-size: 0.75rem;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.avatar-lg {
+	width: 40px;
+	height: 40px;
+	font-size: 0.875rem;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.separator-v {
+	width: 1px;
+	height: 16px;
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+.separator-h {
+	height: 1px;
+	width: 100%;
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-menu-dark {
+	background-color: #1e1e24;
+	border: 1px solid var(--border-color);
+}
+
+/* [11] 아이콘 및 스크롤바 */
+.material-symbols-outlined {
+	font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+	vertical-align: middle;
+	line-height: 1;
+}
+
+.custom-scrollbar::-webkit-scrollbar, ::-webkit-scrollbar {
+	width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track, ::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb {
+	background-color: rgba(255, 255, 255, 0.1);
+	border-radius: 20px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover, ::-webkit-scrollbar-thumb:hover
+	{
+	background-color: rgba(255, 255, 255, 0.2);
+}
+
+.login-input {
+	background-color: rgba(0, 0, 0, 0.2) !important;
+	border: 1px solid rgba(255, 255, 255, 0.1) !important;
+	border-radius: 0.75rem !important;
+	height: 3rem !important;
+	color: white !important;
+	padding-left: 3rem !important; /* 아이콘 공간 확보 */
+}
+
+/* 플레이스홀더 색상 */
+.login-input::placeholder {
+	color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 포커스 효과 */
+.login-input:focus {
+	background-color: rgba(0, 0, 0, 0.4) !important;
+	border-color: #a855f7 !important;
+	box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1) !important;
+	outline: none;
+}
+
+.hover-text-white:hover {
+	color: #fff !important;
+}
+
+.transition-colors {
+	transition: color 0.2s ease;
+}
+
+/* 알림창 기본 스타일 */
+.glass-toast {
+    position: fixed;
+    top: -100px; /* 처음에 위로 숨김 */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    min-width: 320px;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    opacity: 0;
+}
+
+/* 활성화 시 위치 */
+.glass-toast.show {
+    top: 30px; /* 상단에서 30px 내려옴 */
+    opacity: 1;
+}
+
+/* 아이콘 원형 배경 */
+.toast-icon-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to top right, #a855f7, #6366f1);
+    color: white;
+}
+
+.text-gray-300 { color: #d1d5db; }
+.tracking-widest { letter-spacing: 0.1em; }
+
+/* notice */
+
+/* write */
+.admin-create {
+  --primary: #135bec;
+  --background-dark: #101622;
+  --surface-dark: #1c1f27;
+  --border-dark: #282e39;
+  --text-secondary: #9da6b9;
+
+  font-family: "Inter", "Noto Sans KR", sans-serif;
+  border-radius: 0.25rem;
+}
+
+/* list */
+.admin-list {
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --background-dark: #111827;
+  --surface-dark: #1f2937;
+  --border-dark: #374151;
+  --text-main: #f9fafb;
+  --text-sub: #9ca3af;
+
+  font-family: "Inter", sans-serif;
+  border-radius: 0.25rem;
+}
