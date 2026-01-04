@@ -69,28 +69,23 @@
 						<button type="button"
 							class="btn w-100 fw-bold text-white shadow-md mt-2"
 							style="height: 3rem; border-radius: 0.75rem; background: linear-gradient(to right, #a855f7, #6366f1); border: none; transition: transform 0.2s;"
-							onclick="sendLogin();">LOG IN</button>
+							onclick="sendLoginAjax();">LOG IN</button>
 
 					</form>
 
-					<c:if test="${not empty message}">
-						<div class="w-100 p-2 text-center fade-in"
-							style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 0.75rem; color: #fca5a5; font-size: 0.8rem; animation: shake 0.5s ease-in-out;">
-							<span style="vertical-align: middle; margin-left: 4px;">${message}</span>
-						</div>
-					</c:if>
+					<div id="loginError" class="w-100 p-2 text-center fade-in"
+						style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 0.75rem; color: #fca5a5; font-size: 0.8rem; display: none; margin-bottom: 15px;">
+						<span id="errorText"></span>
+					</div>
 
 					<div class="d-flex justify-content-between w-100 mt-2"
 						style="font-size: 0.85rem;">
 						<a href="#"
 							class="text-decoration-none text-secondary hover-text-white transition-colors">
-							Forgot Password? 
-						</a> 
-							
-						<a href="${pageContext.request.contextPath}/member/signup"
+							Forgot Password? </a> <a
+							href="${pageContext.request.contextPath}/member/signup"
 							class="text-decoration-none text-white fw-bold hover-text-white transition-colors">
-							Sign Up 
-						</a>
+							Sign Up </a>
 					</div>
 
 					<div class="d-flex align-items-center gap-3 w-100 my-2">
@@ -130,6 +125,7 @@
 		</main>
 	</div>
 
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
@@ -149,6 +145,43 @@
 
     	f.action = '${pageContext.request.contextPath}/member/login';
     	f.submit();
+	}
+	
+	function sendLoginAjax() {
+	    const f = document.loginForm;
+	    const userId = $('input[name=userId]').val();
+	    const userPwd = $('input[name=userPwd]').val();
+		
+	   	if( ! userId.trim() ) {
+        	f.userId.focus();
+       		return;
+   		}
+
+    	if( ! userPwd.trim() ) {
+        	f.userPwd.focus();
+        	return;
+    	}
+    	
+    	$.ajax({
+            url: "${pageContext.request.contextPath}/member/login_json",
+            headers: { "AJAX": "true" },
+            type: "POST",
+            data: { userId: userId, userPwd: userPwd },
+            dataType: "json",
+            success: function(res) {
+                if(res.status === "success") {
+                    location.href = "${pageContext.request.contextPath}/";
+                } else {
+                    $("#errorText").text(res.message);
+                    $("#loginError").fadeIn();
+                    
+                    $('input[name=userPwd]').val('').focus();
+                }
+            },
+            error: function(xhr) {
+                console.error("로그인 통신 실패", xhr);
+            }
+        });
 	}
 </script>
 </body>

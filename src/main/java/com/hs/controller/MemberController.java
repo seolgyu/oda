@@ -10,6 +10,7 @@ import com.hs.mvc.annotation.Controller;
 import com.hs.mvc.annotation.GetMapping;
 import com.hs.mvc.annotation.PostMapping;
 import com.hs.mvc.annotation.RequestMapping;
+import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
 import com.hs.service.MemberService;
 import com.hs.service.MemberServiceImpl;
@@ -99,6 +100,55 @@ public class MemberController {
 
 		// 메인 화면으로 리다이렉트
 		return new ModelAndView("redirect:/");
+	}
+	
+	@PostMapping("login_json")
+	@ResponseBody
+	public Map<String, Object> loginAjax(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		
+		Map<String, Object> model = new HashMap<>();
+
+		try {
+			String userId = req.getParameter("userId");
+			String userPwd = req.getParameter("userPwd");
+
+			Map<String, Object> map = new HashMap<>();
+			
+			map.put("userId", userId);
+			map.put("userPwd", userPwd);
+
+			MemberDTO dto = service.loginMember(map);
+
+			if (dto == null) {
+				model.put("status", "fail");
+		        model.put("message", "아이디 또는 비밀번호가 틀렸습니다.");
+
+				return model;
+			}
+
+			HttpSession session = req.getSession();
+			session.setMaxInactiveInterval(20 * 60);
+
+			SessionInfo info = new SessionInfo();
+			info.setMemberIdx(dto.getMemberIdx());
+			info.setUserId(dto.getUserId());
+			info.setUserName(dto.getUserName());
+			info.setAvatar(dto.getProfile_photo());
+			info.setUserLevel(dto.getUserLevel());
+
+			session.setAttribute("member", info);
+
+			session.setAttribute("toastMsg", dto.getUserName() + "님, 환영합니다!");
+		    session.setAttribute("toastType", "success");
+		    
+		    model.put("status", "success");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return model;
 	}
 
 	@GetMapping("logout")

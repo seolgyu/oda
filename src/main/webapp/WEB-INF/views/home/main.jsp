@@ -2,6 +2,7 @@
 <%@ page trimDirectiveWhitespaces="true"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -42,8 +43,9 @@
 				<div class="feed-wrapper d-flex flex-column gap-4">
 					<div class="glass-panel p-3 shadow-lg">
 						<div class="d-flex gap-3">
-							<div class="avatar-lg text-white fw-bold flex-shrink-0"
-								style="background: linear-gradient(to top right, #a855f7, #6366f1);">MK</div>
+							<div class="avatar-lg text-white fw-bold flex-shrink-0" style="background: linear-gradient(to top right, #a855f7, #6366f1);">
+								${not empty sessionScope.member ? fn:substring(sessionScope.member.userName, 0, 1) : "MK"}	
+							</div>
 							<div class="flex-grow-1">
 								<input class="create-input text-base"
 									placeholder="Share your latest creation..." type="text" />
