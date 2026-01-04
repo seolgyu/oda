@@ -8,14 +8,6 @@
 <%@ include file="head.jsp"%>
 </head>
 <body>
-	<c:if test="${sessionScope.loginSuccess}">
-		<script>
-			// 자바스크립트 변수로 성공 상태 전달
-			const showLoginModal = true;
-		</script>
-		<%-- 새로고침 시 다시 뜨지 않도록 즉시 제거 --%>
-		<c:remove var="loginSuccess" scope="session" />
-	</c:if>
 
 	<%@ include file="header.jsp"%>
 
@@ -34,8 +26,7 @@
 						<h4 id="toastTitle"
 							class="text-xs fw-bold text-uppercase tracking-widest mb-1"
 							style="color: #a855f7;">System</h4>
-						<p id="toastMessage" class="text-sm text-gray-300 mb-0">메시지
-							내용이 여기에 표시됩니다.</p>
+						<p id="toastMessage" class="text-sm text-gray-300 mb-0">여기</p>
 					</div>
 				</div>
 			</div>
@@ -334,30 +325,41 @@
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
+	
+	<c:if test="${not empty sessionScope.toastMsg}">
+	    <script>
+	        $(document).ready(function() {
+	            showToast("${sessionScope.toastMsg}", "${sessionScope.toastType}");
+	        });
+	    </script>
+	    <c:remove var="toastMsg" scope="session" />
+	    <c:remove var="toastType" scope="session" />
+	</c:if>
 
 	<script>
-		$(document)
-				.ready(
-						function() {
-							if (typeof showLoginModal !== 'undefined'
-									&& showLoginModal) {
-								showToast(
-										"${sessionScope.member.userName}님, 환영합니다!",
-										"success");
-							}
-						});
-
 		function showToast(msg, type) {
-			const $toast = $('#sessionToast');
-			$('#toastMessage').text(msg);
-			$('#toastTitle').text('SUCCESS').css('color', '#4ade80');
-			$('#toastIcon').text('check_circle');
+		    const $toast = $('#sessionToast');
+		    const $title = $('#toastTitle');
+		    const $icon = $('#toastIcon');
+		    
+		    $('#toastMessage').text(msg);
 
-			$toast.addClass('show');
+		    if (type === "success") {
+		        $title.text('SUCCESS').css('color', '#4ade80');
+		        $icon.text('check_circle');
+		    } else if (type === "info") {
+		        $title.text('INFO').css('color', '#8B5CF6');
+		        $icon.text('info');
+		    } else if (type === "error") {
+		        $title.text('ERROR').css('color', '#f87171');
+		        $icon.text('error');
+		    }
 
-			setTimeout(function() {
-				$toast.removeClass('show');
-			}, 2500);
+		    $toast.addClass('show');
+
+		    setTimeout(function() {
+		        $toast.removeClass('show');
+		    }, 2500);
 		}
 	</script>
 </body>

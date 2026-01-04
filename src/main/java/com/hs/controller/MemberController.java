@@ -28,6 +28,13 @@ public class MemberController {
 	@GetMapping("login")
 	public ModelAndView loginForm(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		
+		if (session.getAttribute("member") != null) {
+			session.setAttribute("toastMsg", "이미 로그인된 상태입니다.");
+	        session.setAttribute("toastType", "info");
+	        return new ModelAndView("redirect:/");
+	    }
 		// 로그인 폼
 		return new ModelAndView("member/login");
 	}
@@ -76,7 +83,8 @@ public class MemberController {
 			session.setAttribute("member", info);
 
 			// 로그인 성공 여부
-			session.setAttribute("loginSuccess", true);
+			session.setAttribute("toastMsg", dto.getUserName() + "님, 환영합니다!");
+		    session.setAttribute("toastType", "success");
 
 			String preLoginURI = (String) session.getAttribute("preLoginURI");
 			session.removeAttribute("preLoginURI");
