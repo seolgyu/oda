@@ -7,7 +7,6 @@
 <head>
     <%@ include file="/WEB-INF/views/home/head.jsp"%>
 
-    <!-- notice 전용 CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
 </head>
 
