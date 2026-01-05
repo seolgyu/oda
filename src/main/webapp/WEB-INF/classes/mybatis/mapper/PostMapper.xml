@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.PostMapper">
+
+	<insert id="insertPost" parameterType="com.hs.model.PostDTO">
+		INSERT INTO posts (
+			post_id,
+			user_num, community_id,
+			title,
+			content,
+			post_type,
+			is_deleted,
+			created_date, state 
+		) VALUES (
+			posts_seq.NEXTVAL,
+			#{userNum}, #{communityId, jdbcType=INTEGER},
+			#{title},
+			#{content},
+			#{postType},
+			'0', SYSTIMESTAMP, #{state} 
+		)
+	</insert>
+
+	<update id="updatePost" parameterType="com.hs.model.PostDTO">
+		UPDATE posts
+		SET title = #{title},
+			content = #{content},
+			updated_date = SYSTIMESTAMP, 
+			state = #{state} 
+		WHERE post_id = #{postId} AND user_num = #{userNum}
+	</update>
+
+	<select id="findById" parameterType="long" resultType="com.hs.model.PostDTO">
+		SELECT
+			p.post_id AS postId,
+			p.user_num AS userNum, 
+			p.community_id AS communityId,
+			p.title,
+			p.content,
+			p.post_type AS postType,
+			p.view_count AS viewCount,
+			p.like_count AS likeCount,
+			p.created_date AS createdDate, 
+			p.updated_date AS updatedDate,
+			p.state,
+			u.userName AS authorNickname,
+			
+			NULL AS authorProfileImage
+			
+		FROM posts p
+		JOIN member1 u ON p.user_num = u.memberIdx 
+		WHERE p.post_id = #{postId}
+	</select>
+
+	<select id="listPost" resultType="com.hs.model.PostDTO">
+		SELECT
+			p.post_id AS postId,
+			p.user_num AS userNum,
+			p.title,
+			p.view_count AS viewCount,
+			p.like_count AS likeCount,
+			p.created_date AS createdDate,
+			u.userName AS authorNickname,
+			
+			NULL AS authorProfileImage
+			
+		FROM posts p
+		JOIN member1 u ON p.user_num = u.memberIdx
+		WHERE p.is_deleted = '0'
+		ORDER BY p.post_id DESC
+	</select>
+	
+</mapper>
