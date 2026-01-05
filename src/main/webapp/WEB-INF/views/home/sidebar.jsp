@@ -13,11 +13,11 @@
 		<hr class="my-3 border-secondary opacity-25">
 		<div class="text-xs text-secondary px-3 mb-2 text-uppercase fw-bold">Community</div>
 
-		<button class="nav-item">
+		<button class="nav-item" onclick="location.href='${pageContext.request.contextPath}/community/main';">
 			<span class="material-symbols-outlined">settings_suggest</span> <span>커뮤니티
 				관리</span>
 		</button>
-		<button class="nav-item">
+		<button class="nav-item" onclick="location.href='${pageContext.request.contextPath}/community/create';">
 			<span class="material-symbols-outlined">add_circle</span> <span>커뮤니티
 				개설</span>
 		</button>

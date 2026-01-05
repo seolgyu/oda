@@ -3,8 +3,9 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet"/>
+	<%@ include file="/WEB-INF/views/home/head.jsp"%>
+	
+ 	<script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/community.css">
     <script>
         tailwind.config = {
@@ -19,14 +20,14 @@
         }
     </script>
 </head>
-<body class="bg-[#050505] text-gray-100 overflow-hidden font-sans">
+<body class="bg-[#050505] text-gray-100 font-sans">
 
-    <%@ include file="/WEB-INF/views/layout/header.jsp"%>
+    <%@ include file="/WEB-INF/views/home/header.jsp"%>
 
     <div class="app-body">
         <%@ include file="/WEB-INF/views/home/sidebar.jsp"%>
 
-        <main class="app-main flex-1">
+        <main class="app-main flex-1 custom-scrollbar style="overflow-y: auto;">
             <div class="space-background">
                 <div class="stars"></div>
                 <div class="stars2"></div>
@@ -35,7 +36,7 @@
                 <div class="planet planet-2"></div>
             </div>
 
-            <div class="feed-scroll-container custom-scrollbar w-full">
+            <div class="feed-scroll-container w-full">
                 <div class="max-w-3xl mx-auto py-12 px-4 relative z-10">
                     
                     <div class="text-center mb-10">
@@ -44,7 +45,7 @@
                     </div>
 
                     <div class="neon-card rounded-[2.5rem] p-8 md:p-12">
-                        <form action="create_ok.jsp" method="post" class="space-y-8 relative z-10">
+                        <form action="" method="post" class="space-y-8 relative z-10">
                             
                             <div class="space-y-3">
                                 <label class="block text-sm font-medium text-gray-300 ml-1">Community Name <span class="text-red-500">*</span></label>

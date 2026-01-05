@@ -29,9 +29,63 @@
     z-index: 0;
 }
 
+.profile-info-bar {
+    padding: 0 1.5rem 1.2rem 1.5rem !important;
+    background-color: rgba(10, 10, 10, 0.9);
+}
+
+.banner-area {
+    height: 180px;
+    background: linear-gradient(135deg, #312e81 0%, #4c1d95 50%, #1e3a8a 100%) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.banner-area::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+    opacity: 0.3;
+}
+
+.profile-info-bar {
+    padding: 0 1.5rem 1.2rem 1.5rem !important;
+    background-color: rgba(10, 10, 10, 0.9);
+}
+
+.info-text-area {
+    margin-left: 5px !important; /* 로고와의 가로 간격 */
+    padding-bottom: 5px !important; /* 바닥과의 정렬 조절 */
+    padding-top: 15px !important;
+}
+
+.community-logo {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(45deg, #8b5cf6, #ec4899);
+    border-radius: 1.2rem;
+    border: 2px solid #18181b !important;
+    margin-top: -55px !important; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: white;
+    z-index: 10;
+}
+
+.info-text-area h1 {
+    font-size: 1.75rem !important;
+    letter-spacing: -0.5px;
+}
+
 .custom-input {
     background: rgba(0, 0, 0, 0.4) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white;
+    transition: all 0.2s;
     color: white !important;
     transition: all 0.2s ease;
 }
@@ -39,10 +93,7 @@
 .custom-input:focus {
     border-color: #a855f7 !important;
     background: rgba(0, 0, 0, 0.6) !important;
-    outline: none;
 }
-
-.privacy-card { border: 2px solid transparent !important; transition: all 0.2s; }
 .card-unselected { border-color: rgba(255, 255, 255, 0.1) !important; background: rgba(255, 255, 255, 0.05) !important; }
 .card-selected { border-color: #a855f7 !important; background: rgba(168, 85, 247, 0.08) !important; }
 
@@ -60,6 +111,7 @@
 
 .icon-public-active { color: #4ade80 !important; }
 .icon-private-active { color: #f472b6 !important; }
+.icon-inactive { color: #6b7280 !important; }
 .icon-inactive { color: #6b7280 !important; }
 
 .custom-scrollbar::-webkit-scrollbar { width: 6px; }
