@@ -35,8 +35,13 @@
 			<span class="material-symbols-outlined">help</span> <span>문의하기</span>
 		</button>
 
-		<button class="nav-item mt-auto text-danger">
-			<span class="material-symbols-outlined">admin_panel_settings</span> <span>관리자</span>
-		</button>
+		<c:if
+			test="${not empty sessionScope.member and sessionScope.member.userLevel >= 51}">
+			<button class="nav-item mt-auto text-danger"
+				onclick="location.href='${pageContext.request.contextPath}/admin';">
+				<span class="material-symbols-outlined">admin_panel_settings</span>
+				<span>관리자</span>
+			</button>
+		</c:if>
 	</nav>
 </aside>
