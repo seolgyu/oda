@@ -1,0 +1,59 @@
+@charset "UTF-8";
+
+/* 사이드바 컨테이너 */
+.app-sidebar {
+	width: var(--sidebar-width);
+	background-color: var(--background-dark);
+	border-right: 1px solid var(--border-color);
+	display: flex;
+	flex-direction: column;
+	padding: 1.5rem 1rem;
+	z-index: 900;
+	overflow-y: auto;
+}
+
+/* 네비게이션 아이템 */
+.nav-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 12px;
+	color: var(--text-secondary);
+	text-decoration: none;
+	border-radius: 8px;
+	margin-bottom: 4px;
+	transition: all 0.2s;
+	font-size: 0.95rem;
+	border: none;
+	background: none;
+	width: 100%;
+	text-align: left;
+}
+
+.nav-item:hover, .nav-item.active {
+	background-color: rgba(255, 255, 255, 0.08);
+	color: #fff;
+}
+
+.nav-item .material-symbols-outlined {
+	font-size: 22px;
+}
+
+/* 사이드바 전용 버튼 (혹시 모를 사용 대비 유지) */
+.sidebar-btn {
+	width: 40px;
+	height: 40px;
+	border-radius: 0.5rem;
+	background: transparent;
+	border: none;
+	color: var(--text-secondary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s;
+}
+
+.sidebar-btn:hover {
+	background-color: #27272a;
+	color: #fff;
+}

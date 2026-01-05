@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <header class="app-header">
-        <a href="#" class="brand-logo">ODA</a>
+        <a href="${pageContext.request.contextPath}/" class="brand-logo">ODA</a>
 
         <div class="flex-grow-1 d-flex justify-content-center px-4">
             <input type="text" class="search-bar" placeholder="Search ODA...">
