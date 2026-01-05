@@ -211,8 +211,8 @@
 									style="width: 10px; height: 10px;"></span>
 								<div class="d-flex flex-column lh-1">
 									<span class="text-muted"
-										style="font-size: 10px; margin-bottom: 2px;">일반 방문자</span> <span
-										class="fw-bold text-light" style="font-size: 0.875rem;">5,230</span>
+										style="font-size: 10px; margin-bottom: 2px;">일반 방문자</span> 
+									<span class="fw-bold text-light" style="font-size: 0.875rem;" id="totalGeneral">5,230</span>
 								</div>
 							</div>
 							<div
@@ -222,62 +222,14 @@
 									style="width: 10px; height: 10px; background-color: #a855f7;"></span>
 								<div class="d-flex flex-column lh-1">
 									<span class="text-muted"
-										style="font-size: 10px; margin-bottom: 2px;">회원 방문자</span> <span
-										class="fw-bold text-light" style="font-size: 0.875rem;">3,150</span>
+										style="font-size: 10px; margin-bottom: 2px;">회원 방문자</span> 
+									<span class="fw-bold text-light" style="font-size: 0.875rem;" id="totalMember">3,150</span>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="graph-container">
-						<div
-							class="position-absolute w-100 h-100 p-3 d-flex flex-column justify-content-between"
-							style="z-index: 0; pointer-events: none;">
-							<div
-								style="height: 1px; width: 100%; background: #334155; opacity: 0.3;"></div>
-							<div
-								style="height: 1px; width: 100%; background: #334155; opacity: 0.3;"></div>
-							<div
-								style="height: 1px; width: 100%; background: #334155; opacity: 0.3;"></div>
-							<div
-								style="height: 1px; width: 100%; background: #334155; opacity: 0.3;"></div>
-							<div
-								style="height: 1px; width: 100%; background: #334155; opacity: 0.3;"></div>
-						</div>
-						<svg class="position-absolute top-0 start-0 w-100 h-100 p-3"
-							preserveAspectRatio="none" style="z-index: 1;"
-							viewBox="0 0 800 200">
-<defs>
-<linearGradient id="gradientBlue" x1="0" x2="0" y1="0" y2="1">
-<stop offset="0%" stop-color="#3b82f6" stop-opacity="0.3"></stop>
-<stop offset="100%" stop-color="#3b82f6" stop-opacity="0"></stop>
-</linearGradient>
-<linearGradient id="gradientPurple" x1="0" x2="0" y1="0" y2="1">
-<stop offset="0%" stop-color="#a855f7" stop-opacity="0.3"></stop>
-<stop offset="100%" stop-color="#a855f7" stop-opacity="0"></stop>
-</linearGradient>
-</defs>
-<path
-								d="M0,150 C100,120 200,100 300,110 C400,120 500,60 600,70 C700,80 750,20 800,40 V200 H0 Z"
-								fill="url(#gradientBlue)"></path>
-<path
-								d="M0,150 C100,120 200,100 300,110 C400,120 500,60 600,70 C700,80 750,20 800,40"
-								fill="none" stroke="#3b82f6" stroke-linecap="round"
-								stroke-width="3"></path>
-<circle cx="800" cy="40" fill="#1e293b" r="4" stroke="#3b82f6"
-								stroke-width="2"></circle>
-<path
-								d="M0,180 C150,175 300,150 400,160 C500,170 600,150 800,155 V200 H0 Z"
-								fill="url(#gradientPurple)"></path>
-<path d="M0,180 C150,175 300,150 400,160 C500,170 600,150 800,155"
-								fill="none" stroke="#a855f7" stroke-linecap="round"
-								stroke-width="3"></path>
-<circle cx="800" cy="155" fill="#1e293b" r="4" stroke="#a855f7"
-								stroke-width="2"></circle>
-</svg>
-						<div class="graph-labels">
-							<span>Mon</span> <span>Tue</span> <span>Wed</span> <span>Thu</span>
-							<span>Fri</span> <span>Sat</span> <span>Sun</span>
-						</div>
+					<div class="graph-container" style="position: relative; height: 280px;">
+						<canvas id="visitorChart"></canvas>
 					</div>
 				</section>
 				<section class="card-dark overflow-hidden p-0">
@@ -288,7 +240,7 @@
 								class="material-icons-round text-light bg-purple-soft p-1 rounded fs-6">help_outline</span>
 							<h2 class="h6 fw-bold mb-0">새로 등록된 문의사항</h2>
 						</div>
-						<a
+						
 							class="text-decoration-none small text-primary d-flex align-items-center"
 							href="#"> 전체보기 <span class="material-icons-round fs-6 ms-1">arrow_forward</span>
 						</a>
@@ -418,8 +370,10 @@
 			</div>
 		</main>
 	</div>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/admin_main_chart.js"></script>
 </body>
 </html>
