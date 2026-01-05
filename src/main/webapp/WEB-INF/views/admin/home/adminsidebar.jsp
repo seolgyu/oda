@@ -21,7 +21,7 @@
       </button>
 		
 		<div class="nav-sub">
-        <a href="#" class="nav-sub-item">휴먼계정 관리</a>
+        <a href="#" class="nav-sub-item">휴면계정 관리</a>
         <a href="#" class="nav-sub-item">블랙리스트</a>
         <a href="#" class="nav-sub-item">정지계정 관리</a>
       </div>
@@ -30,7 +30,7 @@
 		<div class="nav-group">
 		<button class="nav-item nav-toggle">
 			<span class="material-symbols-outlined">image</span>
-			<span>컨첸츠관리</span>
+			<span>컨텐츠 관리</span>
 			<span class="material-symbols-outlined arrow">expand_more</span>
       </button>
       
@@ -43,7 +43,7 @@
 		<div class="nav-group">
 		<button class="nav-item nav-toggle">
 			<span class="material-symbols-outlined"> campaign </span>
-			<span>서비스관리</span>
+			<span>서비스 관리</span>
 			<span class="material-symbols-outlined arrow">expand_more</span>
       </button>
       
@@ -64,7 +64,7 @@
 
 		<button class="nav-item">
 			<span class="material-symbols-outlined">settings</span> 
-			<span>시스템관리</span>
+			<span>시스템 관리</span>
 		</button>
 		<button class="nav-item">
 			<span class="material-symbols-outlined">logout</span> 
