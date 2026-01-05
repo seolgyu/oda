@@ -11,8 +11,8 @@
 </head>
 
 <body>
-    <%@ include file="/WEB-INF/views/home/adminheader.jsp"%>
-    <%@ include file="/WEB-INF/views/home/adminsidebar.jsp"%>
+    <%@ include file="../home/adminheader.jsp"%>
+    <%@ include file="../home/adminsidebar.jsp"%>
 
 <div class="feed-scroll-container custom-scrollbar admin-create">
   <div class="d-flex flex-column align-items-center py-4 px-3">
