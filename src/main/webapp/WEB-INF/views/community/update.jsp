@@ -19,7 +19,7 @@
         }
     </script>
 </head>
-<body class="bg-[#050505] text-gray-100 overflow-hidden font-sans">
+<body class="bg-[#050505] text-gray-100 overflow-hidden">
 
     <%@ include file="/WEB-INF/views/home/header.jsp"%>
 

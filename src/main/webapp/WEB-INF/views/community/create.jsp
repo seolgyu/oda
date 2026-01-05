@@ -20,7 +20,7 @@
         }
     </script>
 </head>
-<body class="bg-[#050505] text-gray-100 font-sans">
+<body class="bg-[#050505] text-gray-100">
 
     <%@ include file="/WEB-INF/views/home/header.jsp"%>
 
