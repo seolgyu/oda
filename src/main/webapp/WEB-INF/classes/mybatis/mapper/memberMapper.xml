@@ -25,4 +25,17 @@
 			#{userId},      #{userPwd},     #{email},       #{userName},    'ACTIVE',       SYSDATE         )
 	</insert>
 	
+	<select id="loginMember1" parameterType="map" resultType="com.hs.model.MemberDTO">
+		SELECT memberIdx, userId, userPwd, userName, userLevel, register_date, modify_date
+		FROM member1
+		WHERE userId = #{userId} AND userPwd = #{userPwd} AND enabled = 1
+	</select>
+	
+    <insert id="insertMember1" parameterType="com.hs.model.MemberDTO">
+		INSERT INTO member1(memberIdx, userId, userPwd, userName, enabled, userLevel, 
+					register_date, modify_date)
+		VALUES (member_seq.NEXTVAL, #{userId}, #{userPwd}, #{userName}, 
+			1, 1, SYSDATE, SYSDATE) 
+    </insert>
+	
 </mapper>

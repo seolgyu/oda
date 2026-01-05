@@ -205,13 +205,16 @@ public class MemberController {
 				dto.setUserId(userId);
 				dto.setUserPwd(userPwd);
 				dto.setUserName(userName);
+				
+				/*
 				dto.setEmail(email);
 				dto.setBirth(birth);
 				dto.setTel(tel);
 				dto.setZip(zip);
 				dto.setAddr1(addr1);
 				dto.setAddr2(addr2);
-
+				*/
+				
 				// [3] 서비스 호출 (이미 존재하는 insertMember 활용)
 				// 서비스 내부에서 member1(기본)과 member2(상세) 테이블에 각각 저장될 것입니다.
 				service.insertMember(dto);
