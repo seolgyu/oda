@@ -1,6 +1,6 @@
 package com.hs.mapper;
 
-import com.hs.dto.UserDTO;
+import com.hs.model.UserDTO;
 
 public interface UserMapper {
     

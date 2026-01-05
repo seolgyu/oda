@@ -1,4 +1,4 @@
-package com.hs.dto;
+package com.hs.model;
 
 import java.util.Date;
 
