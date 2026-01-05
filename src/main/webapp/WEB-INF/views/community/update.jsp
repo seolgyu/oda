@@ -5,7 +5,6 @@
 <head>
     <%@ include file="/WEB-INF/views/home/head.jsp"%>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/community.css">
     <script>
         tailwind.config = {
@@ -22,10 +21,10 @@
 </head>
 <body class="bg-[#050505] text-gray-100 overflow-hidden font-sans">
 
-    <%@ include file="/WEB-INF/views/layout/header.jsp"%>
+    <%@ include file="/WEB-INF/views/home/header.jsp"%>
 
     <div class="app-body">
-        <%@ include file="/WEB-INF/views/home/sidebar.jsp"%>
+        <%@ include file="/WEB-INF/views/community/sidebar.jsp"%>
 
         <main class="app-main flex-1">
             <div class="space-background">

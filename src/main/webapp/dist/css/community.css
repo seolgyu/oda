@@ -55,8 +55,8 @@
 }
 
 .info-text-area {
-    margin-left: 5px !important; /* 로고와의 가로 간격 */
-    padding-bottom: 5px !important; /* 바닥과의 정렬 조절 */
+    margin-left: 5px !important;
+    padding-bottom: 5px !important;
     padding-top: 15px !important;
 }
 

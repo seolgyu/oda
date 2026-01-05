@@ -30,5 +30,4 @@ public class CommunityController {
 		return new ModelAndView("community/update");
 	}
 	
-	
 }

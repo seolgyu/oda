@@ -65,3 +65,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.body.classList.add('community-app-mode');
+    
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .community-app-mode {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        .community-app-mode input, 
+        .community-app-mode textarea,
+        .community-app-mode [contenteditable="true"] {
+            -webkit-user-select: text;
+            user-select: text;
+            cursor: text;
+        }
+    `;
+    document.head.appendChild(style);
+});
