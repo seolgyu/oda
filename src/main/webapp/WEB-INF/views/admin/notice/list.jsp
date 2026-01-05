@@ -130,6 +130,37 @@
     letter-spacing: 0.05em;
     color: rgba(255, 255, 255, 0.6) !important; /* 헤더 글자는 살짝 흐리게 */
 }
+
+/* 홈 > 서비스관리 > 공지사항 */
+.breadcrumb-item + .breadcrumb-item::before {
+     color: var(--text-secondary);
+     content: "chevron_right";
+     font-family: 'Material Symbols Outlined';
+     font-size: 14px;
+     vertical-align: middle;
+     
+     display: inline-block; 
+     transform: translateY(6px); 
+     
+     line-height: 1;
+     margin-right: 3px;
+     margin-left: 3px;
+}
+
+.breadcrumb-item a {
+     color: var(--text-secondary);
+     text-decoration: none;
+     line-height: 1;
+}
+        
+.breadcrumb-item a:hover {
+     color: var(--primary-color);
+}
+
+.breadcrumb-item.active {
+     color: #fff;
+}
+
 </style>
 </head>
 <body class="bg-background-dark text-white">
@@ -149,6 +180,14 @@
 
 		<main class="app-main custom-scrollbar">
 			<div class="container-fluid p-4 p-md-5" style="max-width: 1300px;">
+			
+			<nav aria-label="breadcrumb" class="mb-4">	
+				<ol class="breadcrumb">
+				<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin">홈</a></li>
+				<li class="breadcrumb-item"><a href="#">서비스 관리</a></li>
+				<li aria-current="page" class="breadcrumb-item active">공지사항</li>
+				</ol>
+				</nav>
 
 				<div class="card-dark mb-4 mt-2">
 					<div
@@ -160,8 +199,7 @@
 							</div>
 							<div>
 								<h1 class="h3 fw-bold mb-1 text-white">공지사항 관리</h1>
-								<p class="text-white-50 small mb-0">서비스 이용자들에게 전달할 주요 소식과
-									업데이트 내용을 관리하세요.</p>
+								<p class="text-white-50 small mb-0">서비스 이용자들에게 업데이트할 공지내용을 관리하세요.</p>
 							</div>
 						</div>
 

@@ -155,6 +155,37 @@
 	color: #94a3b8;
 	border: 1px solid rgba(148, 163, 184, 0.3);
 }
+
+/* 홈 > 서비스관리 > 공지사항 */
+.breadcrumb-item + .breadcrumb-item::before {
+     color: var(--text-secondary);
+     content: "chevron_right";
+     font-family: 'Material Symbols Outlined';
+     font-size: 14px;
+     vertical-align: middle;
+     
+     display: inline-block; 
+     transform: translateY(6px); 
+     
+     line-height: 1;
+     margin-right: 3px;
+     margin-left: 3px;
+}
+
+.breadcrumb-item a {
+     color: var(--text-secondary);
+     text-decoration: none;
+     line-height: 1;
+}
+        
+.breadcrumb-item a:hover {
+     color: var(--primary-color);
+}
+
+.breadcrumb-item.active {
+     color: #fff;
+}
+
 </style>
 </head>
 <body class="bg-background-dark text-white">
@@ -174,6 +205,14 @@
 
 		<main class="app-main custom-scrollbar">
 			<div class="container-fluid p-4 p-md-5" style="max-width: 1400px;">
+			
+			 <nav aria-label="breadcrumb" class="mb-4">	
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin">홈</a></li>
+					<li class="breadcrumb-item"><a href="#">서비스 관리</a></li>
+					<li aria-current="page" class="breadcrumb-item active">이벤트</li>
+				</ol>
+			</nav>
 
 				<div class="card-dark mb-4 mt-2">
 					<div

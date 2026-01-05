@@ -125,6 +125,37 @@ select.glass-input-box {
 	border-color: #3b82f6;
 	background: rgba(59, 130, 246, 0.05);
 }
+
+/* 홈 > 서비스관리 > 공지사항 */
+.breadcrumb-item + .breadcrumb-item::before {
+     color: var(--text-secondary);
+     content: "chevron_right";
+     font-family: 'Material Symbols Outlined';
+     font-size: 14px;
+     vertical-align: middle;
+     
+     display: inline-block; 
+     transform: translateY(6px); 
+     
+     line-height: 1;
+     margin-right: 3px;
+     margin-left: 3px;
+}
+
+.breadcrumb-item a {
+     color: var(--text-secondary);
+     text-decoration: none;
+     line-height: 1;
+}
+        
+.breadcrumb-item a:hover {
+     color: var(--primary-color);
+}
+
+.breadcrumb-item.active {
+     color: #fff;
+}
+
 </style>
 </head>
 <body class="bg-background-dark text-white">
@@ -144,6 +175,16 @@ select.glass-input-box {
 
 		<main class="app-main custom-scrollbar">
 			<div class="container-fluid p-4 p-md-5" style="max-width: 1100px;">
+			
+			
+			<nav aria-label="breadcrumb" class="mb-4">	
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin">홈</a></li>
+					<li class="breadcrumb-item"><a href="#">서비스 관리</a></li>
+					<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin/notice">공지사항</a></li>
+					<li aria-current="page" class="breadcrumb-item active">공지사항 작성</li>
+				</ol>
+			</nav>
 
 				<div class="card-dark mb-4 mt-2">
 					<div
