@@ -5,122 +5,301 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <%@ include file="/WEB-INF/views/home/head.jsp"%>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ODA Admin - 이벤트/프로모션 관리</title>
+
+<link
+	href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+	rel="stylesheet">
+<link
+	href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+	rel="stylesheet">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<%@ include file="/WEB-INF/views/home/head.jsp"%>
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/dist/css/adminmain.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
+
+<style>
+/* [1] 공지사항 전용 글래스모피즘 보정 스타일 */
+.glass-table-container {
+	background: rgba(30, 41, 59, 0.4) !important;
+	backdrop-filter: blur(15px);
+	-webkit-backdrop-filter: blur(15px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 1rem;
+	overflow: hidden;
+	box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+}
+
+.table-dark-custom {
+	color: #f1f5f9;
+	margin-bottom: 0;
+}
+
+.table-dark-custom thead {
+	background: rgba(255, 255, 255, 0.05);
+	text-transform: uppercase;
+	font-size: 0.75rem;
+	letter-spacing: 0.05em;
+}
+
+.table-dark-custom th, .table-dark-custom td {
+	padding: 1rem 1.25rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	vertical-align: middle;
+}
+
+.table-dark-custom tbody tr:hover {
+	background: rgba(255, 255, 255, 0.03);
+	transition: background 0.2s;
+}
+
+/* [2] 검색창 및 필터 글래스 스타일 */
+.search-wrapper {
+	background: rgba(15, 23, 42, 0.5);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 0.75rem;
+	padding: 0.5rem 1rem;
+}
+
+.glass-input {
+	background: transparent;
+	border: none;
+	color: white;
+	padding-left: 0.5rem;
+}
+
+.glass-input:focus {
+	box-shadow: none;
+	background: transparent;
+	color: white;
+}
+
+/* [3] 뱃지 스타일 보정 */
+.badge-urgent {
+	background: rgba(239, 68, 68, 0.2);
+	color: #f87171;
+	border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-normal {
+	background: rgba(59, 130, 246, 0.2);
+	color: #60a5fa;
+	border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.badge-private {
+	background: rgba(148, 163, 184, 0.2);
+	color: #94a3b8;
+	border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+/* [4] 버튼 커스텀 */
+.btn-write {
+	background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+	border: none;
+	padding: 0.6rem 1.2rem;
+	font-weight: 500;
+	border-radius: 0.75rem;
+	box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+}
+
+.btn-write:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+}
+
+/* 테이블 헤더(th)와 데이터(td) 모두 투명화 */
+.table-dark-custom th, .table-dark-custom td {
+	background-color: transparent !important; /* 배경색 제거 */
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+	/* 테두리 투명도 */
+	color: #f1f5f9 !important; /* 글자색 흰색 계열 고정 */
+	backdrop-filter: none !important; /* 개별 셀에는 블러 중복 제거 */
+}
+
+/* 테이블 헤더(thead) 부분만 살짝 더 어둡게 비치도록 설정 */
+.table-dark-custom thead tr {
+	background-color: rgba(0, 0, 0, 0.2) !important; /* 헤더 영역 구분 */
+}
+
+/* th 내부의 글자 두께와 위치 정렬 */
+.table-dark-custom th {
+	font-weight: 600;
+	text-transform: uppercase;
+	font-size: 0.8rem;
+	letter-spacing: 0.05em;
+	color: rgba(255, 255, 255, 0.6) !important; /* 헤더 글자는 살짝 흐리게 */
+}
+/* 이벤트 전용 상태 컬러 */
+.badge-upcoming {
+	background: rgba(168, 85, 247, 0.2);
+	color: #c084fc;
+	border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.badge-ongoing {
+	background: rgba(34, 197, 94, 0.2);
+	color: #4ade80;
+	border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.badge-ended {
+	background: rgba(148, 163, 184, 0.2);
+	color: #94a3b8;
+	border: 1px solid rgba(148, 163, 184, 0.3);
+}
+</style>
 </head>
+<body class="bg-background-dark text-white">
 
-<body>
-    <%@ include file="../home/adminheader.jsp"%>
-    <%@ include file="../home/adminsidebar.jsp"%>
+	<div class="space-background">
+		<div class="stars"></div>
+		<div class="stars2"></div>
+		<div class="stars3"></div>
+		<div class="planet planet-1"></div>
+		<div class="planet planet-2"></div>
+	</div>
 
-    <!-- Scrollable -->
-    <div class="feed-scroll-container custom-scrollbar admin-list">
-        <div class="d-flex flex-col py-4 px-3">
+	<%@ include file="../home/adminheader.jsp"%>
 
-            <!-- Breadcrumbs -->
-            <nav class="flex items-center text-sm text-text-sub mb-4">
-                <a href="#" class="hover:text-white transition-colors">홈</a>
-                <span class="material-symbols-outlined mx-1 text-[16px]">chevron_right</span>
-                <a href="#" class="hover:text-white transition-colors">서비스 관리</a>
-                <span class="material-symbols-outlined mx-1 text-[16px]">chevron_right</span>
-                <span class="text-white font-medium">이벤트</span>
-            </nav>
+	<div class="app-body">
+		<%@ include file="../home/adminsidebar.jsp"%>
 
-            <!-- Page Heading -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-6">
-                <div>
-                    <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">이벤트</h1>
-                    <p class="text-text-sub text-base max-w-2xl">고객에게 제공할 다양한 이벤트 및 프로모션을 관리하세요.</p>
-                </div>
-                <button class="flex items-center gap-2 bg-primary hover:bg-primary-dark text-white font-medium py-2.5 px-5 rounded-lg shadow-lg">
-                    <span class="material-symbols-outlined text-[20px]">edit_square</span>
-                    <span>이벤트 작성</span>
-                </button>
-            </div>
+		<main class="app-main custom-scrollbar">
+			<div class="container-fluid p-4 p-md-5" style="max-width: 1400px;">
 
-            <!-- Filter & Search -->
-            <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4 p-2 bg-surface-dark rounded-xl border border-border-dark mb-6 shadow-xl">
-                <div class="flex gap-1 overflow-x-auto no-scrollbar filter-buttons">
-                    <button class="bg-primary/20 text-white border border-primary/20">전체보기</button>
-                    <button class="hover:bg-white/5 hover:text-white text-text-sub border border-transparent">진행중인 이벤트</button>
-                    <button class="hover:bg-white/5 hover:text-white text-text-sub border border-transparent">종료된 이벤트</button>
-                </div>
-                <div class="flex items-center gap-3 px-1 lg:px-2">
-                    <div class="relative w-full lg:w-80 group">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text-sub group-focus-within:text-primary transition-colors">
-                            <span class="material-symbols-outlined">search</span>
-                        </div>
-                        <input type="text" placeholder="이벤트명 검색..." class="block w-full py-2 pl-10 pr-4 text-sm text-white bg-background-dark border border-border-dark rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all">
-                    </div>
-                    <div class="h-6 w-px bg-border-dark mx-1"></div>
-                    <button class="p-2 text-text-sub hover:text-white hover:bg-white/5 rounded-lg transition-colors" title="새로고침">
-                        <span class="material-symbols-outlined">refresh</span>
-                    </button>
-                </div>
-            </div>
+				<div class="card-dark mb-4 mt-2">
+					<div
+						class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 p-2">
+						<div class="d-flex align-items-center gap-3">
+							<div
+								class="stat-icon-wrapper bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+								<span class="material-icons-round fs-4">celebration</span>
+							</div>
+							<div>
+								<h1 class="h3 fw-bold mb-1 text-white">이벤트 관리</h1>
+								<p class="text-white-50 small mb-0">프로모션 일정을 확인하고 이벤트를 효율적으로
+									관리하세요.</p>
+							</div>
+						</div>
 
-            <!-- Table -->
-            <div class="bg-surface-dark rounded-xl border border-border-dark overflow-hidden shadow-2xl mb-8">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-text-sub">
-                        <thead class="text-xs uppercase bg-black/20 text-text-sub border-b border-border-dark">
-                            <tr>
-                                <th class="p-4 w-10">
-                                    <input type="checkbox" class="w-4 h-4 accent-primary rounded">
-                                </th>
-                                <th class="px-6 py-4 w-20 text-center font-medium">번호</th>
-                                <th class="px-6 py-4 w-28 text-center font-medium">유형</th>
-                                <th class="px-6 py-4 font-medium">제목</th>
-                                <th class="px-6 py-4 w-40 text-center font-medium">작성자</th>
-                                <th class="px-6 py-4 w-48 text-center font-medium">이벤트 시작/종료일</th>
-                                <th class="px-6 py-4 w-24 text-center font-medium">조회수</th>
-                                <th class="px-6 py-4 w-24 text-center font-medium">응모현황</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-border-dark">
-                            <tr class="bg-primary/5 hover:bg-primary/10 transition-colors group">
-                                <td class="p-4 text-center"><input type="checkbox" class="w-4 h-4 accent-primary rounded"></td>
-                                <td class="px-6 py-4 text-center text-primary font-bold">128</td>
-                                <td class="px-6 py-4 text-center">
-                                    <span class="status progress">진행중</span>
-                                </td>
-                                <td class="px-6 py-4 font-medium text-white">
-                                    <a href="#" class="flex items-center gap-2 group-hover:text-primary transition-colors">
-                                        <span>[신년맞이] 전 품목 20% 할인 이벤트</span>
-                                        <span class="size-2 bg-green-500 rounded-full animate-pulse"></span>
-                                    </a>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <div class="w-6 h-6 rounded-full bg-slate-600 bg-cover ring-1 ring-border-dark" style='background-image:url("https://lh3.googleusercontent.com/aida-public/AB6AXuALbA-S2eE1p-oCMhl1i5etBWGFuGv6CcJYF0VkTYID-xSAJnyomEbHZ6QBob0wmsR4HS3-JZk1xzR6JvyCveZCUZ1HlD6e7p1TWUSzp56QH0Vp0ToxtPPdPIWz3oZUcaAXS-3i_1atXfK9bPaMTIfSVJvAVDnkcBFsjtGw00dIpUsyX4j43zm8004nFoJAD18cKgZ0Kqao4pZ9LFaEIcqKGE2JhpSavWZZXKWwlSZMmOXf6oHPeOD0kj7XSdbScDuG-B6LQOf4zVjw");'></div>
-                                        <span>마케팅</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 text-center text-xs text-text-sub/80 whitespace-nowrap">2024-01-01 ~ 2024-01-31</td>
-                                <td class="px-6 py-4 text-center text-xs">2,450</td>
-                                <td class="px-6 py-4 text-center text-xs font-medium text-primary">342</td>
-                            </tr>
-                            <!-- 반복되는 행도 동일하게 status 클래스 적용 -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+						<button
+							class="btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2"
+							 onclick="location.href='${pageContext.request.contextPath}/admin/events/write';">
+							<span class="material-icons-round fs-6">add_box</span> <span>새
+								이벤트 등록</span>
+						</button>
+					</div>
+				</div>
 
-            <!-- Pagination -->
-            <div class="flex flex-col items-center justify-center pt-2 pb-10">
-                <span class="text-sm text-text-sub mb-4">Showing <span class="font-semibold text-white">1-5</span> of <span class="font-semibold text-white">128</span></span>
-                <ul class="inline-flex items-center -space-x-px text-sm pagination">
-                    <li><a href="#" class="rounded-l-lg"><span class="material-symbols-outlined text-sm">chevron_left</span></a></li>
-                    <li><a href="#" class="active">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                    <li><a href="#" class="rounded-r-lg"><span class="material-symbols-outlined text-sm">chevron_right</span></a></li>
-                </ul>
-            </div>
+				<div class="card-dark mb-4 p-3">
+					<div class="row g-3 align-items-center">
+						<div class="col-12 col-lg-6">
+							<div class="btn-group glass-btn-group">
+								<button class="btn btn-outline-light active btn-sm px-3">전체</button>
+								<button class="btn btn-outline-light btn-sm px-3">진행중</button>
+								<button class="btn btn-outline-light btn-sm px-3">대기</button>
+								<button class="btn btn-outline-light btn-sm px-3">종료</button>
+							</div>
+						</div>
+						<div class="col-12 col-lg-6">
+							<div class="input-group search-wrapper">
+								<span class="material-icons-round text-white-50">search</span> <input
+									type="text" class="form-control glass-input"
+									placeholder="이벤트 제목 검색...">
+								<button class="btn btn-link text-white-50 p-0 ms-2">
+									<span class="material-icons-round">refresh</span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
 
-        </div>
-    </div>
+				<div class="glass-table-container">
+					<div class="table-responsive">
+						<table class="table table-dark-custom">
+							<thead>
+								<tr>
+									<th class="text-center" style="width: 50px;"><input
+										type="checkbox" class="form-check-input"></th>
+									<th style="width: 70px;">번호</th>
+									<th style="width: 100px;">상태</th>
+									<th>이벤트 제목</th>
+									<th style="width: 140px;">시작일</th>
+									<th style="width: 140px;">종료일</th>
+									<th class="text-center" style="width: 90px;">조회수</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr style="background: rgba(34, 197, 94, 0.03);">
+									<td class="text-center"><input type="checkbox"
+										class="form-check-input"></td>
+									<td class="text-white-50">15</td>
+									<td><span class="badge badge-ongoing">진행 중</span></td>
+									<td><span class="fw-bold text-white">겨울 맞이 커뮤니티 활동왕
+											선정</span></td>
+									<td class="text-white-50 date-text">2026-01-01</td>
+									<td class="text-white-50 date-text">2026-01-31</td>
+									<td class="text-center text-white-50">3,452</td>
+								</tr>
+								<tr>
+									<td class="text-center"><input type="checkbox"
+										class="form-check-input"></td>
+									<td class="text-white-50">14</td>
+									<td><span class="badge badge-upcoming">진행 예정</span></td>
+									<td>설 연휴 특별 출석 체크 프로모션</td>
+									<td class="text-white-50 date-text">2026-01-25</td>
+									<td class="text-white-50 date-text">2026-02-05</td>
+									<td class="text-center text-white-50">128</td>
+								</tr>
+								<tr>
+									<td class="text-center"><input type="checkbox"
+										class="form-check-input"></td>
+									<td class="text-white-50">13</td>
+									<td><span class="badge badge-ended">종료됨</span></td>
+									<td class="text-white-50">크리스마스 창작 공모전</td>
+									<td class="text-white-50 date-text">2025-12-01</td>
+									<td class="text-white-50 date-text">2025-12-25</td>
+									<td class="text-center text-white-50">5,102</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div
+						class="p-4 d-flex justify-content-center border-top border-white border-opacity-10">
+						<nav>
+							<ul class="pagination pagination-sm mb-0">
+								<li class="page-item disabled"><a
+									class="page-link bg-transparent border-white border-opacity-10 text-white-50"
+									href="#"><span class="material-icons-round fs-6">chevron_left</span></a></li>
+								<li class="page-item active"><a
+									class="page-link bg-primary border-primary" href="#">1</a></li>
+								<li class="page-item"><a
+									class="page-link bg-transparent border-white border-opacity-10 text-white"
+									href="#">2</a></li>
+								<li class="page-item"><a
+									class="page-link bg-transparent border-white border-opacity-10 text-white"
+									href="#"><span class="material-icons-round fs-6">chevron_right</span></a></li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 </body>
 </html>

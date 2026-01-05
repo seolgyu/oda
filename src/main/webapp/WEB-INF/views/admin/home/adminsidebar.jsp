@@ -4,7 +4,7 @@
 <aside class="app-sidebar custom-scrollbar">
 	<nav class="d-flex flex-column gap-1">
 	
-		<button class="nav-item active">
+		<button class="nav-item active" onclick="location.href='${pageContext.request.contextPath}/admin';">
 			<span class="material-symbols-outlined">home</span>
 			<span>홈</span>
 		</button>

@@ -5,121 +5,278 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <%@ include file="/WEB-INF/views/home/head.jsp"%>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ODA Admin - 문의사항 관리</title>
     
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <%@ include file="/WEB-INF/views/home/head.jsp"%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminmain.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
+
+    <style>
+        /* 문의사항 전용 추가 상태 컬러 (기존 CSS에 추가하거나 style 태그 유지) */
+        .badge-waiting { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
+        .badge-processing { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-completed { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+        
+        /* 기존 공지사항 스타일 유지 및 th/td 보정 적용됨 */
+        /* [1] 공지사항 전용 글래스모피즘 보정 스타일 */
+.glass-table-container {
+	background: rgba(30, 41, 59, 0.4) !important;
+	backdrop-filter: blur(15px);
+	-webkit-backdrop-filter: blur(15px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 1rem;
+	overflow: hidden;
+	box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+}
+
+.table-dark-custom {
+	color: #f1f5f9;
+	margin-bottom: 0;
+}
+
+.table-dark-custom thead {
+	background: rgba(255, 255, 255, 0.05);
+	text-transform: uppercase;
+	font-size: 0.75rem;
+	letter-spacing: 0.05em;
+}
+
+.table-dark-custom th, .table-dark-custom td {
+	padding: 1rem 1.25rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	vertical-align: middle;
+}
+
+.table-dark-custom tbody tr:hover {
+	background: rgba(255, 255, 255, 0.03);
+	transition: background 0.2s;
+}
+
+/* [2] 검색창 및 필터 글래스 스타일 */
+.search-wrapper {
+	background: rgba(15, 23, 42, 0.5);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 0.75rem;
+	padding: 0.5rem 1rem;
+}
+
+.glass-input {
+	background: transparent;
+	border: none;
+	color: white;
+	padding-left: 0.5rem;
+}
+
+.glass-input:focus {
+	box-shadow: none;
+	background: transparent;
+	color: white;
+}
+
+/* [3] 뱃지 스타일 보정 */
+.badge-urgent {
+	background: rgba(239, 68, 68, 0.2);
+	color: #f87171;
+	border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-normal {
+	background: rgba(59, 130, 246, 0.2);
+	color: #60a5fa;
+	border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.badge-private {
+	background: rgba(148, 163, 184, 0.2);
+	color: #94a3b8;
+	border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+/* [4] 버튼 커스텀 */
+.btn-write {
+	background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+	border: none;
+	padding: 0.6rem 1.2rem;
+	font-weight: 500;
+	border-radius: 0.75rem;
+	box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+}
+
+.btn-write:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+}
+
+/* 테이블 헤더(th)와 데이터(td) 모두 투명화 */
+.table-dark-custom th, 
+.table-dark-custom td {
+    background-color: transparent !important; /* 배경색 제거 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; /* 테두리 투명도 */
+    color: #f1f5f9 !important; /* 글자색 흰색 계열 고정 */
+    backdrop-filter: none !important; /* 개별 셀에는 블러 중복 제거 */
+}
+
+/* 테이블 헤더(thead) 부분만 살짝 더 어둡게 비치도록 설정 */
+.table-dark-custom thead tr {
+    background-color: rgba(0, 0, 0, 0.2) !important; /* 헤더 영역 구분 */
+}
+
+/* th 내부의 글자 두께와 위치 정렬 */
+.table-dark-custom th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.6) !important; /* 헤더 글자는 살짝 흐리게 */
+}
+    </style>
 </head>
-<body>
-    <%@ include file="../home/adminheader.jsp"%>
-    <%@ include file="../home/adminsidebar.jsp"%>
+<body class="bg-background-dark text-white">
 
-    <!-- Scrollable Container -->
-    <div class="feed-scroll-container custom-scrollbar admin-list">
-        <div class="d-flex flex-column align-items-center py-4 px-3">
-
-            <!-- Breadcrumbs -->
-            <nav class="flex items-center text-sm text-text-sub mb-4">
-                <a class="hover:text-white transition-colors" href="#">홈</a>
-                <span class="material-symbols-outlined text-[16px] mx-1">chevron_right</span>
-                <a class="hover:text-white transition-colors" href="#">서비스 관리</a>
-                <span class="material-symbols-outlined text-[16px] mx-1">chevron_right</span>
-                <span class="text-white font-medium">문의사항</span>
-            </nav>
-
-            <!-- Page Heading -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 w-full">
-                <div class="flex flex-col gap-2">
-                    <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">문의사항</h1>
-                    <p class="text-text-sub text-base max-w-2xl">서비스 이용자들이 작성한 문의사항에 대한 답변을 제공합니다.</p>
-                </div>
-                <button class="flex items-center gap-2 bg-primary hover:bg-primary-dark text-white font-medium py-2.5 px-5 rounded-lg transition-all">
-                    <span class="material-symbols-outlined text-[20px]">edit_square</span>
-                    <span>문의사항 답변</span>
-                </button>
-            </div>
-
-            <!-- Filter Tabs & Search -->
-            <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4 p-2 w-full"
-                 style="background-color: var(--surface-dark); border: 1px solid var(--border-dark); border-radius: 0.75rem;">
-                <div class="flex p-1 gap-1 overflow-x-auto no-scrollbar">
-                    <button class="px-4 py-2 text-sm font-medium text-white bg-primary border border-primary rounded-lg">전체보기</button>
-                    <button class="px-4 py-2 text-sm font-medium text-text-sub hover:text-white hover:bg-white/5 rounded-lg transition-colors">답변대기</button>
-                    <button class="px-4 py-2 text-sm font-medium text-text-sub hover:text-white hover:bg-white/5 rounded-lg transition-colors">답변완료</button>
-                </div>
-                <div class="flex items-center gap-3 px-1 lg:px-2 pb-1 lg:pb-0">
-                    <div class="relative w-full lg:w-80 group">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text-sub group-focus-within:text-primary transition-colors">
-                            <span class="material-symbols-outlined">search</span>
-                        </div>
-                        <input class="block w-full py-2 pl-10 pr-4 text-sm text-white placeholder-text-sub bg-background-dark border border-border-dark rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition-all outline-none"
-                               placeholder="제목, 작성자 검색..." type="text"/>
-                    </div>
-                    <div class="h-6 w-px bg-border-dark mx-1"></div>
-                    <button class="flex items-center justify-center p-2 text-text-sub hover:text-white hover:bg-white/5 rounded-lg transition-colors" title="새로고침">
-                        <span class="material-symbols-outlined">refresh</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Table Card -->
-            <div class="bg-surface-dark rounded-xl border border-border-dark overflow-hidden shadow-xl shadow-black/40 mb-8 w-full">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-text-sub">
-                        <thead class="text-xs uppercase bg-black/20 text-text-sub border-b border-border-dark">
-                            <tr>
-                                <th class="p-4 w-10"><input class="w-4 h-4 text-primary bg-background-dark border-border-dark rounded focus:ring-primary" type="checkbox"/></th>
-                                <th class="px-6 py-4 w-20 text-center font-medium">번호</th>
-                                <th class="px-6 py-4 w-28 text-center font-medium">유형</th>
-                                <th class="px-6 py-4 font-medium">제목</th>
-                                <th class="px-6 py-4 w-40 text-center font-medium">작성자</th>
-                                <th class="px-6 py-4 w-32 text-center font-medium">작성일</th>
-                                <th class="px-6 py-4 w-28 text-center font-medium">상태</th>
-                                <th class="px-6 py-4 w-24 text-center font-medium">조회수</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-border-dark">
-                            <!-- 반복 row 예시 -->
-                            <tr class="bg-surface-dark hover:bg-white/5 transition-colors group">
-                                <td class="w-4 p-4"><input class="w-4 h-4 text-primary bg-background-dark border-border-dark rounded focus:ring-primary" type="checkbox"/></td>
-                                <td class="px-6 py-4 text-center text-text-sub">152</td>
-                                <td class="px-6 py-4 text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">대기</span>
-                                </td>
-                                <td class="px-6 py-4 font-medium text-white">
-                                    <a class="group-hover:text-primary transition-colors flex items-center gap-2" href="#">
-                                        로그인 오류 관련 문의드립니다.
-                                        <span class="size-2 bg-red-500 rounded-full animate-pulse"></span>
-                                    </a>
-                                </td>
-                                <td class="px-6 py-4 text-center">user123</td>
-                                <td class="px-6 py-4 text-center text-xs text-text-sub/80">2023-10-25</td>
-                                <td class="px-6 py-4 text-center">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/20 whitespace-nowrap">공개</span>
-                                </td>
-                                <td class="px-6 py-4 text-center text-xs">12</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Pagination -->
-            <div class="flex flex-col items-center justify-center pt-2 pb-10 w-full">
-                <span class="text-sm text-text-sub mb-4">
-                    Showing <span class="font-semibold text-white">1-5</span> of <span class="font-semibold text-white">152</span>
-                </span>
-                <ul class="inline-flex items-center -space-x-px text-sm">
-                    <li><a class="flex items-center justify-center px-4 h-10 text-text-sub bg-surface-dark border border-border-dark rounded-l-lg hover:bg-white/5 hover:text-white transition-colors" href="#"><span class="material-symbols-outlined text-sm">chevron_left</span></a></li>
-                    <li><a class="flex items-center justify-center px-4 h-10 text-white bg-primary border border-primary hover:bg-primary-dark transition-colors font-medium z-10" href="#">1</a></li>
-                    <li><a class="flex items-center justify-center px-4 h-10 text-text-sub bg-surface-dark border border-border-dark hover:bg-white/5 hover:text-white transition-colors" href="#">2</a></li>
-                    <li><a class="flex items-center justify-center px-4 h-10 text-text-sub bg-surface-dark border border-border-dark hover:bg-white/5 hover:text-white transition-colors" href="#">3</a></li>
-                    <li><a class="flex items-center justify-center px-4 h-10 text-text-sub bg-surface-dark border border-border-dark hover:bg-white/5 hover:text-white transition-colors" href="#">4</a></li>
-                    <li><a class="flex items-center justify-center px-4 h-10 text-text-sub bg-surface-dark border border-border-dark hover:bg-white/5 hover:text-white transition-colors" href="#">5</a></li>
-                    <li><a class="flex items-center justify-center px-4 h-10 text-text-sub bg-surface-dark border border-border-dark rounded-r-lg hover:bg-white/5 hover:text-white transition-colors" href="#"><span class="material-symbols-outlined text-sm">chevron_right</span></a></li>
-                </ul>
-            </div>
-
-        </div>
+    <div class="space-background">
+        <div class="stars"></div>
+        <div class="stars2"></div>
+        <div class="stars3"></div>
+        <div class="planet planet-1"></div>
+        <div class="planet planet-2"></div>
     </div>
+
+    <%@ include file="../home/adminheader.jsp" %>
+
+    <div class="app-body">
+        <%@ include file="../home/adminsidebar.jsp" %>
+
+        <main class="app-main custom-scrollbar">
+            <div class="container-fluid p-4 p-md-5" style="max-width: 1300px;">
+
+                <div class="card-dark mb-4 mt-2">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 p-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon-wrapper bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                                <span class="material-icons-round fs-4">help_center</span>
+                            </div>
+                            <div>
+                                <h1 class="h3 fw-bold mb-1 text-white">문의사항 관리</h1>
+                                <p class="text-white-50 small mb-0">사용자들의 1:1 문의 및 서비스 피드백에 답변하고 관리하세요.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-dark mb-4 p-3">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-12 col-lg-6">
+                            <div class="btn-group glass-btn-group">
+                                <button class="btn btn-outline-light active btn-sm px-3">전체</button>
+                                <button class="btn btn-outline-light btn-sm px-3">미답변</button>
+                                <button class="btn btn-outline-light btn-sm px-3">처리중</button>
+                                <button class="btn btn-outline-light btn-sm px-3">답변완료</button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="input-group search-wrapper">
+                                <span class="material-icons-round text-white-50">search</span> 
+                                <input type="text" class="form-control glass-input" placeholder="문의 제목, 작성자 계정 검색...">
+                                <button class="btn btn-link text-white-50 p-0 ms-2">
+                                    <span class="material-icons-round">refresh</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-table-container">
+                    <div class="table-responsive">
+                        <table class="table table-dark-custom">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 50px;"><input type="checkbox" class="form-check-input"></th>
+                                    <th style="width: 100px;">상태</th>
+                                    <th>문의 제목</th>
+                                    <th style="width: 180px;">작성자</th>
+                                    <th style="width: 120px;">작성일</th>
+                                    <th class="text-end" style="width: 120px;">유형</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background: rgba(239, 68, 68, 0.03);">
+                                    <td class="text-center"><input type="checkbox" class="form-check-input"></td>
+                                    <td><span class="badge badge-waiting">답변 대기</span></td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-bold">로그인이 자꾸 풀립니다. 확인 부탁드려요.</span>
+                                            <span class="material-icons-round text-danger fs-6" style="font-size: 14px;">priority_high</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 10px;">KM</div>
+                                            <span>kim_minsu</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-white-50">2023-10-25</td>
+                                    <td class="text-end">
+                                        <div class="d-flex align-items-center justify-content-end gap-1 text-white-50 small">
+                                            <span>비공개</span> <span class="material-icons-round" style="font-size: 14px;">lock</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center"><input type="checkbox" class="form-check-input"></td>
+                                    <td><span class="badge badge-processing">처리중</span></td>
+                                    <td>결제 내역 확인 및 환불 요청 건</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="bg-info rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 10px;">LJ</div>
+                                            <span>lee_jiwon</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-white-50">2023-10-24</td>
+                                    <td class="text-end">
+                                        <div class="d-flex align-items-center justify-content-end gap-1 text-white-50 small">
+                                            <span>비공개</span> <span class="material-icons-round" style="font-size: 14px;">lock</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center"><input type="checkbox" class="form-check-input"></td>
+                                    <td><span class="badge badge-completed">답변완료</span></td>
+                                    <td class="text-white-50">새로운 커뮤니티 개설은 어떻게 하나요?</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 10px;">PJ</div>
+                                            <span>park_jun</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-white-50">2023-10-23</td>
+                                    <td class="text-end text-primary small">공개</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="p-4 d-flex justify-content-center border-top border-white border-opacity-10">
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled"><a class="page-link bg-transparent border-white border-opacity-10 text-white-50" href="#"><span class="material-icons-round fs-6">chevron_left</span></a></li>
+                                <li class="page-item active"><a class="page-link bg-primary border-primary" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link bg-transparent border-white border-opacity-10 text-white" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link bg-transparent border-white border-opacity-10 text-white" href="#"><span class="material-icons-round fs-6">chevron_right</span></a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 </body>
 </html>
