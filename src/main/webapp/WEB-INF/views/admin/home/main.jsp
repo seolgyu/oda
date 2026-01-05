@@ -6,8 +6,8 @@
 <html lang="ko">
 <head>
 <%@ include file="/WEB-INF/views/home/head.jsp"%>
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/dist/css/adminmain.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminmain.css">
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body

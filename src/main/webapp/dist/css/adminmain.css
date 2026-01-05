@@ -20,6 +20,33 @@
     --radius-xl: 0.75rem;
     --radius-2xl: 1rem;
     --radius-full: 9999px;
+    
+    --header-height: 64px; /* 헤더 높이에 맞게 조절 */
+    --sidebar-width: 260px;
+}
+
+/* 헤더 아래 영역 */
+.app-body {
+    display: flex;
+    height: calc(100vh - var(--header-height));
+    overflow: hidden;
+}
+
+/* 메인 컨텐츠 영역 */
+.app-main {
+    flex: 1;
+    height: 100%;
+    overflow-y: auto;
+    background-color: var(--color-background-dark); /* 기본 배경색 */
+}
+
+/* 사이드바 고정 */
+.app-sidebar {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    height: 100%;
+    overflow-y: auto;
+    border-right: 1px solid var(--color-border-dark);
 }
 
 /* --- General Styles --- */
