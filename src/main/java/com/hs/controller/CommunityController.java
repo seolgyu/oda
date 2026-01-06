@@ -30,4 +30,14 @@ public class CommunityController {
 		return new ModelAndView("community/update");
 	}
 	
+	@GetMapping("management")
+	public ModelAndView managementList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		return new ModelAndView("community/management");
+	}
+	
+	@GetMapping("list")
+	public ModelAndView communityList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		return new ModelAndView("community/list");
+	}
+	
 }

@@ -15,15 +15,17 @@
 		<hr class="my-3 border-secondary opacity-25">
 		<div class="text-xs text-secondary px-3 mb-2 text-uppercase fw-bold">Community</div>
 
-		<button class="nav-item ${currentUri.contains('/community/main') ? 'active' : ''}" 
-				onclick="location.href='${pageContext.request.contextPath}/community/main';">
-			<span class="material-symbols-outlined">settings_suggest</span> <span>커뮤니티
-				관리</span>
+		<button class="nav-item ${currentUri.contains('/community/list') ? 'active' : ''}" 
+				onclick="location.href='${pageContext.request.contextPath}/community/list';">
+			<span class="material-symbols-outlined">settings_suggest</span> <span>커뮤니티</span>
+		</button>
+		<button class="nav-item ${currentUri.contains('/community/management') ? 'active' : ''}" 
+				onclick="location.href='${pageContext.request.contextPath}/community/management';">
+			<span class="material-symbols-outlined">settings_suggest</span> <span>커뮤니티 관리</span>
 		</button>
 		<button class="nav-item ${currentUri.contains('/community/create') ? 'active' : ''}" 
 				onclick="location.href='${pageContext.request.contextPath}/community/create';">
-			<span class="material-symbols-outlined">add_circle</span> <span>커뮤니티
-				개설</span>
+			<span class="material-symbols-outlined">add_circle</span> <span>커뮤니티 개설</span>
 		</button>
 		<button class="nav-item">
 			<span class="material-symbols-outlined">group</span> <span>팔로잉</span>
