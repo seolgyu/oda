@@ -165,6 +165,10 @@
 .breadcrumb-item.active {
      color: #fff;
 }
+.glass-input::placeholder {
+    color: #ffffff80 !important;
+    opacity: 1;
+}
 
     </style>
 </head>
@@ -220,11 +224,11 @@
                         </div>
                         <div class="col-12 col-lg-6">
                             <div class="input-group search-wrapper">
-                                <span class="material-icons-round text-white-50">search</span> 
+                                <span class="material-icons-round text-white-50 mt-2">search</span> 
                                 <input type="text" class="form-control glass-input" placeholder="문의 제목, 작성자 계정 검색...">
-                                <button class="btn btn-link text-white-50 p-0 ms-2">
+                                <!-- <button class="btn btn-link text-white-50 p-0 ms-2">
                                     <span class="material-icons-round">refresh</span>
-                                </button>
+                                </button> -->
                             </div>
                         </div>
                     </div>

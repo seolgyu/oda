@@ -186,6 +186,10 @@
      color: #fff;
 }
 
+.glass-input::placeholder {
+    color: #ffffff80 !important;
+    opacity: 1;
+}
 </style>
 </head>
 <body class="bg-background-dark text-white">
@@ -250,11 +254,11 @@
 						</div>
 						<div class="col-12 col-lg-6">
 							<div class="input-group search-wrapper">
-								<span class="material-icons-round text-white-50 ">search</span> 
-								<input type="text" style="text-light" class="form-control glass-input" placeholder="이벤트 제목 검색...">
-								<button class="btn btn-link text-white-50 p-0 ms-2">
+								<span class="material-icons-round text-white-50 mt-2">search</span> 
+								<input type="text" class="form-control glass-input" placeholder="이벤트 제목 검색...">
+								<!-- <button class="btn btn-link text-white-50 p-0 ms-2 mt-1">
 									<span class="material-icons-round">refresh</span>
-								</button>
+								</button> -->
 							</div>
 						</div>
 					</div>
