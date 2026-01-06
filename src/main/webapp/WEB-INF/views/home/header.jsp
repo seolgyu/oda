@@ -54,8 +54,8 @@
 					class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow-lg mt-2">
 					<li><h6 class="dropdown-header">내 계정</h6></li>
 					<li><a class="dropdown-item d-flex align-items-center gap-2"
-						href="#"><span class="material-symbols-outlined fs-6">person</span>
-							프로필 보기</a></li>
+						href="${pageContext.request.contextPath}/member/mypage"><span class="material-symbols-outlined fs-6">person</span>
+							내 피드</a></li>
 					<li><a class="dropdown-item d-flex align-items-center gap-2"
 						href="#"><span class="material-symbols-outlined fs-6">favorite</span>
 							좋아요 누른 게시물</a></li>
