@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <%@ include file="/WEB-INF/views/home/head.jsp"%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminmain.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
@@ -244,7 +244,7 @@
 							<thead>
 								<tr>
 									<th class="text-center" style="width: 50px;"><input
-										type="checkbox" class="form-check-input"></th>
+										type="checkbox" class="form-check-input-all"></th>
 									<th style="width: 80px;">번호</th>
 									<th style="width: 100px;">유형</th>
 									<th>제목</th>
@@ -324,5 +324,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
+    <script src="${pageContext.request.contextPath}/dist/js/admin_bbs_util.js"></script>
 </body>
 </html>

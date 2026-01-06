@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <%@ include file="/WEB-INF/views/home/head.jsp"%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminmain.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
@@ -263,7 +263,7 @@
                         <table class="table table-dark-custom">
                             <thead>
                                 <tr>
-                                    <th class="text-center" style="width: 50px;"><input type="checkbox" class="form-check-input"></th>
+                                    <th class="text-center" style="width: 50px;"><input type="checkbox" class="form-check-input-all"></th>
                                     <th style="width: 130px;">상태</th>
                                     <th style="width: 320px;">문의 제목</th>
                                     <th style="width: 180px;">작성자</th>
@@ -334,5 +334,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
+    <script src="${pageContext.request.contextPath}/dist/js/admin_bbs_util.js"></script>
 </body>
 </html>
