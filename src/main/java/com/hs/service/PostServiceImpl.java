@@ -3,6 +3,7 @@ package com.hs.service;
 import java.util.List;
 
 import com.hs.mapper.PostMapper;
+import com.hs.model.FileAtDTO;
 import com.hs.model.PostDTO;
 import com.hs.mybatis.support.MapperContainer;
 
@@ -14,10 +15,21 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void insertPost(PostDTO dto) throws Exception {
 		try {
-			// 나중에 HTML 태그 제어(특수문자 변환) 등이 필요하면 여기서 처리
+			// 1. 게시글 저장 (여기서 dto.postId가 생성됨)
+            mapper.insertPost(dto);
+            
+            // 2. 파일 목록이 있으면 저장
+            List<FileAtDTO> files = dto.getFileList();
+            if(files != null && !files.isEmpty()) {
+                for(FileAtDTO fileDto : files) {
+                    // 게시글 ID 연결
+                    fileDto.setPostId(dto.getPostId());
+                    // DB 저장
+                    mapper.insertFileAt(fileDto);
+                }
+            }
 			
-			// Mapper를 통해 DB에 저장
-			mapper.insertPost(dto);
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();

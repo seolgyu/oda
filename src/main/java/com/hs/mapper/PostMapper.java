@@ -2,6 +2,7 @@ package com.hs.mapper;
 
 import java.util.List;
 
+import com.hs.model.FileAtDTO;
 import com.hs.model.PostDTO;
 
 public interface PostMapper {
@@ -16,4 +17,6 @@ public interface PostMapper {
 	
 	// 목록 조회 추가
 	public List<PostDTO> listPost();
+	
+	public void insertFileAt(FileAtDTO fileDto) throws Exception;
 }

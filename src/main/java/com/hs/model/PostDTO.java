@@ -1,5 +1,7 @@
 package com.hs.model;
 
+import java.util.List;
+
 public class PostDTO {
 	private Long postId;
 	private Long userNum;     
@@ -12,8 +14,13 @@ public class PostDTO {
 	private Long commentCount;
 	private String isDeleted;
 	private String createdDate; 
+	
 	private String updatedDate;
 	private String state;      
+	private String replyEnabled; 
+	private String showCounts;   
+
+	private List<FileAtDTO> fileList;
 
 	// 조인용 필드 (작성자 닉네임 등)
 	private String authorNickname;
@@ -109,7 +116,23 @@ public class PostDTO {
 	public void setAuthorProfileImage(String authorProfileImage) {
 		this.authorProfileImage = authorProfileImage;
 	}
-
-	
+	public String getReplyEnabled() {
+		return replyEnabled;
+	}
+	public void setReplyEnabled(String replyEnabled) {
+		this.replyEnabled = replyEnabled;
+	}
+	public String getShowCounts() {
+		return showCounts;
+	}
+	public void setShowCounts(String showCounts) {
+		this.showCounts = showCounts;
+	}
+	public List<FileAtDTO> getFileList() {
+		return fileList;
+	}
+	public void setFileList(List<FileAtDTO> fileList) {
+		this.fileList = fileList;
+	}
 
 }

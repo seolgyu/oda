@@ -4,70 +4,90 @@
 
 	<insert id="insertPost" parameterType="com.hs.model.PostDTO">
 		INSERT INTO posts (
-			post_id,
-			user_num, community_id,
-			title,
-			content,
-			post_type,
-			is_deleted,
-			created_date, state 
-		) VALUES (
-			posts_seq.NEXTVAL,
-			#{userNum}, #{communityId, jdbcType=INTEGER},
-			#{title},
-			#{content},
-			#{postType},
-			'0', SYSTIMESTAMP, #{state} 
-		)
+		post_id, user_num, community_id, title, content,
+		post_type,
+		is_deleted,
+		created_date, state,
+		reply_enabled, show_counts )
+		VALUES (
+		posts_seq.NEXTVAL,
+		#{userNum}, #{communityId,
+		jdbcType=INTEGER},
+		#{title}, #{content}, #{postType},
+		'0', SYSTIMESTAMP,
+		#{state},
+		#{replyEnabled}, #{showCounts} )
+		<selectKey keyProperty="postId" resultType="long"
+			order="AFTER">
+			SELECT posts_seq.CURRVAL FROM DUAL
+		</selectKey>
 	</insert>
 
 	<update id="updatePost" parameterType="com.hs.model.PostDTO">
 		UPDATE posts
-		SET title = #{title},
-			content = #{content},
-			updated_date = SYSTIMESTAMP, 
-			state = #{state} 
-		WHERE post_id = #{postId} AND user_num = #{userNum}
+		SET title =
+		#{title},
+		content = #{content},
+		updated_date = SYSTIMESTAMP,
+		state =
+		#{state},
+		reply_enabled = #{replyEnabled}, show_counts = #{showCounts}
+		WHERE post_id =
+		#{postId} AND user_num = #{userNum}
 	</update>
 
-	<select id="findById" parameterType="long" resultType="com.hs.model.PostDTO">
+	<select id="findById" parameterType="long"
+		resultType="com.hs.model.PostDTO">
 		SELECT
-			p.post_id AS postId,
-			p.user_num AS userNum, 
-			p.community_id AS communityId,
-			p.title,
-			p.content,
-			p.post_type AS postType,
-			p.view_count AS viewCount,
-			p.like_count AS likeCount,
-			p.created_date AS createdDate, 
-			p.updated_date AS updatedDate,
-			p.state,
-			u.userName AS authorNickname,
-			
-			NULL AS authorProfileImage
-			
+		p.post_id AS postId,
+		p.user_num AS userNum,
+		p.community_id AS communityId,
+		p.title,
+		p.content,
+		p.post_type AS
+		postType,
+		p.view_count AS viewCount,
+		p.like_count AS likeCount,
+		p.created_date AS createdDate,
+		p.updated_date AS updatedDate,
+		p.state,
+		p.reply_enabled AS replyEnabled,
+		p.show_counts AS showCounts,
+		u.userName AS authorNickname,
+
+		NULL AS authorProfileImage
+
 		FROM posts p
-		JOIN member1 u ON p.user_num = u.memberIdx 
-		WHERE p.post_id = #{postId}
+		JOIN member1 u ON p.user_num = u.memberIdx
+		WHERE p.post_id
+		= #{postId}
 	</select>
 
 	<select id="listPost" resultType="com.hs.model.PostDTO">
 		SELECT
-			p.post_id AS postId,
-			p.user_num AS userNum,
-			p.title,
-			p.view_count AS viewCount,
-			p.like_count AS likeCount,
-			p.created_date AS createdDate,
-			u.userName AS authorNickname,
-			
-			NULL AS authorProfileImage
-			
+		p.post_id AS postId,
+		p.user_num AS userNum,
+		p.title,
+		p.view_count AS viewCount,
+		p.like_count AS likeCount,
+		p.created_date AS createdDate,
+		u.userName AS authorNickname,
+		NULL AS authorProfileImage
 		FROM posts p
-		JOIN member1 u ON p.user_num = u.memberIdx
-		WHERE p.is_deleted = '0'
+		JOIN member1 u ON
+		p.user_num = u.memberIdx
+		WHERE p.is_deleted =
+		'0'
 		ORDER BY p.post_id DESC
 	</select>
-	
+
+	<insert id="insertFileAt" parameterType="com.hs.model.FileAtDTO">
+		INSERT INTO FILEAT (
+		file_at_id, file_name, file_path, file_size,
+		file_type, file_order, uploaded_date, post_id
+		) VALUES (
+		fileat_seq.NEXTVAL, #{fileName}, #{filePath}, #{fileSize},
+		#{fileType}, #{fileOrder}, SYSTIMESTAMP, #{postId}
+		)
+	</insert>
 </mapper>

@@ -1,10 +1,16 @@
 package com.hs.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import com.hs.model.FileAtDTO;
 import com.hs.model.PostDTO;
 import com.hs.model.SessionInfo;
+import com.hs.util.FileManager; // 기존 파일매니저 import
+import com.hs.util.MyMultipartFile; // 기존 파일매니저의 인터페이스 import
 import com.hs.mvc.annotation.Controller;
 import com.hs.mvc.annotation.GetMapping;
 import com.hs.mvc.annotation.PostMapping;
@@ -14,12 +20,19 @@ import com.hs.service.PostService;
 import com.hs.service.PostServiceImpl;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
 
 @Controller
 @RequestMapping("/post/*")
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024 * 2,  // 2MB (메모리 임계값)
+    maxFileSize = 1024 * 1024 * 30,       // 30MB (개별 파일 최대)
+    maxRequestSize = 1024 * 1024 * 50     // 50MB (전체 요청 최대)
+)
 public class PostController {
 	
 	// Spring이 아니므로 직접 객체 생성
@@ -28,7 +41,6 @@ public class PostController {
 	// 1. 글쓰기 폼 (GET)
 	@GetMapping("write")
 	public ModelAndView writeForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// 로그인 체크
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo) session.getAttribute("member");
 		
@@ -52,28 +64,64 @@ public class PostController {
 		}
 
 		try {
-			// [1] 요청 파라미터 받기
 			PostDTO dto = new PostDTO();
 			
+			// [1] 일반 파라미터 받기
 			dto.setTitle(req.getParameter("title"));
 			dto.setContent(req.getParameter("content"));
 			
-			// [수정] 공지사항 체크박스 처리
-			// 체크되어 있으면 "NOTICE", 아니면 "COMMUNITY"로 postType 설정
+			// 공지사항 처리
 			String isNotice = req.getParameter("isNotice");
-			if(isNotice != null) {
-				dto.setPostType("NOTICE");
-			} else {
-				dto.setPostType("COMMUNITY");
-			}
+			dto.setPostType(isNotice != null ? "NOTICE" : "COMMUNITY");
 			
-			// [수정] 작성자 PK 설정 (authorId -> userNum)
+			// 댓글 기능 해제 처리
+			String chkReply = req.getParameter("chkReply");
+			dto.setReplyEnabled(chkReply != null ? "0" : "1"); 
+
+			// 좋아요/조회수 숨기기 처리
+			String chkCounts = req.getParameter("chkCounts");
+			dto.setShowCounts(chkCounts != null ? "0" : "1");
+			
 			dto.setUserNum(info.getMemberIdx()); 
-			
-			// [수정] 게시글 상태 설정 (DB 기본값이 있지만 명시적으로 세팅)
 			dto.setState("정상");
 
-			// [2] 서비스 호출
+			// [2] 파일 업로드 처리 (기존 FileManager 활용)
+			FileManager fileManager = new FileManager();
+			
+			// 저장 경로 설정 (webapp/uploads/photo)
+			String root = req.getServletContext().getRealPath("/");
+			String pathname = root + "uploads" + File.separator + "photo";
+			
+			// input type="file"의 name="selectFile"인 파트들을 포함하여 모든 파트 수집
+			Collection<Part> parts = req.getParts();
+			
+			// FileManager를 통해 실제 파일 저장 및 정보 획득
+			List<MyMultipartFile> uploadedFiles = fileManager.doFileUpload(parts, pathname);
+			
+			// [3] MyMultipartFile -> FileAtDTO 변환
+			List<FileAtDTO> fileList = new ArrayList<>();
+			if(uploadedFiles != null && !uploadedFiles.isEmpty()) {
+				int order = 0;
+				for(MyMultipartFile mf : uploadedFiles) {
+					FileAtDTO fileDto = new FileAtDTO();
+					fileDto.setFileName(mf.getOriginalFilename()); // 원본명
+					fileDto.setFilePath(mf.getSaveFilename());     // 저장명
+					fileDto.setFileSize(mf.getSize());             // 사이즈
+					fileDto.setFileOrder(order++);                 // 순서
+					
+					// 파일 타입 추출 (확장자 기반)
+					String originalName = mf.getOriginalFilename();
+					String ext = originalName.substring(originalName.lastIndexOf(".") + 1);
+					fileDto.setFileType(ext); 
+					
+					fileList.add(fileDto);
+				}
+			}
+			
+			// DTO에 파일 리스트 담기
+			dto.setFileList(fileList);
+
+			// [4] 서비스 호출
 			service.insertPost(dto);
 
 		} catch (Exception e) {
@@ -96,10 +144,8 @@ public class PostController {
 		try {
 			long postId = Long.parseLong(req.getParameter("postId"));
 			
-			// 게시글 가져오기
 			PostDTO dto = service.findById(postId);
 			
-			// [수정] 작성자 확인 (authorId -> userNum)
 			if(dto == null || dto.getUserNum() != info.getMemberIdx()) {
 				return new ModelAndView("redirect:/post/list");
 			}
@@ -130,24 +176,25 @@ public class PostController {
 		try {
 			PostDTO dto = new PostDTO();
 			
-			// 파라미터 수동 매핑
 			dto.setPostId(Long.parseLong(req.getParameter("postId")));
 			dto.setTitle(req.getParameter("title"));
 			dto.setContent(req.getParameter("content"));
 			
-			// [수정] 공지사항 여부에 따라 타입 변경
 			String isNotice = req.getParameter("isNotice");
-			if(isNotice != null) {
-				dto.setPostType("NOTICE");
-			} else {
-				dto.setPostType("COMMUNITY");
-			}
+			dto.setPostType(isNotice != null ? "NOTICE" : "COMMUNITY");
 			
-			// [수정] 상태 유지
+			String chkReply = req.getParameter("chkReply");
+			dto.setReplyEnabled(chkReply != null ? "0" : "1");
+
+			String chkCounts = req.getParameter("chkCounts");
+			dto.setShowCounts(chkCounts != null ? "0" : "1");
+			
 			dto.setState("정상");
-			
-			// [수정] 본인 확인용 (authorId -> userNum)
 			dto.setUserNum(info.getMemberIdx());
+			
+			// [주의] 수정 시 파일 추가 업로드 로직은 Insert와 유사하게 구현 가능하나, 
+			// 기존 파일 삭제 등이 얽혀있어 일단 텍스트 수정 위주로 작성됨.
+			// 필요 시 Insert 로직을 참고하여 파일 추가 로직을 여기에 붙여넣으면 됨.
 			
 			service.updatePost(dto);
 			
@@ -159,16 +206,14 @@ public class PostController {
 	}
 	
 	// 5. 게시글 리스트
-		@GetMapping("list")
-		public ModelAndView list(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-			ModelAndView mav = new ModelAndView("post/list");
-			
-			// DB에서 목록 가져오기
-			List<PostDTO> list = service.listPost();
-			
-			// JSP로 데이터 전달
-			mav.addObject("list", list);
-			
-			return mav;
-		}
+	@GetMapping("list")
+	public ModelAndView list(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		ModelAndView mav = new ModelAndView("post/list");
+		
+		List<PostDTO> list = service.listPost();
+		
+		mav.addObject("list", list);
+		
+		return mav;
+	}
 }
