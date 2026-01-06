@@ -204,7 +204,7 @@
 		<%@ include file="../home/adminsidebar.jsp"%>
 
 		<main class="app-main custom-scrollbar">
-			<div class="container-fluid p-4 p-md-5" style="max-width: 1400px;">
+			<div class="container-fluid p-4 p-md-5" style="max-width: 1300px;">
 			
 			 <nav aria-label="breadcrumb" class="mb-4">	
 				<ol class="breadcrumb">
@@ -250,9 +250,8 @@
 						</div>
 						<div class="col-12 col-lg-6">
 							<div class="input-group search-wrapper">
-								<span class="material-icons-round text-white-50">search</span> <input
-									type="text" class="form-control glass-input"
-									placeholder="이벤트 제목 검색...">
+								<span class="material-icons-round text-white-50 ">search</span> 
+								<input type="text" style="text-light" class="form-control glass-input" placeholder="이벤트 제목 검색...">
 								<button class="btn btn-link text-white-50 p-0 ms-2">
 									<span class="material-icons-round">refresh</span>
 								</button>

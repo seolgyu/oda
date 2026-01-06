@@ -99,7 +99,7 @@
 								<div>
 									<p class="stat-label">탈퇴 회원 수</p>
 									<div class="d-flex align-items-baseline gap-2">
-										<span class="stat-value">142</span> <span class="text-muted"
+										<span class="stat-value">142</span> <span class="text-orange"
 											style="font-size: 0.75rem;">최근 30일</span>
 									</div>
 								</div>
@@ -130,7 +130,7 @@
 						<div class="col-12 col-lg-4">
 							<div class="card-dark big-stat-card group">
 								<div class="position-relative z-1">
-									<div class="d-flex align-items-center gap-2 mb-3 text-muted">
+									<div class="d-flex align-items-center gap-2 mb-3 text-light">
 										<span class="material-icons-round text-orange"
 											style="font-size: 1rem;">cloud_upload</span> <span class="stat-label"
 											style="font-size: 0.875rem; font-weight: 500;">콘텐츠 업로드
@@ -149,7 +149,7 @@
 						<div class="col-12 col-lg-4">
 							<div class="card-dark big-stat-card group">
 								<div class="position-relative z-1">
-									<div class="d-flex align-items-center gap-2 mb-3 text-muted">
+									<div class="d-flex align-items-center gap-2 mb-3 text-light">
 										<span class="material-icons-round"
 											style="font-size: 1rem; color: #ec4899;">forum</span> <span class="stat-label"
 											style="font-size: 0.875rem; font-weight: 500;">개설 커뮤니티
@@ -185,9 +185,9 @@
 										style="font-size: 1rem;">flag</span>
 								</div>
 								<div class="d-flex justify-content-between align-items-end mt-2">
-									<span class="stat-value fs-2">3</span> <span class="stat-badge"
-										style="background-color: rgba(51, 65, 85, 0.5); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2);">검토
-										대기중</span>
+									<span class="stat-value fs-2">3</span> 
+									<span class="stat-badge bg-red-soft">
+										검토대기중</span>
 								</div>
 							</div>
 						</div>
@@ -201,7 +201,7 @@
 								<span class="material-icons-round text-primary fs-5">ssid_chart</span>
 								<h2 class="h5 fw-bold mb-0">방문자 추이 (주간)</h2>
 							</div>
-							<p class="text-muted small mb-0">지난 7일간의 일반 방문자와 회원 방문자 변화
+							<p class="text-light small mb-0">지난 7일간의 일반 방문자와 회원 방문자 변화
 								그래프</p>
 						</div>
 						<div class="d-flex align-items-center gap-3 px-3 py-2 rounded"
@@ -210,7 +210,7 @@
 								<span class="rounded-circle bg-primary"
 									style="width: 10px; height: 10px;"></span>
 								<div class="d-flex flex-column lh-1">
-									<span class="text-muted"
+									<span class="text-light"
 										style="font-size: 10px; margin-bottom: 2px;">일반 방문자</span> 
 									<span class="fw-bold text-light" style="font-size: 0.875rem;" id="totalGeneral">5,230</span>
 								</div>
@@ -221,7 +221,7 @@
 								<span class="rounded-circle"
 									style="width: 10px; height: 10px; background-color: #a855f7;"></span>
 								<div class="d-flex flex-column lh-1">
-									<span class="text-muted"
+									<span class="text-light"
 										style="font-size: 10px; margin-bottom: 2px;">회원 방문자</span> 
 									<span class="fw-bold text-light" style="font-size: 0.875rem;" id="totalMember">3,150</span>
 								</div>
@@ -240,10 +240,10 @@
 								class="material-icons-round text-light bg-purple-soft p-1 rounded fs-6">help_outline</span>
 							<h2 class="h6 fw-bold mb-0">새로 등록된 문의사항</h2>
 						</div>
-						
-							class="text-decoration-none small text-primary d-flex align-items-center"
-							href="#"> 전체보기 <span class="material-icons-round fs-6 ms-1">arrow_forward</span>
-						</a>
+						<span
+							class="text-decoration-none small text-primary d-flex align-items-center">
+							<a href="${pageContext.request.contextPath}/admin/inqu" class="nav-sub-item">전체보기</a>
+						</span>
 					</div>
 					<div class="table-responsive">
 						<table class="table-dark-custom">
@@ -260,9 +260,7 @@
 								<tr>
 									<td>
 										<div class="d-flex align-items-center gap-2">
-											<span class="bg-danger rounded-circle"
-												style="width: 6px; height: 6px;"></span> <span
-												class="fw-medium text-light">로그인이 자꾸 풀립니다</span>
+											<span class="fw-medium text-light">로그인이 자꾸 풀립니다</span>
 										</div>
 									</td>
 									<td>
@@ -271,11 +269,11 @@
 												class="text-light text-opacity-75">kim_minsu</span>
 										</div>
 									</td>
-									<td class="text-muted">2023.10.25</td>
+									<td class="text-light">2023.10.25</td>
 									<td><span class="status-badge status-yellow">답변 대기</span></td>
 									<td class="text-end">
 										<div
-											class="d-flex align-items-center justify-content-end gap-1 text-muted">
+											class="d-flex align-items-center justify-content-end gap-1 text-light">
 											<span class="small">비공개</span> <span
 												class="material-icons-round" style="font-size: 14px;">lock</span>
 										</div>
@@ -284,9 +282,7 @@
 								<tr>
 									<td>
 										<div class="d-flex align-items-center gap-2">
-											<span class="bg-primary rounded-circle"
-												style="width: 6px; height: 6px;"></span> <span
-												class="fw-medium text-light">결제 내역 확인 부탁드립니다</span>
+											<span class="fw-medium text-light">결제 내역 확인 부탁드립니다</span>
 										</div>
 									</td>
 									<td>
@@ -295,11 +291,11 @@
 												class="text-light text-opacity-75">lee_jiwon</span>
 										</div>
 									</td>
-									<td class="text-muted">2023.10.24</td>
+									<td class="text-light">2023.10.24</td>
 									<td><span class="status-badge status-blue">처리중</span></td>
 									<td class="text-end">
 										<div
-											class="d-flex align-items-center justify-content-end gap-1 text-muted">
+											class="d-flex align-items-center justify-content-end gap-1 text-light">
 											<span class="small">비공개</span> <span
 												class="material-icons-round" style="font-size: 14px;">lock</span>
 										</div>
@@ -318,7 +314,7 @@
 												class="text-light text-opacity-75">park_jun</span>
 										</div>
 									</td>
-									<td class="text-muted">2023.10.23</td>
+									<td class="text-light">2023.10.23</td>
 									<td><span class="status-badge status-blue">처리중</span></td>
 									<td class="text-end">
 										<div
@@ -341,7 +337,7 @@
 											<span class="text-light text-opacity-75">choi_sora</span>
 										</div>
 									</td>
-									<td class="text-muted">2023.10.22</td>
+									<td class="text-light">2023.10.22</td>
 									<td><span class="status-badge status-green">답변완료</span></td>
 									<td class="text-end">
 										<div
@@ -355,8 +351,8 @@
 						</table>
 					</div>
 					<div
-						class="px-3 py-3 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center text-muted small">
-						<span>Showing 1-4 of 24</span>
+						class="px-3 py-3 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center text-light small">
+						<span>1-4 of 24</span>
 						<div class="d-flex gap-2">
 							<button class="pagination-btn">
 								<span class="material-icons-round fs-6">chevron_left</span>
