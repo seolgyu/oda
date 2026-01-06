@@ -27,7 +27,7 @@
 
     <div class="app-body"> 
     
-        <%@ include file="/WEB-INF/views/community/sidebar.jsp"%>
+        <%@ include file="/WEB-INF/views/home/sidebar.jsp"%>
 
         <main class="app-main flex-1 custom-scrollbar" style="overflow-y: auto;">
             
@@ -66,7 +66,7 @@
                                                 <p class="text-sm text-gray-400 mt-1 truncate max-w-[300px]">Explore the wonders of the universe together.</p>
                                             </div>
                                         </div>
-                                        <button class="ml-10 px-6 py-2.5 bg-primary hover:bg-secondary text-white font-bold text-sm rounded-full transition-transform active:scale-95 shadow-lg shadow-primary/20">
+                                        <button class="ml-10 px-6 py-2.5 bg-[#a855f7] hover:bg-[#9333ea] text-white font-bold text-sm rounded-full transition-transform active:scale-95 shadow-lg shadow-primary/20">
                                             Joined
                                         </button>
                                     </div>

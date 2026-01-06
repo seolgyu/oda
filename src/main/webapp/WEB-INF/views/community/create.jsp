@@ -25,9 +25,9 @@
     <%@ include file="/WEB-INF/views/home/header.jsp"%>
 
     <div class="app-body">
-        <%@ include file="/WEB-INF/views/community/sidebar.jsp"%>
+        <%@ include file="/WEB-INF/views/home/sidebar.jsp"%>
 
-        <main class="app-main flex-1 custom-scrollbar style="overflow-y: auto;">
+        <main class="app-main custom-scrollbar style="overflow-y: auto;"">
             <div class="space-background">
                 <div class="stars"></div>
                 <div class="stars2"></div>

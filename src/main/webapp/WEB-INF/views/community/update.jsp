@@ -24,7 +24,7 @@
     <%@ include file="/WEB-INF/views/home/header.jsp"%>
 
     <div class="app-body">
-        <%@ include file="/WEB-INF/views/community/sidebar.jsp"%>
+        <%@ include file="/WEB-INF/views/home/sidebar.jsp"%>
 
         <main class="app-main flex-1">
             <div class="space-background">

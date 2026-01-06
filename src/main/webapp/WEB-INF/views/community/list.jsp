@@ -9,16 +9,19 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/community.css">
     
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#a855f7",
-                        secondary: "#9333ea",
-                    }
-                }
-            }
-        }
+    tailwind.config = {
+    	corePlugins: {
+        	preflight: false, // Tailwind의 기본 스타일 초기화 기능을 끕니다.
+        },
+        theme: {
+        	extend: {
+            	colors: {
+                	primary: "#a855f7",
+                    secondary: "#9333ea",
+            	}
+        	}
+     	}
+	}
     </script>
 </head>
 <body class="bg-[#050505] text-gray-100">
@@ -26,7 +29,7 @@
     <%@ include file="/WEB-INF/views/home/header.jsp"%>
 
     <div class="app-body flex h-[calc(100vh-56px)] overflow-hidden">
-        <%@ include file="/WEB-INF/views/community/sidebar.jsp"%>
+        <%@ include file="/WEB-INF/views/home/sidebar.jsp"%>
 
         <main class="app-main flex-1 overflow-y-auto custom-scrollbar">
             
@@ -100,11 +103,13 @@
                                 </div>
                             </div>
 
-                            <div class="px-4">
-                                <button onclick="location.href='create'" class="w-full py-4 rounded-2xl border border-primary/30 text-primary font-bold text-sm hover:bg-primary/5 transition-all flex items-center justify-center gap-2">
-                                    <span class="material-symbols-outlined">add</span> Create Your Own
-                                </button>
-                            </div>
+                            <div class="px-0"> 
+                            	<button onclick="location.href='create'" 
+							            class="neon-card w-full py-6 rounded-[2rem] text-primary font-bold text-base hover:bg-white/[0.05] transition-all flex items-center justify-center gap-2 group border-none">
+							        <span class="material-symbols-outlined text-[#a855f7] group-hover:scale-110 transition-transform">add_circle</span>
+							        <span class="tracking-tight text-[#a855f7]">Create Your Own</span>
+							    </button>
+							</div>
                         </div>
                     </div>
                 </div>

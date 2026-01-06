@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.hs.mvc.annotation.Controller;
 import com.hs.mvc.annotation.GetMapping;
+import com.hs.mvc.annotation.PostMapping;
 import com.hs.mvc.annotation.RequestMapping;
 import com.hs.mvc.view.ModelAndView;
 
@@ -17,6 +18,11 @@ public class CommunityController {
 	
 	@GetMapping("create")
 	public ModelAndView createForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+		return new ModelAndView("community/create");
+	}
+	
+	@PostMapping("create")
+	public ModelAndView createSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
 		return new ModelAndView("community/create");
 	}
 	

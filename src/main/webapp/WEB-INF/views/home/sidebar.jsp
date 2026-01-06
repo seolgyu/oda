@@ -1,9 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
+<c:set var="currentUri" value="${pageContext.request.requestURI}" />
+
 <aside class="app-sidebar custom-scrollbar">
 	<nav class="d-flex flex-column gap-1">
-		<button class="nav-item active"  onclick="location.href='${pageContext.request.contextPath}/';">
+		<button class="nav-item ${currentUri.contains('/main') ? 'active' : ''}" onclick="location.href='${pageContext.request.contextPath}/main';">
 			<span class="material-symbols-outlined">home</span> <span>홈</span>
 		</button>
 		<button class="nav-item">
@@ -13,13 +15,17 @@
 		<hr class="my-3 border-secondary opacity-25">
 		<div class="text-xs text-secondary px-3 mb-2 text-uppercase fw-bold">Community</div>
 
-		<button class="nav-item" onclick="location.href='${pageContext.request.contextPath}/community/main';">
-			<span class="material-symbols-outlined">settings_suggest</span> <span>커뮤니티
-				관리</span>
+		<button class="nav-item ${currentUri.contains('/community/list') ? 'active' : ''}" 
+				onclick="location.href='${pageContext.request.contextPath}/community/list';">
+			<span class="material-symbols-outlined">settings_suggest</span> <span>커뮤니티</span>
 		</button>
-		<button class="nav-item" onclick="location.href='${pageContext.request.contextPath}/community/create';">
-			<span class="material-symbols-outlined">add_circle</span> <span>커뮤니티
-				개설</span>
+		<button class="nav-item ${currentUri.contains('/community/management') ? 'active' : ''}" 
+				onclick="location.href='${pageContext.request.contextPath}/community/management';">
+			<span class="material-symbols-outlined">settings_suggest</span> <span>커뮤니티 관리</span>
+		</button>
+		<button class="nav-item ${currentUri.contains('/community/create') ? 'active' : ''}" 
+				onclick="location.href='${pageContext.request.contextPath}/community/create';">
+			<span class="material-symbols-outlined">add_circle</span> <span>커뮤니티 개설</span>
 		</button>
 		<button class="nav-item">
 			<span class="material-symbols-outlined">group</span> <span>팔로잉</span>

@@ -13,7 +13,7 @@
 
 	<div class="app-body">
 	
-		<%@ include file="/WEB-INF/views/community/sidebar.jsp"%>
+		<%@ include file="/WEB-INF/views/home/sidebar.jsp"%>
 
 		<main class="app-main">
             <div class="space-background">
