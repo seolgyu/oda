@@ -6,6 +6,45 @@
 <html lang="ko">
 <head>
 <%@ include file="/WEB-INF/views/home/head.jsp"%>
+
+<style type="text/css">
+/* 탭 버튼 컨테이너 내부 간격 조정 */
+#mypage-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 2px;
+}
+
+/* 탭 버튼 기본 상태 (확실히 보이게 수정) */
+#mypage-tabs .btn-sm, .layout-tabs .btn-sm{
+    transition: all 0.2s ease-in-out;
+    color: rgba(255, 255, 255, 0.7) !important; /* 잘 보이도록 밝기 조절 */
+    background: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important; /* 약한 테두리 추가 */
+    font-weight: 500 !important;
+}
+
+/* 마우스를 올렸을 때 (Hover) */
+#mypage-tabs .btn-sm:hover, .layout-tabs .btn-sm:hover{
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* 활성화된 버튼 (선택됨 - 가장 중요) */
+.active-filter {
+    background: #ffffff !important;           /* 배경 흰색 */
+    color: #000000 !important;                /* 글자 검은색 */
+    border: 1px solid #ffffff !important;
+    font-weight: 700 !important;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); /* 은은한 흰색 광택 */
+}
+
+/* 탭 콘텐츠 영역 기본 숨김 */
+.tab-content {
+    display: none;
+}
+</style>
 </head>
 <body>
 
@@ -36,14 +75,19 @@
                                 <div class="d-flex align-items-end gap-3">
                                     <div class="rounded-4 border border-4 border-dark shadow-lg d-flex align-items-center justify-content-center text-white fw-bold fs-1" 
                                          style="width: 120px; height: 120px; background: linear-gradient(135deg, #6366f1, #a855f7); margin-top: -60px; position: relative; z-index: 2;">
-                                        S
+                                        ${not empty sessionScope.member ? fn:substring(sessionScope.member.userName, 0, 1) : "?"}
                                     </div>
-                                    <div class="pb-2">
-                                        <h1 class="text-white fs-2 fw-bold mb-1">Stargazers Community</h1>
-                                        <p class="text-secondary mb-0">c/stargazers • 14.2k Members • 8.5k Visitors</p>
-                                    </div>
-                                    <div class="ms-auto pb-2 d-flex gap-2">
-                                        <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Joined</button>
+									<div class="pb-2">
+										<h1 class="text-white fs-2 fw-bold mb-1">${not empty sessionScope.member ? sessionScope.member.userName : "null"}
+										</h1>
+										<p class="text-secondary mb-0">
+											c/${sessionScope.member.userId} | <span
+												class="text-white fw-bold">14.2k</span> Followers | <span
+												class="text-white fw-bold">8.5k</span> Visitors
+										</p>
+									</div>
+									<div class="ms-auto pb-2 d-flex gap-2">
+                                        <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Follow</button>
                                         <button class="btn-icon border border-white border-opacity-10 rounded-circle p-2">
                                             <span class="material-symbols-outlined text-white">notifications</span>
                                         </button>
@@ -56,64 +100,87 @@
                     <div class="d-flex gap-4 w-100" style="max-width: 1100px;">
                         
                         <div class="flex-grow-1 d-flex flex-column gap-4" style="min-width: 0;">
-                            
-                            <div class="glass-panel px-3 py-2 d-flex align-items-center justify-content-between shadow-sm">
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-sm rounded-pill px-3 fw-bold active-filter" style="background: rgba(255, 255, 255, 0.1); color: white; border: none;">Hot</button>
-                                    <button class="btn btn-sm rounded-pill px-3 fw-medium text-secondary hover-white border-0">New</button>
-                                    <button class="btn btn-sm rounded-pill px-3 fw-medium text-secondary hover-white border-0">Top</button>
-                                </div>
-                                <div class="d-flex align-items-center gap-1 border-start border-white border-opacity-10 ps-2">
-                                    <button class="btn-icon text-white hover-purple"><span class="material-symbols-outlined fs-5">view_day</span></button>
-                                    <button class="btn-icon text-secondary hover-white"><span class="material-symbols-outlined fs-5">reorder</span></button>
-                                </div>
-                            </div>
 
-                            <div class="glass-panel p-3 shadow-lg">
-                                <div class="d-flex gap-3">
-                                    <div class="avatar-lg text-white fw-bold flex-shrink-0" style="background: linear-gradient(to top right, #a855f7, #6366f1);">MK</div>
-                                    <div class="flex-grow-1">
-                                        <input class="create-input text-base w-100 mb-2" placeholder="Share your latest creation..." type="text" style="background: transparent; border: none; color: white; outline: none;"/>
-                                        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-25">
-                                            <div class="d-flex gap-2">
-                                                <button class="btn-icon text-gray-400 hover-purple"><span class="material-symbols-outlined fs-5">image</span></button>
-                                                <button class="btn-icon text-gray-400 hover-blue"><span class="material-symbols-outlined fs-5">movie</span></button>
-                                                <button class="btn-icon text-gray-400 hover-orange"><span class="material-symbols-outlined fs-5">schema</span></button>
-                                            </div>
-                                            <button class="action-btn-pill">Post</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+							<div
+								class="glass-panel px-3 py-2 d-flex align-items-center justify-content-between shadow-sm">
+								<div class="d-flex gap-2" id="mypage-tabs">
+									<button
+										class="btn btn-sm rounded-pill px-3 fw-bold active-filter"
+										data-target="my-posts">My Post</button>
+									<button
+										class="btn btn-sm rounded-pill px-3 fw-medium text-secondary hover-white border-0"
+										data-target="reposts">Repost</button>
+								</div>
+								<div
+									class="layout-tabs d-flex align-items-center gap-2 border-start border-white border-opacity-10 ps-3">
+									<button class="btn btn-sm rounded-pill px-3 active-filter">
+										<span class="material-symbols-outlined fs-5">view_day</span>
+									</button>
 
-                            <div class="glass-card shadow-lg group">
-                                <div class="p-3 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="avatar-md bg-warning text-white fw-bold">JS</div>
-                                        <div><h3 class="text-sm fw-medium text-white mb-0">Julia Smith</h3><p class="text-xs text-gray-500 mb-0">2 hours ago</p></div>
-                                    </div>
-                                    <button class="btn-icon"><span class="material-symbols-outlined">more_horiz</span></button>
-                                </div>
-                                <div class="p-3">
-                                    <p class="text-light text-sm mb-3 lh-base">Explored a new generative flow today. The combination of vector fields and particle systems created this amazing nebulae effect. 🌌✨</p>
-                                    <div class="ratio ratio-16x9 w-100 rounded-3 overflow-hidden position-relative border border-white border-opacity-10">
-                                        <div class="position-absolute w-100 h-100" style="background: linear-gradient(to bottom right, #312e81, #581c87, #000); opacity: 0.8;"></div>
-                                        <div class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center">
-                                            <div class="rounded-circle" style="width: 8rem; height: 8rem; background: rgba(168, 85, 247, 0.3); filter: blur(40px);"></div>
-                                        </div>
-                                        <div class="position-absolute bottom-0 end-0 m-3 px-2 py-1 rounded text-xs font-monospace text-white-50 border border-white border-opacity-10" style="background: rgba(0, 0, 0, 0.6);">Generation #4291</div>
-                                    </div>
-                                </div>
-                                <div class="px-3 py-2 d-flex align-items-center justify-content-between" style="background: rgba(255, 255, 255, 0.05);">
-                                    <div class="d-flex gap-4">
-                                        <button class="btn-icon text-xs ps-0 d-flex align-items-center gap-2"><span class="material-symbols-outlined fs-6 text-danger">favorite</span> 24</button>
-                                        <button class="btn-icon text-xs d-flex align-items-center gap-2"><span class="material-symbols-outlined fs-6">chat_bubble</span> 5</button>
-                                    </div>
-                                    <button class="btn-icon text-xs pe-0 d-flex align-items-center gap-1"><span class="material-symbols-outlined fs-6">share</span> Share</button>
-                                </div>
-                            </div>
+									<button class="btn btn-sm rounded-pill px-3">
+										<span class="material-symbols-outlined fs-5">reorder</span>
+									</button>
+								</div>
+							</div>
 
-                            <div class="glass-card shadow-lg group">
+							<div class="glass-card shadow-lg group">
+								<div
+									class="p-3 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
+									<div class="d-flex align-items-center gap-3">
+										<div class="avatar-md bg-warning text-white fw-bold">JS</div>
+										<div>
+											<h3 class="text-sm fw-medium text-white mb-0">Julia
+												Smith</h3>
+											<p class="text-xs text-gray-500 mb-0">2 hours ago</p>
+										</div>
+									</div>
+									<button class="btn-icon">
+										<span class="material-symbols-outlined">more_horiz</span>
+									</button>
+								</div>
+								<div class="p-3">
+									<p class="text-light text-sm mb-3 lh-base">Explored a new
+										generative flow today. The combination of vector fields and
+										particle systems created this amazing nebulae effect. 🌌✨</p>
+									<div
+										class="ratio ratio-16x9 w-100 rounded-3 overflow-hidden position-relative border border-white border-opacity-10">
+										<div class="position-absolute w-100 h-100"
+											style="background: linear-gradient(to bottom right, #312e81, #581c87, #000); opacity: 0.8;"></div>
+										<div
+											class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center">
+											<div class="rounded-circle"
+												style="width: 8rem; height: 8rem; background: rgba(168, 85, 247, 0.3); filter: blur(40px);"></div>
+										</div>
+										<div
+											class="position-absolute bottom-0 end-0 m-3 px-2 py-1 rounded text-xs font-monospace text-white-50 border border-white border-opacity-10"
+											style="background: rgba(0, 0, 0, 0.6);">Generation
+											#4291</div>
+									</div>
+								</div>
+								<div
+									class="px-3 py-2 d-flex align-items-center justify-content-between"
+									style="background: rgba(255, 255, 255, 0.05);">
+									<div class="d-flex gap-4">
+										<button
+											class="btn-icon text-xs ps-0 d-flex align-items-center gap-2">
+											<span class="material-symbols-outlined fs-6 text-danger">favorite</span>
+											24
+										</button>
+										<button
+											class="btn-icon text-xs d-flex align-items-center gap-2">
+											<span class="material-symbols-outlined fs-6">chat_bubble</span>
+											5
+										</button>
+									</div>
+									<button
+										class="btn-icon text-xs pe-0 d-flex align-items-center gap-1">
+										<span class="material-symbols-outlined fs-6">share</span>
+										Share
+									</button>
+								</div>
+							</div>
+
+							<div class="glass-card shadow-lg group">
                                 <div class="p-3 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="avatar-md bg-success text-white fw-bold">DT</div>
@@ -208,9 +275,34 @@
         </main>
 	</div>
 
-	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>          
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/community.js"></script>
+	
+	<script type="text/javascript">
+	$(document).ready(function() {
+	    $('#mypage-tabs button, .layout-tabs button').on('click', function() {
+	        
+	        // 1. 같은 부모를 공유하는 버튼들 중에서만 'active-filter' 제거
+	        // 이렇게 해야 왼쪽 탭을 눌러도 오른쪽 탭의 선택 상태가 풀리지 않습니다.
+	        $(this).parent().find('button').removeClass('active-filter');
+	        
+	        // 2. 클릭한 버튼에 활성화 클래스(음영/테두리 효과) 추가
+	        $(this).addClass('active-filter');
+	        
+	        /*
+	        // 3. [옵션] 게시글 필터링 로직 (data-target 속성이 있는 경우만)
+	        const target = $(this).data('target');
+	        if (target) {
+	            $('.tab-content').hide(); // 모든 콘텐츠 숨김
+	            $('#' + target).fadeIn(300); // 선택된 콘텐츠만 보임
+	        }
+	        */
+	    });
+
+	});
+	
+	</script>
 </body>
 </html>
