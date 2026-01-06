@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
 
     <style>
-        /* 문의사항 전용 추가 상태 컬러 (기존 CSS에 추가하거나 style 태그 유지) */
+        /* 문의사항 전용 추가 상태 컬러 (기존 CSS에 추가하거나 style 태그 유지)  */
         .badge-waiting { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
         .badge-processing { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
         .badge-completed { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }

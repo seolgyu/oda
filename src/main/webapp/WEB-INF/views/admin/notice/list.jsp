@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
 
     <style>
-/* [1] 공지사항 전용 글래스모피즘 보정 스타일 */
+/* [1] 공지사항 전용 글래스모피즘 보정 스타일  */
 .glass-table-container {
 	background: rgba(30, 41, 59, 0.4) !important;
 	backdrop-filter: blur(15px);
