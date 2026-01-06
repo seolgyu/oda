@@ -170,7 +170,31 @@
     opacity: 1;
 }
 
-    </style>
+.badge-custom {
+    padding: 0.125rem 0.625rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-width: 1px;
+    border-style: solid;
+    display: inline-flex;
+    align-items: center;
+}
+
+.badge-normal {
+   	background-color: rgba(22, 163, 74, 0.2);
+   	color: #4ade80;
+   	border-color: rgba(22, 163, 74, 0.3);
+   	margin-right: 10px;
+}
+
+.badge-suspended {
+    background-color: rgba(220, 38, 38, 0.2);
+    color: #f87171;
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+</style>
 </head>
 <body class="bg-background-dark text-white">
 
@@ -240,11 +264,11 @@
                             <thead>
                                 <tr>
                                     <th class="text-center" style="width: 50px;"><input type="checkbox" class="form-check-input"></th>
-                                    <th style="width: 100px;">상태</th>
-                                    <th>문의 제목</th>
+                                    <th style="width: 130px;">상태</th>
+                                    <th style="width: 320px;">문의 제목</th>
                                     <th style="width: 180px;">작성자</th>
-                                    <th style="width: 120px;">작성일</th>
-                                    <th class="text-end" style="width: 120px;">유형</th>
+                                    <th style="width: 180px;">작성일</th>
+                                    <th class="text-center" style="width: 130px;">유형</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -266,7 +290,8 @@
                                     <td class="text-white-50">2023-10-25</td>
                                     <td class="text-end">
                                         <div class="d-flex align-items-center justify-content-end gap-1 text-white-50 small">
-                                            <span>비공개</span> <span class="material-icons-round" style="font-size: 14px;">lock</span>
+                                            <span class="badge-custom badge-suspended">비공개</span> 
+                                            <span class="material-icons-round" style="font-size: 14px;">lock</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -282,24 +307,12 @@
                                     </td>
                                     <td class="text-white-50">2023-10-24</td>
                                     <td class="text-end">
-                                        <div class="d-flex align-items-center justify-content-end gap-1 text-white-50 small">
-                                            <span>비공개</span> <span class="material-icons-round" style="font-size: 14px;">lock</span>
-                                        </div>
+                                    <div>
+                                    <span class="badge-custom badge-normal text-end">공개</span>
+                                    </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td class="text-center"><input type="checkbox" class="form-check-input"></td>
-                                    <td><span class="badge badge-completed">답변완료</span></td>
-                                    <td class="text-white-50">새로운 커뮤니티 개설은 어떻게 하나요?</td>
-                                    <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 10px;">PJ</div>
-                                            <span>park_jun</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-white-50">2023-10-23</td>
-                                    <td class="text-end text-primary small">공개</td>
-                                </tr>
+
                             </tbody>
                         </table>
                     </div>

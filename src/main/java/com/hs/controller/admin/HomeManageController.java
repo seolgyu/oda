@@ -32,4 +32,9 @@ public class HomeManageController {
 		ModelAndView mav = new ModelAndView("admin/notice/list");
 		return mav;
 	}
+	@RequestMapping("/admin/user")
+	public ModelAndView user(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		ModelAndView mav = new ModelAndView("admin/user/list");
+		return mav;
+	}
 }
