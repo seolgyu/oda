@@ -17,24 +17,4 @@ public class HomeManageController {
 		ModelAndView mav = new ModelAndView("admin/home/main");
 		return mav;
 	}
-	@RequestMapping("/admin/events")
-	public ModelAndView events(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		ModelAndView mav = new ModelAndView("admin/events/list");
-		return mav;
-	}
-	@RequestMapping("/admin/inqu")
-	public ModelAndView inqu(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		ModelAndView mav = new ModelAndView("admin/inqu/list");
-		return mav;
-	}
-	@RequestMapping("/admin/notice")
-	public ModelAndView notice(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		ModelAndView mav = new ModelAndView("admin/notice/list");
-		return mav;
-	}
-	@RequestMapping("/admin/user")
-	public ModelAndView user(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		ModelAndView mav = new ModelAndView("admin/user/list");
-		return mav;
-	}
 }
