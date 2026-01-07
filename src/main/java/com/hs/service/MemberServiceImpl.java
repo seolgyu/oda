@@ -87,7 +87,7 @@ public class MemberServiceImpl implements MemberService {
 			e.printStackTrace();
 		}
 		
-		return null;
+		return dto;
 	}
 
 }

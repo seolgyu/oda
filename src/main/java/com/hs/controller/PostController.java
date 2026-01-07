@@ -235,11 +235,12 @@ public class PostController {
 
 	    // 2. 서비스 호출 (조회수 증가 + 파일 리스트 포함된 DTO 리턴)
 	    PostDTO dto = service.findById(postId);
-	    MemberDTO memberdto = memberservice.findByIdx(dto.getUserNum());
 	    
 	    if(dto == null) {
 	        return new ModelAndView("redirect:/post/list?page=" + page);
-	    }
+	    }	    
+	    
+	    MemberDTO memberdto = memberservice.findByIdx(dto.getUserNum());
 	    
 	    ModelAndView mav = new ModelAndView("post/article");
 	    mav.addObject("dto", dto);
