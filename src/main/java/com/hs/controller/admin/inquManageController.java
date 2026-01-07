@@ -21,18 +21,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/admin/notice/*")
-public class noticeManageController {
-	
-	@GetMapping("write")
-	public ModelAndView writeForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		ModelAndView mav = new ModelAndView("admin/notice/write");
-		return mav;
-	}
+@RequestMapping("/admin/inqu/*")
+public class inquManageController {
 	
 	@GetMapping("list")
 	public ModelAndView notice(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		ModelAndView mav = new ModelAndView("admin/notice/list");
+		ModelAndView mav = new ModelAndView("admin/inqu/list");
+		return mav;
+	}
+	
+	@GetMapping("write")
+	public ModelAndView writeForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		ModelAndView mav = new ModelAndView("admin/inqu/write");
 		return mav;
 	}
 }
