@@ -4,8 +4,9 @@ public class SessionInfo {
 	private Long memberIdx;
 	private String userId;
 	private String userName;
+	private String userNickname;
 	private int userLevel;
-	private String avatar; // profile photo
+	private String avatar;
 	
 	public Long getMemberIdx() {
 		return memberIdx;
@@ -36,5 +37,11 @@ public class SessionInfo {
 	}
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
+	}
+	public String getUserNickname() {
+		return userNickname;
+	}
+	public void setUserNickname(String userNickname) {
+		this.userNickname = userNickname;
 	}
 }

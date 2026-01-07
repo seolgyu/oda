@@ -15,6 +15,8 @@ public interface MemberMapper {
 	// 회원가입
 	public void insertMember(MemberDTO dto) throws Exception;
 	public void insertMember1(MemberDTO dto) throws SQLException;
+	
+	
 	public void insertMember2(MemberDTO dto) throws SQLException;
 	public void insertMember12(MemberDTO dto) throws SQLException;
 	public void updateMember1(MemberDTO dto) throws SQLException;

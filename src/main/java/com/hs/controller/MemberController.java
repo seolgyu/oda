@@ -74,11 +74,12 @@ public class MemberController {
 
 			// 세션에 저장할 내용
 			SessionInfo info = new SessionInfo();
-			info.setMemberIdx(dto.getMemberIdx());
+			info.setMemberIdx(dto.getUserIdx());
 			info.setUserId(dto.getUserId());
 			info.setUserName(dto.getUserName());
-			info.setAvatar(dto.getProfile_photo());
+			info.setUserNickname(dto.getUserNickname());
 			info.setUserLevel(dto.getUserLevel());
+			info.setAvatar(dto.getProfile_photo());
 
 			// 세션에 member이라는 이름으로 저장
 			session.setAttribute("member", info);
@@ -131,11 +132,12 @@ public class MemberController {
 			session.setMaxInactiveInterval(20 * 60);
 
 			SessionInfo info = new SessionInfo();
-			info.setMemberIdx(dto.getMemberIdx());
+			info.setMemberIdx(dto.getUserIdx());
 			info.setUserId(dto.getUserId());
 			info.setUserName(dto.getUserName());
-			info.setAvatar(dto.getProfile_photo());
+			info.setUserNickname(dto.getUserNickname());
 			info.setUserLevel(dto.getUserLevel());
+			info.setAvatar(dto.getProfile_photo());
 
 			session.setAttribute("member", info);
 
@@ -173,72 +175,71 @@ public class MemberController {
 	}
 
 	// 1. 회원가입 폼으로 이동 (GET 방식)
-		@GetMapping("signup")
-		public ModelAndView signupForm(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			// webapp/WEB-INF/views/member/signup.jsp 파일을 찾아감
-			return new ModelAndView("member/signup");
-		}
+	@GetMapping("signup")
+	public ModelAndView signupForm(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		// webapp/WEB-INF/views/member/signup.jsp 파일을 찾아감
+		return new ModelAndView("member/signup");
+	}
 
-		// 2. 회원가입 처리 (POST 방식)
-		@PostMapping("signup")
-		public ModelAndView signupSubmit(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			
-			// 한글 깨짐 방지 (필터 설정이 안 되어 있을 경우 대비)
-			req.setCharacterEncoding("UTF-8");
+	// 2. 회원가입 처리 (POST 방식)
+	@PostMapping("signup")
+	public ModelAndView signupSubmit(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 
-			try {
-				// [1] 사용자 입력값 모두 받기 (signup.jsp의 input name과 일치해야 함)
-				String userId = req.getParameter("userId");
-				String userPwd = req.getParameter("userPwd");
-				String userName = req.getParameter("userName");
-				String email = req.getParameter("email");
-				String birth = req.getParameter("birth");
-				String tel = req.getParameter("tel");
-				String zip = req.getParameter("zip");
-				String addr1 = req.getParameter("addr1");
-				String addr2 = req.getParameter("addr2");
+		// 한글 깨짐 방지 (필터 설정이 안 되어 있을 경우 대비)
+		req.setCharacterEncoding("UTF-8");
 
-				// [2] DTO에 모든 데이터 담기
-				MemberDTO dto = new MemberDTO();
-				dto.setUserId(userId);
-				dto.setUserPwd(userPwd);
-				dto.setUserName(userName);
-				
-				/*
-				dto.setEmail(email);
-				dto.setBirth(birth);
-				dto.setTel(tel);
-				dto.setZip(zip);
-				dto.setAddr1(addr1);
-				dto.setAddr2(addr2);
-				*/
-				
-				// [3] 서비스 호출 (이미 존재하는 insertMember 활용)
-				// 서비스 내부에서 member1(기본)과 member2(상세) 테이블에 각각 저장될 것입니다.
-				service.insertMember(dto);
+		try {
+			// [1] 사용자 입력값 모두 받기 (signup.jsp의 input name과 일치해야 함)
+			String userId = req.getParameter("userId");
+			String userPwd = req.getParameter("userPwd");
+			String userName = req.getParameter("userName");
+			String userNickname = req.getParameter("userNickname");
+			String birth = req.getParameter("birth");
+			String email = req.getParameter("email");
+			String addr1 = req.getParameter("addr1");
+			String addr2 = req.getParameter("addr2");
+			String tel = req.getParameter("tel");
+			String zip = req.getParameter("zip");
 
-				// [4] 성공 시 로그인 페이지로 이동하며 메시지 전달
-				ModelAndView mav = new ModelAndView("member/login");
-				mav.addObject("message", "회원가입이 완료되었습니다. 로그인 해주세요.");
+			// [2] DTO에 모든 데이터 담기
+			MemberDTO dto = new MemberDTO();
+			dto.setUserId(userId);
+			dto.setUserPwd(userPwd);
+			dto.setUserName(userName);
+			dto.setUserNickname(userNickname);
+			dto.setBirth(birth);
+			dto.setEmail(email);
+			dto.setAddr1(addr1);
+			dto.setAddr2(addr2);
+			dto.setTel(tel);
+			dto.setZip(zip);
 
-				return mav;
+			// [3] 서비스 호출 (이미 존재하는 insertMember 활용)
+			// 서비스 내부에서 member1(기본)과 member2(상세) 테이블에 각각 저장될 것입니다.
+			service.insertMember(dto);
 
-			} catch (Exception e) {
-				e.printStackTrace();
+			// [4] 성공 시 로그인 페이지로 이동하며 메시지 전달
+			ModelAndView mav = new ModelAndView("member/login");
+			mav.addObject("message", "회원가입이 완료되었습니다. 로그인 해주세요.");
 
-				// [5] 실패 시 다시 가입 폼으로 돌아감
-				ModelAndView mav = new ModelAndView("member/signup");
-				mav.addObject("message", "회원가입 실패. 입력한 정보를 다시 확인해주세요.");
-				return mav;
-			}
-		}
-		
-		@GetMapping("mypage")
-		public ModelAndView myPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-			ModelAndView mav = new ModelAndView("member/mypage");
+			return mav;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			// [5] 실패 시 다시 가입 폼으로 돌아감
+			ModelAndView mav = new ModelAndView("member/signup");
+			mav.addObject("message", "회원가입 실패. 입력한 정보를 다시 확인해주세요.");
 			return mav;
 		}
+	}
+
+	@GetMapping("mypage")
+	public ModelAndView myPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		ModelAndView mav = new ModelAndView("member/mypage");
+		return mav;
+	}
 
 }

@@ -70,6 +70,11 @@
 						</div>
 						
 						<div class="position-relative">
+							<span class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" style="font-size: 1.2rem;">badge</span> 
+							<input type="text" name="userNickname" class="form-control login-input" placeholder="Nickname" required>
+						</div>
+						
+						<div class="position-relative">
 							<span class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" style="font-size: 1.2rem;">calendar_month</span> 
 							<input type="date" name="birth" class="form-control login-input" placeholder="Birth Date" style="color-scheme: dark;">
 						</div>

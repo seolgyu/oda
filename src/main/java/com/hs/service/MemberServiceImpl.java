@@ -15,7 +15,7 @@ public class MemberServiceImpl implements MemberService {
 		MemberDTO dto = null;
 		
 		try {
-			dto = mapper.loginMember1(map);
+			dto = mapper.loginMember(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -27,7 +27,7 @@ public class MemberServiceImpl implements MemberService {
 	public void insertMember(MemberDTO dto) throws Exception {
 		
 		try {
-			mapper.insertMember1(dto);
+			mapper.insertMember(dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;

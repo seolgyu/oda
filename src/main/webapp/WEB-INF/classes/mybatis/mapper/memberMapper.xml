@@ -5,25 +5,49 @@
 
 	<select id="loginMember" parameterType="map" resultType="com.hs.model.MemberDTO">
 		SELECT 
-			user_id AS memberIdx,   username AS userId,     password AS userPwd,    nickname AS userName,   email,
-			created_at AS register_date
-		FROM users
-		WHERE username = #{userId} AND password = #{userPwd}
+			user_num AS userIdx,
+			user_id AS userId,
+			user_pwd AS userPwd,
+			user_name AS userName,
+			user_nickname AS userNickname,
+			user_level AS userLevel,
+			user_profile AS profile_photo,
+			user_status AS status
+		FROM member
+		WHERE user_id = #{userId} AND user_pwd = #{userPwd} AND user_status = 1
 	</select>
 	
 	<insert id="insertMember" parameterType="com.hs.model.MemberDTO">
-		INSERT INTO users (
-			user_id, 
-			username, 
-			password, 
-			email, 
-			nickname, 
-			status, 
-			created_at
-		) VALUES (
-			users_seq.NEXTVAL, 
-			#{userId},      #{userPwd},     #{email},       #{userName},    'ACTIVE',       SYSDATE         )
-	</insert>
+    INSERT INTO MEMBER (
+        user_num, 
+        user_id, 
+        user_pwd, 
+        user_name, 
+        user_nickname, 
+        user_birth, 
+        user_email, 
+        user_addr1, 
+        user_addr2, 
+        user_tel, 
+        user_profile, 
+        user_banner,
+        user_zip
+    ) VALUES (
+        member_seq.NEXTVAL,
+        #{userId}, 
+        #{userPwd}, 
+        #{userName}, 
+        #{userNickname},
+        #{birth}, 
+        #{email, jdbcType=VARCHAR}, 
+        #{addr1, jdbcType=VARCHAR}, 
+        #{addr2, jdbcType=VARCHAR}, 
+        #{tel, jdbcType=VARCHAR}, 
+        #{profile_photo, jdbcType=VARCHAR}, 
+        #{banner_photo, jdbcType=VARCHAR},
+        #{zip}
+    )
+</insert>
 	
 	<select id="loginMember1" parameterType="map" resultType="com.hs.model.MemberDTO">
 		SELECT memberIdx, userId, userPwd, userName, userLevel, register_date, modify_date
