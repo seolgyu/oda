@@ -60,8 +60,15 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public MemberDTO findById(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		MemberDTO dto = null;
+		
+		try {
+			dto = mapper.findById(userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return dto;
 	}
 
 	@Override
