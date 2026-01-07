@@ -54,7 +54,7 @@
 					class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow-lg mt-2">
 					<li><h6 class="dropdown-header">내 계정</h6></li>
 					<li><a class="dropdown-item d-flex align-items-center gap-2"
-						href="${pageContext.request.contextPath}/member/mypage"><span class="material-symbols-outlined fs-6">person</span>
+						href="${pageContext.request.contextPath}/member/page?id=${sessionScope.member.userId}"><span class="material-symbols-outlined fs-6">person</span>
 							내 피드</a></li>
 					<li><a class="dropdown-item d-flex align-items-center gap-2"
 						href="#"><span class="material-symbols-outlined fs-6">favorite</span>

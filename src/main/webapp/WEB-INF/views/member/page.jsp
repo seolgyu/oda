@@ -75,13 +75,13 @@
                                 <div class="d-flex align-items-end gap-3">
                                     <div class="rounded-4 border border-4 border-dark shadow-lg d-flex align-items-center justify-content-center text-white fw-bold fs-1" 
                                          style="width: 120px; height: 120px; background: linear-gradient(135deg, #6366f1, #a855f7); margin-top: -60px; position: relative; z-index: 2;">
-                                        ${not empty sessionScope.member ? fn:substring(sessionScope.member.userName, 0, 1) : "?"}
+                                        ${not empty user.profile_photo ? user.profile_photo : fn:substring(user.userName, 0, 1)}
                                     </div>
 									<div class="pb-2">
-										<h1 class="text-white fs-2 fw-bold mb-1">${not empty sessionScope.member ? sessionScope.member.userName : "null"}
+										<h1 class="text-white fs-2 fw-bold mb-1">${user.userNickname}
 										</h1>
 										<p class="text-secondary mb-0">
-											c/${sessionScope.member.userId} | <span
+											c/${user.userId} | <span
 												class="text-white fw-bold">14.2k</span> Followers | <span
 												class="text-white fw-bold">8.5k</span> Visitors
 										</p>

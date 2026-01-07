@@ -238,8 +238,28 @@ public class MemberController {
 
 	@GetMapping("page")
 	public ModelAndView page(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		ModelAndView mav = new ModelAndView("member/page");
-		return mav;
+	    String userId = req.getParameter("id");
+	    
+	    if (userId == null || userId.trim().isEmpty()) {
+	        return new ModelAndView("redirect:/");
+	    }
+
+	    try {
+	        MemberDTO dto = service.findById(userId);
+
+	        if (dto == null) {
+	            return new ModelAndView("redirect:/");
+	            // return new ModelAndView("redirect:/member/noAuthorized");
+	        }
+
+	        ModelAndView mav = new ModelAndView("member/page"); // userPage.jsp로 이동
+	        mav.addObject("user", dto);
+	        return mav;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return new ModelAndView("redirect:/");
+	    }
 	}
 
 }

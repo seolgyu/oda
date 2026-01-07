@@ -50,13 +50,43 @@
 </insert>
 
 	<select id="findById" parameterType="String" resultType="com.hs.model.MemberDTO">
-		SELECT user_num AS userIdx, user_id AS userId, user_name AS userName, user_nickname AS userNickname, user_profile AS profile_photo
+		SELECT user_num AS userIdx, 
+		user_id AS userId, 
+		user_name AS userName, 
+		user_nickname AS userNickname, 
+		user_level AS userLevel,
+		user_created_date AS createdDate,
+		user_updated_date AS updatedDate,
+		last_login_date AS lastLoginDate,
+		user_birth AS birth,
+		user_email AS email,
+		user_addr1 AS addr1, 
+        user_addr2 AS addr2,
+        user_tel AS tel, 
+		user_profile AS profile_photo,
+		user_banner AS banner_photo,
+		user_status AS status
 		FROM member
 		WHERE user_id = #{userId}
 	</select>
 	
 	<select id="findByIdx" parameterType="Long" resultType="com.hs.model.MemberDTO">
-		SELECT user_num AS userIdx, user_id AS userId, user_name AS userName, user_nickname AS userNickname, user_profile AS profile_photo
+		SELECT user_num AS userIdx, 
+		user_id AS userId, 
+		user_name AS userName, 
+		user_nickname AS userNickname, 
+		user_level AS userLevel,
+		user_created_date AS createdDate,
+		user_updated_date AS updatedDate,
+		last_login_date AS lastLoginDate,
+		user_birth AS birth,
+		user_email AS email,
+		user_addr1 AS addr1, 
+        user_addr2 AS addr2,
+        user_tel AS tel, 
+		user_profile AS profile_photo,
+		user_banner AS banner_photo,
+		user_status AS status
 		FROM member
 		WHERE user_num = #{userIdx}
 	</select>
