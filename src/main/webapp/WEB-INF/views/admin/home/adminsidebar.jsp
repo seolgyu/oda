@@ -48,9 +48,9 @@
       </button>
       
       <div class="nav-sub">
-        <a href="${pageContext.request.contextPath}/admin/notice" class="nav-sub-item">공지사항</a>
-        <a href="${pageContext.request.contextPath}/admin/inqu" class="nav-sub-item">문의사항</a>
-        <a href="${pageContext.request.contextPath}/admin/events" class="nav-sub-item">이벤트</a>
+        <a href="${pageContext.request.contextPath}/admin/notice/list" class="nav-sub-item">공지사항</a>
+        <a href="${pageContext.request.contextPath}/admin/inqu/list" class="nav-sub-item">문의사항</a>
+        <a href="${pageContext.request.contextPath}/admin/events/list" class="nav-sub-item">이벤트</a>
       </div>
     </div>
       
