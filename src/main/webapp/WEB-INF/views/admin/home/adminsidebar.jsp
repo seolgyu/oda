@@ -14,7 +14,7 @@
 
 	<!-- 회원 단일(리스트[목록, 검색, 상세조회, 상태-휴먼,중지]로 다 조회 가능) -->
 		<div class="nav-group">
-		<button class="nav-item nav-toggle" onclick="location.href='${pageContext.request.contextPath}/admin/user';">
+		<button class="nav-item nav-toggle">
 			<span class="material-symbols-outlined">person</span>
 			<span>회원관리</span>
 			<span class="material-symbols-outlined arrow">expand_more</span>
