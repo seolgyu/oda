@@ -19,6 +19,4 @@ public interface CommunityService {
 	public void removeFavorite(Long community_id, Long user_num) throws Exception;
 	
 	public List<CommunityDTO> searchCommunity(Map<String, Object> map);
-	
-	
 }

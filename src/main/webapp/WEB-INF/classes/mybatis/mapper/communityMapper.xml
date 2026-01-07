@@ -3,8 +3,74 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hs.mapper.CommunityMapper">
 
-	<insert id="insertCommunity">
-		
+	<insert id="insertCommunity" parameterType="com.hs.dto.CommunityDTO">
+		INSERT INTO community(community_id, com_name, com_description, is_private, user_num, community_kate_id)
+		VALUES(seq_community.NEXTVAL, #{community_id}, #{com_name}, #{com_description}, #{is_private}, #{user_num}, #{community_kate_id})
 	</insert>
-
+	
+	<update id="updateCommunity" parameterType="com.hs.dto.CommunityDTO">
+		UPDATE community SET com_name = #{com_name}, com_description = #{com_description}, is_private = #{is_private}, icon_image = #{icon_image}, banner_image = #{banner_image}, community_kate_id = #{community_kate_id} 
+		WHERE community_id = #{community_id}
+	</update>
+	
+	<delete id="deleteCommunity" parameterType="Long">
+		DELETE FROM community 
+		WHERE community_id = #{community_id}
+	</delete>
+	
+	<insert id="joinCommunity" parameterType="Long">
+		INSERT INTO community_follow(community_id, user_num)
+		VALUES(#{community_id}, #{user_num})
+	</insert>
+	
+	<delete id="leaveCommunity" parameterType="Long">
+		DELETE FROM community_follow 
+		WHERE community_id = #{community_id} AND user_num = #{user_num}
+	</delete>
+	
+	<insert id="addFavorite" parameterType="Long">
+		INSERT INTO community_favorites(community_id, user_num)
+		VALUES(#{community_id}, #{user_num})
+	</insert>
+	
+	<delete id="removeFavorite" parameterType="Long">
+		DELETE FROM community_favorites 
+		WHERE community_id = #{community_id} AND user_num = #{user_num}
+	</delete>
+	
+	<select id="searchCommunity" parameterType="map" resultType="com.hs.dto.CommunityDTO">
+	    SELECT 
+	        c.community_id,
+	        c.com_name,
+	        c.com_description,
+	        c.user_num,
+	    FROM community c
+	    <choose>
+	        <when test="mode == 'favOnly'">
+	            INNER JOIN community_favorites f ON c.community_id = f.community_id
+	            WHERE f.user_num = #{user_num}
+	        </when>
+	        
+			<otherwise>
+				WHERE (
+					c.user_num = #{user_num}
+					OR
+					EXISTS (
+						SELECT 1 FROM community_follow w 
+						WHERE w.community_id = c.community_id 
+						AND w.user_num = #{user_num}
+	                )
+		            OR 
+					EXISTS (
+						SELECT 1 FROM community_favorites f 
+						WHERE f.community_id = c.community_id 
+						AND f.user_num = #{user_num}
+		            )
+		        )
+		    </otherwise>
+		</choose>
+		
+		ORDER BY c.community_id DESC
+	</select>
+	
 </mapper>
