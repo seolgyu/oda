@@ -236,9 +236,9 @@ public class MemberController {
 		}
 	}
 
-	@GetMapping("mypage")
-	public ModelAndView myPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		ModelAndView mav = new ModelAndView("member/mypage");
+	@GetMapping("page")
+	public ModelAndView page(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		ModelAndView mav = new ModelAndView("member/page");
 		return mav;
 	}
 
