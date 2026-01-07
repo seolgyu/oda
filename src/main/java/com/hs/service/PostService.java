@@ -14,5 +14,6 @@ public interface PostService {
 	// 게시글 상세 조회 (PK로 찾기)
 	public PostDTO findById(long postId);
 	
+	// 게시글 리스트
 	public List<PostDTO> listPost();
 }

@@ -8,28 +8,26 @@
 <head>
     <%@ include file="../home/head.jsp"%>
     <style>
-        /* [핵심 수정] 부트스트랩 기본 테이블 배경 제거 및 유리 효과 적용 */
+       
         .glass-table {
-            background: rgba(255, 255, 255, 0.05); /* 투명한 검정/흰색 혼합 */
-            backdrop-filter: blur(12px);            /* 유리처럼 흐리게 */
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);          
             border-radius: 1rem;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            overflow: hidden; /* 모서리 둥글게 유지 */
+            overflow: hidden;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
-
-        /* 테이블 자체 배경 투명화 (중요!) */
+       
         .table-transparent {
             --bs-table-bg: transparent !important;
             --bs-table-color: #fff !important;
             margin-bottom: 0;
         }
-
-        /* 헤더 스타일 */
+   
         .table-transparent thead th {
             background-color: rgba(0, 0, 0, 0.3) !important;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            color: #a855f7; /* 포인트 컬러 (보라색) */
+            color: #a855f7; 
             font-weight: 700;
             padding: 1.2rem 1rem;
             text-transform: uppercase;
@@ -37,23 +35,21 @@
             letter-spacing: 0.05em;
         }
 
-        /* 바디 스타일 */
+
         .table-transparent tbody td {
             background-color: transparent !important;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             padding: 1rem;
             vertical-align: middle;
-            color: #e2e8f0; /* 연한 회색 텍스트 */
+            color: #e2e8f0; 
         }
 
-        /* 마우스 올렸을 때 효과 (Hover) */
         .table-transparent tbody tr:hover td {
             background-color: rgba(255, 255, 255, 0.1) !important;
             color: #fff;
             transition: background-color 0.2s;
         }
 
-        /* 링크 스타일 제거 */
         .post-link {
             text-decoration: none;
             color: inherit;
@@ -61,10 +57,9 @@
             width: 100%;
         }
         .post-link:hover {
-            color: #a855f7; /* 호버 시 보라색 */
+            color: #a855f7; 
         }
 
-        /* 페이지네이션 커스텀 */
         .page-link-custom {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);

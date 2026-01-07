@@ -53,12 +53,12 @@
 		p.state,
 		p.reply_enabled AS replyEnabled,
 		p.show_counts AS showCounts,
-		u.userName AS authorNickname,
+		u.user_nickname AS authorNickname,
 
 		NULL AS authorProfileImage
 
 		FROM posts p
-		JOIN member1 u ON p.user_num = u.memberIdx
+		JOIN member u ON p.user_num = u.user_num
 		WHERE p.post_id
 		= #{postId}
 	</select>
@@ -71,11 +71,11 @@
 		p.view_count AS viewCount,
 		p.like_count AS likeCount,
 		p.created_date AS createdDate,
-		u.userName AS authorNickname,
+		u.user_nickname AS authorNickname,
 		NULL AS authorProfileImage
 		FROM posts p
-		JOIN member1 u ON
-		p.user_num = u.memberIdx
+		JOIN member u ON
+		p.user_num = u.user_num
 		WHERE p.is_deleted =
 		'0'
 		ORDER BY p.post_id DESC
@@ -90,4 +90,25 @@
 		#{fileType}, #{fileOrder}, SYSTIMESTAMP, #{postId}
 		)
 	</insert>
+	
+	<update id="updateHitCount" parameterType="long">
+		UPDATE posts
+		SET view_count = view_count + 1
+		WHERE post_id = #{postId}
+	</update>
+
+	<select id="listFileAt" parameterType="long" resultType="com.hs.model.FileAtDTO">
+		SELECT 
+			file_at_id AS fileAtId,
+			file_name AS fileName,
+			file_path AS filePath,
+			file_size AS fileSize,
+			file_type AS fileType,
+			file_order AS fileOrder,
+			uploaded_date AS uploadedDate,
+			post_id AS postId
+		FROM FILEAT
+		WHERE post_id = #{postId}
+		ORDER BY file_order ASC
+	</select>
 </mapper>

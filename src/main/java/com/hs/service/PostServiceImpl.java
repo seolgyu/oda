@@ -9,31 +9,26 @@ import com.hs.mybatis.support.MapperContainer;
 
 public class PostServiceImpl implements PostService {
 	
-	// MyBatis 매퍼 객체 가져오기 (Spring이 아니므로 Container 사용)
+	// MyBatis 매퍼 객체 가져오기
 	private PostMapper mapper = MapperContainer.get(PostMapper.class);
 
 	@Override
 	public void insertPost(PostDTO dto) throws Exception {
 		try {
-			// 1. 게시글 저장 (여기서 dto.postId가 생성됨)
-            mapper.insertPost(dto);
-            
-            // 2. 파일 목록이 있으면 저장
-            List<FileAtDTO> files = dto.getFileList();
-            if(files != null && !files.isEmpty()) {
-                for(FileAtDTO fileDto : files) {
-                    // 게시글 ID 연결
-                    fileDto.setPostId(dto.getPostId());
-                    // DB 저장
-                    mapper.insertFileAt(fileDto);
-                }
-            }
+			// 1. 게시글 저장 (게시글 번호 생성)
+			mapper.insertPost(dto);
 			
-			
-			
+			// 2. 파일이 있다면 파일 테이블에 저장
+			List<FileAtDTO> files = dto.getFileList();
+			if(files != null && !files.isEmpty()) {
+				for(FileAtDTO fileDto : files) {
+					fileDto.setPostId(dto.getPostId()); 
+					mapper.insertFileAt(fileDto);
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw e; // 에러를 Controller로 던져서 알림
+			throw e;
 		}
 	}
 
@@ -52,11 +47,17 @@ public class PostServiceImpl implements PostService {
 		PostDTO dto = null;
 		
 		try {
+			// 1. 조회수 증가 (상세 보기 시에만 증가)
+			mapper.updateHitCount(postId);
+			
+			// 2. 게시글 상세 정보 가져오기
 			dto = mapper.findById(postId);
 			
-			// 만약 줄바꿈(\n)을 <br>로 바꿔서 보여줘야 한다면 
-			// 여기서 dto.getContent()를 가공하면 됩니다.
-			// (수정 폼에서는 원본 텍스트가 필요하므로 지금은 그대로 둡니다)
+			// 3. 첨부파일 리스트 가져오기 및 DTO에 설정
+			if(dto != null) {
+				List<FileAtDTO> files = mapper.listFileAt(postId);
+				dto.setFileList(files);
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -67,12 +68,12 @@ public class PostServiceImpl implements PostService {
 	
 	@Override
 	public List<PostDTO> listPost() {
-	    List<PostDTO> list = null;
-	    try {
-	        list = mapper.listPost();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return list;
+		List<PostDTO> list = null;
+		try {
+			list = mapper.listPost();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 }

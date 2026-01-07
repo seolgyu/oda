@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.hs.model.FileAtDTO;
+import com.hs.model.MemberDTO;
 import com.hs.model.PostDTO;
 import com.hs.model.SessionInfo;
 import com.hs.util.FileManager; // 기존 파일매니저 import
@@ -16,6 +17,8 @@ import com.hs.mvc.annotation.GetMapping;
 import com.hs.mvc.annotation.PostMapping;
 import com.hs.mvc.annotation.RequestMapping;
 import com.hs.mvc.view.ModelAndView;
+import com.hs.service.MemberService;
+import com.hs.service.MemberServiceImpl;
 import com.hs.service.PostService;
 import com.hs.service.PostServiceImpl;
 
@@ -37,6 +40,7 @@ public class PostController {
 	
 	// Spring이 아니므로 직접 객체 생성
 	private PostService service = new PostServiceImpl();
+	private MemberService memberservice = new MemberServiceImpl();
 
 	// 1. 글쓰기 폼 (GET)
 	@GetMapping("write")
@@ -192,10 +196,6 @@ public class PostController {
 			dto.setState("정상");
 			dto.setUserNum(info.getMemberIdx());
 			
-			// [주의] 수정 시 파일 추가 업로드 로직은 Insert와 유사하게 구현 가능하나, 
-			// 기존 파일 삭제 등이 얽혀있어 일단 텍스트 수정 위주로 작성됨.
-			// 필요 시 Insert 로직을 참고하여 파일 추가 로직을 여기에 붙여넣으면 됨.
-			
 			service.updatePost(dto);
 			
 		} catch (Exception e) {
@@ -215,5 +215,37 @@ public class PostController {
 		mav.addObject("list", list);
 		
 		return mav;
+	}
+	
+	// 6. 게시글 상세 보기 (GET)
+	@GetMapping("article")
+	public ModelAndView article(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    // 1. 파라미터 받기
+	    String page = req.getParameter("page");
+	    long postId = 0;
+	    
+	    try {
+	        String postIdStr = req.getParameter("postId");
+	        if(postIdStr != null) {
+	            postId = Long.parseLong(postIdStr);
+	        }
+	    } catch (Exception e) {
+	        return new ModelAndView("redirect:/post/list");
+	    }
+
+	    // 2. 서비스 호출 (조회수 증가 + 파일 리스트 포함된 DTO 리턴)
+	    PostDTO dto = service.findById(postId);
+	    MemberDTO memberdto = memberservice.findByIdx(dto.getUserNum());
+	    
+	    if(dto == null) {
+	        return new ModelAndView("redirect:/post/list?page=" + page);
+	    }
+	    
+	    ModelAndView mav = new ModelAndView("post/article");
+	    mav.addObject("dto", dto);
+	    mav.addObject("memberdto", memberdto);
+	    mav.addObject("page", page);
+	    
+	    return mav;
 	}
 }
