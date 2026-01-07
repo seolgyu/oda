@@ -62,7 +62,7 @@
                                                 <span class="font-bold text-xl">r/</span>
                                             </div>
                                             <div>
-                                                <h3 class="text-lg font-bold text-gray-100 group-hover:text-primary transition-colors">r/community_name</h3>
+                                                <h3 class="text-lg font-bold text-gray-100 group-hover:text-primary transition-colors" onclick="location.href='${pageContext.request.contextPath}/community/main';">r/community_name</h3>
                                                 <p class="text-sm text-gray-400 mt-1 truncate max-w-[300px]">Explore the wonders of the universe together.</p>
                                             </div>
                                         </div>

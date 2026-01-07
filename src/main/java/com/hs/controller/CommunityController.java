@@ -23,6 +23,7 @@ public class CommunityController {
 	
 	@PostMapping("create")
 	public ModelAndView createSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+		
 		return new ModelAndView("community/create");
 	}
 	
