@@ -77,4 +77,17 @@ public class MemberServiceImpl implements MemberService {
 		return null;
 	}
 
+	@Override
+	public MemberDTO findByIdx(Long userIdx) {
+		MemberDTO dto = null;
+		
+		try {
+			dto = mapper.findByIdx(userIdx);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
 }

@@ -14,6 +14,7 @@ public interface MemberService {
 	public void deleteProfilePhoto(Map<String, Object> map) throws Exception;
 	public void deleteMember(Map<String, Object> map) throws Exception;
 	
-	public MemberDTO findById(String userId);	
+	public MemberDTO findById(String userId);
+	public MemberDTO findByIdx(Long userIdx);	
 	public List<Map<String, Object>> listAgeSection();
 }

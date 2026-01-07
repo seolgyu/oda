@@ -52,7 +52,13 @@
 	<select id="findById" parameterType="String" resultType="com.hs.model.MemberDTO">
 		SELECT user_num AS userIdx, user_id AS userId, user_name AS userName, user_nickname AS userNickname, user_profile AS profile_photo
 		FROM member
-		WHERE userId = #{userId}
+		WHERE user_id = #{userId}
+	</select>
+	
+	<select id="findByIdx" parameterType="Long" resultType="com.hs.model.MemberDTO">
+		SELECT user_num AS userIdx, user_id AS userId, user_name AS userName, user_nickname AS userNickname, user_profile AS profile_photo
+		FROM member
+		WHERE user_num = #{userIdx}
 	</select>
 	
 	<select id="loginMember1" parameterType="map" resultType="com.hs.model.MemberDTO">
