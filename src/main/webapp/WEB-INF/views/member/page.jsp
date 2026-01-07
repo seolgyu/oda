@@ -72,28 +72,38 @@
                                 <div class="position-absolute w-100 h-100" style="background: url('https://www.transparenttextures.com/patterns/stardust.png'); opacity: 0.3;"></div>
                             </div>
                             <div class="px-4 pb-4 pt-4 position-relative" style="background: rgba(13, 14, 18, 0.85); backdrop-filter: blur(10px);">
-                                <div class="d-flex align-items-end gap-3">
-                                    <div class="rounded-4 border border-4 border-dark shadow-lg d-flex align-items-center justify-content-center text-white fw-bold fs-1" 
-                                         style="width: 120px; height: 120px; background: linear-gradient(135deg, #6366f1, #a855f7); margin-top: -60px; position: relative; z-index: 2;">
-                                        ${not empty user.profile_photo ? user.profile_photo : fn:substring(user.userName, 0, 1)}
-                                    </div>
+								<div class="d-flex align-items-end gap-3">
+									<div
+										class="rounded-4 border border-4 border-dark shadow-lg d-flex align-items-center justify-content-center text-white fw-bold fs-1"
+										style="width: 120px; height: 120px; background: linear-gradient(135deg, #6366f1, #a855f7); margin-top: -60px; position: relative; z-index: 2;">
+										${not empty user.profile_photo ? user.profile_photo : fn:substring(user.userName, 0, 1)}
+									</div>
 									<div class="pb-2">
 										<h1 class="text-white fs-2 fw-bold mb-1">${user.userNickname}
 										</h1>
 										<p class="text-secondary mb-0">
-											c/${user.userId} | <span
-												class="text-white fw-bold">14.2k</span> Followers | <span
-												class="text-white fw-bold">8.5k</span> Visitors
+											c/${user.userId} | <span class="text-white fw-bold">14.2k</span>
+											Followers | <span class="text-white fw-bold">8.5k</span>
+											Visitors
 										</p>
 									</div>
 									<div class="ms-auto pb-2 d-flex gap-2">
-                                        <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Follow</button>
-                                        <button class="btn-icon border border-white border-opacity-10 rounded-circle p-2">
-                                            <span class="material-symbols-outlined text-white">notifications</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+										<button
+											class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Follow</button>
+										<button
+											class="btn-icon border border-white border-opacity-10 rounded-circle p-2">
+											<span class="material-symbols-outlined text-white">notifications</span>
+										</button>
+										<c:if
+											test="${not empty sessionScope.member and sessionScope.member.userId eq user.userId}">
+											<button
+												class="btn-icon border border-white border-opacity-10 rounded-circle p-2">
+												<span class="material-symbols-outlined text-white">settings</span>
+											</button>
+										</c:if>
+									</div>
+								</div>
+							</div>
                         </div>
                     </div>
 
