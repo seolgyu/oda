@@ -254,10 +254,11 @@
 								</tr>
 							</thead>
 							<tbody>
+							<c:forEach var="dto" items="${list}"  varStatus="status">
 								<tr style="background: rgba(59, 130, 246, 0.05);">
 									<td class="text-center"><input type="checkbox"
 										class="form-check-input"></td>
-									<td><span class="material-icons-round text-primary fs-5">campaign</span></td>
+									<td class="text-white-50"><!-- <span class="material-icons-round text-primary fs-5"> -->${dto.notice_num}<!-- </span> --></td>
 									<td><span class="badge badge-urgent">주요</span></td>
 									<td>
 										<div class="d-flex align-items-center gap-2">
@@ -266,10 +267,11 @@
 												class="visually-hidden">New</span></span>
 										</div>
 									</td>
-									<td>관리자</td>
+									<td>${dto.user_nickname}</td>
 									<td class="text-white-50">2023-10-24</td>
 									<td class="text-center text-white-50">1,240</td>
 								</tr>
+							</c:forEach>
 								<tr>
 									<td class="text-center"><input type="checkbox"
 										class="form-check-input"></td>

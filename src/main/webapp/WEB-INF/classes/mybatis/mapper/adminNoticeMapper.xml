@@ -2,5 +2,73 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hs.mapper.admin.NoticeMapper">
-
+	<sql id="where-list">
+		<if test="schType == 'all' ">
+			( INSTR(subject, #{kwd}) &gt; 0
+				OR DBMS_LOB.INSTR(content, #{kwd}) &gt; 0 )
+		</if>
+		<if test="schType == 'subject' ">
+			INSTR(subject, #{kwd}) &gt; 0
+		</if>
+		<if test="schType == 'content' ">
+			DBMS_LOB.INSTR(content, #{kwd}) &gt; 0 
+		</if>
+		<if test="schType == 'userName' ">
+			INSTR(user_nickname, #{kwd}) &gt; 0
+		</if>
+		<if test="schType == 'reg_date' ">
+			( TO_CHAR(noti_reg_date, 'YYYY-MM-DD') = #{kwd}
+				OR TO_CHAR(noti_reg_date, 'YYYYMMDD') = #{kwd} ) OR
+			( TO_CHAR(update_date, 'YYYY-MM-DD') = #{kwd}
+				OR TO_CHAR(update_date, 'YYYYMMDD') = #{kwd} )
+		</if>
+	</sql>
+	
+	<select id="noticeList" resultType="com.hs.model.admin.NoticeDTO">
+		SELECT noti.notice_num notice_num,
+				noti.state state,
+				noti.noti_title noti_title,
+				memb.USER_NICKNAME user_nickname,
+				TO_CHAR(noti.noti_reg_date, 'YYYY-MM-DD') noti_reg_date,
+				noti.noti_hitcount noti_hitcount
+		FROM NOTICE noti, member memb
+		<where>
+			<if test="is_notice != null">
+				is_notice = #{is_notice}
+			</if>		
+			<if test="kwd != null and kwd != ''">
+				AND <include refid="where-list"/>
+			</if>
+			AND noti.USER_NUM = memb.USER_NUM
+		</where>
+        ORDER BY noti.noti_reg_date DESC, noti.notice_num DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	<select id="noticeListTop" resultType="com.hs.model.admin.NoticeDTO">
+		SELECT noti.notice_num notice_num,
+				noti.state state,
+				noti.noti_title noti_title,
+				memb.USER_NICKNAME user_nickname,
+				TO_CHAR(noti.noti_reg_date, 'YYYY-MM-DD') noti_reg_date,
+				noti.noti_hitcount noti_hitcount
+		FROM NOTICE noti, member memb
+		WHERE noti.USER_NUM = memb.USER_NUM
+        AND noti.state = '공개' AND noti.is_notice = '1'
+        ORDER BY noti.noti_reg_date DESC, noti.notice_num DESC
+	</select>
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM notice noti, member memb
+		WHERE noti.user_num = memb.user_num
+		<where>
+			<if test="is_notice != null">
+				is_notice = #{is_notice}
+			</if>		
+			<if test="kwd != null and kwd != ''  ">
+				AND <include refid="where-list"/>
+			</if>
+		</where>
+	</select>
 </mapper>
