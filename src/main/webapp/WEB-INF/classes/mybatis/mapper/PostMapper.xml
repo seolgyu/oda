@@ -32,8 +32,7 @@
 		state =
 		#{state},
 		reply_enabled = #{replyEnabled}, show_counts = #{showCounts}
-		WHERE post_id =
-		#{postId} AND user_num = #{userNum}
+		WHERE post_id = #{postId} AND user_num = #{userNum}
 	</update>
 
 	<select id="findById" parameterType="long"
@@ -54,13 +53,10 @@
 		p.reply_enabled AS replyEnabled,
 		p.show_counts AS showCounts,
 		u.user_nickname AS authorNickname,
-
-		NULL AS authorProfileImage
-
+		u.user_profile AS authorProfileImage
 		FROM posts p
 		JOIN member u ON p.user_num = u.user_num
-		WHERE p.post_id
-		= #{postId}
+		WHERE p.post_id = #{postId}
 	</select>
 
 	<select id="listPost" resultType="com.hs.model.PostDTO">
@@ -76,8 +72,7 @@
 		FROM posts p
 		JOIN member u ON
 		p.user_num = u.user_num
-		WHERE p.is_deleted =
-		'0'
+		WHERE p.is_deleted = '0'
 		ORDER BY p.post_id DESC
 	</select>
 
