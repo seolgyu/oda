@@ -225,7 +225,7 @@
 					<div class="row g-3 align-items-center">
 						<div class="col-12 col-lg-6">
 							<div class="btn-group glass-btn-group">
-						        <button type="button" class="btn btn-outline-light ${empty state ? 'active' : ''} btn-sm px-3" value="">전체</button>
+						        <button type="button" class="btn btn-outline-light ${state ? 'active' : ''} btn-sm px-3" value="">전체</button>
 						        <button type="button" class="btn btn-outline-light ${state == '공개' ? 'active' : ''} btn-sm px-3" value="공개">공개</button>
 						        <button type="button" class="btn btn-outline-light ${state == '비공개' ? 'active' : ''} btn-sm px-3" value="비공개">비공개</button>
 						        <button type="button" class="btn btn-outline-light ${state == '임시저장' ? 'active' : ''} btn-sm px-3" value="임시저장">임시저장</button>
@@ -271,6 +271,27 @@
 								</tr>
 							</thead>
 							<tbody>
+							<c:forEach var="dto" items="${noticeList}">
+								<tr style="background: rgba(59, 130, 246, 0.05);">
+									<td class="text-center"><input type="checkbox"
+										class="form-check-input"></td>
+									<td class="text-white-50"><!-- <span class="material-icons-round text-primary fs-5"> -->${dto.notice_num}<!-- </span> --></td>
+									<td>
+										<span class="badge badge-normal">
+										<span class="material-symbols-outlined text-primary fs-5">campaign</span>
+										</span>
+									</td>
+									<td>
+										<div class="d-flex align-items-center gap-2">
+											<span class="fw-bold">${dto.noti_title}</span> <!-- <span class="badge bg-danger p-1 rounded-circle">
+											<span class="visually-hidden">New</span></span> -->
+										</div>
+									</td>
+									<td>${dto.user_nickname}</td>
+									<td class="text-white-50">${dto.noti_reg_date }</td>
+									<td class="text-center text-white-50">${dto.hitCount }</td>
+								</tr>
+							</c:forEach>
 							<c:forEach var="dto" items="${list}"  varStatus="status">
 								<tr style="background: rgba(59, 130, 246, 0.05);">
 									<td class="text-center"><input type="checkbox"

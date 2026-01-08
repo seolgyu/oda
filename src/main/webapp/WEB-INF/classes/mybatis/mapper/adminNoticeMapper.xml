@@ -33,10 +33,10 @@
 				noti.noti_hitcount noti_hitcount
 		FROM NOTICE noti, member memb
 		<where>
-			<if test="is_notice != null">
+			<if test="is_notice != null and is_notice != ''  ">
 				is_notice = #{is_notice}
 			</if>
-			<if test="state != null">
+			<if test="state != null and state != ''  ">
 				AND noti.state = #{state}
 			</if>		
 			<if test="kwd != null and kwd != ''">
@@ -66,13 +66,13 @@
 		FROM notice noti
 		JOIN member memb ON noti.user_num = memb.user_num
 		<where>
-			<if test="is_notice != null">
+			<if test="is_notice != null and is_notice != ''  ">
 				is_notice = #{is_notice}
 			</if>		
 			<if test="kwd != null and kwd != ''  ">
 				AND <include refid="where-list"/>
 			</if>
-			<if test="state != null">
+			<if test="state != null and state != ''  ">
 				AND noti.state = #{state}
 			</if>	
 		</where>
