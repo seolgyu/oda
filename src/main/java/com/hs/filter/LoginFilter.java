@@ -107,7 +107,8 @@ public class LoginFilter implements Filter {
 				"/notice/list",
 				"/uploads/photo/**",
 				"/dist/**",
-				"/resources/**"
+				"/resources/**",
+				"/post/article"
 		};
 		
 		if(uri.length() <= 1) {
