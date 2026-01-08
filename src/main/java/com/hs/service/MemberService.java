@@ -1,5 +1,6 @@
 package com.hs.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,10 @@ public interface MemberService {
 	public void deleteMember(Map<String, Object> map) throws Exception;
 	
 	public MemberDTO findById(String userId);
-	public MemberDTO findByIdx(Long userIdx);	
+	public MemberDTO findByIdx(Long userIdx);
+	
+	public int checkId(String userId) throws SQLException;
+	public int checkNickname(String userNickname) throws SQLException;
+	
 	public List<Map<String, Object>> listAgeSection();
 }

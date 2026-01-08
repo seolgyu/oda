@@ -1,5 +1,6 @@
 package com.hs.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -88,6 +89,30 @@ public class MemberServiceImpl implements MemberService {
 		}
 		
 		return dto;
+	}
+
+	@Override
+	public int checkId(String userId) throws SQLException {
+		
+		try {
+			return mapper.checkId(userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return 0;
+	}
+
+	@Override
+	public int checkNickname(String userNickname) throws SQLException {
+		
+		try {
+			return mapper.checkNickname(userNickname);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return 0;
 	}
 
 }

@@ -102,7 +102,7 @@ public class LoginFilter implements Filter {
 		String []uris = {
 				"/index.jsp", "/main", 
 				"/member/login", "/member/login_json", "/member/logout",
-				"/member/signup",
+				"/member/signup", "/member/signupAjax", "/member/checkDuplicate",
 				"/member/account", "/member/userIdCheck", "/member/complete",
 				"/notice/list",
 				"/uploads/photo/**",
