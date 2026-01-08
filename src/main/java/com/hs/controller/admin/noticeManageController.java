@@ -52,6 +52,7 @@ public class noticeManageController {
 
 			String schType = req.getParameter("schType");
 			String kwd = req.getParameter("kwd");
+			String state = req.getParameter("state");
 			if (schType == null) {
 				schType = "all";
 				kwd = "";
@@ -65,7 +66,8 @@ public class noticeManageController {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("is_Notice", 1);
 			map.put("schType", schType);
-			map.put("kwd", kwd);			
+			map.put("kwd", kwd);	
+			map.put("state", state);
 			
 			int dataCount = service.dataCount(map);
 			int total_page = util.pageCount(dataCount, size);
@@ -110,6 +112,7 @@ public class noticeManageController {
 			mav.addObject("paging", paging);
 			mav.addObject("schType", schType);
 			mav.addObject("kwd", kwd);
+			mav.addObject("state", state);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -225,15 +225,17 @@
 					<div class="row g-3 align-items-center">
 						<div class="col-12 col-lg-6">
 							<div class="btn-group glass-btn-group">
-								<button class="btn btn-outline-light active btn-sm px-3">공개</button>
-								<button class="btn btn-outline-light btn-sm px-3">비공개</button>
-								<button class="btn btn-outline-light btn-sm px-3">임시저장</button>
-								<button class="btn btn-outline-light btn-sm px-3">신고</button>
-							</div>
+						        <button type="button" class="btn btn-outline-light ${empty state ? 'active' : ''} btn-sm px-3" value="">전체</button>
+						        <button type="button" class="btn btn-outline-light ${state == '공개' ? 'active' : ''} btn-sm px-3" value="공개">공개</button>
+						        <button type="button" class="btn btn-outline-light ${state == '비공개' ? 'active' : ''} btn-sm px-3" value="비공개">비공개</button>
+						        <button type="button" class="btn btn-outline-light ${state == '임시저장' ? 'active' : ''} btn-sm px-3" value="임시저장">임시저장</button>
+						        <button type="button" class="btn btn-outline-light ${state == '신고' ? 'active' : ''} btn-sm px-3" value="신고">신고</button>
+						    </div>
 						</div>
 							<div class="col-12 col-lg-4 offset-lg-2">
-						    <form name="searchForm" method="get">
+							<form name="searchForm" method="get">
 						        <input type="hidden" name="size" value="${size}">
+						         <input type="hidden" name="state" value="${state}">
 						        
 						        <div class="input-group search-wrapper">
 						            <select name="schType" class="form-select glass-select" style="max-width: 120px; background: transparent; border: none; border-right: 1px solid rgba(255, 255, 255, 0.1); color: white; padding-right: 2rem;">

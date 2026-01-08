@@ -35,6 +35,9 @@
 		<where>
 			<if test="is_notice != null">
 				is_notice = #{is_notice}
+			</if>
+			<if test="state != null">
+				AND noti.state = #{state}
 			</if>		
 			<if test="kwd != null and kwd != ''">
 				AND <include refid="where-list"/>
@@ -69,6 +72,9 @@
 			<if test="kwd != null and kwd != ''  ">
 				AND <include refid="where-list"/>
 			</if>
+			<if test="state != null">
+				AND noti.state = #{state}
+			</if>	
 		</where>
 	</select>
 </mapper>
