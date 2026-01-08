@@ -63,6 +63,7 @@ public class noticeManageController {
 			int size = pageSize == null ? 5 : Integer.parseInt(pageSize);
 
 			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("is_Notice", 1);
 			map.put("schType", schType);
 			map.put("kwd", kwd);			
 			
@@ -100,6 +101,14 @@ public class noticeManageController {
 
 			// 포워딩 jsp에 전달할 데이터
 			mav.addObject("list", list);
+			
+			mav.addObject("articleUrl", articleUrl);
+			mav.addObject("dataCount", dataCount);
+			mav.addObject("size", size);
+			mav.addObject("page", current_page);
+			mav.addObject("total_page", total_page);
+			mav.addObject("paging", paging);
+			mav.addObject("schType", schType);
 			
 		} catch (Exception e) {
 			e.printStackTrace();

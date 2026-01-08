@@ -17,6 +17,7 @@
     <%@ include file="/WEB-INF/views/home/head.jsp"%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminmain.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
 
     <style>
 /* [1] 공지사항 전용 글래스모피즘 보정 스타일  */
@@ -91,6 +92,11 @@
 	background: rgba(148, 163, 184, 0.2);
 	color: #94a3b8;
 	border: 1px solid rgba(148, 163, 184, 0.3);
+}
+.badge-waiting {
+	background: rgba(234, 179, 8, 0.2); 
+	color: #facc15; 
+	border: 1px solid rgba(234, 179, 8, 0.3); 
 }
 
 /* [4] 버튼 커스텀 */
@@ -219,22 +225,29 @@
 					<div class="row g-3 align-items-center">
 						<div class="col-12 col-lg-6">
 							<div class="btn-group glass-btn-group">
-								<button class="btn btn-outline-light active btn-sm px-3">전체</button>
-								<button class="btn btn-outline-light btn-sm px-3">주요</button>
-								<button class="btn btn-outline-light btn-sm px-3">일반</button>
+								<button class="btn btn-outline-light active btn-sm px-3">공개</button>
 								<button class="btn btn-outline-light btn-sm px-3">비공개</button>
+								<button class="btn btn-outline-light btn-sm px-3">임시저장</button>
+								<button class="btn btn-outline-light btn-sm px-3">신고</button>
 							</div>
 						</div>
-						<div class="col-12 col-lg-6">
-							<div class="input-group search-wrapper">
-								<span class="material-icons-round text-white-50 mt-2">search</span> <input
-									type="text" class="form-control glass-input"
-									placeholder="제목, 작성자 검색...">
-								<!-- <button class="btn btn-link text-white-50 p-0 ms-2">
-									<span class="material-icons-round">refresh</span>
-								</button> -->
+							<div class="col-12 col-lg-4 offset-lg-2">
+								<div class="input-group search-wrapper">
+								<select class="form-select glass-select" style="max-width: 120px; background: transparent; border: none; border-right: 1px solid rgba(255, 255, 255, 0.1); color: white; padding-right: 2rem;">
+						            <option value="all">전체</option>
+						            <option value="subject">제목+내용</option>
+						            <option value="content">내용</option>
+						            <option value="userName">작성자</option>
+						            <option value="reg_date">작성일</option>
+						        </select>
+						        	<span style="width:10px;"></span>
+									<span class="material-icons-round text-white-25 mt-2">search</span> 
+									<input type="text" class="form-control glass-input" placeholder="제목, 작성일 검색...">
+									<!-- <button class="btn btn-link text-white-50 p-0 ms-2">
+										<span class="material-icons-round">refresh</span>
+									</button> -->
+								</div>
 							</div>
-						</div>
 					</div>
 				</div>
 
@@ -259,64 +272,57 @@
 									<td class="text-center"><input type="checkbox"
 										class="form-check-input"></td>
 									<td class="text-white-50"><!-- <span class="material-icons-round text-primary fs-5"> -->${dto.notice_num}<!-- </span> --></td>
-									<td><span class="badge badge-urgent">주요</span></td>
+									<td>
+										<c:if test="${dto.state == '공개'}">
+											<span class="badge badge-normal">${dto.state} </span>
+										</c:if>
+										<c:if test="${dto.state == '비공개'}">
+											<span class="badge badge-private">${dto.state} </span>
+										</c:if>
+										<c:if test="${dto.state == '임시저장'}">
+											<span class="badge badge-waiting">${dto.state} </span>
+										</c:if>
+										<c:if test="${dto.state == '신고'}">
+											<span class="badge badge-urgent d-flex align-items-center gap-1 w-fit">
+											<span class="material-icons-round fs-6" style="font-size: 12px;">lock</span>${dto.state}</span>
+										</c:if>
+									</td>
 									<td>
 										<div class="d-flex align-items-center gap-2">
-											<span class="fw-bold">[긴급] 서비스 점검 안내 (10.25 02:00 ~
-												06:00)</span> <span class="badge bg-danger p-1 rounded-circle"><span
-												class="visually-hidden">New</span></span>
+											<span class="fw-bold">${dto.noti_title}</span> <!-- <span class="badge bg-danger p-1 rounded-circle">
+											<span class="visually-hidden">New</span></span> -->
 										</div>
 									</td>
 									<td>${dto.user_nickname}</td>
-									<td class="text-white-50">2023-10-24</td>
-									<td class="text-center text-white-50">1,240</td>
+									<td class="text-white-50">${dto.noti_reg_date }</td>
+									<td class="text-center text-white-50">${dto.hitCount }</td>
 								</tr>
 							</c:forEach>
-								<tr>
-									<td class="text-center"><input type="checkbox"
-										class="form-check-input"></td>
-									<td class="text-white-50">128</td>
-									<td><span class="badge badge-normal">일반</span></td>
-									<td>11월 업데이트 미리보기 및 기능 개선 사항</td>
-									<td>운영팀</td>
-									<td class="text-white-50">2023-10-20</td>
-									<td class="text-center text-white-50">856</td>
-								</tr>
-								<tr>
-									<td class="text-center"><input type="checkbox"
-										class="form-check-input"></td>
-									<td class="text-white-50">127</td>
-									<td><span
-										class="badge badge-private d-flex align-items-center gap-1 w-fit"><span
-											class="material-icons-round fs-6" style="font-size: 12px;">lock</span>비공개</span></td>
-									<td class="text-white-50">시스템 안정화 작업 완료 보고</td>
-									<td>개발팀</td>
-									<td class="text-white-50">2023-10-12</td>
-									<td class="text-center text-white-50">120</td>
-								</tr>
 							</tbody>
 						</table>
 					</div>
-
-					<div
-						class="p-4 d-flex justify-content-center border-top border-white border-opacity-10">
+					<div class="p-4 d-flex justify-content-center border-top border-white border-opacity-10">
 						<nav>
-							<ul class="pagination pagination-sm mb-0">
-								<li class="page-item disabled"><a
-									class="page-link bg-transparent border-white border-opacity-10 text-white-50"
+						<span class="text-sm text-text-sub mb-4">
+						 	조회 <span class="font-semibold text-white">(${page}/${total_page} page)</span> of <span class="font-semibold text-white">${dataCount}</span>
+						</span>
+							<!-- <ul class="pagination pagination-sm mb-0">
+								<li class="page-item disabled">
+								<a class="page-link bg-transparent border-white border-opacity-10 text-white-50"
 									href="#"><span class="material-icons-round fs-6">chevron_left</span></a></li>
 								<li class="page-item active"><a
 									class="page-link bg-primary border-primary" href="#">1</a></li>
 								<li class="page-item"><a
 									class="page-link bg-transparent border-white border-opacity-10 text-white"
 									href="#">2</a></li>
-								<li class="page-item"><a
-									class="page-link bg-transparent border-white border-opacity-10 text-white"
+								<li class="page-item">
+								<a class="page-link bg-transparent border-white border-opacity-10 text-white"
 									href="#">3</a></li>
 								<li class="page-item"><a
 									class="page-link bg-transparent border-white border-opacity-10 text-white"
 									href="#"><span class="material-icons-round fs-6">chevron_right</span></a></li>
-							</ul>
+							</ul> -->
+							<div class="page-navigation">${dataCount == 0 ? "등록된 게시물이 없습니다." : paging}</div>
 						</nav>
 					</div>
 				</div>

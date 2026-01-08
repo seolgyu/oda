@@ -5,16 +5,16 @@
   display: flex;
   justify-content: center;
   align-content: center;
-  
-  padding: 20px 0;
+  padding: 14px 0;
 }
 
 .paginate {
   display: flex;
   align-content: center;
   flex-wrap: wrap;
-  
-  font-size: 14px;	
+  border: 1px solid #636769;
+  border-radius: 5px;
+  font-size: 12px;	
 }
 
 .paginate a,
@@ -24,9 +24,9 @@
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
-  color: #333333;
-  background-color: #ffffff;
-  border: 1px solid #dee2e6;
+  color: #ffffff;
+  background-color: #1e293b;
+  /* border: 1px solid #dee2e6; */
 }
 
 .paginate a {
