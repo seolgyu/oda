@@ -232,22 +232,24 @@
 							</div>
 						</div>
 							<div class="col-12 col-lg-4 offset-lg-2">
-								<div class="input-group search-wrapper">
-								<select class="form-select glass-select" style="max-width: 120px; background: transparent; border: none; border-right: 1px solid rgba(255, 255, 255, 0.1); color: white; padding-right: 2rem;">
-						            <option value="all">전체</option>
-						            <option value="subject">제목+내용</option>
-						            <option value="content">내용</option>
-						            <option value="userName">작성자</option>
-						            <option value="reg_date">작성일</option>
-						        </select>
-						        	<span style="width:10px;"></span>
-									<span class="material-icons-round text-white-25 mt-2">search</span> 
-									<input type="text" class="form-control glass-input" placeholder="제목, 작성일 검색...">
-									<!-- <button class="btn btn-link text-white-50 p-0 ms-2">
-										<span class="material-icons-round">refresh</span>
-									</button> -->
-								</div>
-							</div>
+						    <form name="searchForm" method="get">
+						        <input type="hidden" name="size" value="${size}">
+						        
+						        <div class="input-group search-wrapper">
+						            <select name="schType" class="form-select glass-select" style="max-width: 120px; background: transparent; border: none; border-right: 1px solid rgba(255, 255, 255, 0.1); color: white; padding-right: 2rem;">
+						                <option value="all" ${schType == 'all' ? 'selected' : ''}>전체</option>
+						                <option value="subject" ${schType == 'subject' ? 'selected' : ''}>제목+내용</option>
+						                <option value="content" ${schType == 'content' ? 'selected' : ''}>내용</option>
+						                <option value="userName" ${schType == 'userName' ? 'selected' : ''}>작성자</option>
+						                <option value="reg_date" ${schType == 'reg_date' ? 'selected' : ''}>작성일</option>
+						            </select>
+						            
+						            <span style="width:10px;"></span>
+						            <span class="material-icons-round text-white-25 mt-2" onclick="searchList();" style="cursor: pointer;">search</span> 
+						            <input type="text" name="kwd" class="form-control glass-input" value="${kwd}" placeholder="제목, 작성일 검색...">
+						        </div>
+						    </form>
+						</div>
 					</div>
 				</div>
 

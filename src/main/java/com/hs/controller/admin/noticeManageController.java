@@ -60,7 +60,7 @@ public class noticeManageController {
 
 			// 한페이지 표시할 데이터 개수
 			String pageSize = req.getParameter("size");
-			int size = pageSize == null ? 5 : Integer.parseInt(pageSize);
+			int size = pageSize == null ? 10 : Integer.parseInt(pageSize);
 
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("is_Notice", 1);
@@ -101,7 +101,7 @@ public class noticeManageController {
 
 			// 포워딩 jsp에 전달할 데이터
 			mav.addObject("list", list);
-			
+			mav.addObject("noticeList", noticeList);
 			mav.addObject("articleUrl", articleUrl);
 			mav.addObject("dataCount", dataCount);
 			mav.addObject("size", size);
@@ -109,7 +109,7 @@ public class noticeManageController {
 			mav.addObject("total_page", total_page);
 			mav.addObject("paging", paging);
 			mav.addObject("schType", schType);
-			
+			mav.addObject("kwd", kwd);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

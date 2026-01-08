@@ -8,105 +8,182 @@
 <head>
 <%@ include file="head.jsp"%>
 <style>
-/* 1. 필터 바 (Glass 효과 + 고정) */
+/* 1. 필터 바 투명화 (Box 2) */
 .filter-bar {
-    background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(5px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    
-    /* [중요] 위치를 잡고 z-index를 높여서 카드보다 위에 뜨게 함 */
-    position: relative; 
-    z-index: 1000; 
+	background: transparent !important; /* 배경 투명 */
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	margin-bottom: 0.5rem;
+	padding-bottom: 0.5rem;
+	position: relative;
+	z-index: 1000;
 }
 
-/* 2. 공통 카드 스타일 (호버 효과) */
-.feed-card {
-    transition: transform 0.2s, background 0.2s;
-    cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    
-    /* [중요] 카드는 기본 레벨(1)로 설정하여 필터바(1000)보다 아래에 있게 함 */
-    position: relative;
-    z-index: 1; 
-}
-
-.feed-card:hover {
-    /* transform은 유지하되 z-index는 건드리지 않음 */
-    transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.08) !important;
-}
-
-/* 3. 카드형 (Card View) 썸네일 영역 */
-.card-thumbnail-area {
-	width: 100%;
-	height: 300px; /* 높이 고정 */
-	background-color: rgba(0, 0, 0, 0.2);
+/* 2. 카드형 뷰 - 이미지 슬라이더 스타일 */
+.carousel-inner {
+	background-color: #000; /* 빈 공간 검은색 처리 */
 	border-radius: 0.5rem;
-	overflow: hidden;
-	margin-bottom: 1rem;
+}
+
+.image-container {
+	height: 500px; /* 고정 높이 */
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	overflow: hidden;
 }
 
-.card-thumbnail-img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover; /* 꽉 차게 */
+.slider-img {
+	max-width: 100%;
+	max-height: 100%;
+	width: auto;
+	height: auto;
+	object-fit: contain; /* 이미지가 잘리지 않고 비율 유지 */
 }
 
-/* 4. 축약형 (Compact View) 스타일 */
-.compact-card {
+/* 슬라이더 버튼 스타일 (article.jsp와 통일) */
+.carousel-btn-glass {
+	width: 40px;
+	height: 40px;
+	background: rgba(255, 255, 255, 0.1);
+	backdrop-filter: blur(4px);
+	border-radius: 50%;
 	display: flex;
 	align-items: center;
-	gap: 1.5rem;
-	padding: 1rem 1.5rem;
+	justify-content: center;
+	color: white;
 }
 
-.compact-thumbnail {
-	width: 60px;
-	height: 60px;
-	border-radius: 0.5rem;
-	object-fit: cover;
+.carousel-control-prev, .carousel-control-next {
+	opacity: 1;
+	width: 10%;
+}
+
+/* 3. 축약형 뷰 (Reddit 스타일) */
+.compact-card {
+	display: flex;
+	align-items: flex-start; /* 위쪽 정렬 */
+	gap: 1rem;
+	padding: 0.75rem; /* 패딩 축소 */
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	background: rgba(20, 20, 20, 0.6); /* 더 어둡게 */
+	border-radius: 0.3rem; /* 둥글기 축소 */
+}
+
+.compact-card:hover {
+	background: rgba(255, 255, 255, 0.05);
+	border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Reddit형 썸네일 */
+.compact-thumbnail-area {
+	width: 120px; /* 너비 고정 */
+	height: 90px; /* 높이 고정 */
+	background: #000;
+	border-radius: 4px;
 	flex-shrink: 0;
-	background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* 5. 드롭다운 메뉴 (유리 효과) */
-.glass-dropdown {
-    background: rgba(30, 30, 30, 0.95);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    
-    /* [중요] 드롭다운이 확실하게 맨 위로 오도록 설정 */
-    z-index: 2000 !important;
-}
-
-.dropdown-item {
-	color: #e2e8f0;
-	font-size: 0.9rem;
-	padding: 0.5rem 1rem;
-}
-
-.dropdown-item:hover {
-	background: rgba(168, 85, 247, 0.2);
-	color: #fff;
-}
-
-.dropdown-item.active {
-	background: #a855f7;
-	color: #fff;
-}
-
-/* 텍스트 말줄임 처리 */
-.text-ellipsis {
-	display: -webkit-box;
-	-webkit-line-clamp: 3; /* 3줄까지만 표시 */
-	-webkit-box-orient: vertical;
 	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.compact-thumb-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover; /* 썸네일은 꽉 차게 (확대 기능 있으므로) */
+}
+
+.action-btn-group {
+	display: flex;
+	gap: 0.8rem; /* 버튼 사이 간격 */
+	margin-top: 1.2rem; /* [요청 2] 위쪽 간격을 더 벌림 */
+}
+
+/* [수정] 액션 버튼 기본 스타일 */
+.action-btn {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 6px 10px;
+	border-radius: 4px;
+	color: #9ca3af; /* 기본 회색 */
+	font-size: 0.85rem;
+	font-weight: 500;
+	background: transparent;
+	border: 1px solid transparent; /* 호버 시 테두리 방지용 투명 테두리 */
+	transition: all 0.2s;
+}
+
+/* [요청 2] 버튼별 호버 색상 (Article 페이지와 통일) */
+/* 댓글 - 파랑 */
+.action-btn.btn-comment:hover {
+	color: #60a5fa;
+	background: rgba(96, 165, 250, 0.1);
+}
+/* 공유 - 보라 */
+.action-btn.btn-share:hover {
+	color: #c084fc;
+	background: rgba(192, 132, 252, 0.1);
+}
+/* 저장 - 노랑 */
+.action-btn.btn-save:hover {
+	color: #facc15;
+	background: rgba(250, 204, 21, 0.1);
+}
+/* 신고 - 빨강 */
+.action-btn.btn-report:hover {
+	color: #f87171;
+	background: rgba(248, 113, 113, 0.1);
+}
+/* [추가] 좋아요 버튼 호버 효과 (카드형에 추가됨) */
+.action-btn.btn-like:hover {
+	color: #ec4899; /* 핑크색 */
+	background: rgba(236, 72, 153, 0.1);
+}
+
+/* [추가] 카드형 뷰 하단에서는 버튼 그룹의 위쪽 여백을 없앰 */
+.feed-card .action-btn-group {
+	margin-top: 0 !important;
+	width: 100%;
+	/* 버튼들 사이 간격을 균등하게 배분하려면 아래 주석 해제 */
+	/* justify-content: space-between; */
+}
+/* 공통 */
+.glass-dropdown {
+	background: rgba(30, 30, 30, 0.95);
+	backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	z-index: 2000 !important;
+}
+
+/* 간격 축소 */
+.feed-wrapper {
+	gap: 0.5rem !important;
+} /* 게시물 사이 간격 줄임 */
+
+/* [요청 4] 모달 닫기 버튼 스타일 */
+.modal-close-btn {
+	position: absolute;
+	top: -40px; /* 이미지 위쪽 바깥으로 배치 */
+	right: 0;
+	background: rgba(0, 0, 0, 0.5);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	color: white;
+	border-radius: 50%;
+	width: 36px;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.2s;
+	z-index: 1056; /* 모달 바디보다 위에 */
+}
+
+.modal-close-btn:hover {
+	background: rgba(255, 255, 255, 0.2);
+	transform: scale(1.1);
 }
 </style>
 </head>
@@ -143,100 +220,53 @@
 			</div>
 			<div class="feed-scroll-container custom-scrollbar">
 
-				<div class="feed-wrapper d-flex flex-column gap-4">
-
-					<div class="glass-panel p-3 shadow-lg">
-						<div class="d-flex gap-3">
-							<div class="avatar-lg text-white fw-bold flex-shrink-0"
-								style="background: linear-gradient(to top right, #a855f7, #6366f1);">
-								${not empty sessionScope.member ? fn:substring(sessionScope.member.userName, 0, 1) : "G"}
-							</div>
-							<div class="flex-grow-1">
-								<input class="create-input text-base"
-									placeholder="${not empty sessionScope.member ? 'Share your latest creation...' : 'Please login to post...'}"
-									type="text" ${empty sessionScope.member ? 'disabled' : ''} />
-
-								<div
-									class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top border-secondary border-opacity-25">
-									<div class="d-flex gap-2">
-										<button class="btn-icon text-gray-400 hover-purple">
-											<span class="material-symbols-outlined fs-5">image</span>
-										</button>
-										<button class="btn-icon text-gray-400 hover-blue">
-											<span class="material-symbols-outlined fs-5">movie</span>
-										</button>
-									</div>
-
-									<c:if test="${not empty sessionScope.member}">
-										<button class="action-btn-pill"
-											onclick="location.href='${pageContext.request.contextPath}/post/write'">Post</button>
-									</c:if>
-								</div>
-							</div>
-						</div>
-					</div>
+				<div class="feed-wrapper d-flex flex-column">
 
 					<div
 						class="filter-bar d-flex justify-content-between align-items-center px-2">
 						<div
 							class="d-flex align-items-center gap-4 text-xs fw-medium text-gray-500 text-uppercase tracking-widest">
-							<span>Latest Updates</span>
+							<span class="text-white-50">Latest Updates</span>
 						</div>
 
 						<div class="d-flex gap-2">
 							<div class="dropdown">
 								<button
-									class="btn btn-sm text-white border border-secondary border-opacity-25 d-flex align-items-center gap-2 px-3 py-2 rounded-pill"
-									style="background: rgba(255, 255, 255, 0.05);" type="button"
+									class="btn btn-sm text-white border border-secondary border-opacity-25 d-flex align-items-center gap-2 px-3 py-1 rounded-pill"
+									style="background: rgba(0, 0, 0, 0.3);" type="button"
 									data-bs-toggle="dropdown" aria-expanded="false">
 									<span id="currentSortLabel"> <c:choose>
-											<c:when test="${sort == 'likes'}">좋아요 많은 순</c:when>
+											<c:when test="${sort == 'likes'}">좋아요 순</c:when>
 											<c:when test="${sort == 'views'}">조회수 순</c:when>
-											<c:when test="${sort == 'trend'}">급상승</c:when>
 											<c:otherwise>최신순</c:otherwise>
 										</c:choose>
 									</span> <span class="material-symbols-outlined fs-6 small ms-1">expand_more</span>
 								</button>
 								<ul
 									class="dropdown-menu dropdown-menu-dark glass-dropdown dropdown-menu-end">
-									<li><h6 class="dropdown-header text-white-50">정렬 기준</h6></li>
-									<li><a
-										class="dropdown-item ${sort == 'latest' || empty sort ? 'active' : ''}"
+									<li><a class="dropdown-item"
 										href="javascript:changeSort('latest')">최신순</a></li>
-									<li><a
-										class="dropdown-item ${sort == 'likes' ? 'active' : ''}"
-										href="javascript:changeSort('likes')">좋아요 많은 순</a></li>
-									<li><a
-										class="dropdown-item ${sort == 'views' ? 'active' : ''}"
+									<li><a class="dropdown-item"
+										href="javascript:changeSort('likes')">좋아요 순</a></li>
+									<li><a class="dropdown-item"
 										href="javascript:changeSort('views')">조회수 순</a></li>
-									<li><a
-										class="dropdown-item ${sort == 'trend' ? 'active' : ''}"
-										href="javascript:changeSort('trend')">급상승</a></li>
 								</ul>
 							</div>
 
 							<div class="dropdown">
 								<button
-									class="btn btn-sm text-white border border-secondary border-opacity-25 d-flex align-items-center gap-2 px-3 py-2 rounded-pill"
-									style="background: rgba(255, 255, 255, 0.05);" type="button"
+									class="btn btn-sm text-white border border-secondary border-opacity-25 d-flex align-items-center gap-2 px-3 py-1 rounded-pill"
+									style="background: rgba(0, 0, 0, 0.3);" type="button"
 									data-bs-toggle="dropdown" aria-expanded="false">
 									<span class="material-symbols-outlined fs-6"> ${viewMode == 'compact' ? 'view_list' : 'view_day'}
 									</span>
 								</button>
 								<ul
-									class="dropdown-menu dropdown-menu-dark glass-dropdown dropdown-menu-end"
-									style="min-width: 120px;">
-									<li><h6 class="dropdown-header text-white-50">보기</h6></li>
-									<li><a
-										class="dropdown-item ${viewMode == 'card' || empty viewMode ? 'active' : ''}"
-										href="javascript:changeView('card')"> <span
-											class="material-symbols-outlined fs-6 align-middle me-2">view_day</span>카드형
-									</a></li>
-									<li><a
-										class="dropdown-item ${viewMode == 'compact' ? 'active' : ''}"
-										href="javascript:changeView('compact')"> <span
-											class="material-symbols-outlined fs-6 align-middle me-2">view_list</span>축약형
-									</a></li>
+									class="dropdown-menu dropdown-menu-dark glass-dropdown dropdown-menu-end">
+									<li><a class="dropdown-item"
+										href="javascript:changeView('card')">카드형</a></li>
+									<li><a class="dropdown-item"
+										href="javascript:changeView('compact')">축약형</a></li>
 								</ul>
 							</div>
 						</div>
@@ -244,20 +274,19 @@
 
 					<c:if test="${empty list}">
 						<div class="text-center py-5 glass-card shadow-lg">
-							<span
-								class="material-symbols-outlined fs-1 text-white-50 opacity-25">inbox</span>
-							<p class="text-white-50 mt-3">등록된 게시글이 없습니다.</p>
+							<p class="text-white-50">등록된 게시글이 없습니다.</p>
 						</div>
 					</c:if>
 
 					<c:forEach var="dto" items="${list}">
 
 						<c:if test="${viewMode == 'card' || empty viewMode}">
-							<div class="glass-card shadow-lg feed-card group"
-								onclick="goArticle('${dto.postId}')">
+							<div class="glass-card shadow-lg feed-card mb-3"
+								onclick="goArticle('${dto.postId}')"
+								style="background: rgba(30, 30, 30, 0.4);">
 
 								<div
-									class="p-3 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
+									class="p-3 d-flex align-items-center justify-content-between">
 									<div class="d-flex align-items-center gap-3">
 										<div
 											class="avatar-md text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden"
@@ -268,9 +297,7 @@
 														src="${pageContext.request.contextPath}/uploads/profile/${dto.authorProfileImage}"
 														style="width: 100%; height: 100%; object-fit: cover;">
 												</c:when>
-												<c:otherwise>
-                                    ${fn:substring(dto.authorNickname, 0, 1)}
-                                </c:otherwise>
+												<c:otherwise>${fn:substring(dto.authorNickname, 0, 1)}</c:otherwise>
 											</c:choose>
 										</div>
 										<div>
@@ -280,96 +307,129 @@
 									</div>
 								</div>
 
-								<div class="p-3">
-									<p class="text-light text-sm mb-3 lh-base text-ellipsis"
-										style="color: #d1d5db;">${dto.content}</p>
-
-									<c:if test="${not empty dto.thumbnail}">
-										<div
-											class="card-thumbnail-area border border-white border-opacity-10">
-											<img
-												src="${pageContext.request.contextPath}/uploads/photo/${dto.thumbnail}"
-												class="card-thumbnail-img" alt="Post Image">
-										</div>
-									</c:if>
+								<div class="px-3 pb-2">
+									<h5 class="text-white fw-bold fs-5">${dto.title}</h5>
+									<p class="text-gray-300 text-sm mb-3 text-ellipsis">${dto.content}</p>
 								</div>
 
-								<div
-									class="px-3 py-2 d-flex align-items-center justify-content-between"
-									style="background: rgba(255, 255, 255, 0.05);">
-									<div class="d-flex gap-4">
-										<button
-											class="d-flex align-items-center gap-2 btn-icon text-xs ps-0 hover-pink">
+								<c:if test="${not empty dto.fileList}">
+									<div id="carousel-${dto.postId}"
+										class="carousel slide px-3 pb-3" data-bs-interval="false"
+										onclick="event.stopPropagation();">
+										<div class="carousel-inner">
+											<c:forEach var="fileDto" items="${dto.fileList}"
+												varStatus="status">
+												<div class="carousel-item ${status.first ? 'active' : ''}">
+													<div class="image-container">
+														<img
+															src="${pageContext.request.contextPath}/uploads/photo/${fileDto.filePath}"
+															class="slider-img" alt="Post Image">
+													</div>
+												</div>
+											</c:forEach>
+										</div>
+										<c:if test="${fn:length(dto.fileList) > 1}">
+											<button class="carousel-control-prev" type="button"
+												data-bs-target="#carousel-${dto.postId}"
+												data-bs-slide="prev">
+												<span class="carousel-btn-glass"><span
+													class="material-symbols-outlined">chevron_left</span></span>
+											</button>
+											<button class="carousel-control-next" type="button"
+												data-bs-target="#carousel-${dto.postId}"
+												data-bs-slide="next">
+												<span class="carousel-btn-glass"><span
+													class="material-symbols-outlined">chevron_right</span></span>
+											</button>
+										</c:if>
+									</div>
+								</c:if>
+
+								<div class="px-3 py-3 border-top border-white border-opacity-10">
+									<div class="action-btn-group"
+										onclick="event.stopPropagation();">
+
+										<button class="action-btn btn-like">
 											<span class="material-symbols-outlined fs-6">favorite</span>
-											${dto.likeCount}
+											<span>${dto.likeCount}</span>
 										</button>
-										<button
-											class="d-flex align-items-center gap-2 btn-icon text-xs hover-blue">
+
+										<button class="action-btn btn-comment">
 											<span class="material-symbols-outlined fs-6">chat_bubble</span>
-											${dto.viewCount}
+											<span>${dto.commentCount}</span>
+										</button>
+
+										<button class="action-btn btn-share">
+											<span class="material-symbols-outlined fs-6">share</span> <span>공유</span>
+										</button>
+
+										<button class="action-btn btn-save">
+											<span class="material-symbols-outlined fs-6">bookmark</span>
+											<span>저장</span>
+										</button>
+
+										<button class="action-btn btn-report ms-auto">
+											<span class="material-symbols-outlined fs-6">flag</span> <span>신고</span>
 										</button>
 									</div>
-									<button
-										class="d-flex align-items-center gap-1 btn-icon text-xs pe-0 hover-purple">
-										<span class="material-symbols-outlined fs-6">share</span>
-										Share
-									</button>
 								</div>
 							</div>
+
 						</c:if>
 
 						<c:if test="${viewMode == 'compact'}">
-							<div
-								class="glass-card shadow-sm feed-card rounded-3 compact-card"
+							<div class="compact-card mb-2"
 								onclick="goArticle('${dto.postId}')">
 
-								<c:choose>
-									<c:when test="${not empty dto.thumbnail}">
-										<img
-											src="${pageContext.request.contextPath}/uploads/photo/${dto.thumbnail}"
-											class="compact-thumbnail" alt="Thumb">
-									</c:when>
-									<c:otherwise>
-										<div
-											class="compact-thumbnail d-flex align-items-center justify-content-center text-white-50">
-											<span class="material-symbols-outlined">article</span>
-										</div>
-									</c:otherwise>
-								</c:choose>
-
-								<div class="flex-grow-1" style="min-width: 0;">
-									<h5 class="text-white fw-bold fs-6 mb-1 text-truncate">${dto.title}</h5>
-									<div
-										class="d-flex align-items-center gap-2 text-xs text-gray-400">
-										<span class="text-white fw-medium">${dto.authorNickname}</span>
-										<span>&bull;</span> <span>${dto.createdDate}</span>
-									</div>
+								<div class="compact-thumbnail-area"
+									onclick="event.stopPropagation(); showImageModal('${dto.fileList[0].filePath}');">
+									<c:choose>
+										<c:when test="${not empty dto.fileList}">
+											<img
+												src="${pageContext.request.contextPath}/uploads/photo/${dto.fileList[0].filePath}"
+												class="compact-thumb-img" alt="Thumb">
+											<div class="position-absolute p-1">
+												<span class="material-symbols-outlined text-white fs-6"
+													style="text-shadow: 0 0 4px black;">open_in_full</span>
+											</div>
+										</c:when>
+										<c:otherwise>
+											<span class="material-symbols-outlined text-white-50">article</span>
+										</c:otherwise>
+									</c:choose>
 								</div>
 
-								<div
-									class="d-flex flex-column align-items-end gap-1 text-xs text-white-50">
-									<span class="d-flex align-items-center gap-1"> <span
-										class="material-symbols-outlined" style="font-size: 1rem;">favorite</span>
-										${dto.likeCount}
-									</span> <span class="d-flex align-items-center gap-1"> <span
-										class="material-symbols-outlined" style="font-size: 1rem;">visibility</span>
-										${dto.viewCount}
-									</span>
+								<div class="flex-grow-1" style="min-width: 0;">
+									<div class="d-flex align-items-center gap-2 mb-1">
+										<span class="text-xs text-white fw-bold">${dto.authorNickname}</span>
+										<span class="text-xs text-gray-500">&bull;
+											${dto.createdDate}</span>
+									</div>
+
+									<h5 class="text-white fw-bold fs-6 mb-1 text-truncate">${dto.title}</h5>
+
+									<div class="action-btn-group"
+										onclick="event.stopPropagation();">
+										<button class="action-btn btn-comment">
+											<span class="material-symbols-outlined fs-6">chat_bubble</span>
+											<span>${dto.commentCount} 댓글</span>
+										</button>
+										<button class="action-btn btn-share">
+											<span class="material-symbols-outlined fs-6">share</span> <span>공유</span>
+										</button>
+										<button class="action-btn btn-save">
+											<span class="material-symbols-outlined fs-6">bookmark</span>
+											<span>저장</span>
+										</button>
+										<button class="action-btn btn-report">
+											<span class="material-symbols-outlined fs-6">flag</span> <span>신고</span>
+										</button>
+									</div>
 								</div>
 							</div>
 						</c:if>
-
 					</c:forEach>
-
-					<div class="text-center py-4">
-						<span class="text-secondary small">You've reached the end
-							of the feed</span>
-					</div>
 				</div>
-
-
-
-
 			</div>
 			<div class="position-absolute bottom-0 end-0 m-4 z-3">
 				<button
@@ -397,7 +457,23 @@
 			</div>
 		</main>
 	</div>
+	<div class="modal fade" id="imageModal" tabindex="-1"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-lg">
+			<div class="modal-content bg-transparent border-0 position-relative">
 
+				<button type="button" class="modal-close-btn"
+					onclick="closeImageModal()">
+					<span class="material-symbols-outlined">close</span>
+				</button>
+
+				<div class="modal-body p-0 text-center">
+					<img id="modalImage" src="" class="img-fluid rounded shadow-lg"
+						style="max-height: 85vh;">
+				</div>
+			</div>
+		</div>
+	</div>
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 	<script
@@ -467,6 +543,95 @@
 		}
 	</script>
 
+	<script>
+		// 모달 인스턴스를 저장할 전역 변수
+		let myModalInstance = null;
 
+		// 1. 이미지 확대 모달 열기
+		function showImageModal(imagePath) {
+			if (!imagePath)
+				return;
+
+			const fullPath = '${pageContext.request.contextPath}/uploads/photo/'
+					+ imagePath;
+			const modalElement = document.getElementById('imageModal');
+
+			// 이미지 경로 설정
+			document.getElementById('modalImage').src = fullPath;
+
+			// 모달 인스턴스가 없으면 생성, 있으면 재사용
+			if (!myModalInstance) {
+				myModalInstance = new bootstrap.Modal(modalElement);
+			}
+
+			myModalInstance.show();
+		}
+
+		// 2. 이미지 확대 모달 닫기 (X 버튼용)
+		function closeImageModal() {
+			if (myModalInstance) {
+				myModalInstance.hide();
+			}
+		}
+	</script>
+
+	<script>
+		// [요청] 캐러셀(슬라이더) 버튼 제어 로직: 첫 장에선 < 숨김, 마지막 장에선 > 숨김
+		document.addEventListener('DOMContentLoaded', function() {
+
+			// 화면에 있는 모든 슬라이더를 찾음
+			const carousels = document.querySelectorAll('.carousel');
+
+			carousels.forEach(function(carousel) {
+				// 1. 초기 상태 설정
+				const prevBtn = carousel
+						.querySelector('.carousel-control-prev');
+				const nextBtn = carousel
+						.querySelector('.carousel-control-next');
+				const items = carousel.querySelectorAll('.carousel-item');
+
+				// 이미지가 없거나 버튼이 없는 경우 패스
+				if (!items.length)
+					return;
+
+				// (1) 처음 로딩 시 첫 번째 장이므로 Prev 버튼 숨기기
+				if (prevBtn)
+					prevBtn.style.display = 'none';
+
+				// (2) 이미지가 1개뿐이면 Next 버튼도 숨기기
+				if (items.length <= 1 && nextBtn) {
+					nextBtn.style.display = 'none';
+				}
+
+				// 2. 슬라이드 넘길 때마다 실행되는 이벤트
+				carousel.addEventListener('slid.bs.carousel', function(e) {
+					const currentIndex = e.to; // 현재 보고 있는 순서 (0부터 시작)
+					const lastIndex = items.length - 1; // 마지막 순서
+
+					// A. 첫 번째 장일 때 -> Prev 숨김, Next 보임
+					if (currentIndex === 0) {
+						if (prevBtn)
+							prevBtn.style.display = 'none';
+						if (nextBtn)
+							nextBtn.style.display = 'flex';
+					}
+					// B. 마지막 장일 때 -> Prev 보임, Next 숨김
+					else if (currentIndex === lastIndex) {
+						if (prevBtn)
+							prevBtn.style.display = 'flex';
+						if (nextBtn)
+							nextBtn.style.display = 'none';
+					}
+					// C. 중간일 때 -> 둘 다 보임
+					else {
+						if (prevBtn)
+							prevBtn.style.display = 'flex';
+						if (nextBtn)
+							nextBtn.style.display = 'flex';
+					}
+				});
+			});
+		});
+	</script>
 </body>
 </html>

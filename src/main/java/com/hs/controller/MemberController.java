@@ -235,6 +235,96 @@ public class MemberController {
 			return mav;
 		}
 	}
+	
+	@PostMapping("signupAjax")
+	@ResponseBody
+	public Map<String, Object> signupSubmitAjax(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		Map<String, Object> map = new HashMap<>();
+
+		// 한글 깨짐 방지 (필터 설정이 안 되어 있을 경우 대비)
+		req.setCharacterEncoding("UTF-8");
+
+		try {
+			// [1] 사용자 입력값 모두 받기 (signup.jsp의 input name과 일치해야 함)
+			String userId = req.getParameter("userId");
+			String userPwd = req.getParameter("userPwd");
+			String userName = req.getParameter("userName");
+			String userNickname = req.getParameter("userNickname");
+			String birth = req.getParameter("birth");
+			String email = req.getParameter("email");
+			String addr1 = req.getParameter("addr1");
+			String addr2 = req.getParameter("addr2");
+			String tel = req.getParameter("tel");
+			String zip = req.getParameter("zip");
+
+			// [2] DTO에 모든 데이터 담기
+			MemberDTO dto = new MemberDTO();
+			dto.setUserId(userId);
+			dto.setUserPwd(userPwd);
+			dto.setUserName(userName);
+			dto.setUserNickname(userNickname);
+			dto.setBirth(birth);
+			dto.setEmail(email);
+			dto.setAddr1(addr1);
+			dto.setAddr2(addr2);
+			dto.setTel(tel);
+			dto.setZip(zip);
+
+			// [3] 서비스 호출 (이미 존재하는 insertMember 활용)
+			// 서비스 내부에서 member1(기본)과 member2(상세) 테이블에 각각 저장될 것입니다.
+			service.insertMember(dto);
+			
+			map.put("status", "success");
+	        map.put("message", "회원가입이 완료되었습니다.");
+
+		} catch (Exception e) {
+	        e.printStackTrace();
+	        // [4] 실패 데이터 구성
+	        map.put("status", "fail");
+	        map.put("message", "가입 도중 오류가 발생했습니다: " + e.getMessage());
+	    }
+		
+		return map;
+	}
+	
+	@PostMapping("checkDuplicate")
+	@ResponseBody
+	public Map<String, Object> checkDuplicate(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    Map<String, Object> map = new HashMap<>();
+	    
+	    req.setCharacterEncoding("UTF-8");
+
+		try {
+			String userId = req.getParameter("userId");
+	        String userNickname = req.getParameter("userNickname");
+			
+			if (userId != null && !userId.trim().isEmpty()) {
+				if (service.checkId(userId.trim()) > 0) {
+					map.put("status", "failId");
+					map.put("message", "이미 등록된 아이디입니다.");
+					return map;
+				}
+			}
+		    
+		    if (userNickname != null && !userNickname.trim().isEmpty()) {
+	            if (service.checkNickname(userNickname.trim()) > 0) {
+	                map.put("status", "failNickname");
+	                map.put("message", "이미 사용 중인 닉네임입니다.");
+	                return map;
+	            }
+	        }
+		    
+		    map.put("status", "success");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("status", "error");
+			map.put("message", "서버 내부 오류가 발생했습니다.");
+		}
+	    
+	    return map;
+	}
 
 	@GetMapping("page")
 	public ModelAndView page(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -260,6 +350,18 @@ public class MemberController {
 	        e.printStackTrace();
 	        return new ModelAndView("redirect:/");
 	    }
+	}
+	
+	@GetMapping("findId")
+	public ModelAndView findIdForm(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		return new ModelAndView("member/findId");
+	}
+	
+	@GetMapping("findPwd")
+	public ModelAndView findPwdForm(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		return new ModelAndView("member/findPwd");
 	}
 
 }

@@ -39,13 +39,13 @@
         #{userName}, 
         #{userNickname},
         #{birth}, 
-        #{email, jdbcType=VARCHAR}, 
+        #{email}, 
         #{addr1, jdbcType=VARCHAR}, 
         #{addr2, jdbcType=VARCHAR}, 
         #{tel, jdbcType=VARCHAR}, 
         #{profile_photo, jdbcType=VARCHAR}, 
         #{banner_photo, jdbcType=VARCHAR},
-        #{zip}
+        #{zip, jdbcType=VARCHAR}
     )
 </insert>
 
@@ -89,6 +89,18 @@
 		user_status AS status
 		FROM member
 		WHERE user_num = #{userIdx}
+	</select>
+	
+	<select id="checkId" parameterType="String" resultType="Integer">
+    	SELECT COUNT(*) 
+    	FROM member 
+    	WHERE user_id = #{userId}
+	</select>
+	
+	<select id="checkNickname" parameterType="String" resultType="Integer">
+    	SELECT COUNT(*) 
+    	FROM member 
+    	WHERE user_nickname = #{userNickname}
 	</select>
 	
 	<select id="loginMember1" parameterType="map" resultType="com.hs.model.MemberDTO">

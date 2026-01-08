@@ -115,54 +115,68 @@
 		ORDER BY file_order ASC
 	</select>
 
-	<select id="listPostMain" parameterType="map" resultType="com.hs.model.PostDTO">
-		SELECT
-			p.POST_ID AS postId,
-			p.USER_NUM AS userNum,
-			p.TITLE AS title,
-			p.CONTENT AS content,
-			p.VIEW_COUNT AS viewCount,
-			p.LIKE_COUNT AS likeCount,
-			p.COMMENT_COUNT AS commentCount,
-			
-			CASE
-				WHEN TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
-				THEN TO_CHAR(p.CREATED_DATE, 'HH24:MI')
-				ELSE TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD')
-			END AS createdDate,
-			
-			/* 닉네임 */
-			NVL(u.USER_NICKNAME, 'Unknown') AS authorNickname,
-			
-			/* [수정 확인] 여기가 반드시 USER_PROFILE 이어야 합니다! */
-			u.USER_PROFILE AS authorProfileImage,
-			
-			/* 썸네일 */
-			(SELECT FILE_PATH FROM (
-				SELECT FILE_PATH, POST_ID, ROW_NUMBER() OVER(PARTITION BY POST_ID ORDER BY FILE_ORDER ASC) as rn
-				FROM FILEAT
-			 ) f WHERE f.POST_ID = p.POST_ID AND rn = 1
-			) AS thumbnail
+	<resultMap id="postMap" type="com.hs.model.PostDTO">
+    <id property="postId" column="postId"/>
+    <result property="userNum" column="userNum"/>
+    <result property="title" column="title"/>
+    <result property="content" column="content"/>
+    <result property="viewCount" column="viewCount"/>
+    <result property="likeCount" column="likeCount"/>
+    <result property="commentCount" column="commentCount"/>
+    <result property="createdDate" column="createdDate"/>
+    <result property="authorNickname" column="authorNickname"/>
+    <result property="authorProfileImage" column="authorProfileImage"/>
+    
+    <collection property="fileList" ofType="com.hs.model.FileAtDTO">
+        <result property="fileAtId" column="fileAtId"/>
+        <result property="filePath" column="filePath"/>
+        <result property="fileOrder" column="fileOrder"/>
+    </collection>
+</resultMap>
 
-		FROM POSTS p
-		LEFT JOIN MEMBER u ON p.USER_NUM = u.USER_NUM
-		WHERE p.IS_DELETED = '0'
-		
-		<choose>
-			<when test="sort == 'likes'">
-				ORDER BY p.LIKE_COUNT DESC, p.POST_ID DESC
-			</when>
-			<when test="sort == 'views'">
-				ORDER BY p.VIEW_COUNT DESC, p.POST_ID DESC
-			</when>
-			<when test="sort == 'trend'">
-				ORDER BY (p.VIEW_COUNT + p.LIKE_COUNT * 5) DESC, p.POST_ID DESC
-			</when>
-			<otherwise>
-				ORDER BY p.POST_ID DESC
-			</otherwise>
-		</choose>
-	</select>
+<select id="listPostMain" parameterType="map" resultMap="postMap">
+    SELECT
+        p.POST_ID AS postId,
+        p.USER_NUM AS userNum,
+        p.TITLE AS title,
+        p.CONTENT AS content,
+        p.VIEW_COUNT AS viewCount,
+        p.LIKE_COUNT AS likeCount,
+        p.COMMENT_COUNT AS commentCount,
+        
+        CASE
+            WHEN TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+            THEN TO_CHAR(p.CREATED_DATE, 'HH24:MI')
+            ELSE TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD')
+        END AS createdDate,
+        
+        NVL(u.USER_NICKNAME, 'Unknown') AS authorNickname,
+        u.USER_PROFILE AS authorProfileImage,
+        
+        /* 파일 정보 조회 */
+        f.FILE_AT_ID AS fileAtId,
+        f.FILE_PATH AS filePath,
+        f.FILE_ORDER AS fileOrder
+
+    FROM POSTS p
+    LEFT JOIN MEMBER u ON p.USER_NUM = u.USER_NUM
+    /* 파일 테이블도 조인하여 모든 이미지 가져오기 */
+    LEFT JOIN FILEAT f ON p.POST_ID = f.POST_ID
+    
+    WHERE p.IS_DELETED = '0'
+    
+    <choose>
+        <when test="sort == 'likes'">
+            ORDER BY p.LIKE_COUNT DESC, p.POST_ID DESC, f.FILE_ORDER ASC
+        </when>
+        <when test="sort == 'views'">
+            ORDER BY p.VIEW_COUNT DESC, p.POST_ID DESC, f.FILE_ORDER ASC
+        </when>
+        <otherwise>
+            ORDER BY p.POST_ID DESC, f.FILE_ORDER ASC
+        </otherwise>
+    </choose>
+</select>
 
 
 
