@@ -1,6 +1,7 @@
 package com.hs.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.hs.model.FileAtDTO;
 import com.hs.model.PostDTO;
@@ -25,4 +26,7 @@ public interface PostMapper {
 
 	// 해당 게시글의 첨부파일 목록 조회
 	public List<FileAtDTO> listFileAt(long postId);
+	
+	public List<PostDTO> listPostMain(Map<String, Object> map);
+
 }

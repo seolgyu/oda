@@ -56,7 +56,8 @@
 		u.user_profile AS authorProfileImage
 		FROM posts p
 		JOIN member u ON p.user_num = u.user_num
-		WHERE p.post_id = #{postId}
+		WHERE p.post_id =
+		#{postId}
 	</select>
 
 	<select id="listPost" resultType="com.hs.model.PostDTO">
@@ -65,9 +66,11 @@
 		p.user_num AS userNum,
 		p.title,
 		p.view_count AS viewCount,
-		p.like_count AS likeCount,
+		p.like_count
+		AS likeCount,
 		p.created_date AS createdDate,
-		u.user_nickname AS authorNickname,
+		u.user_nickname AS
+		authorNickname,
 		NULL AS authorProfileImage
 		FROM posts p
 		JOIN member u ON
@@ -79,31 +82,89 @@
 	<insert id="insertFileAt" parameterType="com.hs.model.FileAtDTO">
 		INSERT INTO FILEAT (
 		file_at_id, file_name, file_path, file_size,
-		file_type, file_order, uploaded_date, post_id
+		file_type, file_order,
+		uploaded_date, post_id
 		) VALUES (
-		fileat_seq.NEXTVAL, #{fileName}, #{filePath}, #{fileSize},
-		#{fileType}, #{fileOrder}, SYSTIMESTAMP, #{postId}
+		fileat_seq.NEXTVAL, #{fileName},
+		#{filePath}, #{fileSize},
+		#{fileType}, #{fileOrder}, SYSTIMESTAMP,
+		#{postId}
 		)
 	</insert>
-	
+
 	<update id="updateHitCount" parameterType="long">
 		UPDATE posts
-		SET view_count = view_count + 1
+		SET
+		view_count = view_count + 1
 		WHERE post_id = #{postId}
 	</update>
 
-	<select id="listFileAt" parameterType="long" resultType="com.hs.model.FileAtDTO">
-		SELECT 
-			file_at_id AS fileAtId,
-			file_name AS fileName,
-			file_path AS filePath,
-			file_size AS fileSize,
-			file_type AS fileType,
-			file_order AS fileOrder,
-			uploaded_date AS uploadedDate,
-			post_id AS postId
+	<select id="listFileAt" parameterType="long"
+		resultType="com.hs.model.FileAtDTO">
+		SELECT
+		file_at_id AS fileAtId,
+		file_name AS fileName,
+		file_path AS filePath,
+		file_size AS fileSize,
+		file_type AS fileType,
+		file_order AS fileOrder,
+		uploaded_date AS uploadedDate,
+		post_id AS postId
 		FROM FILEAT
 		WHERE post_id = #{postId}
 		ORDER BY file_order ASC
 	</select>
+
+	<select id="listPostMain" parameterType="map" resultType="com.hs.model.PostDTO">
+		SELECT
+			p.POST_ID AS postId,
+			p.USER_NUM AS userNum,
+			p.TITLE AS title,
+			p.CONTENT AS content,
+			p.VIEW_COUNT AS viewCount,
+			p.LIKE_COUNT AS likeCount,
+			p.COMMENT_COUNT AS commentCount,
+			
+			CASE
+				WHEN TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+				THEN TO_CHAR(p.CREATED_DATE, 'HH24:MI')
+				ELSE TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD')
+			END AS createdDate,
+			
+			/* 닉네임 */
+			NVL(u.USER_NICKNAME, 'Unknown') AS authorNickname,
+			
+			/* [수정 확인] 여기가 반드시 USER_PROFILE 이어야 합니다! */
+			u.USER_PROFILE AS authorProfileImage,
+			
+			/* 썸네일 */
+			(SELECT FILE_PATH FROM (
+				SELECT FILE_PATH, POST_ID, ROW_NUMBER() OVER(PARTITION BY POST_ID ORDER BY FILE_ORDER ASC) as rn
+				FROM FILEAT
+			 ) f WHERE f.POST_ID = p.POST_ID AND rn = 1
+			) AS thumbnail
+
+		FROM POSTS p
+		LEFT JOIN MEMBER u ON p.USER_NUM = u.USER_NUM
+		WHERE p.IS_DELETED = '0'
+		
+		<choose>
+			<when test="sort == 'likes'">
+				ORDER BY p.LIKE_COUNT DESC, p.POST_ID DESC
+			</when>
+			<when test="sort == 'views'">
+				ORDER BY p.VIEW_COUNT DESC, p.POST_ID DESC
+			</when>
+			<when test="sort == 'trend'">
+				ORDER BY (p.VIEW_COUNT + p.LIKE_COUNT * 5) DESC, p.POST_ID DESC
+			</when>
+			<otherwise>
+				ORDER BY p.POST_ID DESC
+			</otherwise>
+		</choose>
+	</select>
+
+
+
+
 </mapper>

@@ -1,6 +1,7 @@
 package com.hs.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.hs.mapper.PostMapper;
 import com.hs.model.FileAtDTO;
@@ -75,5 +76,16 @@ public class PostServiceImpl implements PostService {
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	@Override
+	public List<PostDTO> listPostMain(Map<String, Object> map) {
+	    List<PostDTO> list = null;
+	    try {
+	        list = mapper.listPostMain(map);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return list;
 	}
 }

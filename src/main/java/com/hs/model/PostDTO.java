@@ -21,7 +21,8 @@ public class PostDTO {
 	private String showCounts;   
 
 	private List<FileAtDTO> fileList;
-
+	private String thumbnail;
+	
 	// 조인용 필드 (작성자 닉네임 등)
 	private String authorNickname;
 	private String authorProfileImage;
@@ -134,5 +135,10 @@ public class PostDTO {
 	public void setFileList(List<FileAtDTO> fileList) {
 		this.fileList = fileList;
 	}
-
+	public String getThumbnail() {
+		return thumbnail;
+	}
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
+	}
 }
