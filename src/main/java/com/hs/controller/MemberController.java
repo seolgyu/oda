@@ -351,5 +351,17 @@ public class MemberController {
 	        return new ModelAndView("redirect:/");
 	    }
 	}
+	
+	@GetMapping("findId")
+	public ModelAndView findIdForm(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		return new ModelAndView("member/findId");
+	}
+	
+	@GetMapping("findPwd")
+	public ModelAndView findPwdForm(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		return new ModelAndView("member/findPwd");
+	}
 
 }

@@ -248,8 +248,14 @@ input:-webkit-autofill:active {
     <div class="app-body">
         <%@ include file="../home/sidebar.jsp"%>
 
-        <main class="app-main d-flex justify-content-center align-items-center py-2">
+		<main
+			class="app-main d-flex justify-content-center align-items-center py-2">
 			<div class="signup-card shadow-lg">
+				<a href="${pageContext.request.contextPath}/member/login"
+					class="position-absolute top-0 start-0 m-3 text-secondary hover-text-white transition-colors"
+					style="z-index: 10;"> <span class="material-symbols-outlined"
+					style="font-size: 1.2rem;">arrow_back</span>
+				</a>
 
 				<div id="successOverlay" class="success-overlay">
 					<div class="success-content">
@@ -270,8 +276,8 @@ input:-webkit-autofill:active {
 					<div class="position-relative">
 						<span
 							class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y input-icon text-secondary">person</span>
-						<input type="text" name="userId" class="form-control login-input" autocomplete="off"
-							placeholder="User ID">
+						<input type="text" name="userId" class="form-control login-input"
+							autocomplete="off" placeholder="User ID">
 					</div>
 
 					<div class="position-relative">
@@ -304,16 +310,17 @@ input:-webkit-autofill:active {
 					<div class="position-relative">
 						<span
 							class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y input-icon text-secondary">calendar_today</span>
-						<input type="text" name="birth" class="form-control login-input" autocomplete="off"
-							placeholder="Birth Date" onfocus="(this.type='date')"
+						<input type="text" name="birth" class="form-control login-input"
+							autocomplete="off" placeholder="Birth Date"
+							onfocus="(this.type='date')"
 							onblur="if(!this.value) this.type='text'">
 					</div>
 
 					<div class="position-relative">
 						<span
 							class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y input-icon text-secondary">mail</span>
-						<input type="email" name="email" class="form-control login-input" autocomplete="off"
-							placeholder="Email Address">
+						<input type="email" name="email" class="form-control login-input"
+							autocomplete="off" placeholder="Email Address">
 					</div>
 
 					<div class="d-flex align-items-center my-1 opacity-50">
@@ -327,8 +334,8 @@ input:-webkit-autofill:active {
 					<div class="position-relative">
 						<span
 							class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y input-icon text-secondary">call</span>
-						<input type="text" name="tel" class="form-control login-input" autocomplete="off"
-							placeholder="Phone Number">
+						<input type="text" name="tel" class="form-control login-input"
+							autocomplete="off" placeholder="Phone Number">
 					</div>
 
 					<div class="position-relative">
@@ -357,7 +364,7 @@ input:-webkit-autofill:active {
 				</div>
 			</div>
 		</main>
-    </div>
+	</div>
 
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
