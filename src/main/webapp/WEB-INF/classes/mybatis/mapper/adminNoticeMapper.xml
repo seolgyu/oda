@@ -4,23 +4,23 @@
 <mapper namespace="com.hs.mapper.admin.NoticeMapper">
 	<sql id="where-list">
 		<if test="schType == 'all' ">
-			( INSTR(subject, #{kwd}) &gt; 0
-				OR DBMS_LOB.INSTR(content, #{kwd}) &gt; 0 )
+			( INSTR(noti_title, #{kwd}) &gt; 0
+				OR DBMS_LOB.INSTR(noti_content, #{kwd}) &gt; 0 )
 		</if>
 		<if test="schType == 'subject' ">
-			INSTR(subject, #{kwd}) &gt; 0
+			INSTR(noti_title, #{kwd}) &gt; 0
 		</if>
 		<if test="schType == 'content' ">
-			DBMS_LOB.INSTR(content, #{kwd}) &gt; 0 
+			DBMS_LOB.INSTR(noti_content, #{kwd}) &gt; 0 
 		</if>
 		<if test="schType == 'userName' ">
 			INSTR(user_nickname, #{kwd}) &gt; 0
 		</if>
 		<if test="schType == 'reg_date' ">
-			( TO_CHAR(noti_reg_date, 'YYYY-MM-DD') = #{kwd}
+			(( TO_CHAR(noti_reg_date, 'YYYY-MM-DD') = #{kwd}
 				OR TO_CHAR(noti_reg_date, 'YYYYMMDD') = #{kwd} ) OR
 			( TO_CHAR(update_date, 'YYYY-MM-DD') = #{kwd}
-				OR TO_CHAR(update_date, 'YYYYMMDD') = #{kwd} )
+				OR TO_CHAR(update_date, 'YYYYMMDD') = #{kwd} ))
 		</if>
 	</sql>
 	
@@ -60,8 +60,8 @@
 	
 	<select id="dataCount" parameterType="map" resultType="Integer">
 		SELECT NVL(COUNT(*), 0)
-		FROM notice noti, member memb
-		WHERE noti.user_num = memb.user_num
+		FROM notice noti
+		JOIN member memb ON noti.user_num = memb.user_num
 		<where>
 			<if test="is_notice != null">
 				is_notice = #{is_notice}
