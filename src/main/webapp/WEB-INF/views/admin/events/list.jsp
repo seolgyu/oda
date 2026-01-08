@@ -269,28 +269,33 @@
 						<table class="table table-dark-custom">
 							<thead>
 								<tr>
-									<th class="text-center" style="width: 50px;"><input
-										type="checkbox" class="form-check-input-all"></th>
-									<th style="width: 70px;">번호</th>
+									<th class="text-center" style="width: 50px;">
+										<input type="checkbox" class="form-check-input-all"></th>
+									<th style="width: 80px;">번호</th>
 									<th style="width: 100px;">상태</th>
-									<th>이벤트 제목</th>
-									<th style="width: 140px;">시작일</th>
-									<th style="width: 140px;">종료일</th>
-									<th class="text-center" style="width: 90px;">조회수</th>
+									<th>제목</th>
+									<th style="width: 150px;">시작일</th>
+									<th style="width: 120px;">종료일</th>
+									<th class="text-center" style="width: 100px;">조회수</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr style="background: rgba(34, 197, 94, 0.03);">
-									<td class="text-center"><input type="checkbox"
-										class="form-check-input"></td>
-									<td class="text-white-50">15</td>
-									<td><span class="badge badge-ongoing">진행 중</span></td>
-									<td><span class="fw-bold text-white">겨울 맞이 커뮤니티 활동왕
-											선정</span></td>
-									<td class="text-white-50 date-text">2026-01-01</td>
-									<td class="text-white-50 date-text">2026-01-31</td>
-									<td class="text-center text-white-50">3,452</td>
+								<c:forEach var="dto" items="${list}" varStatus="status">
+								<tr>
+									<td class="text-center">
+										<input type="checkbox" class="form-check-input"></td>
+									<td class="text-white">${dto.event_num}</td>
+									<td>
+										<span class="badge badge-ongoing">${dto.is_active}</span>
+									</td>
+									<td>
+										<span class="fw-bold text-white">${dto.event_title}</span>
+									</td>
+									<td class="text-white-50 date-text">${dto.start_date}</td>
+									<td class="text-white-50 date-text">${dto.end_date}</td>
+									<td class="text-center text-white-50">128</td>
 								</tr>
+								</c:forEach>
 								<tr>
 									<td class="text-center"><input type="checkbox"
 										class="form-check-input"></td>

@@ -3,9 +3,12 @@ package com.hs.service.admin;
 import java.util.List;
 import java.util.Map;
 
+import com.hs.mapper.admin.EventMapper;
 import com.hs.model.admin.EventDTO;
+import com.hs.mybatis.support.MapperContainer;
 
 public class EventServiceImpl implements EventService {
+	private EventMapper mapper = MapperContainer.get(EventMapper.class);
 	
 	@Override
 	public void insertEvent(EventDTO dto) throws Exception {
@@ -33,9 +36,15 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public int dataCount(Map<String, Object> map) {
-		// 데이터 개수
-		
-		return 0;
+		int result = 0;
+
+		try {
+			result = mapper.dataCount(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 
 	@Override
@@ -47,8 +56,15 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public List<EventDTO> listEvent(Map<String, Object> map) {
+		List<EventDTO> list = null;
 		
-		return null;
+		try {
+			list = mapper.listEvent(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
 	}
 
 	@Override

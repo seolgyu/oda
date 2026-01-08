@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hs.mapper.admin.NoticeMapper">
+<mapper namespace="com.hs.mapper.admin.EventMapper">
 	<!-- 이벤트 등록  -->
-	<insert id="insertEvent" parameterType="com.hs.model.admin.EventDTO">
-		INSERT INTO EVENT(event_num, event_title, event_content, start_date, end_date, is_active, created_date, update_date, state)
+	<!--
+	<insert id="insertEvent" parameterType="map">
+		  INSERT INTO EVENT(event_num, event_title, event_content, start_date, 
+			end_date, is_active, created_date, update_date, state)
+		VALUES(#{event_num}, #{event_title}, #{event_content}, #{start_date}, #{end_date}, 0, SYSDATE, SYSDATE, #{state})
 	</insert>
-	
+	-->
+
 	
 	<!-- 이벤트 리스트 출력 -->
-	<select id="listEvent" parameterType="com.hs.model.admin.EventDTO">
-	    SELECT e.user_num, event_num, event_title, event_content, 
-	    	start_date, end_date, is_active, created_date, update_date, state
+	<select id="listEvent" parameterType="map" resultType="com.hs.model.admin.EventDTO">
+	    SELECT e.user_num, event_num, event_title, event_content, start_date, end_date, is_active, created_date, update_date, state
     	FROM EVENT e
-    	JOIN MEMBER m ON e.user_num = m.user_num;		
-	</select>
+    	JOIN MEMBER m ON e.user_num = m.user_num
+	</select>	
+
 
 
 </mapper>
