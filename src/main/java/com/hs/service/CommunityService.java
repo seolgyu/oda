@@ -7,9 +7,10 @@ import com.hs.model.CommunityDTO;
 
 public interface CommunityService {
 	
-	public void createCommunity(CommunityDTO dto) throws Exception;
+	public void insertCommunity(CommunityDTO dto) throws Exception;
+	public List<CommunityDTO> getCategoryList();
 	public CommunityDTO findById(Long community_id);
-	public void isCommunityName(String com_name);
+	public CommunityDTO isCommunityName(String com_name);
 	public void updateCommunity(CommunityDTO dto) throws Exception;
 	public void deleteCommunity(Long community_id) throws Exception;
 	

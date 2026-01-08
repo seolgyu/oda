@@ -3,7 +3,7 @@
 .app-main {
     min-height: 100vh;
     position: relative;
-    overflow: hidden;
+    /* overflow: hidden; */
     display: flex;
     flex-direction: column;
 }

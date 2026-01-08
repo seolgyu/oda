@@ -6,14 +6,19 @@ public class CommunityDTO {
 	private Long community_id; // PK
 	private String com_name;
 	private String com_description; // CLOB
-	private String community_kate_id;
+	private String category_id;
+	private String category_name;
 	private String icon_image;
 	private String banner_image;
 	private String is_private; // '0' or '1'
+	private int today_visit;
+	private int total_visit;
 	private Long member_count;
 	private Long post_count;
 	private Long user_num; // FK (User)
 	private Date created_date;
+	private Date favorites_date;
+	private Date follow_date;
 
 	// 조인용 필드 (화면 표시용)
 	private String creatorNickname;
@@ -42,12 +47,20 @@ public class CommunityDTO {
 		this.com_description = com_description;
 	}
 
-	public String getCommunity_kate_id() {
-		return community_kate_id;
+	public String getCategory_id() {
+		return category_id;
 	}
 
-	public void setCommunity_kate_id(String community_kate_id) {
-		this.community_kate_id = community_kate_id;
+	public void setCategory_id(String category_id) {
+		this.category_id = category_id;
+	}
+
+	public String getCategory_name() {
+		return category_name;
+	}
+
+	public void setCategory_name(String category_name) {
+		this.category_name = category_name;
 	}
 
 	public String getIcon_image() {
@@ -112,6 +125,38 @@ public class CommunityDTO {
 
 	public void setCreatorNickname(String creatorNickname) {
 		this.creatorNickname = creatorNickname;
+	}
+
+	public int getToday_visit() {
+		return today_visit;
+	}
+
+	public void setToday_visit(int today_visit) {
+		this.today_visit = today_visit;
+	}
+
+	public int getTotal_visit() {
+		return total_visit;
+	}
+
+	public void setTotal_visit(int total_visit) {
+		this.total_visit = total_visit;
+	}
+
+	public Date getFavorites_date() {
+		return favorites_date;
+	}
+
+	public void setFavorites_date(Date favorites_date) {
+		this.favorites_date = favorites_date;
+	}
+
+	public Date getFollow_date() {
+		return follow_date;
+	}
+
+	public void setFollow_date(Date follow_date) {
+		this.follow_date = follow_date;
 	}
 
 	

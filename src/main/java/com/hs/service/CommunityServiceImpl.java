@@ -9,12 +9,10 @@ import com.hs.mybatis.support.MapperContainer;
 
 public class CommunityServiceImpl implements CommunityService{
 	private CommunityMapper mapper = MapperContainer.get(CommunityMapper.class);
-	private MemberServiceImpl mservice = new MemberServiceImpl();
 	
 	@Override
-	public void createCommunity(CommunityDTO dto) throws Exception {
+	public void insertCommunity(CommunityDTO dto) throws Exception {
 		try {
-			
 			mapper.insertCommunity(dto);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -25,7 +23,6 @@ public class CommunityServiceImpl implements CommunityService{
 
 	@Override
 	public CommunityDTO findById(Long community_id) {
-		CommunityDTO dto = null;
 		try {
 			
 		} catch (Exception e) {
@@ -33,11 +30,27 @@ public class CommunityServiceImpl implements CommunityService{
 		}
 		return null;
 	}
+	
+	@Override
+	public List<CommunityDTO> getCategoryList() {
+		List<CommunityDTO> list = null;
+		try {
+			list = mapper.getCategoryList();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
 	@Override
-	public void isCommunityName(String com_name) {
-		// TODO Auto-generated method stub
-		
+	public CommunityDTO isCommunityName(String com_name) {
+		CommunityDTO dto = null;
+		try {
+			dto = mapper.findByName(com_name);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dto;
 	}
 
 	@Override
@@ -80,9 +93,6 @@ public class CommunityServiceImpl implements CommunityService{
 	public List<CommunityDTO> searchCommunity(Map<String, Object> map) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	
-	
+	}	
 	
 }

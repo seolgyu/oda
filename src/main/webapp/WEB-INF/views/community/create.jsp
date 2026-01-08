@@ -27,7 +27,8 @@
     <div class="app-body">
         <%@ include file="/WEB-INF/views/home/sidebar.jsp"%>
 
-        <main class="app-main custom-scrollbar style="overflow-y: auto;"">
+        <main class="app-main custom-scrollbar" style="overflow-y: auto;">
+            
             <div class="space-background">
                 <div class="stars"></div>
                 <div class="stars2"></div>
@@ -40,33 +41,35 @@
                 <div class="max-w-3xl mx-auto py-12 px-4 relative z-10">
                     
                     <div class="text-center mb-10">
-                        <h1 class="text-4xl font-extrabold text-white tracking-tight mb-2">Create a Community</h1>
-                        <p class="text-gray-400 text-base font-light">Build a new space for collaboration and sharing in the galaxy.</p>
+                        <h1 class="text-4xl font-extrabold text-white tracking-tight mb-2">커뮤니티 만들기</h1>
+                        <p class="text-gray-400 text-base font-light">협업과 공유를 위한 새로운 공간을 만들어보세요.</p>
                     </div>
 
                     <div class="neon-card rounded-[2.5rem] p-8 md:p-12">
-                        <form action="" method="post" class="space-y-8 relative z-10">
+                        <form id="createForm" action="" method="post" class="space-y-8 relative z-10">
                             
                             <div class="space-y-3">
-                                <label class="block text-sm font-medium text-gray-300 ml-1">Community Name <span class="text-red-500">*</span></label>
-                                <input type="text" name="name" class="custom-input w-full rounded-xl py-4 px-5 text-white" placeholder="e.g. Generative Art Enthusiasts">
+                                <label class="block text-sm font-medium text-gray-300 ml-1">커뮤니티 이름 <span class="text-red-500">*</span></label>
+                                <input type="text" name="com_name" class="custom-input w-full rounded-xl py-4 px-5 text-white" placeholder="커뮤니티 제목을 입력하세요...">
+                                <p id="error-com_name" class="text-red-500 text-xs mt-1 hidden">커뮤니티 이름을 입력해주세요.</p>
                             </div>
 
                             <div class="space-y-3">
-                                <label class="block text-sm font-medium text-gray-300 ml-1">Description</label>
-                                <textarea name="description" rows="4" class="custom-input w-full rounded-xl py-4 px-5 text-white resize-none" placeholder="Tell people what your community is about..."></textarea>
+                                <label class="block text-sm font-medium text-gray-300 ml-1">커뮤니티 설명 </label>
+                                <textarea name="com_description" rows="4" class="custom-input w-full rounded-xl py-4 px-5 text-white resize-none" placeholder="커뮤니티를 설명해주세요..."></textarea>
+                            	<p id="error-com_description" class="text-red-500 text-xs mt-1 hidden">설명을 입력해주세요.</p>
                             </div>
 
                             <div class="space-y-3">
-                                <label class="block text-sm font-medium text-gray-300 ml-1">Privacy & Accessibility</label>
+                                <label class="block text-sm font-medium text-gray-300 ml-1">공개 범위</label>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <label class="privacy-card card-selected relative flex cursor-pointer rounded-2xl p-6 h-[90px] items-center">
-                                        <input type="radio" name="privacy-type" value="public" checked class="sr-only">
+                                        <input type="radio" name="is_private" value="public" checked class="sr-only">
                                         <div class="flex flex-1 gap-4 items-center">
                                             <span class="material-symbols-outlined text-green-400 text-2xl flex-none">public</span>
                                             <div class="flex-1">
-                                                <p class="text-[15px] font-bold title-text text-[#a855f7]">Public</p>
-                                                <p class="text-[11px] text-gray-400 leading-tight">Anyone can view and post.</p>
+                                                <p class="text-[15px] font-bold title-text text-[#a855f7]">공개</p>
+                                                <p class="text-[11px] text-gray-400 leading-tight">누구나 보고 게시할 수 있습니다.</p>
                                             </div>
                                         </div>
                                         <div class="check-container w-6 h-6 flex-none flex justify-center items-center ml-2">
@@ -75,12 +78,12 @@
                                     </label>
                                     
                                     <label class="privacy-card card-unselected relative flex cursor-pointer rounded-2xl p-6 h-[90px] items-center">
-                                        <input type="radio" name="privacy-type" value="restricted" class="sr-only">
+                                        <input type="radio" name="is_private" value="private" class="sr-only">
                                         <div class="flex flex-1 gap-4 items-center">
                                             <span class="material-symbols-outlined text-red-400 text-2xl flex-none">lock</span>
                                             <div class="flex-1">
-                                                <p class="text-[15px] font-bold title-text text-white">Restricted</p>
-                                                <p class="text-[11px] text-gray-400 leading-tight">Only approved members can view.</p>
+                                                <p class="text-[15px] font-bold title-text text-white">비공개</p>
+                                                <p class="text-[11px] text-gray-400 leading-tight">나만 볼 수 있습니다.</p>
                                             </div>
                                         </div>
                                         <div class="check-container w-6 h-6 flex-none flex justify-center items-center ml-2"></div>
@@ -89,15 +92,17 @@
                             </div>
 
                             <div class="space-y-4">
-                                <label class="block text-sm font-medium text-gray-300 ml-1">Select Topics</label>
-                                <div class="flex flex-wrap gap-2.5">
-                                    <button type="button" class="topic-btn px-4 py-2.5 rounded-xl text-xs font-medium">❤️ Health</button>
-                                    <button type="button" class="topic-btn px-4 py-2.5 rounded-xl text-xs font-medium selected">🎮 Gaming</button>
-                                    <button type="button" class="topic-btn px-4 py-2.5 rounded-xl text-xs font-medium">🧪 Science</button>
-                                    <button type="button" class="topic-btn px-4 py-2.5 rounded-xl text-xs font-medium">🎨 Art</button>
-                                    <button type="button" class="topic-btn px-4 py-2.5 rounded-xl text-xs font-medium">🚀 Tech</button>
-                                    <button type="button" class="topic-btn px-4 py-2.5 rounded-xl text-xs font-medium">🌍 Travel</button>
+                                <label class="block text-sm font-medium text-gray-300 ml-1">커뮤니티 주제</label>
+                                <div class="flex flex-wrap gap-2.5 pb-10">
+                                	<c:forEach var="cate" items="${categories}" varStatus="status">
+							            <button type="button" 
+							                    class="topic-btn px-4 py-2.5 rounded-xl text-xs font-medium ${status.first ? 'selected' : ''}"
+							                    data-id="${cate.category_id}">
+							                ${cate.category_name}
+							            </button>
+							        </c:forEach>
                                 </div>
+                                <input type="hidden" name="category_id" id="selectedTopic" value="">
                             </div>
 
                             <div class="flex justify-end items-center gap-6 pt-6 border-t border-white/5">
@@ -114,6 +119,8 @@
     </div>
 
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/util-jquery.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/community.js"></script>
 </body>
 </html>

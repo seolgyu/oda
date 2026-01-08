@@ -17,6 +17,7 @@ public interface CommunityMapper {
 	public void addFavorite(Map<String, Object> map) throws SQLException;
 	public void removeFavorite(Map<String, Object> map) throws SQLException;
 	
+	public List<CommunityDTO> getCategoryList();
 	public CommunityDTO findById(Long community_id) throws SQLException;
 	public CommunityDTO findByName(String com_name) throws SQLException;
 	public List<CommunityDTO> selectAll(Map<String, Object> map);

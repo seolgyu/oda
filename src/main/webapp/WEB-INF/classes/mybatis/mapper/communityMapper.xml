@@ -4,12 +4,12 @@
 <mapper namespace="com.hs.mapper.CommunityMapper">
 
 	<insert id="insertCommunity" parameterType="com.hs.model.CommunityDTO">
-		INSERT INTO community(community_id, com_name, com_description, is_private, user_num, community_kate_id)
-		VALUES(seq_community.NEXTVAL, #{com_name}, #{com_description}, #{is_private}, #{user_num}, #{community_kate_id})
+		INSERT INTO COMMUNITY(community_id, com_name, com_description, is_private, user_num, category_id)
+		VALUES(com_id_seq.NEXTVAL, #{com_name}, #{com_description}, #{is_private}, #{user_num}, #{category_id})
 	</insert>
 	
 	<update id="updateCommunity" parameterType="com.hs.model.CommunityDTO">
-		UPDATE community SET com_name = #{com_name}, com_description = #{com_description}, is_private = #{is_private}, icon_image = #{icon_image}, banner_image = #{banner_image}, community_kate_id = #{community_kate_id} 
+		UPDATE community SET com_name = #{com_name}, com_description = #{com_description}, is_private = #{is_private}, icon_image = #{icon_image}, banner_image = #{banner_image}, category_id = #{category_id} 
 		WHERE community_id = #{community_id}
 	</update>
 	
@@ -37,6 +37,11 @@
 		DELETE FROM community_favorites 
 		WHERE community_id = #{community_id} AND user_num = #{user_num}
 	</delete>
+	
+	<select id="getCategoryList" resultType="com.hs.model.CommunityDTO">
+		SELECT category_id, category_name
+		FROM COMMUNITY_CATEGORY
+	</select>
 	
 	<select id="searchCommunity" parameterType="map" resultType="com.hs.model.CommunityDTO">
 	    SELECT 
@@ -71,6 +76,12 @@
 		</choose>
 		
 		ORDER BY c.community_id DESC
+	</select>
+	
+	<select id="findByName" parameterType="String" resultType="com.hs.model.CommunityDTO">
+		SELECT * 
+		FROM COMMUNITY 
+		WHERE com_name = #{com_name}
 	</select>
 	
 </mapper>
