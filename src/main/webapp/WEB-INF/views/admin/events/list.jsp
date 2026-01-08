@@ -248,14 +248,14 @@
 							<div class="btn-group glass-btn-group">
 								<button class="btn btn-outline-light active btn-sm px-3">전체</button>
 								<button class="btn btn-outline-light btn-sm px-3">진행중</button>
-								<button class="btn btn-outline-light btn-sm px-3">대기</button>
+								<button class="btn btn-outline-light btn-sm px-3">진행예정</button>
 								<button class="btn btn-outline-light btn-sm px-3">종료</button>
 							</div>
 						</div>
 						<div class="col-12 col-lg-6">
 							<div class="input-group search-wrapper">
 								<span class="material-icons-round text-white-50 mt-2">search</span> 
-								<input type="text" class="form-control glass-input" placeholder="이벤트 제목 검색...">
+								<input type="text" class="form-control glass-input" placeholder="이벤트 제목과 내용 검색...">
 								<!-- <button class="btn btn-link text-white-50 p-0 ms-2 mt-1">
 									<span class="material-icons-round">refresh</span>
 								</button> -->
@@ -280,27 +280,52 @@
 								</tr>
 							</thead>
 							<tbody>
-								<c:forEach var="dto" items="${list}" varStatus="status">
-								<tr>
+								<c:forEach var="dto" items="${listTop}" varStatus="activestatus">
+								<tr style="background: rgba(59, 130, 246, 0.05);">
 									<td class="text-center">
 										<input type="checkbox" class="form-check-input"></td>
 									<td class="text-white">${dto.event_num}</td>
 									<td>
-										<span class="badge badge-ongoing">${dto.is_active}</span>
+										<span class="badge badge-ongoing">진행</span>
 									</td>
 									<td>
 										<span class="fw-bold text-white">${dto.event_title}</span>
 									</td>
 									<td class="text-white-50 date-text">${dto.start_date}</td>
 									<td class="text-white-50 date-text">${dto.end_date}</td>
-									<td class="text-center text-white-50">128</td>
+									<td class="text-center text-white-50">${dto.hitCount}</td>
 								</tr>
 								</c:forEach>
+								
+								<c:forEach var="dto" items="${list}" varStatus="activestatus">
 								<tr>
+									<td class="text-center">
+										<input type="checkbox" class="form-check-input"></td>
+									<td class="text-white">${dto.event_num}</td>
+									<td>
+										<c:if test="${dto.active_status == '진행예정'}">
+											<span class="badge badge-upcoming">${dto.active_status}</span>
+										</c:if>
+										<c:if test="${dto.active_status == '진행'}">
+											<span class="badge badge-ongoing">${dto.active_status}</span>
+										</c:if>
+										<c:if test="${dto.active_status == '종료'}">
+											<span class="badge badge-ended">${dto.active_status}</span>
+										</c:if>
+									</td>
+									<td>
+										<span class="fw-bold text-white">${dto.event_title}</span>
+									</td>
+									<td class="text-white-50 date-text">${dto.start_date}</td>
+									<td class="text-white-50 date-text">${dto.end_date}</td>
+									<td class="text-center text-white-50">${dto.hitCount}</td>
+								</tr>
+								</c:forEach>
+							<tr>
 									<td class="text-center"><input type="checkbox"
 										class="form-check-input"></td>
 									<td class="text-white-50">14</td>
-									<td><span class="badge badge-upcoming">진행 예정</span></td>
+									<td><span class="badge badge-upcoming">진행</span></td>
 									<td>설 연휴 특별 출석 체크 프로모션</td>
 									<td class="text-white-50 date-text">2026-01-25</td>
 									<td class="text-white-50 date-text">2026-02-05</td>
@@ -316,6 +341,7 @@
 									<td class="text-white-50 date-text">2025-12-25</td>
 									<td class="text-center text-white-50">5,102</td>
 								</tr>
+								
 							</tbody>
 						</table>
 					</div>

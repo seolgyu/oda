@@ -3,22 +3,94 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hs.mapper.admin.EventMapper">
 	<!-- 이벤트 등록  -->
-	<!--
 	<insert id="insertEvent" parameterType="map">
 		  INSERT INTO EVENT(event_num, event_title, event_content, start_date, 
 			end_date, is_active, created_date, update_date, state)
 		VALUES(#{event_num}, #{event_title}, #{event_content}, #{start_date}, #{end_date}, 0, SYSDATE, SYSDATE, #{state})
 	</insert>
-	-->
-
+	
+	<sql id="search-list">
+		<if test="schType == 'all' ">
+			(INSTR(event_title, #{kwd}) &gt; 0 
+				OR DBMS_LOB.INSTR(event_content, #{kwd}) &gt; 0)
+		</if>
+		<if test="schType == 'event_title' ">
+			DBMS_LOB.INSTR(event_title, #{kwd}) &gt; 0
+		</if>
+		<if test="schType == 'event_content' ">
+			DBMS_LOB.INSTR(event_content, #{kwd}) &gt; 0
+		</if>
+	</sql>
+	
+	<!-- 이벤트 리스트 맨윗줄 출력(진행) -->
+		<select id="listEventTop" resultType="com.hs.model.admin.EventDTO">
+	    SELECT e.user_num, e.event_num, event_title, event_content, 
+	    	TO_CHAR(start_date, 'YYYY-MM-DD') start_date, 
+	    	TO_CHAR(end_date, 'YYYY-MM-DD') end_date,
+                is_active, 
+                created_date, update_date, state, NVL(fileCount, 0) fileCount
+    	FROM EVENT e
+    	JOIN MEMBER m ON e.user_num = m.user_num
+       	LEFT OUTER JOIN (
+    		SELECT event_num, COUNT(*) fileCount 
+    		FROM EVENT_FILEAT ef
+    		GROUP BY event_num
+    	) ef ON e.event_num = ef.event_num
+    	WHERE event = 1 AND showEvent = 1 AND SYSDATE &gt; start_date AND SYSDATE &lt;= end_date
+		ORDER BY update_date DESC, event_num DESC
+	</select>
+	
+	<!-- 데이터 개수 -->
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+    	FROM EVENT e
+    	JOIN MEMBER m ON e.user_num = m.user_num
+		<where>
+			<if test="showEvent != null">
+				showEvent = #{showEvent}
+			</if>		
+			<if test="kwd != null and kwd != ''  ">
+				AND <include refid="search-list"/>
+			</if>
+		</where>
+	</select>
+	
 	
 	<!-- 이벤트 리스트 출력 -->
 	<select id="listEvent" parameterType="map" resultType="com.hs.model.admin.EventDTO">
-	    SELECT e.user_num, event_num, event_title, event_content, start_date, end_date, is_active, created_date, update_date, state
+	    SELECT e.user_num, e.event_num, event_title, event_content, 
+	    	TO_CHAR(start_date, 'YYYY-MM-DD') start_date, 
+	    	TO_CHAR(end_date, 'YYYY-MM-DD') end_date,
+                CASE
+                    WHEN SYSDATE &gt; start_date AND SYSDATE &lt;= end_date THEN '진행'
+                    WHEN is_active = 2 OR (SYSDATE >= end_date) THEN '종료'
+                ELSE '진행예정'
+                END AS active_status,
+                is_active, 
+                created_date, update_date, state, NVL(fileCount, 0) fileCount
     	FROM EVENT e
     	JOIN MEMBER m ON e.user_num = m.user_num
-	</select>	
-
-
-
+       	LEFT OUTER JOIN (
+    		SELECT event_num, COUNT(*) fileCount 
+    		FROM EVENT_FILEAT ef
+    		GROUP BY event_num
+    	) ef ON e.event_num = ef.event_num
+    	<where>
+    		<if test="showEvent != null">
+    			showEvent = #{showEvent}
+    		</if>
+    		<if test="kwd != null and kwd != ''">
+    			AND <include refid="search-list"/>
+    		</if>
+    	</where>
+    	ORDER BY update_date DESC, event_num DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	<!-- 조회수 증가 -->
+	<update id="updateHitCount" parameterType="Long">
+		UPDATE EVENT SET hitCount = hitCount + 1
+		WHERE num = #{num}
+	</update>
+	
 </mapper>

@@ -7,9 +7,12 @@ public class EventDTO {
 	private String event_content;
 	private String start_date;
 	private String end_date;
-	private int is_active;
+	private int is_active; // 강제종료
+	private String active_status; // 진행, 진행예정, 종료 담는 가성 컬럼
 	private String created_date;
 	private String update_date;
+	private int hitCount;
+	private int showEvent;
 	private String state; // 임시저장, 신고, 정상, 나만보기
 	
 	// 첨부파일
@@ -21,10 +24,31 @@ public class EventDTO {
 	private String file_order;
 	private String uploaded_date;
 	
+	
+	
 	// 댓글	
 	
+	
+	public int getHitCount() {
+		return hitCount;
+	}
+	public int getShowNotice() {
+		return showEvent;
+	}
+	public void setShowNotice(int showEvent) {
+		this.showEvent = showEvent;
+	}
+	public void setHitCount(int hitCount) {
+		this.hitCount = hitCount;
+	}
 	public long getUser_num() {
 		return user_num;
+	}
+	public String getActive_status() {
+		return active_status;
+	}
+	public void setActive_status(String active_status) {
+		this.active_status = active_status;
 	}
 	public void setUser_num(long user_num) {
 		this.user_num = user_num;

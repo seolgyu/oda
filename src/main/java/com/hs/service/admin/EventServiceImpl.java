@@ -50,8 +50,15 @@ public class EventServiceImpl implements EventService {
 	@Override
 	public List<EventDTO> listEventTop() {
 		// 리스트 첫줄
-		
-		return null;
+		List<EventDTO> list = null;
+
+		try {
+			list = mapper.listEventTop();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return list;
 	}
 
 	@Override
