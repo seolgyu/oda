@@ -273,12 +273,10 @@
 							<tbody>
 							<c:forEach var="dto" items="${noticeList}">
 								<tr style="background: rgba(59, 130, 246, 0.05);">
-									<td class="text-center"><input type="checkbox"
-										class="form-check-input"></td>
+									<td class="text-center"><span class="material-symbols-outlined text-primary fs-5">campaign</span></td>
 									<td class="text-white-50"><!-- <span class="material-icons-round text-primary fs-5"> -->${dto.notice_num}<!-- </span> --></td>
 									<td>
-										<span class="badge badge-normal">
-										<span class="material-symbols-outlined text-primary fs-5">campaign</span>
+										<span class="badge badge-normal">${dto.state}
 										</span>
 									</td>
 									<td>
