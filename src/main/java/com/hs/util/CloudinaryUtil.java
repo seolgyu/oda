@@ -9,9 +9,9 @@ public class CloudinaryUtil {
 
     // 1. Cloudinary 설정 (대시보드에서 확인한 값으로 변경 필수!)
     private static final Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-        "cloud_name", "dw1gqjnjx",      // 사용자분이 알려주신 Cloud Name
-        "api_key", "127647647352412",    // Dashboard의 API Key 복사
-        "api_secret", "9F6ieiyY7TgoLNoqKppm5kQjvcM" // Dashboard의 API Secret 복사
+        "cloud_name", "123",      // 사용자분이 알려주신 Cloud Name
+        "api_key", "123",    // Dashboard의 API Key 복사
+        "api_secret", "456" // Dashboard의 API Secret 복사
     ));
 
     /**
