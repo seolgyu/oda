@@ -70,19 +70,40 @@
 							<span
 								class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
 								style="font-size: 1.2rem;">mail</span> <input type="email"
-								name="userEmail" class="form-control login-input"
+								name="email" class="form-control login-input"
 								placeholder="Email Address" required>
 						</div>
 
-						<button type="button"
+						<button type="button" id="sendBtn"
 							class="btn w-100 fw-bold text-white shadow-md mt-2"
 							style="height: 3rem; border-radius: 0.75rem; background: linear-gradient(to right, #f43f5e, #fb923c); border: none; transition: transform 0.2s;"
-							onclick="sendResetPwd();">SEND RESET LINK</button>
+							onclick="sendResetPwd();">SEND VERIFICATION CODE</button>
+
+						<div id="authCodeSection" class="w-100 d-flex flex-column gap-3" style="display: none !important;">
+							<div class="position-relative">
+								<span
+									class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
+									style="font-size: 1.2rem;">verified_user</span> <input
+									type="text" id="authCode" class="form-control login-input"
+									placeholder="Enter 6-digit code" maxlength="6">
+							</div>
+
+							<button type="button" id="verifyBtn"
+								class="btn w-100 fw-bold text-white shadow-md"
+								style="height: 3rem; border-radius: 0.75rem; background: linear-gradient(to right, #4f46e5, #7c3aed); border: none;"
+								onclick="">VERIFY CODE</button>
+
+							<div class="text-center text-xs"
+								style="color: #fb923c; font-size: 0.8rem;">
+								Time left: <span id="timer">03:00</span>
+							</div>
+						</div>
 					</form>
 
-					<div id="findPwdResult" class="w-100 p-2 text-center fade-in"
-						style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.75rem; color: #fff; font-size: 0.85rem; display: none;">
-						<span id="pwdResultText"></span>
+					<div id="findPwdResult" class="w-100 p-3 text-center fade-in"
+						style="border-radius: 0.75rem; font-size: 0.9rem; display: none; transition: all 0.3s;">
+
+						<div id="resultText" class="fw-medium"></div>
 					</div>
 
 					<div class="d-flex justify-content-center w-100 mt-2"
@@ -103,58 +124,86 @@
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 	<script type="text/javascript">
-	function sendLogin() {
-	    const f = document.loginForm;
-		
-	   	if( ! f.userId.value.trim() ) {
-        f.userId.focus();
-       		return;
-   		}
-
-    	if( ! f.userPwd.value.trim() ) {
-        	f.userPwd.focus();
-        	return;
-    	}
-
-    	f.action = '${pageContext.request.contextPath}/member/login';
-    	f.submit();
-	}
 	
-	function sendLoginAjax() {
-	    const f = document.loginForm;
-	    const userId = $('input[name=userId]').val();
-	    const userPwd = $('input[name=userPwd]').val();
-		
-	   	if( ! userId.trim() ) {
-        	f.userId.focus();
-       		return;
-   		}
+	function sendResetPwd() {
+		const $errorDiv = $("#findIdResult");
+	    const $resultText = $("#resultText");
+	    const $submitBtn = $("button[onclick='sendResetPwd();']");
+	    
+	    const $userId = $('input[name=userId]');
+	    const $userName = $('input[name=userName]');
+	    const $email = $('input[name=email]');
+	    
+	    const userId = $userId.val().trim();
+	    const userName = $userName.val().trim();
+	    const email = $email.val().trim();
 
-    	if( ! userPwd.trim() ) {
-        	f.userPwd.focus();
-        	return;
-    	}
-    	
-    	$.ajax({
-            url: "${pageContext.request.contextPath}/member/login_json",
-            headers: { "AJAX": "true" },
-            type: "POST",
-            data: { userId: userId, userPwd: userPwd },
-            dataType: "json",
-            success: function(res) {
-                if(res.status === "success") {
-                    location.href = "${pageContext.request.contextPath}/";
-                } else {
-                    $("#errorText").text(res.message);
-                    $("#loginError").fadeIn();
-                    
-                    $('input[name=userPwd]').val('').focus();
-                }
-            },
-            error: function(xhr) {
-                console.error("로그인 통신 실패", xhr);
-            }
-        });
+		if (! userId ) {
+			showResult("입력하지 않은 필드가 존재합니다.", "error");
+			$userId.focus();
+			return;
+		}
+
+		if (! userName ) {
+			showResult("입력하지 않은 필드가 존재합니다.", "error");
+			$userName.focus();
+			return;
+		}
+			
+		if(! email ) {
+			showResult("입력하지 않은 필드가 존재합니다.", "error");
+			$email.focus();
+			return;
+		}
+		
+		$submitBtn.prop("disabled", true);
+
+		$.ajax({
+			type : "POST",
+			url : "${pageContext.request.contextPath}/member/findPwdAjax",
+			data : {userId: userId, userName: userName, email: email},
+			dataType : "json",
+			success : function(data) {
+				if (data.status === "exist") {
+					showResult("인증번호가 전송되었습니다.", "success");
+			        
+			        $("input[name=userId], input[name=userName], input[name=email]").prop("readOnly", true);
+			        
+			        $("#sendBtn").fadeOut(200, function() {
+			            $("#authCodeSection").fadeIn(300);
+			        });
+				} else if (data.status === "emailSendError") {
+	                showResult("이메일 전송에 실패했습니다.", "error");
+	                $submitBtn.prop("disabled", false);
+	            } else {
+	                showResult("일치하는 사용자를 찾을 수 없습니다.", "error");
+	                $submitBtn.prop("disabled", false);
+	            }
+			},
+			error : function() {
+				showResult("서버 에러가 발생했습니다. 다시 시도해주세요.", "error");
+				$submitBtn.prop("disabled", false);
+			}
+		});
+		
+		function showResult(msg, type) {
+	        $errorDiv.hide();
+	        if (type === "success") {
+	            $errorDiv.css({
+	                "background": "rgba(16, 185, 129, 0.15)",
+	                "border": "1px solid rgba(16, 185, 129, 0.3)",
+	                "color": "#34d399"
+	            });
+	        } else {
+	            $errorDiv.css({
+	                "background": "rgba(244, 63, 94, 0.1)",
+	                "border": "1px solid rgba(244, 63, 94, 0.2)",
+	                "color": "#fb7185"
+	            });
+	        }
+	        $resultText.html(msg);
+	        $errorDiv.fadeIn(300);
+	    }
 	}
 </script>
 </body>

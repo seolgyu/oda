@@ -32,5 +32,8 @@ public interface MemberMapper {
 	public int checkId(String userId) throws SQLException;
 	public int checkNickname(String userId) throws SQLException;
 	
+	public String findId(Map<String, Object> map) throws SQLException;
+	public int isValidAccount(Map<String, Object> map) throws SQLException;
+	
 	public List<Map<String, Object>> listAgeSection();
 }

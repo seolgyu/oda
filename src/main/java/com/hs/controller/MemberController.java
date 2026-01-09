@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.hs.mail.Mail;
+import com.hs.mail.MailSender;
 import com.hs.model.MemberDTO;
 import com.hs.model.SessionInfo;
 import com.hs.mvc.annotation.Controller;
@@ -14,6 +16,7 @@ import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
 import com.hs.service.MemberService;
 import com.hs.service.MemberServiceImpl;
+import com.hs.util.MyUtil;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -298,7 +301,7 @@ public class MemberController {
 		try {
 			String userId = req.getParameter("userId");
 	        String userNickname = req.getParameter("userNickname");
-			
+	        			
 			if (userId != null && !userId.trim().isEmpty()) {
 				if (service.checkId(userId.trim()) > 0) {
 					map.put("status", "failId");
@@ -358,10 +361,124 @@ public class MemberController {
 		return new ModelAndView("member/findId");
 	}
 	
+	@PostMapping("findIdAjax")
+	@ResponseBody
+	public Map<String, Object> findIdSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    Map<String, Object> model = new HashMap<>();
+	    
+	    req.setCharacterEncoding("UTF-8");
+
+		try {
+			Map<String, Object> map = new HashMap<>();
+			
+			String userName = req.getParameter("userName");
+	        String email = req.getParameter("email");
+	        
+	        map.put("userName", userName);
+	        map.put("email", email);
+	        
+	        String userId = service.findId(map);
+	        
+	        if(userId == null) {
+	        	model.put("status", "fail");
+				return model;
+	        }
+		    
+		    model.put("status", "success");
+		    model.put("userId", userId);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("status", "error");
+		}
+	    
+	    return model;
+	}
+	
 	@GetMapping("findPwd")
 	public ModelAndView findPwdForm(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		return new ModelAndView("member/findPwd");
+	}
+	
+	@PostMapping("findPwdAjax")
+	@ResponseBody
+	public Map<String, Object> findPwdSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    Map<String, Object> model = new HashMap<>();
+	    
+	    HttpSession session = req.getSession();
+	    req.setCharacterEncoding("UTF-8");
+
+		try {
+			Map<String, Object> map = new HashMap<>();
+			
+			String userId = req.getParameter("userId");
+			String userName = req.getParameter("userName");
+	        String email = req.getParameter("email");
+	        System.out.println("2. 파라미터 확인: " + userId);
+	        
+	        map.put("userId", userId);
+	        map.put("userName", userName);
+	        map.put("email", email);
+	        
+	        int result = service.isValidAccount(map);
+	        System.out.println("3. DB 조회 결과: " + result);
+	        	        
+	        if(result <= 0) {
+	        	model.put("status", "fail");
+				return model;
+	        }
+		    
+	        // 메일 전송 로직
+	        String subject = "[ODA Community] 비밀번호 찾기 인증번호 안내";
+	        String authCode = MyUtil.generateAuthCode();
+	        String content = "<div style='font-family: \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif; max-width: 500px; margin: 20px auto; padding: 40px; border: 1px solid #ebebeb; border-radius: 20px; text-align: center; color: #333;'>"
+	                + "  <h2 style='font-size: 24px; margin-bottom: 20px; color: #000;'>본인 확인 인증번호</h2>"
+	                + "  <p style='font-size: 15px; line-height: 1.6; color: #666; margin-bottom: 30px;'>"
+	                + "    안녕하세요.<br>요청하신 본인 확인을 위한 인증번호를 보내드립니다.<br>"
+	                + "    아래의 6자리 번호를 인증창에 입력해 주세요."
+	                + "  </p>"
+	                + "  <div style='background-color: #f8f9fa; border-radius: 12px; padding: 25px; margin-bottom: 30px; border: 1px solid #e9ecef;'>"
+	                + "    <span style='font-size: 32px; font-weight: bold; color: #007bff; letter-spacing: 8px;'>" + authCode + "</span>"
+	                + "  </div>"
+	                + "  <p style='font-size: 13px; color: #999;'>"
+	                + "    ※ 인증번호의 유효 시간은 <b>3분</b>입니다.<br>"
+	                + "    시간이 만료되었다면 다시 요청해 주세요."
+	                + "  </p>"
+	                + "  <hr style='border: 0; border-top: 1px solid #eee; margin: 30px 0;'>"
+	                + "  <p style='font-size: 12px; color: #bbb;'>본 메일은 발신 전용입니다. 문의 사항은 고객센터를 이용해 주세요.</p>"
+	                + "</div>";
+	        
+	        session.setAttribute("targetEmail", email);
+	        session.setAttribute("authCode", authCode);
+	        session.setAttribute("authCodeTime", System.currentTimeMillis());
+	        
+	        Mail dto = new Mail();
+			
+			dto.setSenderName("ODA");
+			dto.setSenderEmail("kimchowon417@gmail.com");
+			
+			dto.setReceiverEmail(email);
+			dto.setSubject(subject);
+			dto.setContent(content);
+					
+			MailSender sender = new MailSender();
+			boolean b = sender.mailSend(dto);
+			System.out.println("4. 메일 발송 결과: " + b);
+			
+			if(! b) {
+				model.put("status", "emailSendError");
+				return model;
+			}
+	        
+		    model.put("status", "exist");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("status", "error");
+		}
+	    
+	    return model;
 	}
 
 }

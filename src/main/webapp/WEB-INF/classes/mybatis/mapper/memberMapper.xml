@@ -103,6 +103,18 @@
     	WHERE user_nickname = #{userNickname}
 	</select>
 	
+	<select id="findId" parameterType="map" resultType="String">
+    	SELECT user_id 
+    	FROM member 
+    	WHERE user_name = #{userName} AND user_email = #{email, jdbcType=VARCHAR}
+	</select>
+	
+	<select id="isValidAccount" parameterType="map" resultType="Integer">
+    	SELECT COUNT(*)
+    	FROM member 
+    	WHERE user_id = #{userId} AND user_name = #{userName} AND user_email = #{email, jdbcType=VARCHAR}
+	</select>
+	
 	<select id="loginMember1" parameterType="map" resultType="com.hs.model.MemberDTO">
 		SELECT memberIdx, userId, userPwd, userName, userLevel, register_date, modify_date
 		FROM member1

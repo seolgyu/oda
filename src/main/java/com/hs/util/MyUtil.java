@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 public class MyUtil {
@@ -360,4 +361,16 @@ public class MyUtil {
 
 		return Pattern.matches("[\\w\\~\\-\\.]+@[\\w\\~\\-]+(\\.[\\w\\~\\-]+)+", email.trim());
 	}
+	
+	/**
+	 * 인증번호 난수 생성
+	 * 
+	 * @return 6자리 난수 문자열
+	 */
+	public static String generateAuthCode() {
+        Random random = new Random();
+        int num = random.nextInt(1000000);
+        
+        return String.format("%06d", num);
+    }
 }

@@ -104,7 +104,7 @@ public class LoginFilter implements Filter {
 				"/member/login", "/member/login_json", "/member/logout",
 				"/member/signup", "/member/signupAjax", "/member/checkDuplicate",
 				"/member/account", "/member/userIdCheck", "/member/complete",
-				"/member/findPwd", "/member/findId",
+				"/member/findPwd", "/member/findId", "/member/findIdAjax", "/member/findPwdAjax",
 				"/notice/list",
 				"/uploads/photo/**",
 				"/dist/**",

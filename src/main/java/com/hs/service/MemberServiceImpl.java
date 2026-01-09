@@ -115,4 +115,30 @@ public class MemberServiceImpl implements MemberService {
 		return 0;
 	}
 
+	@Override
+	public String findId(Map<String, Object> map) throws SQLException {
+		String userId = null;
+		
+		try {
+			userId = mapper.findId(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return userId;
+	}
+
+	@Override
+	public int isValidAccount(Map<String, Object> map) throws SQLException {
+		int cntAccount = 0;
+		
+		try {
+			cntAccount = mapper.isValidAccount(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return cntAccount;
+	}
+
 }
