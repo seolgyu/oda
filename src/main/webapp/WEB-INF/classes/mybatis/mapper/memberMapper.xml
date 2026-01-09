@@ -109,8 +109,8 @@
     	WHERE user_name = #{userName} AND user_email = #{email, jdbcType=VARCHAR}
 	</select>
 	
-	<select id="isValidAccount" parameterType="map" resultType="Integer">
-    	SELECT COUNT(*)
+	<select id="findUserNum" parameterType="map" resultType="Long">
+    	SELECT user_num
     	FROM member 
     	WHERE user_id = #{userId} AND user_name = #{userName} AND user_email = #{email, jdbcType=VARCHAR}
 	</select>
