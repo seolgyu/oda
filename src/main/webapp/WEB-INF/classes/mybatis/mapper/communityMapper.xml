@@ -45,10 +45,9 @@
 	
 	<select id="searchCommunity" parameterType="map" resultType="com.hs.model.CommunityDTO">
 	    SELECT 
-	        c.community_id,
-	        c.com_name,
-	        c.com_description,
-	        c.user_num
+	        c.community_id, c.com_name, c.com_description, c.icon_image, c.banner_image, c.is_private, 
+	        c.member_count, c.post_count, TO_CHAR(c.created_date, 'YYYY-MM-DD') created_date, 
+	        c.today_visit, c.total_visit, c.user_num, c.category_id
 	    FROM community c
 	    <choose>
 	        <when test="mode == 'favOnly'">
@@ -57,21 +56,14 @@
 	        </when>
 	        
 			<otherwise>
-				WHERE (
-					c.user_num = #{user_num}
-					OR
-					EXISTS (
-						SELECT 1 FROM community_follow w 
-						WHERE w.community_id = c.community_id 
-						AND w.user_num = #{user_num}
-	                )
-		            OR 
-					EXISTS (
-						SELECT 1 FROM community_favorites f 
-						WHERE f.community_id = c.community_id 
-						AND f.user_num = #{user_num}
-		            )
-		        )
+				WHERE c.user_num = #{user_num}
+					OR c.community_id IN (
+						SELECT community_id FROM community_follow 
+						WHERE user_num = #{user_num}
+						UNION
+           				SELECT community_id FROM community_favorites 
+           				WHERE user_num = #{user_num}
+					)
 		    </otherwise>
 		</choose>
 		
@@ -79,9 +71,19 @@
 	</select>
 	
 	<select id="findByName" parameterType="String" resultType="com.hs.model.CommunityDTO">
-		SELECT * 
+		SELECT community_id, com_name, com_description, icon_image, banner_image, is_private, 
+			member_count, post_count, TO_CHAR(created_date, 'YYYY-MM-DD') created_date, 
+			today_visit, total_visit, user_num, category_id
 		FROM COMMUNITY 
 		WHERE com_name = #{com_name}
+	</select>
+	
+	<select id="findById" parameterType="Long" resultType="com.hs.model.CommunityDTO">
+		SELECT community_id, com_name, com_description, icon_image, banner_image, is_private, 
+			member_count, post_count, TO_CHAR(created_date, 'YYYY-MM-DD') created_date, 
+			today_visit, total_visit, user_num, category_id
+		FROM COMMUNITY 
+		WHERE community_id = #{community_id}
 	</select>
 	
 </mapper>

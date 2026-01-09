@@ -23,12 +23,13 @@ public class CommunityServiceImpl implements CommunityService{
 
 	@Override
 	public CommunityDTO findById(Long community_id) {
+		CommunityDTO dto = null;
 		try {
-			
+			mapper.findById(community_id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return dto;
 	}
 	
 	@Override
@@ -91,8 +92,13 @@ public class CommunityServiceImpl implements CommunityService{
 
 	@Override
 	public List<CommunityDTO> searchCommunity(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
+		List<CommunityDTO> list = null;
+		try {
+			list = mapper.searchCommunity(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}	
 	
 }
