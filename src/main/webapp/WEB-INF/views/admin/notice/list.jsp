@@ -212,12 +212,15 @@
 								<p class="text-white-50 small mb-0">서비스 이용자들에게 업데이트할 공지내용을 관리하세요.</p>
 							</div>
 						</div>
-
-						<button
-							class="btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2" onclick="location.href='${pageContext.request.contextPath}/admin/notice/write';">
-							<span class="material-icons-round fs-6">edit</span> <span>공지사항
-								작성</span>
-						</button>
+						<div class="d-flex gap-2">
+							<button	
+								class="btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2" onclick="location.href='${pageContext.request.contextPath}/admin/notice/write';">
+								<span class="material-icons-round fs-3">edit</span> <span>작성</span>
+							</button>
+							<button type = "button" id="btnDeleteList" class = "btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2">
+								<span class="material-icons-round fs-3">delete</span> <span>삭제</span>
+							</button>
+						</div>
 					</div>
 				</div>
 
@@ -273,8 +276,12 @@
 							<tbody>
 							<c:forEach var="dto" items="${noticeList}">
 								<tr style="background: rgba(59, 130, 246, 0.05);">
-									<td class="text-center"><span class="material-symbols-outlined text-primary fs-5">campaign</span></td>
-									<td class="text-white-50"><!-- <span class="material-icons-round text-primary fs-5"> -->${dto.notice_num}<!-- </span> --></td>
+									<td class="text-center">
+									<span class="material-symbols-outlined text-primary fs-5">campaign</span>
+									</td>
+									<td class="text-white-50">
+									<!-- <span class="material-icons-round text-primary fs-5"> -->${dto.notice_num}<!-- </span> -->
+									</td>
 									<td>
 										<span class="badge badge-normal">${dto.state}
 										</span>
@@ -292,8 +299,12 @@
 							</c:forEach>
 							<c:forEach var="dto" items="${list}"  varStatus="status">
 								<tr style="background: rgba(59, 130, 246, 0.05);">
-									<td class="text-center"><input type="checkbox"
-										class="form-check-input"></td>
+									<td class="text-center">
+									<input type="checkbox" 
+				                       class="form-check-input" 
+				                       name="nums" 
+				                       value="${dto.notice_num}">
+									</td>
 									<td class="text-white-50"><!-- <span class="material-icons-round text-primary fs-5"> -->${dto.notice_num}<!-- </span> --></td>
 									<td>
 										<c:if test="${dto.state == '공개'}">
@@ -352,7 +363,7 @@
 			</div>
 		</main>
 	</div>
-
+	<form name="deleteForm" method="post"></form>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/admin_bbs_util.js"></script>

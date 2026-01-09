@@ -49,4 +49,41 @@ public class NoticeServiceImpl implements NoticeService{
 
 		return result;
 	}
+
+	@Override
+	public void noticeDelete(long num) throws Exception {
+		try {
+			mapper.noticeDelete(num);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
+		
+	}
+
+	@Override
+	public void noticeDeleteList(List<Long> list) throws Exception {
+		try {
+			mapper.noticeDeleteList(list);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
+		
+	}
+
+	@Override
+	public NoticeDTO findById(long num) {
+		NoticeDTO dto = null;
+		
+		try {
+			dto = mapper.findById(num);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return dto;
+	}
 }

@@ -77,4 +77,36 @@
 			</if>	
 		</where>
 	</select>
+	
+	<delete id="noticeDelete" parameterType="Long">
+		DELETE FROM notice
+		WHERE notice_num = #{notice_num}
+	</delete>
+	
+	<delete id="noticeDeleteList" parameterType="java.util.List">
+		DELETE FROM notice
+		WHERE notice_num IN
+		<foreach collection="list" item="num" index="index"
+			open="(" separator="," close=")">
+			#{num}
+		</foreach>
+	</delete>
+	
+	<select id="findById" parameterType="Long" resultType="com.hs.model.admin.NoticeDTO">
+	SELECT notice_num num,
+		 	noti.user_num user_num,
+		 	memb.user_Id user_Id,
+		 	memb.user_nickname user_nickname,
+		 	noti_title,
+		 	noti_content,
+		 	noti_reg_date,
+			noti_hitCount,
+			is_notice,
+			memb.user_updated_date user_updated_date
+	FROM notice noti, member memb
+	WHERE noti.user_num = memb.user_num
+	AND notice_num = #{num}
+	</select>
+	
+	
 </mapper>

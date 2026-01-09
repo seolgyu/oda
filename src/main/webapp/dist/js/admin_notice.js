@@ -1,4 +1,3 @@
-// 체크박스 공통 제어
 $(function(){
     function searchList() {
         const f = document.searchForm;
@@ -14,10 +13,8 @@ $(function(){
         location.href = url + '?' + params;
     }
 
-    // 전역 함수로 등록 (onclick에서 사용)
     window.searchList = searchList;
 
-    // 엔터키 검색
     $('input[name="kwd"]').on('keypress', function(e) {
         if(e.key === 'Enter' || e.keyCode === 13) {
             e.preventDefault();
@@ -25,47 +22,100 @@ $(function(){
         }
     });
 
-    // 검색 아이콘 클릭
-    $('.search-icon').on('click', function() {
-        searchList();
-    });
-	
     $('.glass-btn-group .btn').on('click', function(e){
-        e.preventDefault(); // ✅ 기본 동작 방지
-        
-        console.log('버튼 클릭됨'); // ✅ 디버깅용
-        
-        // 모든 버튼의 active 클래스 제거
+        e.preventDefault();
         $('.glass-btn-group .btn').removeClass('active');
-
-        // 클릭한 버튼에 active 클래스 추가
         $(this).addClass('active');
 
-        // 버튼의 value 값 또는 텍스트 가져오기
         const stateValue = $(this).val() || $(this).attr('value') || '';
-        
-        // 현재 검색 조건 가져오기
         const schType = $('select[name="schType"]').val() || 'all';
         const kwd = $('input[name="kwd"]').val() || '';
         const size = $('input[name="size"]').val() || '10';
 
-        // URLSearchParams로 쿼리스트링 생성
         const params = new URLSearchParams();
         params.append('size', size);
         params.append('schType', schType);
         params.append('kwd', kwd);
 
-        // state 값이 있으면 추가 (전체 버튼은 빈 값)
         if(stateValue) {
             params.append('state', stateValue);
         }
 
-        // 페이지 이동
         const pathname = window.location.pathname;
         const url = pathname + '?' + params.toString();
-        
-        console.log('이동할 URL:', url); // ✅ 디버깅용
-        
+
         location.href = url;
+    });
+
+    $('.form-check-input-all').on('change', function() {
+        const isChecked = $(this).prop('checked');
+        $('input[name="nums"]').prop('checked', isChecked);
+    });
+
+    $(document).on('change', 'input[name="nums"]', function() {
+        const totalCount = $('input[name="nums"]').length;
+        const checkedCount = $('input[name="nums"]:checked').length;
+        $('.form-check-input-all').prop('checked', totalCount === checkedCount);
+    });
+
+    // ✅ 검색 파라미터 가져오기 함수
+    function getSearchParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return {
+            schType: $('select[name="schType"]').val() || 'all',
+            kwd: $('input[name="kwd"]').val() || '',
+            state: $('input[name="state"]').val() || '',
+            size: $('input[name="size"]').val() || '10',
+            page: urlParams.get('page') || '1'
+        };
+    }
+
+    // ✅ hidden input 추가 함수
+    function addHiddenInput(form, name, value) {
+        if(value) {
+            $('<input>')
+                .attr('type', 'hidden')
+                .attr('name', name)
+                .val(value)
+                .appendTo(form);
+        }
+    }
+
+    // 삭제 버튼 클릭
+    $('#btnDeleteList').on('click', function(e) {
+        e.preventDefault();
+
+        const checkedItems = $('input[name="nums"]:checked');
+
+        if(checkedItems.length === 0) {
+            alert('삭제할 공지사항을 선택해주세요.');
+            return;
+        }
+
+        if(!confirm(`선택한 ${checkedItems.length}개의 공지사항을 삭제하시겠습니까?`)) {
+            return;
+        }
+
+        const f = document.deleteForm;
+        $(f).empty();
+
+        // 체크된 항목들 추가
+        checkedItems.each(function() {
+            $(this).clone().appendTo(f);
+        });
+
+        // ✅ 검색 조건들 모두 추가
+        const params = getSearchParams();
+        addHiddenInput(f, 'schType', params.schType);
+        addHiddenInput(f, 'kwd', params.kwd);
+        addHiddenInput(f, 'state', params.state);
+        addHiddenInput(f, 'size', params.size);
+        addHiddenInput(f, 'page', params.page); // ✅ page 추가
+
+        // action 설정 및 submit
+        const pathname = window.location.pathname;
+        const baseUrl = pathname.substring(0, pathname.lastIndexOf('/'));
+        f.action = baseUrl + '/deleteList';
+        f.submit();
     });
 });

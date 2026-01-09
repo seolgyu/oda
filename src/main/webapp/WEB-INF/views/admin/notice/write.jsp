@@ -220,17 +220,19 @@ select.glass-input-box {
 
 						<div class="row mb-4">
 							<div class="col-md-6 mb-4 mb-md-0">
-								<label class="form-label">공지 유형</label> <select
-									class="glass-input-box" name="noticeType">
-									<option value="normal">일반 공지</option>
-									<option value="urgent">주요(긴급) 공지</option>
+								<label class="form-label">공지 설정</label> <select
+									class="glass-input-box" name="is_Notice">
+									<option value="0">일반 공지사항</option>
+									<option value="1">고정 공지사항</option>
 								</select>
 							</div>
 							<div class="col-md-6">
-								<label class="form-label">공개 설정</label> <select
-									class="glass-input-box" name="isVisible">
-									<option value="true">공개</option>
-									<option value="false">비공개(임시저장)</option>
+								<label class="form-label">공지 유형</label> <select
+									class="glass-input-box" name="state">
+									<option value="공개">공개</option>
+									<option value="비공개">비공개</option>
+									<option value="임시저장">임시저장</option>
+									<option value="신고">신고</option>
 								</select>
 							</div>
 						</div>

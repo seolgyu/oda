@@ -1,6 +1,8 @@
 package com.hs.controller.admin;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +38,11 @@ public class noticeManageController {
 	@GetMapping("write")
 	public ModelAndView writeForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		ModelAndView mav = new ModelAndView("admin/notice/write");
+		return mav;
+	}
+	@GetMapping("article")
+	public ModelAndView article(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		ModelAndView mav = new ModelAndView("admin/notice/article");
 		return mav;
 	}
 	
@@ -118,5 +125,126 @@ public class noticeManageController {
 		}
 		
 		return mav;
+	}
+	
+	@GetMapping("delete")
+	public ModelAndView delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		
+		// 파일 저장 경로 - 임시 주석
+		
+		  String root = session.getServletContext().getRealPath("/"); String pathname =
+		  root + "uploads" + File.separator + "notice";
+		  
+		  String page = req.getParameter("page"); String size =
+		  req.getParameter("size"); String query = "page=" + page + "&size=" + size;
+		 
+		
+		try {
+			long num = Long.parseLong(req.getParameter("num"));
+			
+			String schType = req.getParameter("schType");
+			String kwd = req.getParameter("kwd");
+			String state = req.getParameter("state");
+			
+			if (schType == null) {
+				schType = "all";
+				kwd = "";
+			}
+			kwd = util.decodeUrl(kwd);
+
+			if (! kwd.isBlank()) {
+				query += "&schType=" + schType + "&kwd=" + util.encodeUrl(kwd);
+			}
+
+			NoticeDTO dto = service.findById(num);
+			if (dto == null) {
+				return new ModelAndView("redirect:/admin/notice/list?" + query);
+			}
+
+			// 실제 파일 삭제
+			/*
+			 * List<NoticeDTO> listFile = service.listNoticeFile(num); for (NoticeDTO vo :
+			 * listFile) { fileManager.doFiledelete(pathname, vo.getSaveFilename()); }
+			 */
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("field", "num");
+			map.put("num", num);
+			
+			// 파일이름 등의 정보 삭제
+			//service.deleteNoticeFile(map);			
+
+			// 게시글 삭제
+			service.noticeDelete(num);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ModelAndView("redirect:/admin/notice/list?" + query);
+	}
+	
+	@PostMapping("deleteList")
+	public ModelAndView deleteList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 게시글다중삭제
+		// 넘어온 파라미터 : 글번호들, 페이지번호, size [, 검색컬럼, 검색값]
+		HttpSession session = req.getSession();
+		
+		// 파일 저장 경로
+		String root = session.getServletContext().getRealPath("/");
+		String pathname = root + "uploads" + File.separator + "notice";
+
+		String page = req.getParameter("page");
+		String size = req.getParameter("size");
+		String state = req.getParameter("state");
+		
+		String query = "size=" + size + "&page=" + page + "&state=" + util.encodeUrl(state);
+
+		try {
+			String schType = req.getParameter("schType");
+			String kwd = req.getParameter("kwd");
+			if (schType == null) {
+				schType = "all";
+				kwd = "";
+			} else if (kwd == null) {
+				kwd = "";
+			} else if (state == null) {
+				state = "";
+			}
+			kwd = util.decodeUrl(kwd);
+			if (! kwd.isBlank()) {
+				query += "&schType=" + schType + "&kwd=" + util.encodeUrl(kwd) + "&state=" + util.encodeUrl(state);
+			}
+
+			String[] nn = req.getParameterValues("nums");
+			List<Long> nums = new ArrayList<Long>();
+			for (int i = 0; i < nn.length; i++) {
+				nums.add(Long.parseLong(nn[i]));
+			}
+
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("field", "num");
+			for (Long n : nums) {
+				//List<NoticeDTO> listFile = service.listNoticeFile(n);
+				
+				// 실제 파일 삭제
+				/*
+				 * for (NoticeDTO vo : listFile) { fileManager.doFiledelete(pathname,
+				 * vo.getSaveFilename()); }
+				 */
+				
+				map.put("num", n);
+				
+				// 파일이름 등의 정보 삭제
+				//service.deleteNoticeFile(map);
+			}
+
+			// 게시글 다중 삭제
+			service.noticeDeleteList(nums);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ModelAndView("redirect:/admin/notice/list?" + query);
 	}
 }
