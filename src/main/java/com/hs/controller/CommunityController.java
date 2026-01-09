@@ -37,7 +37,6 @@ public class CommunityController {
 		return mav;
 	}
 	
-	@ResponseBody
 	@PostMapping("create")
 	public ModelAndView createSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
 		HttpSession session = req.getSession();
@@ -55,14 +54,13 @@ public class CommunityController {
 		dto.setCategory_id(category_id);
 		dto.setUser_num(info.getMemberIdx());
 		
-		
 		try {
 			cservice.insertCommunity(dto);
-			dto = cservice.isCommunityName(com_name);
+			
+			CommunityDTO saveDto = cservice.isCommunityName(dto.getCom_name());
 			
 			ModelAndView mav = new ModelAndView("community/main");
-			mav.addObject("dto", dto);
-			mav.addObject("is_private", dto.getIs_private().equals("0") ? "전체공개" : "비공개");
+			mav.addObject("dto", saveDto);
 			
 			return mav;
 		} catch (Exception e) {
@@ -72,7 +70,6 @@ public class CommunityController {
 			
 			List<CommunityDTO> categoryList = cservice.getCategoryList();
 			mav.addObject("categories", categoryList);
-			
 			mav.addObject("dto", dto);
 			mav.addObject("mode", "error");
 			
@@ -85,14 +82,39 @@ public class CommunityController {
 	public ModelAndView mainPage(HttpServletRequest req, HttpServletResponse resp) {
 		String com_id = req.getParameter("community_id");
 		
-		ModelAndView mav = new ModelAndView("community/main");
+		if(com_id == null || com_id.isEmpty()) {
+			return new ModelAndView("redirect:/community/list");
+		}
+		
+		try {
+			Long community_id = Long.parseLong(com_id);
+			CommunityDTO dto = cservice.findById(community_id);
+				
+			if(dto != null) {
+				ModelAndView mav = new ModelAndView("community/main");
+				mav.addObject("dto", dto);
+				return mav;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ModelAndView("redirect:/community/list");
+	}
+	
+	@GetMapping("update")
+	public ModelAndView updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String com_id = req.getParameter("community_id");
+		
+		ModelAndView mav = new ModelAndView("community/update");
 		
 		try {
 			if(com_id != null) {
 				Long community_id = Long.parseLong(com_id);
 				CommunityDTO dto = cservice.findById(community_id);
 	            mav.addObject("dto", dto);
-	            mav.addObject("is_private_text", dto.getIs_private().equals("0") ? "전체공개" : "비공개");
+	            
+	            List<CommunityDTO> categoryList = cservice.getCategoryList();
+	    		mav.addObject("categories", categoryList);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -100,15 +122,41 @@ public class CommunityController {
 		return mav;
 	}
 	
-	@GetMapping("update")
-	public ModelAndView updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		return new ModelAndView("community/update");
-	}
-	
+	@ResponseBody
 	@PostMapping("update")
-	public ModelAndView updateSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+	public Map<String, Object> updateSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+		Map<String, Object> map = new HashMap<String, Object>();
 		
-		return new ModelAndView("community/create");
+		try {
+			String com_id = req.getParameter("community_id");
+	        String name = req.getParameter("com_name");
+	        String description = req.getParameter("com_description");
+	        String is_private = req.getParameter("is_private");
+	        String topic_id = req.getParameter("category_id");
+	        String icon = req.getParameter("icon_image");
+	        String banner = req.getParameter("banner_image");
+
+	        CommunityDTO dto = new CommunityDTO();
+	        dto.setCommunity_id(Long.parseLong(com_id));
+	        dto.setCom_name(name);
+	        dto.setCom_description(description);
+	        dto.setIs_private("private".equals(is_private) ? "1" : "0");
+	        dto.setCategory_id(topic_id);
+	        dto.setIcon_image(icon); 
+	        dto.setBanner_image(banner);
+	        
+	        cservice.updateCommunity(dto);
+
+	        map.put("status", "success");
+	        map.put("community_id", com_id);
+	        map.put("message", "커뮤니티 설정이 변경되었습니다.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("status", "error");
+	        map.put("message", e.getMessage());
+		}
+		
+		return map;
 	}
 	
 	@GetMapping("delete")

@@ -42,7 +42,7 @@
                     
                     <div class="text-center mb-10">
                         <h1 class="text-4xl font-extrabold text-white tracking-tight mb-2">커뮤니티 만들기</h1>
-                        <p class="text-gray-400 text-base font-light">협업과 공유를 위한 새로운 공간을 만들어보세요.</p>
+                        <p class="text-gray-400 text-base font-light">ODA에서 협업과 공유를 위한 새로운 공간을 만들어보세요.</p>
                     </div>
 
                     <div class="neon-card rounded-[2.5rem] p-8 md:p-12">
@@ -55,9 +55,9 @@
                             </div>
 
                             <div class="space-y-3">
-                                <label class="block text-sm font-medium text-gray-300 ml-1">커뮤니티 설명 </label>
+                                <label class="block text-sm font-medium text-gray-300 ml-1">커뮤니티 소개 </label>
                                 <textarea name="com_description" rows="4" class="custom-input w-full rounded-xl py-4 px-5 text-white resize-none" placeholder="커뮤니티를 설명해주세요..."></textarea>
-                            	<p id="error-com_description" class="text-red-500 text-xs mt-1 hidden">설명을 입력해주세요.</p>
+                            	<p id="error-com_description" class="text-red-500 text-xs mt-1 hidden">커뮤니티를 소개해주세요.</p>
                             </div>
 
                             <div class="space-y-3">
@@ -83,7 +83,7 @@
                                             <span class="material-symbols-outlined text-red-400 text-2xl flex-none">lock</span>
                                             <div class="flex-1">
                                                 <p class="text-[15px] font-bold title-text text-white">비공개</p>
-                                                <p class="text-[11px] text-gray-400 leading-tight">나만 볼 수 있습니다.</p>
+                                                <p class="text-[11px] text-gray-400 leading-tight">나만 보거나 게시할 수 있습니다.</p>
                                             </div>
                                         </div>
                                         <div class="check-container w-6 h-6 flex-none flex justify-center items-center ml-2"></div>
@@ -106,9 +106,9 @@
                             </div>
 
                             <div class="flex justify-end items-center gap-6 pt-6 border-t border-white/5">
-                                <button type="button" class="text-sm text-gray-500 hover:text-white transition-colors" onclick="history.back()">Cancel</button>
+                                <button type="button" class="text-sm text-gray-500 hover:text-white transition-colors" onclick="history.back()">취소</button>
                                 <button type="submit" class="bg-[#a855f7] hover:bg-[#9333ea] px-10 py-4 rounded-2xl font-bold text-white shadow-[0_10px_40px_rgba(168,85,247,0.4)] flex items-center gap-2 transition-all transform hover:-translate-y-1">
-                                    <span class="material-symbols-outlined text-lg">rocket_launch</span> Create Community
+                                    <span class="material-symbols-outlined text-lg">rocket_launch</span> 커뮤니티 만들기
                                 </button>
                             </div>
                         </form>

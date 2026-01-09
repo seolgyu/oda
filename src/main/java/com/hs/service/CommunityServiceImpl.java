@@ -25,7 +25,7 @@ public class CommunityServiceImpl implements CommunityService{
 	public CommunityDTO findById(Long community_id) {
 		CommunityDTO dto = null;
 		try {
-			mapper.findById(community_id);
+			dto = mapper.findById(community_id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -56,8 +56,12 @@ public class CommunityServiceImpl implements CommunityService{
 
 	@Override
 	public void updateCommunity(CommunityDTO dto) throws Exception {
-		// TODO Auto-generated method stub
-		
+		try {
+			mapper.updateCommunity(dto);
+			dto = mapper.findById(dto.getCommunity_id());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

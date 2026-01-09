@@ -72,7 +72,7 @@
 							                        </div>
 							                        <div>
 							                            <h3 class="text-lg font-bold text-gray-100 group-hover:text-primary transition-colors cursor-pointer" 
-							                                onclick="location.href='${pageContext.request.contextPath}/community/main?id=${dto.community_id}';">
+							                                onclick="location.href='${pageContext.request.contextPath}/community/main?community_id=${dto.community_id}';">
 							                                ${dto.com_name}
 							                            </h3>
 							                            <p class="text-sm text-gray-400 mt-1 truncate max-w-[300px]">${dto.com_description}</p>
@@ -100,7 +100,7 @@
 						        <div class="space-y-5">
 						            <c:forEach var="fav" items="${favList}">
 						                <div class="flex items-center space-x-3 group cursor-pointer" 
-						                     onclick="location.href='${pageContext.request.contextPath}/community/main?id=${fav.community_id}';">
+						                     onclick="location.href='${pageContext.request.contextPath}/community/main?community_id=${fav.community_id}';">
 						                    <div class="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center text-primary text-[10px] font-bold border border-primary/30 group-hover:bg-primary group-hover:text-white transition-all uppercase">
 						                        ${fav.com_short_name}
 						                    </div>

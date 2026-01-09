@@ -10,9 +10,6 @@
     
     <script>
     tailwind.config = {
-    	corePlugins: {
-        	preflight: false, // Tailwind의 기본 스타일 초기화 기능을 끕니다.
-        },
         theme: {
         	extend: {
             	colors: {
@@ -45,8 +42,8 @@
                 <div class="max-w-5xl mx-auto py-12 px-6">
                     
                     <div class="text-center mb-12">
-                        <h1 class="text-4xl font-extrabold text-white tracking-tight mb-3">Explore Communities</h1>
-                        <p class="text-gray-400 text-base font-light">Discover new spaces for collaboration and sharing in the galaxy.</p>
+                        <h1 class="text-4xl font-extrabold text-white tracking-tight mb-3">커뮤니티 둘러보기</h1>
+                        <p class="text-gray-400 text-base font-light">ODA에서 협업과 공유를 위한 새로운 공간을 발견해보세요.</p>
                     </div>
 
                     <div class="flex flex-col lg:flex-row gap-8">
@@ -54,7 +51,7 @@
                             
                             <div class="relative group">
                                 <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-gray-500">search</span>
-                                <input type="text" class="custom-input w-full rounded-2xl py-4 pl-14 pr-6 text-white outline-none" placeholder="Search for a community by name...">
+                                <input type="text" class="custom-input w-full rounded-2xl py-4 pl-14 pr-6 text-white outline-none" placeholder="커뮤니티를 이름으로 검색하세요...">
                             </div>
 
                             <div class="neon-card rounded-[2.5rem] overflow-hidden">
@@ -84,7 +81,7 @@
                                     </c:when>
                                     <c:otherwise>
                                         <div class="p-20 text-center">
-                                            <p class="text-gray-500 font-light">No communities found in this sector of the galaxy.</p>
+                                            <p class="text-gray-500 font-light">ODA에는 어떤 커뮤니티도 개설되지 않았습니다.</p>
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
@@ -93,7 +90,7 @@
 
                         <div class="w-full lg:w-80 space-y-6">
                             <div class="neon-card rounded-[2rem] p-8">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-6 border-b border-white/5 pb-3">Popular Topics</label>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-6 border-b border-white/5 pb-3">커뮤니티 인기 주제</label>
                                 <div class="flex flex-wrap gap-2.5">
                                     <button type="button" class="topic-btn px-4 py-2 rounded-xl text-[11px] font-medium">❤️ Health</button>
                                     <button type="button" class="topic-btn px-4 py-2 rounded-xl text-[11px] font-medium selected">🎮 Gaming</button>
@@ -107,7 +104,7 @@
                             	<button onclick="location.href='create'" 
 							            class="neon-card w-full py-6 rounded-[2rem] text-primary font-bold text-base hover:bg-white/[0.05] transition-all flex items-center justify-center gap-2 group border-none">
 							        <span class="material-symbols-outlined text-[#a855f7] group-hover:scale-110 transition-transform">add_circle</span>
-							        <span class="tracking-tight text-[#a855f7]">Create Your Own</span>
+							        <span class="tracking-tight text-[#a855f7]">나의 커뮤니티 만들기</span>
 							    </button>
 							</div>
                         </div>
