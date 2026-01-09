@@ -398,6 +398,15 @@ public class MemberController {
 	@GetMapping("findPwd")
 	public ModelAndView findPwdForm(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		
+		HttpSession session = req.getSession();
+		 
+		session.removeAttribute("isVerified");
+	    session.removeAttribute("resetUserNum");
+	    session.removeAttribute("targetEmail");
+	    session.removeAttribute("authCode");
+	    session.removeAttribute("authCodeTime");
+	    
 		return new ModelAndView("member/findPwd");
 	}
 	
@@ -415,16 +424,14 @@ public class MemberController {
 			String userId = req.getParameter("userId");
 			String userName = req.getParameter("userName");
 	        String email = req.getParameter("email");
-	        System.out.println("2. 파라미터 확인: " + userId);
 	        
 	        map.put("userId", userId);
 	        map.put("userName", userName);
 	        map.put("email", email);
 	        
-	        int result = service.isValidAccount(map);
-	        System.out.println("3. DB 조회 결과: " + result);
+	        Long resetUserNum = service.findUserNum(map);
 	        	        
-	        if(result <= 0) {
+	        if(resetUserNum == null) {
 	        	model.put("status", "fail");
 				return model;
 	        }
@@ -449,27 +456,29 @@ public class MemberController {
 	                + "  <p style='font-size: 12px; color: #bbb;'>본 메일은 발신 전용입니다. 문의 사항은 고객센터를 이용해 주세요.</p>"
 	                + "</div>";
 	        
-	        session.setAttribute("targetEmail", email);
-	        session.setAttribute("authCode", authCode);
-	        session.setAttribute("authCodeTime", System.currentTimeMillis());
 	        
 	        Mail dto = new Mail();
 			
 			dto.setSenderName("ODA");
 			dto.setSenderEmail("kimchowon417@gmail.com");
-			
 			dto.setReceiverEmail(email);
 			dto.setSubject(subject);
 			dto.setContent(content);
 					
 			MailSender sender = new MailSender();
 			boolean b = sender.mailSend(dto);
-			System.out.println("4. 메일 발송 결과: " + b);
+			
 			
 			if(! b) {
 				model.put("status", "emailSendError");
 				return model;
 			}
+			
+			session.setAttribute("isVerified", false);
+			session.setAttribute("resetUserNum", resetUserNum);
+			session.setAttribute("targetEmail", email);
+			session.setAttribute("authCode", authCode);
+			session.setAttribute("authCodeTime", System.currentTimeMillis());
 	        
 		    model.put("status", "exist");
 			
@@ -479,6 +488,67 @@ public class MemberController {
 		}
 	    
 	    return model;
+	}
+	
+	@PostMapping("chkAuthCode")
+	@ResponseBody
+	public Map<String, Object> chkAuthCode(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    Map<String, Object> model = new HashMap<>();
+	    
+	    HttpSession session = req.getSession();
+	    req.setCharacterEncoding("UTF-8");
+
+		try {
+			String userCode = req.getParameter("userCode");
+	        String authCode = (String)session.getAttribute("authCode");
+	        Long authCodeTime = (Long) session.getAttribute("authCodeTime");
+	        
+	        if (authCode == null || authCodeTime == null) {
+	            model.put("status", "expired");
+	            return model;
+	        }
+	        
+	        long currentTime = System.currentTimeMillis();
+	        if (currentTime - authCodeTime > 3 * 60 * 1000) { // 3분
+	            session.removeAttribute("authCode");
+	            session.removeAttribute("authCodeTime");
+	            model.put("status", "timeout");
+	            return model;
+	        }
+
+	        if (!userCode.equals(authCode)) {
+	            model.put("status", "fail");
+	            return model;
+	        }
+	        
+	        session.setAttribute("isVerified", true);
+	        
+	        session.removeAttribute("authCode");
+	        session.removeAttribute("authCodeTime");
+	        
+		    model.put("status", "success");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("status", "error");
+		}
+	    
+	    return model;
+	}
+	
+	@GetMapping("changePwd")
+	public ModelAndView changePwdForm(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		
+		HttpSession session = req.getSession();
+		
+		Boolean isVerified = (Boolean) session.getAttribute("isVerified");
+		Long resetUserNum = (Long) session.getAttribute("resetUserNum");
+
+	    if (isVerified == null || !isVerified || resetUserNum == null) {
+	        return new ModelAndView("redirect:/member/login");
+	    }
+		return new ModelAndView("member/changePwd");
 	}
 
 }

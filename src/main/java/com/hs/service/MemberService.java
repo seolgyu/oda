@@ -22,7 +22,7 @@ public interface MemberService {
 	public int checkNickname(String userNickname) throws SQLException;
 	
 	public String findId(Map<String, Object> map) throws SQLException;
-	public int isValidAccount(Map<String, Object> map) throws SQLException;
+	public Long findUserNum(Map<String, Object> map) throws SQLException;
 	
 	public List<Map<String, Object>> listAgeSection();
 }

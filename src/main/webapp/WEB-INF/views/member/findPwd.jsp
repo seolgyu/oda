@@ -125,6 +125,8 @@
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 	<script type="text/javascript">
 	
+	let timer;
+	
 	function sendResetPwd() {
 		const $errorDiv = $("#findIdResult");
 	    const $resultText = $("#resultText");
@@ -166,12 +168,15 @@
 			success : function(data) {
 				if (data.status === "exist") {
 					showResult("인증번호가 전송되었습니다.", "success");
-			        
-			        $("input[name=userId], input[name=userName], input[name=email]").prop("readOnly", true);
-			        
-			        $("#sendBtn").fadeOut(200, function() {
-			            $("#authCodeSection").fadeIn(300);
-			        });
+				    
+				    $("#sendBtn").text("RESEND CODE");
+				    
+				    $("#sendBtn").prop("disabled", true);
+				    setTimeout(function() {
+				        $("#sendBtn").prop("disabled", false);
+				    }, 10000);
+				    
+				    startTimer(180);
 				} else if (data.status === "emailSendError") {
 	                showResult("이메일 전송에 실패했습니다.", "error");
 	                $submitBtn.prop("disabled", false);
@@ -204,6 +209,37 @@
 	        $resultText.html(msg);
 	        $errorDiv.fadeIn(300);
 	    }
+	}
+	
+	function chkAuthCode() {
+		
+	}
+	
+	function startTimer(duration) {
+	    let timerSeconds = duration;
+	    let minutes, seconds;
+	    const display = document.querySelector('#timer');
+
+	    if (timer) clearInterval(timer);
+
+	    timer = setInterval(function () {
+	        minutes = parseInt(timerSeconds / 60, 10);
+	        seconds = parseInt(timerSeconds % 60, 10);
+
+	        minutes = minutes < 10 ? "0" + minutes : minutes;
+	        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+	        display.textContent = minutes + ":" + seconds;
+
+	        if (--timerSeconds < 0) {
+	            clearInterval(timer);
+	            display.textContent = "00:00";
+	            display.parentElement.style.color = "#ef4444";
+	            
+	            $("#authCode").prop("disabled", true);
+	            showResult("인증 시간이 만료되었습니다. 다시 시도해주세요.", "error");
+	        }
+	    }, 1000);
 	}
 </script>
 </body>

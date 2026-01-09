@@ -129,16 +129,16 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public int isValidAccount(Map<String, Object> map) throws SQLException {
-		int cntAccount = 0;
+	public Long findUserNum(Map<String, Object> map) throws SQLException {
+		Long userNum = null;
 		
 		try {
-			cntAccount = mapper.isValidAccount(map);
+			userNum = mapper.findUserNum(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return cntAccount;
+		return userNum;
 	}
 
 }
