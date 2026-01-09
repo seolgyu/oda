@@ -39,11 +39,11 @@
                                         S
                                     </div>
                                     <div class="pb-2">
-                                        <h1 class="text-white fs-2 fw-bold mb-1">Stargazers Community</h1>
-                                        <p class="text-secondary mb-0">c/stargazers • 14.2k Members • 8.5k Visitors</p>
+                                        <h1 class="text-white fs-2 fw-bold mb-1">${dto.com_name}</h1>
+                                        <p class="text-secondary mb-0">• 가입자 수 ${dto.member_count} • 방문자 수 ${dto.today_visit}</p>
                                     </div>
                                     <div class="ms-auto pb-2 d-flex gap-2">
-                                        <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Joined</button>
+                                        <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">바꿀거임</button>
                                         <button class="btn-icon border border-white border-opacity-10 rounded-circle p-2">
                                             <span class="material-symbols-outlined text-white">notifications</span>
                                         </button>
@@ -59,9 +59,9 @@
                             
                             <div class="glass-panel px-3 py-2 d-flex align-items-center justify-content-between shadow-sm">
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-sm rounded-pill px-3 fw-bold active-filter" style="background: rgba(255, 255, 255, 0.1); color: white; border: none;">Hot</button>
-                                    <button class="btn btn-sm rounded-pill px-3 fw-medium text-secondary hover-white border-0">New</button>
-                                    <button class="btn btn-sm rounded-pill px-3 fw-medium text-secondary hover-white border-0">Top</button>
+                                    <button class="btn btn-sm rounded-pill px-3 fw-bold active-filter" style="background: rgba(255, 255, 255, 0.1); color: white; border: none;">인기순</button>
+                                    <button class="btn btn-sm rounded-pill px-3 fw-medium text-secondary hover-white border-0">최신순</button>
+                                    <button class="btn btn-sm rounded-pill px-3 fw-medium text-secondary hover-white border-0">댓글순</button>
                                 </div>
                                 <div class="d-flex align-items-center gap-1 border-start border-white border-opacity-10 ps-2">
                                     <button class="btn-icon text-white hover-purple"><span class="material-symbols-outlined fs-5">view_day</span></button>
@@ -156,7 +156,7 @@
 
                         <aside class="d-none d-xl-flex flex-column gap-4" style="width: 320px; flex-shrink: 0;">
 						    <div class="glass-card p-4 shadow-lg">
-						        <h3 class="text-white text-xs fw-bold text-uppercase tracking-widest mb-3 opacity-75">About Community</h3>
+						        <h3 class="text-white text-xs fw-bold text-uppercase tracking-widest mb-3 opacity-75">커뮤니티 자세히 보기</h3>
 						        
 						        <div class="d-flex align-items-center gap-3 mb-3">
 						            <div class="rounded-circle overflow-hidden border border-white border-opacity-10 shadow-sm" style="width: 50px; height: 50px; background: linear-gradient(135deg, #e11d48, #4c1d95);">
@@ -164,33 +164,33 @@
 						                    <span class="material-symbols-outlined">flare</span>
 						                </div>
 						            </div>
-						            <h4 class="text-white text-sm fw-bold mb-0">r/Stargazers</h4>
+						            <h4 class="text-white text-sm fw-bold mb-0">${dto.com_name}</h4>
 						        </div>
 						        
-						        <p class="text-secondary text-xs lh-relaxed mb-4">A community for amateur astronomers, astrophotographers, and space enthusiasts.</p>
+						        <p class="text-secondary text-xs lh-relaxed mb-4">${dto.com_description}</p>
 						        
 						        <div class="d-flex gap-4 mb-4 pt-3 border-top border-white border-opacity-10">
 						            <div class="d-flex flex-column">
-						                <span class="text-white text-sm fw-bold">14.2k</span>
-						                <span class="text-secondary" style="font-size: 10px;">Members</span>
+						                <span class="text-white text-sm fw-bold">${dto.member_count}</span>
+						                <span class="text-secondary" style="font-size: 10px;">가입자수</span>
 						            </div>
 						            <div class="d-flex flex-column">
 						                <div class="d-flex align-items-center gap-1">
 						                    <span class="material-symbols-outlined text-info" style="font-size: 12px;">visibility</span>
-						                    <span class="text-white text-sm fw-bold">8.5k</span>
+						                    <span class="text-white text-sm fw-bold">${dto.total_visit}</span>
 						                </div>
-						                <span class="text-secondary" style="font-size: 10px;">Visitors</span>
+						                <span class="text-secondary" style="font-size: 10px;">총방문자수</span>
 						            </div>
 						        </div>
 						
 						        <div class="d-flex flex-column gap-2 mb-4">
 								    <div class="d-flex align-items-center gap-2 text-secondary">
 								        <span class="material-symbols-outlined" style="font-size: 18px;">cake</span>
-								        <span style="font-size: 0.85rem;">Created Sep 20, 2021</span>
+								        <span style="font-size: 0.85rem;">${dto.created_date}</span>
 								    </div>
 								    <div class="d-flex align-items-center gap-2 text-secondary">
-								        <span class="material-symbols-outlined" style="font-size: 18px;">public</span>
-								        <span style="font-size: 0.85rem;">Public Access</span>
+								        <span class="material-symbols-outlined" style="font-size: 18px;">${dto.is_private == '0' ? 'public' : 'lock'}</span>
+								        <span style="font-size: 0.85rem;">${dto.is_private == '0' ? '전체공개' : '비공개'}</span>
 								    </div>
 								</div>
 						

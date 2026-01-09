@@ -5,6 +5,7 @@ import java.util.Date;
 public class CommunityDTO {
 	private Long community_id; // PK
 	private String com_name;
+	private String com_short_name;
 	private String com_description; // CLOB
 	private String category_id;
 	private String category_name;
@@ -16,9 +17,9 @@ public class CommunityDTO {
 	private Long member_count;
 	private Long post_count;
 	private Long user_num; // FK (User)
-	private Date created_date;
-	private Date favorites_date;
-	private Date follow_date;
+	private String created_date;
+	private String favorites_date;
+	private String follow_date;
 
 	// 조인용 필드 (화면 표시용)
 	private String creatorNickname;
@@ -37,6 +38,14 @@ public class CommunityDTO {
 
 	public void setCom_name(String com_name) {
 		this.com_name = com_name;
+	}
+
+	public String getCom_short_name() {
+		return com_short_name;
+	}
+
+	public void setCom_short_name(String com_short_name) {
+		this.com_short_name = com_short_name;
 	}
 
 	public String getCom_description() {
@@ -111,11 +120,11 @@ public class CommunityDTO {
 		this.user_num = user_num;
 	}
 
-	public Date getCreated_date() {
+	public String getCreated_date() {
 		return created_date;
 	}
 
-	public void setCreated_date(Date created_date) {
+	public void setCreated_date(String created_date) {
 		this.created_date = created_date;
 	}
 
@@ -143,19 +152,19 @@ public class CommunityDTO {
 		this.total_visit = total_visit;
 	}
 
-	public Date getFavorites_date() {
+	public String getFavorites_date() {
 		return favorites_date;
 	}
 
-	public void setFavorites_date(Date favorites_date) {
+	public void setFavorites_date(String favorites_date) {
 		this.favorites_date = favorites_date;
 	}
 
-	public Date getFollow_date() {
+	public String getFollow_date() {
 		return follow_date;
 	}
 
-	public void setFollow_date(Date follow_date) {
+	public void setFollow_date(String follow_date) {
 		this.follow_date = follow_date;
 	}
 

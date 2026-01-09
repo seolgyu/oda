@@ -1,7 +1,9 @@
 package com.hs.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.hs.model.CommunityDTO;
 import com.hs.model.SessionInfo;
@@ -53,8 +55,16 @@ public class CommunityController {
 		dto.setCategory_id(category_id);
 		dto.setUser_num(info.getMemberIdx());
 		
+		
 		try {
 			cservice.insertCommunity(dto);
+			dto = cservice.isCommunityName(com_name);
+			
+			ModelAndView mav = new ModelAndView("community/main");
+			mav.addObject("dto", dto);
+			mav.addObject("is_private", dto.getIs_private().equals("0") ? "전체공개" : "비공개");
+			
+			return mav;
 		} catch (Exception e) {
 			e.printStackTrace();
 			
@@ -69,12 +79,25 @@ public class CommunityController {
 			return mav;
 		}
 		
-		return new ModelAndView("redirect:/community/main");
 	}
 	
 	@GetMapping("main")
 	public ModelAndView mainPage(HttpServletRequest req, HttpServletResponse resp) {
-		return new ModelAndView("community/main");
+		String com_id = req.getParameter("community_id");
+		
+		ModelAndView mav = new ModelAndView("community/main");
+		
+		try {
+			if(com_id != null) {
+				Long community_id = Long.parseLong(com_id);
+				CommunityDTO dto = cservice.findById(community_id);
+	            mav.addObject("dto", dto);
+	            mav.addObject("is_private_text", dto.getIs_private().equals("0") ? "전체공개" : "비공개");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return mav;
 	}
 	
 	@GetMapping("update")
@@ -95,14 +118,36 @@ public class CommunityController {
 	
 	@GetMapping("management")
 	public ModelAndView managementList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		return new ModelAndView("community/management");
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		ModelAndView mav = new ModelAndView("community/management");
+		
+		try {
+			Map<String, Object> allmap = new HashMap<String, Object>();
+			allmap.put("user_num", info.getMemberIdx());
+			allmap.put("mode", "allList");
+			
+			List<CommunityDTO> allList = cservice.searchCommunity(allmap);
+			System.out.println("디버깅 - allList 개수: " + (allList != null ? allList.size() : "null"));
+			mav.addObject("allList", allList);
+			
+			Map<String, Object> favmap = new HashMap<String, Object>();
+			favmap.put("user_num", info.getMemberIdx());
+			favmap.put("mode", "favOnly");
+			
+			List<CommunityDTO> favList = cservice.searchCommunity(favmap);
+			mav.addObject("favList", favList);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return mav;
 	}
 	
 	@GetMapping("list")
 	public ModelAndView communityList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		return new ModelAndView("community/list");
 	}
-	
-	
 	
 }
