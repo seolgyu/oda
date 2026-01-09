@@ -10,8 +10,7 @@ import com.hs.model.FileAtDTO;
 import com.hs.model.MemberDTO;
 import com.hs.model.PostDTO;
 import com.hs.model.SessionInfo;
-import com.hs.util.FileManager; // 기존 파일매니저 import
-import com.hs.util.MyMultipartFile; // 기존 파일매니저의 인터페이스 import
+import com.hs.util.CloudinaryUtil;
 import com.hs.mvc.annotation.Controller;
 import com.hs.mvc.annotation.GetMapping;
 import com.hs.mvc.annotation.PostMapping;
@@ -57,83 +56,94 @@ public class PostController {
 		return mav;
 	}
 
-	// 2. 글 등록 처리 (POST)
-	@PostMapping("write")
-	public ModelAndView writeSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo) session.getAttribute("member");
-		
-		if (info == null) {
-			return new ModelAndView("redirect:/member/login");
-		}
+	// 2. 글 등록 처리 (POST) - Cloudinary 적용됨
+    @PostMapping("write")
+    public ModelAndView writeSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        SessionInfo info = (SessionInfo) session.getAttribute("member");
+        
+        if (info == null) {
+            return new ModelAndView("redirect:/member/login");
+        }
 
-		try {
-			PostDTO dto = new PostDTO();
-			
-			// [1] 일반 파라미터 받기
-			dto.setTitle(req.getParameter("title"));
-			dto.setContent(req.getParameter("content"));
-			
-			// 공지사항 처리
-			String isNotice = req.getParameter("isNotice");
-			dto.setPostType(isNotice != null ? "NOTICE" : "COMMUNITY");
-			
-			// 댓글 기능 해제 처리
-			String chkReply = req.getParameter("chkReply");
-			dto.setReplyEnabled(chkReply != null ? "0" : "1"); 
+        try {
+            PostDTO dto = new PostDTO();
+            
+            // [1] 일반 파라미터 받기
+            dto.setTitle(req.getParameter("title"));
+            dto.setContent(req.getParameter("content"));
+            
+            // 공지사항 처리
+            String isNotice = req.getParameter("isNotice");
+            dto.setPostType(isNotice != null ? "NOTICE" : "COMMUNITY");
+            
+            // 댓글 기능 해제 처리
+            String chkReply = req.getParameter("chkReply");
+            dto.setReplyEnabled(chkReply != null ? "0" : "1"); 
 
-			// 좋아요/조회수 숨기기 처리
-			String chkCounts = req.getParameter("chkCounts");
-			dto.setShowCounts(chkCounts != null ? "0" : "1");
-			
-			dto.setUserNum(info.getMemberIdx()); 
-			dto.setState("정상");
+            // 좋아요/조회수 숨기기 처리
+            String chkCounts = req.getParameter("chkCounts");
+            dto.setShowCounts(chkCounts != null ? "0" : "1");
+            
+            dto.setUserNum(info.getMemberIdx()); 
+            dto.setState("정상");
 
-			// [2] 파일 업로드 처리 (기존 FileManager 활용)
-			FileManager fileManager = new FileManager();
-			
-			// 저장 경로 설정 (webapp/uploads/photo)
-			String root = req.getServletContext().getRealPath("/");
-			String pathname = root + "uploads" + File.separator + "photo";
-			
-			// input type="file"의 name="selectFile"인 파트들을 포함하여 모든 파트 수집
-			Collection<Part> parts = req.getParts();
-			
-			// FileManager를 통해 실제 파일 저장 및 정보 획득
-			List<MyMultipartFile> uploadedFiles = fileManager.doFileUpload(parts, pathname);
-			
-			// [3] MyMultipartFile -> FileAtDTO 변환
-			List<FileAtDTO> fileList = new ArrayList<>();
-			if(uploadedFiles != null && !uploadedFiles.isEmpty()) {
-				int order = 0;
-				for(MyMultipartFile mf : uploadedFiles) {
-					FileAtDTO fileDto = new FileAtDTO();
-					fileDto.setFileName(mf.getOriginalFilename()); // 원본명
-					fileDto.setFilePath(mf.getSaveFilename());     // 저장명
-					fileDto.setFileSize(mf.getSize());             // 사이즈
-					fileDto.setFileOrder(order++);                 // 순서
-					
-					// 파일 타입 추출 (확장자 기반)
-					String originalName = mf.getOriginalFilename();
-					String ext = originalName.substring(originalName.lastIndexOf(".") + 1);
-					fileDto.setFileType(ext); 
-					
-					fileList.add(fileDto);
-				}
-			}
-			
-			// DTO에 파일 리스트 담기
-			dto.setFileList(fileList);
+            // [2] 파일 업로드 처리 (Cloudinary 연동)
+            List<FileAtDTO> fileList = new ArrayList<>();
+            String root = req.getServletContext().getRealPath("/");
+            String tempPath = root + "temp"; // 임시 저장 경로
+            
+            File tempDir = new File(tempPath);
+            if(!tempDir.exists()) tempDir.mkdirs(); // 폴더 없으면 생성
+            
+            Collection<Part> parts = req.getParts();
+            int order = 0;
+            
+            for(Part part : parts) {
+                // name이 "selectFile"이고 실제 파일 데이터가 있는 경우만 처리
+                if(part.getName().equals("selectFile") && part.getSize() > 0 && part.getSubmittedFileName() != null && !part.getSubmittedFileName().trim().isEmpty()) {
+                    
+                    // 1. 임시 파일로 저장
+                    String originalFileName = part.getSubmittedFileName();
+                    File tempFile = new File(tempPath, originalFileName);
+                    part.write(tempFile.getAbsolutePath());
+                    
+                    // 2. Cloudinary로 전송 및 URL 획득
+                    String uploadedUrl = CloudinaryUtil.uploadFile(tempFile);
+                    
+                    if(uploadedUrl != null) {
+                        FileAtDTO fileDto = new FileAtDTO();
+                        fileDto.setFileName(originalFileName);
+                        fileDto.setFilePath(uploadedUrl); // ★ 이제 여기에 https://... 주소가 들어갑니다.
+                        fileDto.setFileSize(part.getSize());
+                        fileDto.setFileOrder(order++);
+                        
+                        // 확장자 추출
+                        String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+                        fileDto.setFileType(ext);
+                        
+                        fileList.add(fileDto);
+                    }
+                    
+                    // 3. 임시 파일 삭제 (서버 용량 확보)
+                    if(tempFile.exists()) {
+                        tempFile.delete();
+                    }
+                }
+            }
+            
+            // DTO에 파일 리스트 담기
+            dto.setFileList(fileList);
 
-			// [4] 서비스 호출
-			service.insertPost(dto);
+            // [3] 서비스 호출
+            service.insertPost(dto);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		return new ModelAndView("redirect:/post/list");
-	}
+        return new ModelAndView("redirect:/post/list");
+    }
 
 	// 3. 수정 폼 (GET)
 	@GetMapping("update")

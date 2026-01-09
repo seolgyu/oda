@@ -321,9 +321,19 @@
 												varStatus="status">
 												<div class="carousel-item ${status.first ? 'active' : ''}">
 													<div class="image-container">
-														<img
-															src="${pageContext.request.contextPath}/uploads/photo/${fileDto.filePath}"
-															class="slider-img" alt="Post Image">
+														<c:choose>
+															<%-- 1. http로 시작하는 URL(Cloudinary 등)인 경우 --%>
+															<c:when test="${fn:startsWith(fileDto.filePath, 'http')}">
+																<img src="${fileDto.filePath}" class="slider-img"
+																	alt="Post Image">
+															</c:when>
+															<%-- 2. 기존 로컬 파일인 경우 --%>
+															<c:otherwise>
+																<img
+																	src="${pageContext.request.contextPath}/uploads/photo/${fileDto.filePath}"
+																	class="slider-img" alt="Post Image">
+															</c:otherwise>
+														</c:choose>
 													</div>
 												</div>
 											</c:forEach>
@@ -385,9 +395,20 @@
 									onclick="event.stopPropagation(); showImageModal('${dto.fileList[0].filePath}');">
 									<c:choose>
 										<c:when test="${not empty dto.fileList}">
-											<img
-												src="${pageContext.request.contextPath}/uploads/photo/${dto.fileList[0].filePath}"
-												class="compact-thumb-img" alt="Thumb">
+											<c:choose>
+												<c:when
+													test="${fn:startsWith(dto.fileList[0].filePath, 'http')}">
+													<img src="${dto.fileList[0].filePath}"
+														class="compact-thumb-img" alt="Thumb">
+												</c:when>
+												<c:otherwise>
+													<img
+														src="${pageContext.request.contextPath}/uploads/photo/${dto.fileList[0].filePath}"
+														class="compact-thumb-img" alt="Thumb">
+												</c:otherwise>
+											</c:choose>
+
+
 											<div class="position-absolute p-1">
 												<span class="material-symbols-outlined text-white fs-6"
 													style="text-shadow: 0 0 4px black;">open_in_full</span>
@@ -549,22 +570,29 @@
 
 		// 1. 이미지 확대 모달 열기
 		function showImageModal(imagePath) {
-			if (!imagePath)
-				return;
+		    if (!imagePath) return;
 
-			const fullPath = '${pageContext.request.contextPath}/uploads/photo/'
-					+ imagePath;
-			const modalElement = document.getElementById('imageModal');
+		    // 이미지 경로가 'http'로 시작하는지 확인하여 분기 처리
+		    let fullPath = "";
+		    if (imagePath.startsWith("http")) {
+		        // 1. Cloudinary 등 외부 URL인 경우: 그대로 사용
+		        fullPath = imagePath;
+		    } else {
+		        // 2. 로컬 파일인 경우: 앞부분에 서버 경로 추가
+		        fullPath = '${pageContext.request.contextPath}/uploads/photo/' + imagePath;
+		    }
 
-			// 이미지 경로 설정
-			document.getElementById('modalImage').src = fullPath;
+		    const modalElement = document.getElementById('imageModal');
 
-			// 모달 인스턴스가 없으면 생성, 있으면 재사용
-			if (!myModalInstance) {
-				myModalInstance = new bootstrap.Modal(modalElement);
-			}
+		    // 이미지 경로 설정
+		    document.getElementById('modalImage').src = fullPath;
 
-			myModalInstance.show();
+		    // 모달 인스턴스가 없으면 생성, 있으면 재사용
+		    if (!myModalInstance) {
+		        myModalInstance = new bootstrap.Modal(modalElement);
+		    }
+
+		    myModalInstance.show();
 		}
 
 		// 2. 이미지 확대 모달 닫기 (X 버튼용)
@@ -576,7 +604,7 @@
 	</script>
 
 	<script>
-		// [요청] 캐러셀(슬라이더) 버튼 제어 로직: 첫 장에선 < 숨김, 마지막 장에선 > 숨김
+		// 캐러셀(슬라이더) 버튼 제어 로직: 첫 장에선 < 숨김, 마지막 장에선 > 숨김
 		document.addEventListener('DOMContentLoaded', function() {
 
 			// 화면에 있는 모든 슬라이더를 찾음

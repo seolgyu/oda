@@ -56,44 +56,40 @@
 
 .hover-purple:hover {
 	color: #c084fc !important;
-	
-/* [article.jsp] style 태그 안에 추가 */
-
-/* 커스텀 캐러셀 버튼 스타일 */
-.carousel-control-prev, 
-.carousel-control-next {
-    width: 10%; /* 클릭 영역 너비 */
-    opacity: 1; /* 투명도 오버라이드 */
+	/* [article.jsp] style 태그 안에 추가 */
+	/* 커스텀 캐러셀 버튼 스타일 */ . carousel-control-prev , .carousel-control-next {
+	width : 10%; /* 클릭 영역 너비 */
+	opacity: 1; /* 투명도 오버라이드 */
 }
 
 /* 버튼 내부의 유리 구슬 디자인 */
 .carousel-btn-glass {
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.1); /* 반투명 배경 */
-    backdrop-filter: blur(4px);            /* 블러 효과 */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* 얇은 테두리 */
-    border-radius: 50%;                    /* 원형 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+	width: 40px;
+	height: 40px;
+	background: rgba(255, 255, 255, 0.1); /* 반투명 배경 */
+	backdrop-filter: blur(4px); /* 블러 효과 */
+	border: 1px solid rgba(255, 255, 255, 0.2); /* 얇은 테두리 */
+	border-radius: 50%; /* 원형 */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	transition: all 0.3s ease;
 }
 
 /* 호버 시 효과 */
-.carousel-control-prev:hover .carousel-btn-glass,
-.carousel-control-next:hover .carousel-btn-glass {
-    background: rgba(168, 85, 247, 0.6); /* 보라색 하이라이트 */
-    border-color: #a855f7;
-    transform: scale(1.1); /* 살짝 커짐 */
+.carousel-control-prev:hover .carousel-btn-glass, .carousel-control-next:hover .carousel-btn-glass
+	{
+	background: rgba(168, 85, 247, 0.6); /* 보라색 하이라이트 */
+	border-color: #a855f7;
+	transform: scale(1.1); /* 살짝 커짐 */
 }
 
 /* 이미지 래퍼: 이미지가 없을 때 영역 확보용 */
 .image-wrapper {
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.2);
+	width: 100%;
+	background-color: rgba(0, 0, 0, 0.2);
 }
 </style>
 <script type="text/javascript">
@@ -111,48 +107,51 @@
 	}
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // 1. 요소 선택
-        const carouselEl = document.getElementById('imageCarousel');
-        
-        // 이미지가 없거나 1개뿐이면 로직 실행 안 함
-        if (!carouselEl) return;
-        
-        const items = carouselEl.querySelectorAll('.carousel-item');
-        const btnPrev = document.getElementById('btnPrev');
-        const btnNext = document.getElementById('btnNext');
-        
-        // 이미지가 1개면 버튼 모두 숨김
-        if (items.length <= 1) {
-            if(btnPrev) btnPrev.style.display = 'none';
-            if(btnNext) btnNext.style.display = 'none';
-            return;
-        }
+	document.addEventListener('DOMContentLoaded', function() {
+		// 1. 요소 선택
+		const carouselEl = document.getElementById('imageCarousel');
 
-        // 2. 초기 상태 설정 (첫 페이지이므로 Prev 숨김)
-        btnPrev.style.display = 'none';
-        btnNext.style.display = 'flex'; // flex로 해야 중앙 정렬 유지됨
+		// 이미지가 없거나 1개뿐이면 로직 실행 안 함
+		if (!carouselEl)
+			return;
 
-        // 3. 슬라이드 이벤트 리스너 (슬라이드 완료 후 발생)
-        carouselEl.addEventListener('slid.bs.carousel', function (e) {
-            const currentIndex = e.to; // 이동한 인덱스 (0부터 시작)
-            const lastIndex = items.length - 1;
+		const items = carouselEl.querySelectorAll('.carousel-item');
+		const btnPrev = document.getElementById('btnPrev');
+		const btnNext = document.getElementById('btnNext');
 
-            // (1) 첫 번째 슬라이드일 때
-            if (currentIndex === 0) {
-                btnPrev.style.display = 'none';
-            } else {
-                btnPrev.style.display = 'flex';
-            }
+		// 이미지가 1개면 버튼 모두 숨김
+		if (items.length <= 1) {
+			if (btnPrev)
+				btnPrev.style.display = 'none';
+			if (btnNext)
+				btnNext.style.display = 'none';
+			return;
+		}
 
-            // (2) 마지막 슬라이드일 때
-            if (currentIndex === lastIndex) {
-                btnNext.style.display = 'none';
-            } else {
-                btnNext.style.display = 'flex';
-            }
-        });
-    });
+		// 2. 초기 상태 설정 (첫 페이지이므로 Prev 숨김)
+		btnPrev.style.display = 'none';
+		btnNext.style.display = 'flex'; // flex로 해야 중앙 정렬 유지됨
+
+		// 3. 슬라이드 이벤트 리스너 (슬라이드 완료 후 발생)
+		carouselEl.addEventListener('slid.bs.carousel', function(e) {
+			const currentIndex = e.to; // 이동한 인덱스 (0부터 시작)
+			const lastIndex = items.length - 1;
+
+			// (1) 첫 번째 슬라이드일 때
+			if (currentIndex === 0) {
+				btnPrev.style.display = 'none';
+			} else {
+				btnPrev.style.display = 'flex';
+			}
+
+			// (2) 마지막 슬라이드일 때
+			if (currentIndex === lastIndex) {
+				btnNext.style.display = 'none';
+			} else {
+				btnNext.style.display = 'flex';
+			}
+		});
+	});
 </script>
 </head>
 <body>
@@ -243,15 +242,31 @@
 													<c:forEach var="fileDto" items="${dto.fileList}"
 														varStatus="status">
 														<div class="carousel-item ${status.first ? 'active' : ''}">
+
 															<div
 																class="image-wrapper d-flex justify-content-center align-items-center bg-dark bg-opacity-25"
 																style="height: 500px;">
-																<img
-																	src="${pageContext.request.contextPath}/uploads/photo/${fileDto.filePath}"
-																	class="d-block"
-																	style="max-width: 100%; max-height: 100%; object-fit: contain;"
-																	alt="Post Image">
+																<c:choose>
+																	<%-- 1. http로 시작하는 URL (Cloudinary 파일) --%>
+																	<c:when
+																		test="${fn:startsWith(fileDto.filePath, 'http')}">
+																		<img src="${fileDto.filePath}" class="d-block"
+																			style="max-width: 100%; max-height: 100%; object-fit: contain;"
+																			alt="Post Image">
+																	</c:when>
+
+																	<%-- 2. 로컬 업로드 파일 --%>
+																	<c:otherwise>
+																		<img
+																			src="${pageContext.request.contextPath}/uploads/photo/${fileDto.filePath}"
+																			class="d-block"
+																			style="max-width: 100%; max-height: 100%; object-fit: contain;"
+																			alt="Post Image">
+																	</c:otherwise>
+																</c:choose>
 															</div>
+
+
 														</div>
 													</c:forEach>
 												</div>
