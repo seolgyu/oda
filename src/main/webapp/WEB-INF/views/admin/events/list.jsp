@@ -24,7 +24,7 @@
 	href="${pageContext.request.contextPath}/dist/css/adminmain.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
-
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
 <style>
 /* [1] 공지사항 전용 글래스모피즘 보정 스타일  */
 .glass-table-container {
@@ -246,20 +246,30 @@
 					<div class="row g-3 align-items-center">
 						<div class="col-12 col-lg-6">
 							<div class="btn-group glass-btn-group">
-								<button class="btn btn-outline-light active btn-sm px-3">전체</button>
-								<button class="btn btn-outline-light btn-sm px-3">진행중</button>
-								<button class="btn btn-outline-light btn-sm px-3">진행예정</button>
-								<button class="btn btn-outline-light btn-sm px-3">종료</button>
+								<button class="btn btn-outline-light ${activestatus ? 'active' : ''} btn-sm px-3" value="">전체</button>
+								<button class="btn btn-outline-light ${activestatus == '진행중' ? 'active' : ''} btn-sm px-3" value="진행중">진행중</button>
+								<button class="btn btn-outline-light ${activestatus == '진행예정' ? 'active' : ''}btn-sm px-3" value="진행예정">진행예정</button>
+								<button class="btn btn-outline-light ${activestatus == '종료' ? 'active' : ''}btn-sm px-3" value="종료">종료</button>
 							</div>
-						</div>
-						<div class="col-12 col-lg-6">
-							<div class="input-group search-wrapper">
-								<span class="material-icons-round text-white-50 mt-2">search</span> 
-								<input type="text" class="form-control glass-input" placeholder="이벤트 제목과 내용 검색...">
-								<!-- <button class="btn btn-link text-white-50 p-0 ms-2 mt-1">
-									<span class="material-icons-round">refresh</span>
-								</button> -->
-							</div>
+						</div>	
+							<div class="col-12 col-lg-4 offset-lg-2">
+							<form name="searchForm" method="get">
+						        <input type="hidden" name="size" value="${size}">
+						         <input type="hidden" name="activestatus" value="${activestatus}">
+						         
+						        <div class="input-group search-wrapper">
+						            <select name="schType" class="form-select glass-select" style="max-width: 120px; background: transparent; border: none; border-right: 1px solid rgba(255, 255, 255, 0.1); color: white; padding-right: 2rem;">
+						                <option value="all" ${schType == 'all' ? 'selected' : ''}>전체</option>
+						                <option value="title_content" ${schType == 'title_content' ? 'selected' : ''}>제목+내용</option>
+						                <option value="content" ${schType == 'content' ? 'selected' : ''}>내용</option>
+						                <option value="startdate" ${schType == 'startdate' ? 'selected' : ''}>시작일</option>
+						            </select>
+						            
+						            <span style="width:10px;"></span>
+						            <span class="material-icons-round text-white-25 mt-2" onclick="searchList();" style="cursor: pointer;">search</span> 
+						            <input type="text" name="kwd" class="form-control glass-input" value="${kwd}" placeholder="제목,내용,시작일 검색...">
+						        </div>
+							</form>
 						</div>
 					</div>
 				</div>
@@ -283,7 +293,7 @@
 								<c:forEach var="dto" items="${listTop}" varStatus="activestatus">
 								<tr style="background: rgba(59, 130, 246, 0.05);">
 									<td class="text-center">
-										<input type="checkbox" class="form-check-input"></td>
+									<span class="material-symbols-outlined text-primary fs-5">campaign</span></td>
 									<td class="text-white">${dto.event_num}</td>
 									<td>
 										<span class="badge badge-ongoing">진행</span>
@@ -346,22 +356,12 @@
 						</table>
 					</div>
 
-					<div
-						class="p-4 d-flex justify-content-center border-top border-white border-opacity-10">
+					<div class="p-4 d-flex justify-content-center border-top border-white border-opacity-10">
 						<nav>
-							<ul class="pagination pagination-sm mb-0">
-								<li class="page-item disabled"><a
-									class="page-link bg-transparent border-white border-opacity-10 text-white-50"
-									href="#"><span class="material-icons-round fs-6">chevron_left</span></a></li>
-								<li class="page-item active"><a
-									class="page-link bg-primary border-primary" href="#">1</a></li>
-								<li class="page-item"><a
-									class="page-link bg-transparent border-white border-opacity-10 text-white"
-									href="#">2</a></li>
-								<li class="page-item"><a
-									class="page-link bg-transparent border-white border-opacity-10 text-white"
-									href="#"><span class="material-icons-round fs-6">chevron_right</span></a></li>
-							</ul>
+						<span class="text-sm text-text-sub mb-4">
+						 	<span class="font-semibold text-white">(${page}/${total_page} page)</span> of <span class="font-semibold text-white">${dataCount}</span>
+						</span>
+							<div class="page-navigation">${dataCount == 0 ? "등록된 게시물이 없습니다." : paging}</div>
 						</nav>
 					</div>
 				</div>
@@ -375,5 +375,6 @@
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/admin_bbs_util.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/admin_event.js"></script>
 </body>
 </html>

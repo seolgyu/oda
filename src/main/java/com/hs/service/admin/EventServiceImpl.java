@@ -54,6 +54,7 @@ public class EventServiceImpl implements EventService {
 
 		try {
 			list = mapper.listEventTop();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

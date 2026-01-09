@@ -24,8 +24,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-
-
 @Controller
 @RequestMapping("/admin/events/*")
 public class eventManageController {
@@ -115,6 +113,12 @@ public class eventManageController {
 	@GetMapping("write")
 	public ModelAndView writeForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		ModelAndView mav = new ModelAndView("admin/events/write");
+		return mav;
+	}
+	
+	@GetMapping("article")
+	public ModelAndView eventarticle(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		ModelAndView mav = new ModelAndView("admin/events/article");
 		return mav;
 	}
 }

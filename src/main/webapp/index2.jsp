@@ -1,1 +1,1 @@
-<jsp:forward page="/admin"/>
+<jsp:forward page="/admin/events/article">
