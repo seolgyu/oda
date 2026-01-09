@@ -356,5 +356,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/admin_bbs_util.js"></script>
+    <script src="${pageContext.request.contextPath}/dist/js/admin_notice.js"></script>
 </body>
 </html>
