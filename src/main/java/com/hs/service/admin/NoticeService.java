@@ -1,5 +1,6 @@
 package com.hs.service.admin;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -14,4 +15,10 @@ public interface NoticeService {
 	public void noticeDeleteList(List<Long> list) throws Exception;
 	
 	public NoticeDTO findById(long num);
+	
+	public void noticeInsert(NoticeDTO dto) throws SQLException;
+	
+	public void deleteNoticeFile(Map<String, Object> map) throws Exception;
+	public List<NoticeDTO> listNoticeFile(long num);
+	public NoticeDTO findByFileId(long fileNum);
 }

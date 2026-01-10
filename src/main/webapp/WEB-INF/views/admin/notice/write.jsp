@@ -204,18 +204,17 @@ select.glass-input-box {
 							<button class="btn btn-outline-light px-4 py-2 border-opacity-25"
 								style="border-radius: 0.75rem;" onclick="history.back();">취소</button>
 							<button
+								type = "button"
 								class="btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2"
-								id="btnSubmit">
-								<span class="material-icons-round fs-6">check_circle</span> <span>작성
-									완료</span>
+								id="btnSubmit"
+								onclick="submitContents();">
+								<span class="material-icons-round fs-6">check_circle</span> <span>${mode=='update'?'수정완료':'작성완료'}</span>
 							</button>
 						</div>
 					</div>
 				</div>
 
-				<form id="noticeForm"
-					action="${pageContext.request.contextPath}/admin/notice/write"
-					method="post" enctype="multipart/form-data">
+				<form name="noticeForm" method="post" enctype="multipart/form-data">
 					<div class="card-dark p-4 p-md-5 shadow-lg">
 
 						<div class="row mb-4">
@@ -238,43 +237,31 @@ select.glass-input-box {
 						</div>
 
 						<div class="mb-4">
-							<label class="form-label">공지 제목</label> <input type="text"
-								class="glass-input-box" name="subject"
+							<label class="form-label">공지 제목</label> 
+							<input type="text"
+								class="glass-input-box" name="title"
+								value="${dto.noti_title}"
 								placeholder="공지사항 제목을 입력해 주세요.">
 						</div>
 
 						<div class="mb-0">
 							<label class="form-label">상세 내용</label>
-							<div
-								class="glass-table-container editor-wrap p-0 overflow-hidden">
-								<div
-									class="editor-toolbar bg-white bg-opacity-5 p-2 d-flex gap-2 border-bottom border-white border-opacity-10">
-									<button type="button"
-										class="toolbar-btn btn btn-sm text-white-50">
-										<span class="material-icons-round fs-5">format_bold</span>
-									</button>
-									<button type="button"
-										class="toolbar-btn btn btn-sm text-white-50">
-										<span class="material-icons-round fs-5">format_italic</span>
-									</button>
-									<button type="button"
-										class="toolbar-btn btn btn-sm text-white-50">
-										<span class="material-icons-round fs-5">format_list_bulleted</span>
-									</button>
-									<div class="mx-1 border-start border-white border-opacity-10"></div>
-									<button type="button"
-										class="toolbar-btn btn btn-sm text-white-50">
-										<span class="material-icons-round fs-5">link</span>
-									</button>
-								</div>
-								<textarea class="editor-textarea" name="content"
-									placeholder="사용자들에게 안내할 이벤트 상세 내용을 작성하세요..."></textarea>
-							</div>
+							<tr>
+								<td>
+									<textarea name="content" id="ir1" class="form-control" style="width: 99%; height: 300px;">${dto.content}</textarea>
+								</td>
+							</tr>
 						</div>
 
 						<div class="mb-0">
-							<label class="form-label">첨부 파일</label>
-							<div class="file-upload-wrapper">
+							<!-- <label class="form-label">첨부 파일</label> -->
+							<tr>
+								<td class="bg-light col-sm-2" scope="row">첨&nbsp;&nbsp;&nbsp;&nbsp;부</td>
+								<td>
+									<input type="file" name="selectFile" class="form-control" multiple>
+								</td>
+							</tr>
+							<!-- <div class="file-upload-wrapper">
 								<input type="file" name="upload" id="fileInput" class="hidden"
 									style="display: none;" multiple>
 								<div onclick="document.getElementById('fileInput').click();">
@@ -282,8 +269,22 @@ select.glass-input-box {
 									<p class="mb-1 text-white">클릭하여 파일을 업로드하거나 드래그하세요.</p>
 									<p class="text-white-50 small mb-0">최대 10MB까지 가능합니다.</p>
 								</div>
-							</div>
-							<div id="fileList" class="mt-2"></div>
+							</div> -->
+							<c:if test="${mode=='update'}">
+								<c:forEach var="vo" items="${listFile}">
+									<tr>
+										<td class="bg-light col-sm-2" scope="row">첨부된파일</td>
+										<td> 
+											<p class="form-control-plaintext">
+												<a href="javascript:deleteFile('${vo.fileNum}');"><i class="bi bi-trash"></i></a>
+												${vo.originalFilename}
+											</p>
+										</td>
+									</tr>
+								</c:forEach>
+							</c:if>
+							<input type="hidden" name="size" value="${size}">
+							<!-- <div id="fileList" class="mt-2"></div> -->
 						</div>
 					</div>
 				</form>
@@ -293,19 +294,70 @@ select.glass-input-box {
 
 
 
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
-	<script>
-        // 파일 선택 시 목록 표시 간단 로직
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            const list = document.getElementById('fileList');
-            list.innerHTML = '';
-            for(let file of e.target.files) {
-                list.innerHTML += `<div class="text-primary small mt-1 d-flex align-items-center gap-1">
-                    <span class="material-icons-round" style="font-size:14px">attach_file</span>\${file.name}</div>`;
-            }
-        });
-    </script>
+<script type="text/javascript">
+function check() {
+	const f = document.noticeForm;
+	let str;
+	
+	str = f.title.value.trim();
+	if( ! str ) {
+		alert('제목을 입력하세요. ');
+		f.title.focus();
+		return false;
+	}
+
+	str = f.content.value.trim();
+	if( ! str || str === '<p><br></p>' ) {
+		alert('내용을 입력하세요. ');
+		return false;
+	}
+
+	f.action = '${pageContext.request.contextPath}/admin/notice/${mode}';
+	
+	return true;
+}
+
+<c:if test="${mode=='update'}">
+	function deleteFile(fileNum) {
+		if(! confirm('파일을 삭제 하시겠습니까 ? ')) {
+			return;
+		}
+		
+		let params = 'num=${dto.num}&fileNum=' + fileNum + '&page=${page}&size=${size}';
+		let url = '${pageContext.request.contextPath}/admin/notice/deleteFile?' + params;
+		location.href = url;
+	}
+</c:if>
+</script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/dist/vendor/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
+<script type="text/javascript">
+var oEditors = [];
+nhn.husky.EZCreator.createInIFrame({
+	oAppRef: oEditors,
+	elPlaceHolder: 'ir1',
+	sSkinURI: '${pageContext.request.contextPath}/dist/vendor/se2/SmartEditor2Skin.html',
+	fCreator: 'createSEditor2',
+	fOnAppLoad: function(){
+		// 로딩 완료 후
+		oEditors.getById['ir1'].setDefaultFont('돋움', 12);
+	},
+});
+
+function submitContents(elClickedObj) {
+	 oEditors.getById['ir1'].exec('UPDATE_CONTENTS_FIELD', []);
+	 try {
+		if(! check()) {
+			return;
+		}
+		
+		document.noticeForm.submit();
+		
+	} catch(e) {
+	}
+}
+</script>
 </body>
 </html>

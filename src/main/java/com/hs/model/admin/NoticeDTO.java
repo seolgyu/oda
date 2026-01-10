@@ -1,7 +1,11 @@
 package com.hs.model.admin;
 
+import java.util.List;
+
+import com.hs.util.MyMultipartFile;
+
 public class NoticeDTO {
-	private int notice_num;
+	private long notice_num;
 	private String user_nickname;
 	private String state;
 	private String noti_title;
@@ -10,11 +14,56 @@ public class NoticeDTO {
 	private String update_date;
 	private int hitCount;
 	private String is_notice;
+	private Long user_num;
 	
-	public int getNotice_num() {
+	private List<MyMultipartFile> listFile;
+	
+	private long fileNum;
+	private String saveFilename;
+	private String originalFilename;
+	private long fileSize;
+    
+    public List<MyMultipartFile> getListFile() {
+		return listFile;
+	}
+	public void setListFile(List<MyMultipartFile> listFile) {
+		this.listFile = listFile;
+	}
+	public long getFileNum() {
+		return fileNum;
+	}
+	public void setFileNum(long fileNum) {
+		this.fileNum = fileNum;
+	}
+	public String getSaveFilename() {
+		return saveFilename;
+	}
+	public void setSaveFilename(String saveFilename) {
+		this.saveFilename = saveFilename;
+	}
+	public String getOriginalFilename() {
+		return originalFilename;
+	}
+	public void setOriginalFilename(String originalFilename) {
+		this.originalFilename = originalFilename;
+	}
+	public long getFileSize() {
+		return fileSize;
+	}
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
+	}
+	
+	public Long getUser_num() {
+		return user_num;
+	}
+	public void setUser_num(Long user_num) {
+		this.user_num = user_num;
+	}
+	public long getNotice_num() {
 		return notice_num;
 	}
-	public void setNotice_num(int notice_num) {
+	public void setNotice_num(long notice_num) {
 		this.notice_num = notice_num;
 	}
 	public String getUser_nickname() {

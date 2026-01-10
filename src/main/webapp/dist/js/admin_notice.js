@@ -58,7 +58,6 @@ $(function(){
         $('.form-check-input-all').prop('checked', totalCount === checkedCount);
     });
 
-    // ✅ 검색 파라미터 가져오기 함수
     function getSearchParams() {
         const urlParams = new URLSearchParams(window.location.search);
         return {
@@ -70,7 +69,6 @@ $(function(){
         };
     }
 
-    // ✅ hidden input 추가 함수
     function addHiddenInput(form, name, value) {
         if(value) {
             $('<input>')
@@ -81,7 +79,6 @@ $(function(){
         }
     }
 
-    // 삭제 버튼 클릭
     $('#btnDeleteList').on('click', function(e) {
         e.preventDefault();
 
@@ -99,20 +96,17 @@ $(function(){
         const f = document.deleteForm;
         $(f).empty();
 
-        // 체크된 항목들 추가
         checkedItems.each(function() {
             $(this).clone().appendTo(f);
         });
 
-        // ✅ 검색 조건들 모두 추가
         const params = getSearchParams();
         addHiddenInput(f, 'schType', params.schType);
         addHiddenInput(f, 'kwd', params.kwd);
         addHiddenInput(f, 'state', params.state);
         addHiddenInput(f, 'size', params.size);
-        addHiddenInput(f, 'page', params.page); // ✅ page 추가
+        addHiddenInput(f, 'page', params.page);
 
-        // action 설정 및 submit
         const pathname = window.location.pathname;
         const baseUrl = pathname.substring(0, pathname.lastIndexOf('/'));
         f.action = baseUrl + '/deleteList';

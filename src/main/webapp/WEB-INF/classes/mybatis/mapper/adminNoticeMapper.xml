@@ -2,6 +2,9 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hs.mapper.admin.NoticeMapper">
+	<select id="noticeSeq" resultType="Long">
+		SELECT notice_seq.NEXTVAL FROM dual
+	</select>
 	<sql id="where-list">
 		<if test="schType == 'all' ">
 			( INSTR(noti_title, #{kwd}) &gt; 0
@@ -36,7 +39,7 @@
 			<if test="is_notice != null and is_notice != ''  ">
 				is_notice = #{is_notice}
 			</if>
-			<if test="state != null and state != ''  ">
+			<if test="state != null and state != '' and state != 'null'">
 				AND noti.state = #{state}
 			</if>		
 			<if test="kwd != null and kwd != ''">
@@ -72,7 +75,7 @@
 			<if test="kwd != null and kwd != ''  ">
 				AND <include refid="where-list"/>
 			</if>
-			<if test="state != null and state != ''  ">
+			<if test="state != null and state != '' and state != 'null'">
 				AND noti.state = #{state}
 			</if>	
 		</where>
@@ -108,5 +111,53 @@
 	AND notice_num = #{num}
 	</select>
 	
+	<insert id="noticeInsert" parameterType="com.hs.model.admin.NoticeDTO">
+		INSERT INTO notice
+		(
+		    notice_num,
+		    noti_title,
+		    noti_content,
+		    noti_hitcount,
+		    noti_reg_date,
+		    update_date,
+		    state,
+		    is_notice,
+		    user_num
+		)
+		VALUES
+		(
+	       #{notice_num},
+	       #{noti_title},
+	       #{noti_content},
+	       0,
+	       SYSDATE,
+	       SYSDATE,
+	       #{state},
+	       #{is_notice},
+	       #{user_num}
+		)
+	</insert>
 	
+	<insert id="insertNoticeFile" parameterType="com.hs.model.admin.NoticeDTO">
+		INSERT INTO noticeFile(fileNum, num, saveFilename, originalFilename, fileSize)
+		VALUES (noticeFile_seq.NEXTVAL, #{notice_num}, #{saveFilename},
+			#{originalFilename}, #{fileSize})
+	</insert>
+	
+	<select id="findByFileId" parameterType="Long" resultType="com.hs.model.admin.NoticeDTO">
+		SELECT fileNum, num, saveFilename, originalFilename, fileSize
+		FROM noticeFile
+	    WHERE fileNum = #{fileNum}
+	</select>
+	
+	<select id="listNoticeFile" parameterType="Long" resultType="com.hs.model.admin.NoticeDTO">
+		SELECT fileNum, num, saveFilename, originalFilename, fileSize
+		FROM noticeFile
+		WHERE num = #{num}    
+	</select>
+	
+	<delete id="deleteNoticeFile" parameterType="map">
+		DELETE FROM noticeFile
+		WHERE ${field} = #{num}
+	</delete>
 </mapper>

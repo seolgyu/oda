@@ -21,6 +21,7 @@ import com.hs.service.MemberServiceImpl;
 import com.hs.service.admin.NoticeService;
 import com.hs.service.admin.NoticeServiceImpl;
 import com.hs.util.FileManager;
+import com.hs.util.MyMultipartFile;
 import com.hs.util.MyUtil;
 
 import jakarta.servlet.ServletException;
@@ -38,7 +39,43 @@ public class noticeManageController {
 	@GetMapping("write")
 	public ModelAndView writeForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		ModelAndView mav = new ModelAndView("admin/notice/write");
+		
+		String size = req.getParameter("size");
+		
+		mav.addObject("mode", "write");
+		mav.addObject("size", size);
+		
 		return mav;
+	}
+	
+	@PostMapping("write")
+	public ModelAndView writeSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		String root = session.getServletContext().getRealPath("/");
+		String pathname = root + "uploads" + File.separator + "notice";
+		
+		String size = req.getParameter("size");
+		
+		try {
+			NoticeDTO dto = new NoticeDTO();
+			
+			dto.setUser_num(info.getMemberIdx());
+			dto.setIs_notice(req.getParameter("is_Notice"));
+			dto.setState(req.getParameter("state"));
+			dto.setNoti_title(req.getParameter("title"));
+			dto.setNoti_content(req.getParameter("content"));
+
+			List<MyMultipartFile> listFile = fileManager.doFileUpload(req.getParts(), pathname);
+			dto.setListFile(listFile);
+
+			service.noticeInsert(dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return new ModelAndView("redirect:/admin/notice/list?size=" + size);
 	}
 	@GetMapping("article")
 	public ModelAndView article(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -197,8 +234,10 @@ public class noticeManageController {
 		String size = req.getParameter("size");
 		String state = req.getParameter("state");
 		
-		String query = "size=" + size + "&page=" + page + "&state=" + util.encodeUrl(state);
-
+		String query = "size=" + size + "&page=" + page;
+		if (state != null) {
+	        query += "&state=" + util.encodeUrl(state);
+	    }
 		try {
 			String schType = req.getParameter("schType");
 			String kwd = req.getParameter("kwd");
@@ -212,8 +251,12 @@ public class noticeManageController {
 			}
 			kwd = util.decodeUrl(kwd);
 			if (! kwd.isBlank()) {
-				query += "&schType=" + schType + "&kwd=" + util.encodeUrl(kwd) + "&state=" + util.encodeUrl(state);
+				query += "&schType=" + schType + "&kwd=" + util.encodeUrl(kwd);
 			}
+			
+			if (state != null) {
+	            query += "&state=" + util.encodeUrl(state);
+	        }
 
 			String[] nn = req.getParameterValues("nums");
 			List<Long> nums = new ArrayList<Long>();
@@ -224,18 +267,18 @@ public class noticeManageController {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("field", "num");
 			for (Long n : nums) {
-				//List<NoticeDTO> listFile = service.listNoticeFile(n);
+				List<NoticeDTO> listFile = service.listNoticeFile(n);
 				
 				// 실제 파일 삭제
-				/*
-				 * for (NoticeDTO vo : listFile) { fileManager.doFiledelete(pathname,
-				 * vo.getSaveFilename()); }
-				 */
+				
+				  for (NoticeDTO vo : listFile) { fileManager.doFiledelete(pathname,
+				  vo.getSaveFilename()); }
+				 
 				
 				map.put("num", n);
 				
 				// 파일이름 등의 정보 삭제
-				//service.deleteNoticeFile(map);
+				service.deleteNoticeFile(map);
 			}
 
 			// 게시글 다중 삭제

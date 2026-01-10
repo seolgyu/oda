@@ -214,7 +214,7 @@
 						</div>
 						<div class="d-flex gap-2">
 							<button	
-								class="btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2" onclick="location.href='${pageContext.request.contextPath}/admin/notice/write';">
+								class="btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2" onclick="location.href='${pageContext.request.contextPath}/admin/notice/write?size=${size}';">
 								<span class="material-icons-round fs-3">edit</span> <span>작성</span>
 							</button>
 							<button type = "button" id="btnDeleteList" class = "btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2">
