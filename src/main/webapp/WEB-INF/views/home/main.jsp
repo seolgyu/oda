@@ -8,49 +8,84 @@
 <head>
 <%@ include file="head.jsp"%>
 <style>
-/* 1. 필터 바 투명화 (Box 2) */
+/* 1. 필터 바 스타일 */
 .filter-bar {
-	background: transparent !important; /* 배경 투명 */
+	background: transparent !important;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	margin-bottom: 0.5rem;
-	padding-bottom: 0.5rem;
+	margin-bottom: 1.5rem;
+	padding-bottom: 1rem;
 	position: relative;
 	z-index: 1000;
 }
 
-/* 2. 카드형 뷰 - 이미지 슬라이더 스타일 */
+/* 2. 공통 호버 효과 */
+.action-btn-hover.btn-like:hover {
+	color: #ec4899 !important;
+	background: rgba(236, 72, 153, 0.1) !important;
+}
+
+.action-btn-hover.btn-comment:hover {
+	color: #60a5fa !important;
+	background: rgba(96, 165, 250, 0.1) !important;
+}
+
+.action-btn-hover.btn-share:hover {
+	color: #c084fc !important;
+	background: rgba(192, 132, 252, 0.1) !important;
+}
+
+.action-btn-hover.btn-save:hover {
+	color: #facc15 !important;
+	background: rgba(250, 204, 21, 0.1) !important;
+}
+
+.action-btn-hover.btn-report:hover {
+	color: #f87171 !important;
+	background: rgba(248, 113, 113, 0.1) !important;
+}
+
+/* 3. 카드형 뷰 스타일 */
+.feed-card {
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	margin-bottom: 2rem;
+}
+
 .carousel-inner {
-	background-color: #000; /* 빈 공간 검은색 처리 */
+	background-color: #000;
 	border-radius: 0.5rem;
 }
 
 .image-container {
-	height: 500px; /* 고정 높이 */
+	height: 650px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
+	background: #000;
 }
 
 .slider-img {
 	max-width: 100%;
 	max-height: 100%;
-	width: auto;
-	height: auto;
-	object-fit: contain; /* 이미지가 잘리지 않고 비율 유지 */
+	object-fit: contain;
 }
 
-/* 슬라이더 버튼 스타일 (article.jsp와 통일) */
 .carousel-btn-glass {
-	width: 40px;
-	height: 40px;
-	background: rgba(255, 255, 255, 0.1);
+	width: 44px;
+	height: 44px;
+	background: rgba(255, 255, 255, 0.15);
 	backdrop-filter: blur(4px);
 	border-radius: 50%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	color: white;
+	transition: all 0.2s;
+}
+
+.carousel-btn-glass:hover {
+	background: rgba(255, 255, 255, 0.25);
+	transform: scale(1.1);
 }
 
 .carousel-control-prev, .carousel-control-next {
@@ -58,114 +93,132 @@
 	width: 10%;
 }
 
-/* 3. 축약형 뷰 (Reddit 스타일) */
+/* 4. 축약형 뷰 (수정됨) */
 .compact-card {
 	display: flex;
-	align-items: flex-start; /* 위쪽 정렬 */
-	gap: 1rem;
-	padding: 0.75rem; /* 패딩 축소 */
-	border: 1px solid rgba(255, 255, 255, 0.05);
-	background: rgba(20, 20, 20, 0.6); /* 더 어둡게 */
-	border-radius: 0.3rem; /* 둥글기 축소 */
+	flex-direction: row;
+	gap: 1.5rem;
+	padding: 1.5rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(25, 25, 25, 0.6);
+	margin-bottom: 0 !important;
+	border-radius: 0 !important;
+	cursor: pointer;
+	transition: background 0.2s;
+	/* 높이를 내용물에 맞추지 않고 스트레치 */
+	align-items: stretch;
 }
 
 .compact-card:hover {
-	background: rgba(255, 255, 255, 0.05);
-	border-color: rgba(255, 255, 255, 0.2);
+	background: rgba(255, 255, 255, 0.08);
 }
 
-/* Reddit형 썸네일 */
+.compact-card:first-child {
+	border-top-left-radius: 1rem !important;
+	border-top-right-radius: 1rem !important;
+}
+
+.compact-card:last-child {
+	border-bottom-left-radius: 1rem !important;
+	border-bottom-right-radius: 1rem !important;
+	border-bottom: none;
+}
+
 .compact-thumbnail-area {
-	width: 120px; /* 너비 고정 */
-	height: 90px; /* 높이 고정 */
-	background: #000;
-	border-radius: 4px;
+	width: 140px;
+	height: 105px;
+	border-radius: 8px;
 	flex-shrink: 0;
 	overflow: hidden;
+	position: relative;
+	background: #000;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	cursor: pointer;
 }
 
 .compact-thumb-img {
 	width: 100%;
 	height: 100%;
-	object-fit: cover; /* 썸네일은 꽉 차게 (확대 기능 있으므로) */
+	object-fit: cover;
+	/* 만약 이미지가 잘리는 게 싫고 전체가 다 보여야 한다면 contain으로 변경하세요 */
+	/* object-fit: contain; */
+	transition: transform 0.3s;
+	display: block;
 }
 
-.action-btn-group {
-	display: flex;
-	gap: 0.8rem; /* 버튼 사이 간격 */
-	margin-top: 1.2rem; /* [요청 2] 위쪽 간격을 더 벌림 */
+.compact-card:hover .compact-thumb-img {
+	transform: scale(1.05);
 }
 
-/* [수정] 액션 버튼 기본 스타일 */
-.action-btn {
-	display: flex;
-	align-items: center;
-	gap: 4px;
-	padding: 6px 10px;
-	border-radius: 4px;
-	color: #9ca3af; /* 기본 회색 */
-	font-size: 0.85rem;
-	font-weight: 500;
-	background: transparent;
-	border: 1px solid transparent; /* 호버 시 테두리 방지용 투명 테두리 */
-	transition: all 0.2s;
+.compact-action-group {
+	display: flex !important;
+	flex-direction: row !important;
+	align-items: center !important;
+	gap: 1.5rem !important;
 }
 
-/* [요청 2] 버튼별 호버 색상 (Article 페이지와 통일) */
-/* 댓글 - 파랑 */
-.action-btn.btn-comment:hover {
-	color: #60a5fa;
-	background: rgba(96, 165, 250, 0.1);
+.card-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px !important; /* 카드형은 넉넉하게 */
+    border-radius: 50px !important;
+    color: #d1d5db;
+    font-weight: 600;
+    font-size: 1.05rem !important;
+    background: transparent;
+    border: none;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
 }
-/* 공유 - 보라 */
-.action-btn.btn-share:hover {
-	color: #c084fc;
-	background: rgba(192, 132, 252, 0.1);
+.card-action-btn .material-symbols-outlined { font-size: 1.5rem; }
+
+.compact-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    /* 축약형은 공간 확보를 위해 패딩과 폰트를 카드형보다 조금 줄임 */
+    padding: 8px 14px !important; 
+    border-radius: 50px !important;
+    color: #9ca3af;
+    font-size: 0.95rem !important; /* 폰트 사이즈 조절 */
+    font-weight: 600;
+    background: transparent;
+    border: none;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    white-space: nowrap !important; /* 버튼 글자 줄바꿈 방지 */
 }
-/* 저장 - 노랑 */
-.action-btn.btn-save:hover {
-	color: #facc15;
-	background: rgba(250, 204, 21, 0.1);
-}
-/* 신고 - 빨강 */
-.action-btn.btn-report:hover {
-	color: #f87171;
-	background: rgba(248, 113, 113, 0.1);
-}
-/* [추가] 좋아요 버튼 호버 효과 (카드형에 추가됨) */
-.action-btn.btn-like:hover {
-	color: #ec4899; /* 핑크색 */
-	background: rgba(236, 72, 153, 0.1);
+.compact-action-btn .material-symbols-outlined { font-size: 1.3rem !important; }
+
+/* 축약형 버튼들 사이의 간격만 따로 넓게 조정 */
+.compact-action-group {
+	display: flex !important;
+	flex-direction: row !important;
+	align-items: center !important;
+	gap: 0.4rem !important; /* 버튼과 버튼 사이의 거리를 넓게 [cite: 40] */
 }
 
-/* [추가] 카드형 뷰 하단에서는 버튼 그룹의 위쪽 여백을 없앰 */
-.feed-card .action-btn-group {
-	margin-top: 0 !important;
-	width: 100%;
-	/* 버튼들 사이 간격을 균등하게 배분하려면 아래 주석 해제 */
-	/* justify-content: space-between; */
-}
-/* 공통 */
-.glass-dropdown {
-	background: rgba(30, 30, 30, 0.95);
-	backdrop-filter: blur(12px);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	z-index: 2000 !important;
+/* 레이아웃 */
+.feed-container-center {
+	max-width: 950px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
-/* 간격 축소 */
-.feed-wrapper {
-	gap: 0.5rem !important;
-} /* 게시물 사이 간격 줄임 */
+.feed-wrapper-compact {
+	gap: 0 !important;
+}
 
-/* [요청 4] 모달 닫기 버튼 스타일 */
+.feed-wrapper-card {
+	gap: 1.5rem !important;
+}
+
+/* 모달 닫기 버튼 */
 .modal-close-btn {
 	position: absolute;
-	top: -40px; /* 이미지 위쪽 바깥으로 배치 */
+	top: -40px;
 	right: 0;
 	background: rgba(0, 0, 0, 0.5);
 	border: 1px solid rgba(255, 255, 255, 0.3);
@@ -178,13 +231,20 @@
 	justify-content: center;
 	cursor: pointer;
 	transition: all 0.2s;
-	z-index: 1056; /* 모달 바디보다 위에 */
+	z-index: 1056;
 }
 
 .modal-close-btn:hover {
 	background: rgba(255, 255, 255, 0.2);
 	transform: scale(1.1);
 }
+
+.compact-meta-info {
+    white-space: nowrap !important; /* 글자가 좁아도 절대 줄바꿈 안 함 */
+    flex-shrink: 0; /* 공간이 부족해도 찌그러지지 않음 */
+    min-width: 0;   /* 플렉스 박스 내 오동작 방지 */
+}
+
 </style>
 </head>
 <body>
@@ -192,11 +252,9 @@
 	<%@ include file="header.jsp"%>
 
 	<div class="app-body">
-
 		<%@ include file="sidebar.jsp"%>
 
 		<main class="app-main">
-
 			<div id="sessionToast" class="glass-toast shadow-lg">
 				<div class="d-flex align-items-center gap-3">
 					<div class="toast-icon-circle">
@@ -206,7 +264,7 @@
 						<h4 id="toastTitle"
 							class="text-xs fw-bold text-uppercase tracking-widest mb-1"
 							style="color: #a855f7;">System</h4>
-						<p id="toastMessage" class="text-sm text-gray-300 mb-0">여기</p>
+						<p id="toastMessage" class="text-sm text-gray-300 mb-0">메시지</p>
 					</div>
 				</div>
 			</div>
@@ -218,448 +276,350 @@
 				<div class="planet planet-1"></div>
 				<div class="planet planet-2"></div>
 			</div>
+
 			<div class="feed-scroll-container custom-scrollbar">
-
-				<div class="feed-wrapper d-flex flex-column">
-
-					<div
-						class="filter-bar d-flex justify-content-between align-items-center px-2">
+				<div class="container-fluid py-5">
+					<div class="row justify-content-center">
 						<div
-							class="d-flex align-items-center gap-4 text-xs fw-medium text-gray-500 text-uppercase tracking-widest">
-							<span class="text-white-50">Latest Updates</span>
-						</div>
+							class="col-12 col-lg-11 col-xl-10 mx-auto feed-container-center">
 
-						<div class="d-flex gap-2">
-							<div class="dropdown">
-								<button
-									class="btn btn-sm text-white border border-secondary border-opacity-25 d-flex align-items-center gap-2 px-3 py-1 rounded-pill"
-									style="background: rgba(0, 0, 0, 0.3);" type="button"
-									data-bs-toggle="dropdown" aria-expanded="false">
-									<span id="currentSortLabel"> <c:choose>
-											<c:when test="${sort == 'likes'}">좋아요 순</c:when>
-											<c:when test="${sort == 'views'}">조회수 순</c:when>
-											<c:otherwise>최신순</c:otherwise>
-										</c:choose>
-									</span> <span class="material-symbols-outlined fs-6 small ms-1">expand_more</span>
-								</button>
-								<ul
-									class="dropdown-menu dropdown-menu-dark glass-dropdown dropdown-menu-end">
-									<li><a class="dropdown-item"
-										href="javascript:changeSort('latest')">최신순</a></li>
-									<li><a class="dropdown-item"
-										href="javascript:changeSort('likes')">좋아요 순</a></li>
-									<li><a class="dropdown-item"
-										href="javascript:changeSort('views')">조회수 순</a></li>
-								</ul>
-							</div>
-
-							<div class="dropdown">
-								<button
-									class="btn btn-sm text-white border border-secondary border-opacity-25 d-flex align-items-center gap-2 px-3 py-1 rounded-pill"
-									style="background: rgba(0, 0, 0, 0.3);" type="button"
-									data-bs-toggle="dropdown" aria-expanded="false">
-									<span class="material-symbols-outlined fs-6"> ${viewMode == 'compact' ? 'view_list' : 'view_day'}
-									</span>
-								</button>
-								<ul
-									class="dropdown-menu dropdown-menu-dark glass-dropdown dropdown-menu-end">
-									<li><a class="dropdown-item"
-										href="javascript:changeView('card')">카드형</a></li>
-									<li><a class="dropdown-item"
-										href="javascript:changeView('compact')">축약형</a></li>
-								</ul>
-							</div>
-						</div>
-					</div>
-
-					<c:if test="${empty list}">
-						<div class="text-center py-5 glass-card shadow-lg">
-							<p class="text-white-50">등록된 게시글이 없습니다.</p>
-						</div>
-					</c:if>
-
-					<c:forEach var="dto" items="${list}">
-
-						<c:if test="${viewMode == 'card' || empty viewMode}">
-							<div class="glass-card shadow-lg feed-card mb-3"
-								onclick="goArticle('${dto.postId}')"
-								style="background: rgba(30, 30, 30, 0.4);">
+							<div
+								class="d-flex flex-column ${viewMode == 'compact' ? 'feed-wrapper-compact' : 'feed-wrapper-card'}">
 
 								<div
-									class="p-3 d-flex align-items-center justify-content-between">
-									<div class="d-flex align-items-center gap-3">
-										<div
-											class="avatar-md text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden"
-											style="background: linear-gradient(45deg, #a855f7, #6366f1); border-radius: 50%;">
-											<c:choose>
-												<c:when test="${not empty dto.authorProfileImage}">
-													<img
-														src="${pageContext.request.contextPath}/uploads/profile/${dto.authorProfileImage}"
-														style="width: 100%; height: 100%; object-fit: cover;">
-												</c:when>
-												<c:otherwise>${fn:substring(dto.authorNickname, 0, 1)}</c:otherwise>
-											</c:choose>
+									class="filter-bar d-flex justify-content-between align-items-center px-2">
+									<div
+										class="d-flex align-items-center gap-4 text-sm fw-medium text-gray-500 text-uppercase tracking-widest">
+										<span class="text-white fs-4 fw-bold">Latest Updates</span>
+									</div>
+
+									<div class="d-flex gap-2">
+										<div class="dropdown">
+											<button
+												class="btn btn-sm text-white border border-secondary border-opacity-25 d-flex align-items-center gap-2 px-3 py-2 rounded-pill shadow-sm"
+												style="background: rgba(0, 0, 0, 0.3);" type="button"
+												data-bs-toggle="dropdown" aria-expanded="false">
+												<span id="currentSortLabel"> <c:choose>
+														<c:when test="${sort == 'likes'}">좋아요 순</c:when>
+														<c:when test="${sort == 'views'}">조회수 순</c:when>
+														<c:otherwise>최신순</c:otherwise>
+													</c:choose>
+												</span> <span class="material-symbols-outlined fs-6 small ms-1">expand_more</span>
+											</button>
+											<ul
+												class="dropdown-menu dropdown-menu-dark glass-dropdown dropdown-menu-end shadow-lg">
+												<li><a class="dropdown-item"
+													href="javascript:changeSort('latest')">최신순</a></li>
+												<li><a class="dropdown-item"
+													href="javascript:changeSort('likes')">좋아요 순</a></li>
+												<li><a class="dropdown-item"
+													href="javascript:changeSort('views')">조회수 순</a></li>
+											</ul>
 										</div>
-										<div>
-											<h3 class="text-sm fw-medium text-white mb-0">${dto.authorNickname}</h3>
-											<p class="text-xs text-gray-500 mb-0">${dto.createdDate}</p>
+
+										<div class="dropdown">
+											<button
+												class="btn btn-sm text-white border border-secondary border-opacity-25 d-flex align-items-center gap-2 px-3 py-2 rounded-pill shadow-sm"
+												style="background: rgba(0, 0, 0, 0.3);" type="button"
+												data-bs-toggle="dropdown" aria-expanded="false">
+												<span class="material-symbols-outlined fs-6">
+													${viewMode == 'compact' ? 'view_list' : 'view_day'} </span>
+											</button>
+											<ul
+												class="dropdown-menu dropdown-menu-dark glass-dropdown dropdown-menu-end shadow-lg">
+												<li><a class="dropdown-item"
+													href="javascript:changeView('card')">카드형</a></li>
+												<li><a class="dropdown-item"
+													href="javascript:changeView('compact')">축약형</a></li>
+											</ul>
 										</div>
 									</div>
 								</div>
 
-								<div class="px-3 pb-2">
-									<h5 class="text-white fw-bold fs-5">${dto.title}</h5>
-									<p class="text-gray-300 text-sm mb-3 text-ellipsis">${dto.content}</p>
-								</div>
-
-								<c:if test="${not empty dto.fileList}">
-									<div id="carousel-${dto.postId}"
-										class="carousel slide px-3 pb-3" data-bs-interval="false"
-										onclick="event.stopPropagation();">
-										<div class="carousel-inner">
-											<c:forEach var="fileDto" items="${dto.fileList}"
-												varStatus="status">
-												<div class="carousel-item ${status.first ? 'active' : ''}">
-													<div class="image-container">
-														<c:choose>
-															<%-- 1. http로 시작하는 URL(Cloudinary 등)인 경우 --%>
-															<c:when test="${fn:startsWith(fileDto.filePath, 'http')}">
-																<img src="${fileDto.filePath}" class="slider-img"
-																	alt="Post Image">
-															</c:when>
-															<%-- 2. 기존 로컬 파일인 경우 --%>
-															<c:otherwise>
-																<img
-																	src="${pageContext.request.contextPath}/uploads/photo/${fileDto.filePath}"
-																	class="slider-img" alt="Post Image">
-															</c:otherwise>
-														</c:choose>
-													</div>
-												</div>
-											</c:forEach>
-										</div>
-										<c:if test="${fn:length(dto.fileList) > 1}">
-											<button class="carousel-control-prev" type="button"
-												data-bs-target="#carousel-${dto.postId}"
-												data-bs-slide="prev">
-												<span class="carousel-btn-glass"><span
-													class="material-symbols-outlined">chevron_left</span></span>
-											</button>
-											<button class="carousel-control-next" type="button"
-												data-bs-target="#carousel-${dto.postId}"
-												data-bs-slide="next">
-												<span class="carousel-btn-glass"><span
-													class="material-symbols-outlined">chevron_right</span></span>
-											</button>
-										</c:if>
+								<c:if test="${empty list}">
+									<div class="text-center py-5 glass-card shadow-lg rounded-4">
+										<p class="text-white-50 fs-5">등록된 게시글이 없습니다.</p>
 									</div>
 								</c:if>
 
-								<div class="px-3 py-3 border-top border-white border-opacity-10">
-									<div class="action-btn-group"
-										onclick="event.stopPropagation();">
+								<c:forEach var="dto" items="${list}">
 
-										<button class="action-btn btn-like">
-											<span class="material-symbols-outlined fs-6">favorite</span>
-											<span>${dto.likeCount}</span>
-										</button>
+									<%-- ================= [VIEW 1] 카드형 ================= --%>
+									<c:if test="${viewMode == 'card' || empty viewMode}">
+										<div class="glass-card shadow-lg feed-card rounded-4"
+											onclick="goArticle('${dto.postId}')"
+											style="background: rgba(30, 30, 30, 0.6);">
 
-										<button class="action-btn btn-comment">
-											<span class="material-symbols-outlined fs-6">chat_bubble</span>
-											<span>${dto.commentCount}</span>
-										</button>
-
-										<button class="action-btn btn-share">
-											<span class="material-symbols-outlined fs-6">share</span> <span>공유</span>
-										</button>
-
-										<button class="action-btn btn-save">
-											<span class="material-symbols-outlined fs-6">bookmark</span>
-											<span>저장</span>
-										</button>
-
-										<button class="action-btn btn-report ms-auto">
-											<span class="material-symbols-outlined fs-6">flag</span> <span>신고</span>
-										</button>
-									</div>
-								</div>
-							</div>
-
-						</c:if>
-
-						<c:if test="${viewMode == 'compact'}">
-							<div class="compact-card mb-2"
-								onclick="goArticle('${dto.postId}')">
-
-								<div class="compact-thumbnail-area"
-									onclick="event.stopPropagation(); showImageModal('${dto.fileList[0].filePath}');">
-									<c:choose>
-										<c:when test="${not empty dto.fileList}">
-											<c:choose>
-												<c:when
-													test="${fn:startsWith(dto.fileList[0].filePath, 'http')}">
-													<img src="${dto.fileList[0].filePath}"
-														class="compact-thumb-img" alt="Thumb">
-												</c:when>
-												<c:otherwise>
-													<img
-														src="${pageContext.request.contextPath}/uploads/photo/${dto.fileList[0].filePath}"
-														class="compact-thumb-img" alt="Thumb">
-												</c:otherwise>
-											</c:choose>
-
-
-											<div class="position-absolute p-1">
-												<span class="material-symbols-outlined text-white fs-6"
-													style="text-shadow: 0 0 4px black;">open_in_full</span>
+											<div
+												class="p-4 d-flex align-items-center justify-content-between">
+												<div class="d-flex align-items-center gap-3">
+													<div
+														class="avatar-md text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden shadow-sm"
+														style="background: linear-gradient(45deg, #a855f7, #6366f1); border-radius: 50%; width: 52px; height: 52px;">
+														<c:choose>
+															<c:when test="${not empty dto.authorProfileImage}">
+																<img
+																	src="${pageContext.request.contextPath}/uploads/profile/${dto.authorProfileImage}"
+																	style="width: 100%; height: 100%; object-fit: cover;">
+															</c:when>
+															<c:otherwise>
+																<span class="fs-5">${fn:substring(dto.authorNickname, 0, 1)}</span>
+															</c:otherwise>
+														</c:choose>
+													</div>
+													<div>
+														<h3 class="text-base fw-bold text-white mb-0">${dto.authorNickname}</h3>
+														<p class="text-sm text-gray-400 mb-0">${dto.timeAgo}</p>
+													</div>
+												</div>
 											</div>
-										</c:when>
-										<c:otherwise>
-											<span class="material-symbols-outlined text-white-50">article</span>
-										</c:otherwise>
-									</c:choose>
-								</div>
 
-								<div class="flex-grow-1" style="min-width: 0;">
-									<div class="d-flex align-items-center gap-2 mb-1">
-										<span class="text-xs text-white fw-bold">${dto.authorNickname}</span>
-										<span class="text-xs text-gray-500">&bull;
-											${dto.createdDate}</span>
-									</div>
+											<div class="px-4 pb-3">
+												<h5 class="text-white fw-bold fs-3 mb-3">${dto.title}</h5>
+												<p class="text-gray-300 text-lg mb-4 text-ellipsis">${dto.content}</p>
+											</div>
 
-									<h5 class="text-white fw-bold fs-6 mb-1 text-truncate">${dto.title}</h5>
+											<c:if test="${not empty dto.fileList}">
+												<div id="carousel-${dto.postId}" class="carousel slide pb-3"
+													data-bs-interval="false" onclick="event.stopPropagation();">
+													<div class="carousel-inner">
+														<c:forEach var="fileDto" items="${dto.fileList}"
+															varStatus="status">
+															<div
+																class="carousel-item ${status.first ? 'active' : ''}">
+																<div class="image-container">
+																	<c:choose>
+																		<c:when
+																			test="${fn:startsWith(fileDto.filePath, 'http')}">
+																			<img src="${fileDto.filePath}" class="slider-img">
+																		</c:when>
+																		<c:otherwise>
+																			<img
+																				src="${pageContext.request.contextPath}/uploads/photo/${fileDto.filePath}"
+																				class="slider-img">
+																		</c:otherwise>
+																	</c:choose>
+																</div>
+															</div>
+														</c:forEach>
+													</div>
+													<c:if test="${fn:length(dto.fileList) > 1}">
+														<button class="carousel-control-prev ps-3" type="button"
+															data-bs-target="#carousel-${dto.postId}"
+															data-bs-slide="prev">
+															<span class="carousel-btn-glass"><span
+																class="material-symbols-outlined fs-4">chevron_left</span></span>
+														</button>
+														<button class="carousel-control-next pe-3" type="button"
+															data-bs-target="#carousel-${dto.postId}"
+															data-bs-slide="next">
+															<span class="carousel-btn-glass"><span
+																class="material-symbols-outlined fs-4">chevron_right</span></span>
+														</button>
+													</c:if>
+												</div>
+											</c:if>
 
-									<div class="action-btn-group"
-										onclick="event.stopPropagation();">
-										<button class="action-btn btn-comment">
-											<span class="material-symbols-outlined fs-6">chat_bubble</span>
-											<span>${dto.commentCount} 댓글</span>
-										</button>
-										<button class="action-btn btn-share">
-											<span class="material-symbols-outlined fs-6">share</span> <span>공유</span>
-										</button>
-										<button class="action-btn btn-save">
-											<span class="material-symbols-outlined fs-6">bookmark</span>
-											<span>저장</span>
-										</button>
-										<button class="action-btn btn-report">
-											<span class="material-symbols-outlined fs-6">flag</span> <span>신고</span>
-										</button>
-									</div>
-								</div>
+											<div
+												class="px-4 py-3 border-top border-white border-opacity-10">
+												<div class="d-flex align-items-center w-100"
+													onclick="event.stopPropagation();">
+													<button
+														class="card-action-btn action-btn-hover btn-like me-3">
+														<span class="material-symbols-outlined">favorite</span> <span>${dto.likeCount}</span>
+													</button>
+													<button
+														class="card-action-btn action-btn-hover btn-comment">
+														<span class="material-symbols-outlined">chat_bubble</span>
+														<span>${dto.commentCount}</span>
+													</button>
+
+													<div class="ms-auto d-flex gap-2">
+														<button class="card-action-btn action-btn-hover btn-share">
+															<span class="material-symbols-outlined">share</span> <span>공유</span>
+														</button>
+														<button class="card-action-btn action-btn-hover btn-save">
+															<span class="material-symbols-outlined">bookmark</span> <span>저장</span>
+														</button>
+														<button
+															class="card-action-btn action-btn-hover btn-report">
+															<span class="material-symbols-outlined">campaign</span> <span>신고</span>
+														</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</c:if>
+
+									<%-- ================= [VIEW 2] 축약형 (완전 수정됨) ================= --%>
+									<c:if test="${viewMode == 'compact'}">
+										<div class="compact-card shadow-sm"
+											onclick="goArticle('${dto.postId}')">
+
+											<div class="compact-thumbnail-area shadow-sm"
+												onclick="event.stopPropagation(); showImageModal('${not empty dto.fileList ? dto.fileList[0].filePath : ''}');">
+												<c:choose>
+													<c:when test="${not empty dto.fileList}">
+														<c:choose>
+															<c:when
+																test="${fn:startsWith(dto.fileList[0].filePath, 'http')}">
+																<img src="${dto.fileList[0].filePath}"
+																	class="compact-thumb-img">
+															</c:when>
+															<c:otherwise>
+																<img
+																	src="${pageContext.request.contextPath}/uploads/photo/${dto.fileList[0].filePath}"
+																	class="compact-thumb-img">
+															</c:otherwise>
+														</c:choose>
+													</c:when>
+													<c:otherwise>
+														<div
+															class="d-flex align-items-center justify-content-center w-100 h-100 bg-secondary bg-opacity-25">
+															<span
+																class="material-symbols-outlined text-white-50 fs-4">article</span>
+														</div>
+													</c:otherwise>
+												</c:choose>
+											</div>
+
+											<div class="flex-grow-1 d-flex flex-column"
+												style="min-width: 0;">
+
+												<h5 class="text-white fw-bold fs-4 mb-2 text-truncate">${dto.title}</h5>
+
+												<div
+													class="d-flex align-items-center justify-content-between mt-auto pt-2">
+
+													<div
+														class="d-flex align-items-center gap-3 text-gray-400 compact-meta-info">
+														<div class="d-flex align-items-center gap-2 text-white-50">
+															<div
+																class="rounded-circle overflow-hidden d-flex align-items-center justify-content-center shadow-sm"
+																style="width: 28px; height: 28px; background: linear-gradient(45deg, #a855f7, #6366f1);">
+																<c:choose>
+																	<c:when test="${not empty dto.authorProfileImage}">
+																		<img
+																			src="${pageContext.request.contextPath}/uploads/profile/${dto.authorProfileImage}"
+																			style="width: 100%; height: 100%; object-fit: cover;">
+																	</c:when>
+																	<c:otherwise>
+																		<span class="text-white small fw-bold">${fn:substring(dto.authorNickname, 0, 1)}</span>
+																	</c:otherwise>
+																</c:choose>
+															</div>
+															<span class="fw-bold text-base text-white">${dto.authorNickname}</span>
+														</div>
+
+														<span class="opacity-50">&bull;</span> <span
+															class="text-sm">${dto.timeAgo}</span>
+													</div>
+
+													<div class="compact-action-group ms-auto"
+														onclick="event.stopPropagation();">
+														<button
+															class="compact-action-btn action-btn-hover btn-like p-0 border-0">
+															<span class="material-symbols-outlined">favorite</span> <span>${dto.likeCount}</span>
+														</button>
+														<button
+															class="compact-action-btn action-btn-hover btn-comment p-0 border-0">
+															<span class="material-symbols-outlined">chat_bubble</span>
+															<span>${dto.commentCount}</span>
+														</button>
+														<button
+															class="compact-action-btn action-btn-hover btn-share p-0 border-0">
+															<span class="material-symbols-outlined">share</span> <span>공유</span>
+														</button>
+														<button
+															class="compact-action-btn action-btn-hover btn-save p-0 border-0">
+															<span class="material-symbols-outlined">bookmark</span> <span>저장</span>
+														</button>
+														<button
+															class="compact-action-btn action-btn-hover btn-report p-0 border-0">
+															<span class="material-symbols-outlined">campaign</span> <span>신고</span>
+														</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</c:if>
+
+								</c:forEach>
 							</div>
-						</c:if>
-					</c:forEach>
+						</div>
+					</div>
 				</div>
 			</div>
-			<div class="position-absolute bottom-0 end-0 m-4 z-3">
-				<button
-					class="d-flex align-items-center gap-2 rounded-pill px-3 py-2 shadow-lg border border-white border-opacity-10"
-					style="background: rgba(39, 39, 42, 0.8); backdrop-filter: blur(12px);">
-					<div class="d-flex flex-column align-items-start lh-1 me-2">
-						<span class="text-uppercase text-muted fw-semibold"
-							style="font-size: 10px; letter-spacing: 0.05em;">Tasks</span> <span
-							class="text-sm fw-medium text-white-50">0 active</span>
-					</div>
-					<div
-						style="width: 1px; height: 24px; background: rgba(255, 255, 255, 0.1);"></div>
-					<div
-						class="rounded-circle d-flex align-items-center justify-content-center text-muted ms-1"
-						style="width: 24px; height: 24px;">
-						<span class="material-symbols-outlined fs-5">chevron_right</span>
-					</div>
-				</button>
-			</div>
-			<div
-				class="position-absolute bottom-0 start-0 m-4 z-3 d-none d-md-flex align-items-center gap-2 px-3 py-1 rounded-3 border border-white border-opacity-10 text-muted font-monospace text-xs"
-				style="background: rgba(39, 39, 42, 0.8); backdrop-filter: blur(12px);">
-				<span class="material-symbols-outlined" style="font-size: 14px;">grid_4x4</span>
-				<span>492</span>
-			</div>
+
 		</main>
 	</div>
+
 	<div class="modal fade" id="imageModal" tabindex="-1"
 		aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-dialog modal-dialog-centered modal-xl">
 			<div class="modal-content bg-transparent border-0 position-relative">
-
 				<button type="button" class="modal-close-btn"
 					onclick="closeImageModal()">
-					<span class="material-symbols-outlined">close</span>
+					<span class="material-symbols-outlined fs-4">close</span>
 				</button>
-
 				<div class="modal-body p-0 text-center">
-					<img id="modalImage" src="" class="img-fluid rounded shadow-lg"
-						style="max-height: 85vh;">
+					<img id="modalImage" src="" class="img-fluid rounded-4 shadow-lg"
+						style="max-height: 90vh;">
 				</div>
 			</div>
 		</div>
 	</div>
-	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 
 	<c:if test="${not empty sessionScope.toastMsg}">
 		<script>
-			$(document).ready(
-					function() {
-						showToast("${sessionScope.toastMsg}",
-								"${sessionScope.toastType}");
-					});
-		</script>
+            $(document).ready(function() { showToast("${sessionScope.toastMsg}", "${sessionScope.toastType}"); });
+        </script>
 		<c:remove var="toastMsg" scope="session" />
 		<c:remove var="toastType" scope="session" />
 	</c:if>
 
 	<script>
-		function showToast(msg, type) {
-			const $toast = $('#sessionToast');
-			const $title = $('#toastTitle');
-			const $icon = $('#toastIcon');
-
-			$('#toastMessage').text(msg);
-
-			if (type === "success") {
-				$title.text('SUCCESS').css('color', '#4ade80');
-				$icon.text('check_circle');
-			} else if (type === "info") {
-				$title.text('INFO').css('color', '#8B5CF6');
-				$icon.text('info');
-			} else if (type === "error") {
-				$title.text('ERROR').css('color', '#f87171');
-				$icon.text('error');
-			}
-
-			$toast.addClass('show');
-
-			setTimeout(function() {
-				$toast.removeClass('show');
-			}, 2500);
-		}
-	</script>
-
-	<script>
-		// 1. 정렬 변경 함수
-		function changeSort(sortType) {
-			const urlParams = new URLSearchParams(window.location.search);
-			urlParams.set('sort', sortType);
-			// view 모드는 유지하면서 sort만 변경
-			window.location.search = urlParams.toString();
-		}
-
-		// 2. 보기 모드 변경 함수
-		function changeView(viewMode) {
-			const urlParams = new URLSearchParams(window.location.search);
-			urlParams.set('view', viewMode);
-			// sort는 유지하면서 view만 변경
-			window.location.search = urlParams.toString();
-		}
-
-		// 3. 게시글 상세 이동 함수
-		function goArticle(postId) {
-			location.href = '${pageContext.request.contextPath}/post/article?postId='
-					+ postId;
-		}
-	</script>
-
-	<script>
-		// 모달 인스턴스를 저장할 전역 변수
-		let myModalInstance = null;
-
-		// 1. 이미지 확대 모달 열기
-		function showImageModal(imagePath) {
-		    if (!imagePath) return;
-
-		    // 이미지 경로가 'http'로 시작하는지 확인하여 분기 처리
-		    let fullPath = "";
-		    if (imagePath.startsWith("http")) {
-		        // 1. Cloudinary 등 외부 URL인 경우: 그대로 사용
-		        fullPath = imagePath;
-		    } else {
-		        // 2. 로컬 파일인 경우: 앞부분에 서버 경로 추가
-		        fullPath = '${pageContext.request.contextPath}/uploads/photo/' + imagePath;
-		    }
-
-		    const modalElement = document.getElementById('imageModal');
-
-		    // 이미지 경로 설정
-		    document.getElementById('modalImage').src = fullPath;
-
-		    // 모달 인스턴스가 없으면 생성, 있으면 재사용
-		    if (!myModalInstance) {
-		        myModalInstance = new bootstrap.Modal(modalElement);
-		    }
-
-		    myModalInstance.show();
-		}
-
-		// 2. 이미지 확대 모달 닫기 (X 버튼용)
-		function closeImageModal() {
-			if (myModalInstance) {
-				myModalInstance.hide();
-			}
-		}
-	</script>
-
-	<script>
-		// 캐러셀(슬라이더) 버튼 제어 로직: 첫 장에선 < 숨김, 마지막 장에선 > 숨김
-		document.addEventListener('DOMContentLoaded', function() {
-
-			// 화면에 있는 모든 슬라이더를 찾음
-			const carousels = document.querySelectorAll('.carousel');
-
-			carousels.forEach(function(carousel) {
-				// 1. 초기 상태 설정
-				const prevBtn = carousel
-						.querySelector('.carousel-control-prev');
-				const nextBtn = carousel
-						.querySelector('.carousel-control-next');
-				const items = carousel.querySelectorAll('.carousel-item');
-
-				// 이미지가 없거나 버튼이 없는 경우 패스
-				if (!items.length)
-					return;
-
-				// (1) 처음 로딩 시 첫 번째 장이므로 Prev 버튼 숨기기
-				if (prevBtn)
-					prevBtn.style.display = 'none';
-
-				// (2) 이미지가 1개뿐이면 Next 버튼도 숨기기
-				if (items.length <= 1 && nextBtn) {
-					nextBtn.style.display = 'none';
-				}
-
-				// 2. 슬라이드 넘길 때마다 실행되는 이벤트
-				carousel.addEventListener('slid.bs.carousel', function(e) {
-					const currentIndex = e.to; // 현재 보고 있는 순서 (0부터 시작)
-					const lastIndex = items.length - 1; // 마지막 순서
-
-					// A. 첫 번째 장일 때 -> Prev 숨김, Next 보임
-					if (currentIndex === 0) {
-						if (prevBtn)
-							prevBtn.style.display = 'none';
-						if (nextBtn)
-							nextBtn.style.display = 'flex';
-					}
-					// B. 마지막 장일 때 -> Prev 보임, Next 숨김
-					else if (currentIndex === lastIndex) {
-						if (prevBtn)
-							prevBtn.style.display = 'flex';
-						if (nextBtn)
-							nextBtn.style.display = 'none';
-					}
-					// C. 중간일 때 -> 둘 다 보임
-					else {
-						if (prevBtn)
-							prevBtn.style.display = 'flex';
-						if (nextBtn)
-							nextBtn.style.display = 'flex';
-					}
-				});
-			});
-		});
-	</script>
+        function showToast(msg, type) {
+            const $toast = $('#sessionToast');
+            const $title = $('#toastTitle');
+            const $icon = $('#toastIcon');
+            $('#toastMessage').text(msg);
+            if (type === "success") { $title.text('SUCCESS').css('color', '#4ade80'); $icon.text('check_circle'); } 
+            else if (type === "info") { $title.text('INFO').css('color', '#8B5CF6'); $icon.text('info'); } 
+            else if (type === "error") { $title.text('ERROR').css('color', '#f87171'); $icon.text('error'); }
+            $toast.addClass('show');
+            setTimeout(function() { $toast.removeClass('show'); }, 2500);
+        }
+        function changeSort(sortType) {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('sort', sortType);
+            window.location.search = urlParams.toString();
+        }
+        function changeView(viewMode) {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('view', viewMode);
+            window.location.search = urlParams.toString();
+        }
+        function goArticle(postId) {
+            location.href = '${pageContext.request.contextPath}/post/article?postId=' + postId;
+        }
+        let myModalInstance = null;
+        function showImageModal(imagePath) {
+            if (!imagePath) return;
+            let fullPath = "";
+            if (imagePath.startsWith("http")) fullPath = imagePath;
+            else fullPath = '${pageContext.request.contextPath}/uploads/photo/' + imagePath;
+            document.getElementById('modalImage').src = fullPath;
+            const modalElement = document.getElementById('imageModal');
+            if (!myModalInstance) myModalInstance = new bootstrap.Modal(modalElement);
+            myModalInstance.show();
+        }
+        function closeImageModal() { if (myModalInstance) myModalInstance.hide(); }
+    </script>
 </body>
 </html>

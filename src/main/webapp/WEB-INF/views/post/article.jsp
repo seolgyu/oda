@@ -207,8 +207,7 @@
 										<div>
 											<h3 class="text-sm fw-medium text-white mb-0">${not empty memberdto.userNickname ? memberdto.userNickname : memberdto.userId}
 											</h3>
-											<p class="text-xs text-gray-500 mb-0">${dto.createdDate}
-												&bull; 조회 ${dto.viewCount}</p>
+											<p class="text-xs text-gray-500 mb-0">${dto.detailDate} &bull; 조회 ${dto.viewCount}</p>
 										</div>
 									</div>
 

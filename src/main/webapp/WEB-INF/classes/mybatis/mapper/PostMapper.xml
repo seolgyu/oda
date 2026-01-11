@@ -143,13 +143,8 @@
         p.VIEW_COUNT AS viewCount,
         p.LIKE_COUNT AS likeCount,
         p.COMMENT_COUNT AS commentCount,
-        
-        CASE
-            WHEN TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
-            THEN TO_CHAR(p.CREATED_DATE, 'HH24:MI')
-            ELSE TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD')
-        END AS createdDate,
-        
+        TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD HH24:MI:SS') AS createdDate,
+       
         NVL(u.USER_NICKNAME, 'Unknown') AS authorNickname,
         u.USER_PROFILE AS authorProfileImage,
         
