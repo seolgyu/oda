@@ -178,7 +178,7 @@
 
 							<div class="d-flex align-items-center gap-2 mb-3 px-1">
 								<button type="button" class="btn-icon text-white"
-									onclick="location.href='${pageContext.request.contextPath}/post/list?page=${page}'">
+									onclick="history.back()">
 									<span class="material-symbols-outlined">arrow_back</span>
 								</button>
 								<span class="text-white fw-bold fs-5">Post</span>
