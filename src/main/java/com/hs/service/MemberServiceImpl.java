@@ -141,4 +141,15 @@ public class MemberServiceImpl implements MemberService {
 		return userNum;
 	}
 
+	@Override
+	public void updatePwd(Map<String, Object> map) throws SQLException {
+		try {
+			mapper.updatePwd(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+	}
+
 }

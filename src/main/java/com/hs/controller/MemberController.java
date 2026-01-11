@@ -480,6 +480,7 @@ public class MemberController {
 			session.setAttribute("authCode", authCode);
 			session.setAttribute("authCodeTime", System.currentTimeMillis());
 	        
+			System.out.println("이메일 전송 성공 - 서버");
 		    model.put("status", "exist");
 			
 		} catch (Exception e) {
@@ -503,7 +504,7 @@ public class MemberController {
 	        String authCode = (String)session.getAttribute("authCode");
 	        Long authCodeTime = (Long) session.getAttribute("authCodeTime");
 	        
-	        if (authCode == null || authCodeTime == null) {
+	        if (authCode == null || authCodeTime == null || session.getAttribute("resetUserNum") == null) {
 	            model.put("status", "expired");
 	            return model;
 	        }
@@ -549,6 +550,44 @@ public class MemberController {
 	        return new ModelAndView("redirect:/member/login");
 	    }
 		return new ModelAndView("member/changePwd");
+	}
+	
+	@PostMapping("changePwdSubmit")
+	@ResponseBody
+	public Map<String, Object> changePwdSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    Map<String, Object> model = new HashMap<>();
+	    
+	    HttpSession session = req.getSession();
+	    req.setCharacterEncoding("UTF-8");
+
+		try {
+			Boolean isVerified = (Boolean) session.getAttribute("isVerified");
+			Long resetUserNum = (Long) session.getAttribute("resetUserNum");
+			String userPwd = req.getParameter("userPwd");
+	        
+	        if (resetUserNum == null || isVerified == null || !isVerified) {
+	            model.put("status", "expired");
+	            return model;
+	        }
+	        
+	        Map<String, Object> map = new HashMap<String, Object>();
+	        map.put("userNum", resetUserNum);
+	        map.put("userPwd", userPwd);
+	        
+	        service.updatePwd(map);
+	        
+	        session.removeAttribute("resetUserNum");
+	        session.removeAttribute("isVerified");
+	        session.removeAttribute("targetEmail");
+
+		    model.put("status", "success");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("status", "error");
+		}
+	    
+	    return model;
 	}
 
 }

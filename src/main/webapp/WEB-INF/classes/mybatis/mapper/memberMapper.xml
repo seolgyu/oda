@@ -115,6 +115,12 @@
     	WHERE user_id = #{userId} AND user_name = #{userName} AND user_email = #{email, jdbcType=VARCHAR}
 	</select>
 	
+	<update id="updatePwd" parameterType="map">
+		UPDATE member 
+		SET user_pwd = #{userPwd} 
+		WHERE user_num = #{userNum}
+	</update>
+	
 	<select id="loginMember1" parameterType="map" resultType="com.hs.model.MemberDTO">
 		SELECT memberIdx, userId, userPwd, userName, userLevel, register_date, modify_date
 		FROM member1

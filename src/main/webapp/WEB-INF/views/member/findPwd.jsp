@@ -91,7 +91,7 @@
 							<button type="button" id="verifyBtn"
 								class="btn w-100 fw-bold text-white shadow-md"
 								style="height: 3rem; border-radius: 0.75rem; background: linear-gradient(to right, #4f46e5, #7c3aed); border: none;"
-								onclick="">VERIFY CODE</button>
+								onclick="chkAuthCode();">VERIFY CODE</button>
 
 							<div class="text-center text-xs"
 								style="color: #fb923c; font-size: 0.8rem;">
@@ -128,7 +128,7 @@
 	let timer;
 	
 	function sendResetPwd() {
-		const $errorDiv = $("#findIdResult");
+		const $errorDiv = $("#findPwdResult");
 	    const $resultText = $("#resultText");
 	    const $submitBtn = $("button[onclick='sendResetPwd();']");
 	    
@@ -168,10 +168,13 @@
 			success : function(data) {
 				if (data.status === "exist") {
 					showResult("인증번호가 전송되었습니다.", "success");
-				    
-				    $("#sendBtn").text("RESEND CODE");
-				    
-				    $("#sendBtn").prop("disabled", true);
+					
+					$("input[name=userId], input[name=userName], input[name=email]").prop("readonly", true);
+					$("input[name=userId], input[name=userName], input[name=email]").css("background-color", "#f3f4f6");
+					
+					$("#authCodeSection").removeAttr("style").hide().fadeIn(400);
+					$("#sendBtn").text("RESEND CODE").prop("disabled", true);
+					
 				    setTimeout(function() {
 				        $("#sendBtn").prop("disabled", false);
 				    }, 10000);
@@ -190,37 +193,95 @@
 				$submitBtn.prop("disabled", false);
 			}
 		});
+	};
+	
+	function showResult(msg, type) {
+		const $errorDiv = $("#findPwdResult");		
+		const $resultText = $("#resultText");
 		
-		function showResult(msg, type) {
-	        $errorDiv.hide();
-	        if (type === "success") {
-	            $errorDiv.css({
-	                "background": "rgba(16, 185, 129, 0.15)",
-	                "border": "1px solid rgba(16, 185, 129, 0.3)",
-	                "color": "#34d399"
-	            });
-	        } else {
-	            $errorDiv.css({
-	                "background": "rgba(244, 63, 94, 0.1)",
-	                "border": "1px solid rgba(244, 63, 94, 0.2)",
-	                "color": "#fb7185"
-	            });
-	        }
-	        $resultText.html(msg);
-	        $errorDiv.fadeIn(300);
-	    }
-	}
+        $errorDiv.hide();
+        if (type === "success") {
+            $errorDiv.css({
+                "background": "rgba(16, 185, 129, 0.15)",
+                "border": "1px solid rgba(16, 185, 129, 0.3)",
+                "color": "#34d399"
+            });
+        } else {
+            $errorDiv.css({
+                "background": "rgba(244, 63, 94, 0.1)",
+                "border": "1px solid rgba(244, 63, 94, 0.2)",
+                "color": "#fb7185"
+            });
+        }
+        $resultText.html(msg);
+        $errorDiv.fadeIn(300);
+    }
 	
 	function chkAuthCode() {
+		const $authCode = $('#authCode');
+		const $verifyBtn = $("#verifyBtn");
 		
+		const authCode = $authCode.val().trim();
+		
+		if (! authCode ) {
+			showResult("인증코드를 입력하세요.", "error");
+			$authCode.focus();
+			return;
+		}
+		
+		if (authCode.length !== 6) {
+	        showResult("인증코드 6자리를 정확히 입력하세요.", "error");
+	        $authCode.focus();
+	        return;
+	    }
+		
+		$verifyBtn.prop("disabled", true);
+
+		$.ajax({
+			type : "POST",
+			url : "${pageContext.request.contextPath}/member/chkAuthCode",
+			data : {userCode: authCode},
+			dataType : "json",
+			success : function(data) {
+				if (data.status === "success") {
+					$verifyBtn
+		            .removeClass("bg-primary")
+		            .css("background", "#22c55e")
+		            .text("VERIFIED ✓");
+		            
+		        	$authCode.prop("disabled", true);
+		        
+		        	setTimeout(function() {
+		            	location.href = "${pageContext.request.contextPath}/member/changePwd";
+		        	}, 1000);
+				} else if (data.status === "timeout") {
+	                showResult("인증 시간이 초과되었습니다. 다시 요청해주세요.", "error");
+	                $verifyBtn.prop("disabled", false);
+				} else if (data.status === "expired") {
+	                showResult("인증 정보가 유실되었습니다. 처음부터 다시 시도해주세요.", "error");
+	                $verifyBtn.prop("disabled", false);
+	            } else {
+	                showResult("인증에 실패하였습니다.", "error");
+	                $verifyBtn.prop("disabled", false);
+	            }
+			},
+			error : function() {
+				showResult("서버 에러가 발생했습니다. 다시 시도해주세요.", "error");
+				$verifyBtn.prop("disabled", false);
+			}
+		});
 	}
 	
 	function startTimer(duration) {
 	    let timerSeconds = duration;
 	    let minutes, seconds;
 	    const display = document.querySelector('#timer');
+	    const authInput = document.querySelector('#authCode');
 
 	    if (timer) clearInterval(timer);
+	    
+	    authInput.disabled = false;
+		display.parentElement.style.color = "#fb923c";
 
 	    timer = setInterval(function () {
 	        minutes = parseInt(timerSeconds / 60, 10);

@@ -48,7 +48,7 @@
 							enter your new password</p>
 					</div>
 
-					<form name="resetPwdForm" method="POST"
+					<form name="resetPwdForm" method="POST" onsubmit="return false;"
 						class="w-100 d-flex flex-column gap-3">
 						<div class="position-relative">
 							<span
@@ -67,10 +67,10 @@
 								placeholder="Confirm New Password" required>
 						</div>
 
-						<button type="button"
+						<button type="button" id="updatePwdBtn"
 							class="btn w-100 fw-bold text-white shadow-md mt-2"
 							style="height: 3rem; border-radius: 0.75rem; background: linear-gradient(to right, #f43f5e, #fb923c); border: none; transition: transform 0.2s;"
-							onclick="updatePassword();">UPDATE PASSWORD</button>
+							onclick="updatePwd();">UPDATE PASSWORD</button>
 					</form>
 
 					<div id="resetResult" class="w-100 p-3 text-center fade-in"
@@ -95,5 +95,85 @@
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
+	
+	<script type="text/javascript">
+	
+	function updatePwd() {
+	    const $submitBtn = $("#updatePwdBtn");
+	    const $userPwd = $('input[name=userPwd]');
+	    const $userPwdCheck = $('input[name=userPwdCheck]');
+	    
+	    const userPwd = $userPwd.val().trim();
+	    const userPwdCheck = $userPwdCheck.val().trim();
+
+	    if( ! userPwd) {
+	    	showResult("비밀번호를 입력해주세요.", "error");
+    		$userPwd.focus();
+        	return;
+    	} else if(!/^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/.test(userPwd)) {
+    		showResult("영문, 숫자, 특수문자 포함 8 ~ 16자여야 합니다.", "error");
+    		$userPwd.focus();
+        	return;
+    	}
+    	
+    	if (userPwd !== userPwdCheck) {
+            showResult("비밀번호가 일치하지 않습니다.", "error");
+            $userPwdCheck.focus();
+            return;
+        }
+		
+		$submitBtn.prop("disabled", true);
+
+		$.ajax({
+			type : "POST",
+			url : "${pageContext.request.contextPath}/member/changePwdSubmit",
+			data : {userPwd: userPwd},
+			dataType : "json",
+			success : function(data) {
+				if (data.status === "success") {
+					$("input[name=userPwd], input[name=userPwdCheck]").prop("disabled", true);
+					
+					$submitBtn
+		            .css("background", "#22c55e")
+		            .text("SUCCESS ✓");
+		        
+		        	setTimeout(function() {
+		            	location.href = "${pageContext.request.contextPath}/member/login";
+		        	}, 1000);
+				} else {
+	                showResult("세션이 만료되었습니다. 처음부터 다시 시도해주세요.", "error");
+	                $submitBtn.prop("disabled", false);
+				}
+			},
+			error : function() {
+				showResult("서버 에러가 발생했습니다. 다시 시도해주세요.", "error");
+				$submitBtn.prop("disabled", false);
+			}
+		});
+	};
+	
+	function showResult(msg, type) {
+		const $errorDiv = $("#resetResult");		
+		const $resultText = $("#resultText");
+		
+        $errorDiv.hide();
+        if (type === "success") {
+            $errorDiv.css({
+                "background": "rgba(16, 185, 129, 0.15)",
+                "border": "1px solid rgba(16, 185, 129, 0.3)",
+                "color": "#34d399"
+            });
+        } else {
+            $errorDiv.css({
+                "background": "rgba(244, 63, 94, 0.1)",
+                "border": "1px solid rgba(244, 63, 94, 0.2)",
+                "color": "#fb7185"
+            });
+        }
+        $resultText.html(msg);
+        $errorDiv.fadeIn(300);
+    }
+	
+	</script>
 </body>
 </html>

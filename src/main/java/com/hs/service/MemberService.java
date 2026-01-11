@@ -15,6 +15,8 @@ public interface MemberService {
 	public void deleteProfilePhoto(Map<String, Object> map) throws Exception;
 	public void deleteMember(Map<String, Object> map) throws Exception;
 	
+	public void updatePwd(Map<String, Object> map) throws SQLException;
+	
 	public MemberDTO findById(String userId);
 	public MemberDTO findByIdx(Long userIdx);
 	
