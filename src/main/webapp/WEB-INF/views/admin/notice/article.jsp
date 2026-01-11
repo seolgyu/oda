@@ -148,28 +148,61 @@
         .navigation-links {
             border-top: 1px solid #374151;
         }
-        .nav-item-link {
-            padding: 0.75rem 1.5rem;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: #94A3B8;
-            font-size: 0.875rem;
-            transition: background-color 0.2s;
-        }
-        .nav-item-link:hover {
-            background-color: rgba(255,255,255,0.05);
-            color: #fff;
-        }
-        .nav-item-link:not(:last-child) {
-            border-bottom: 1px solid #374151;
-        }
-        .nav-label {
-            font-weight: 600;
-            margin-right: 1rem;
-            color: #D1D5DB;
-            min-width: 60px;
-        }
+        
+        .navigation-links {
+    		border-top: 1px solid #374151;
+		}
+		
+		.nav-item-row {
+		    padding: 0.75rem 1.5rem;
+		    display: flex;
+		    align-items: center;
+		    text-decoration: none;
+		    color: #94A3B8;
+		    font-size: 0.875rem;
+		    transition: background-color 0.2s;
+		    border-bottom: 1px solid #374151;
+		}
+		
+		.nav-item-row:last-child {
+		    border-bottom: none;
+		}
+		
+		.nav-item-row:hover:not(.nav-item-disabled) {
+		    background-color: rgba(255,255,255,0.05);
+		}
+		
+		.nav-item-row:hover:not(.nav-item-disabled) .nav-title {
+		    color: #fff;
+		}
+		
+		.nav-item-disabled {
+		    cursor: default;
+		    color: #64748B;
+		}
+		
+		.nav-label {
+		    font-weight: 600;
+		    margin-right: 1rem;
+		    color: #D1D5DB;
+		    min-width: 80px;
+		    flex-shrink: 0;
+		}
+		
+		.nav-title {
+		    flex: 1;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		    white-space: nowrap;
+		    color: #94A3B8;
+		    transition: color 0.2s;
+		}
+		
+		.nav-item-disabled .nav-label,
+		.nav-item-disabled .nav-title {
+		    color: #64748B;
+		}
+        
         .action-footer {
             padding: 1.5rem;
             display: flex;
@@ -363,36 +396,42 @@
 		<ol class="breadcrumb mb-0">
 			<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin">홈</a></li>
 			<li class="breadcrumb-item"><a href="#">서비스 관리</a></li>
-			<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin.list">리스트</a></li>
+			<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin/notice/list">공지사항 리스트</a></li>
 			<li aria-current="page" class="breadcrumb-item active">공지사항 상세</li>
 		</ol>
 	</nav>
 	
 	<div class="d-flex gap-2">
-		<button class="btn btn-action btn-outline-custom">수정</button>
-		<button class="btn btn-action btn-outline-custom">삭제</button>
-	</div>
+			<button type="button" class="btn btn-action btn-outline-custom" onclick="location.href='${pageContext.request.contextPath}/admin/notice/update?num=${dto.notice_num}&page=${page}&size=${size}';">수정</button>
+		
+			<button type="button" class="btn btn-action btn-outline-custom" onclick="deleteOk();">삭제</button>
+		</div>
 </div>
 
 
 	<div class="view-card">
 		<div class="view-header">
-			<h1 class="view-title">강사님이 보고있습니다.</h1>
+			<h1 class="view-title">${dto.noti_title}</h1>
 			<div class="title-divider"></div>
 			
 			<div class="view-info-bar">
-				<div>이름 : 관리자</div>
-				<div>2025-12-31 09:11:47 <span class="mx-2">|</span> 조회 7</div>
+				<div>이름 : ${dto.user_nickname}</div>
+				<div>${dto.noti_reg_date } <span class="mx-2">|</span> 조회 ${dto.noti_hitCount }</div>
 			</div>
 		</div>
 		
 	<div class="view-content">
-		<p>안녕하세요. 공지사항 내용입니다.</p>
-		<p>시스템 점검 안내 및 교육 일정에 대한 상세 내용을 확인해 주시기 바랍니다.</p>
-			<img alt="Announcement Image" class="content-image-placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBU-bCLB_bG8ykPdI7eLB-HnY3-XXQXn2xqgugPmbR3z4u91yF5yFKJJlRMoO7QBkLJwJrajtYVVbmzPY1bk7OiXBSFFxMyYsA8O-QReyUWV0fSYcCmanxOWFh6dWYsNHM_Q5BPNWguJ781w_meYo5Gysmqeb_gE8q1liKubB-VO-djC6vfIDs44Mm4zIRIQjcdIliZSD_kVYFNYRdefpD9Zm11sfEPYK6VmwuI9vZCGd14sdM2Jrb0DGGhd3sw2e4T2AUwFPCaDa4"/>
-		<p>추가 문의사항은 관리자에게 연락 부탁드립니다. 감사합니다.</p>
+		${dto.noti_content}
 	</div>
-	
+	<c:if test="${listFile.size() != 0}">
+		<p class="text-secondary mb-1 p-2">첨부파일 : 
+			<i class="bi bi-folder2-open"></i>
+			<c:forEach var="vo" items="${listFile}" varStatus="status">
+				<a href="${pageContext.request.contextPath}/admin/notice/download?fileNum=${vo.fileNum}" class="text-reset">${vo.originalFilename}</a>
+				<c:if test="${not status.last}">|</c:if>
+			</c:forEach>
+		</p>
+	</c:if>
 	<div class="like-button-container">
 		<button class="btn btn-like">
 			<span class="material-symbols-outlined">favorite</span>
@@ -400,16 +439,32 @@
 	</div>
 	
 	<div class="navigation-links">
-		<a class="nav-item-link" href="#">
-			<span class="nav-label">이전글 :</span>
-			<span>시스템 업데이트 공지사항</span>
-		</a>
-		
-		<a class="nav-item-link" href="#">
-			<span class="nav-label">다음글 :</span>
-			<span class="text-secondary">다음글이 없습니다.</span>
-		</a>
-	</div>
+    <c:if test="${not empty prevDto}">
+        <a class="nav-item-row" href="${pageContext.request.contextPath}/admin/notice/article?${query}&num=${prevDto.notice_num}">
+            <span class="nav-label">이전글</span>
+            <span class="nav-title"><c:out value="${prevDto.noti_title}"/></span>
+        </a>
+    </c:if>
+    <c:if test="${empty prevDto}">
+        <div class="nav-item-row nav-item-disabled">
+            <span class="nav-label">이전글</span>
+            <span class="nav-title">이전글이 없습니다.</span>
+        </div>
+    </c:if>
+    
+    <c:if test="${not empty nextDto}">
+        <a class="nav-item-row" href="${pageContext.request.contextPath}/admin/notice/article?${query}&num=${nextDto.notice_num}">
+            <span class="nav-label">다음글</span>
+            <span class="nav-title"><c:out value="${nextDto.noti_title}"/></span>
+        </a>
+    </c:if>
+    <c:if test="${empty nextDto}">
+        <div class="nav-item-row nav-item-disabled">
+            <span class="nav-label">다음글</span>
+            <span class="nav-title">다음글이 없습니다.</span>
+        </div>
+    </c:if>
+</div>
 	
 	<div class="comments-section">
 	
@@ -422,7 +477,7 @@
 		<textarea class="comment-textarea" placeholder="댓글을 입력해주세요."></textarea>
 	
 		<div class="comment-input-footer">
-			<button class="btn btn-register">등록</button>
+			<button class="btn btn-register btnSendReply">등록</button>
 		</div>
 	</div>
 	
@@ -519,7 +574,15 @@
 			</div>
 		</main>
 	</div>
-	
+	<script type="text/javascript">
+		function deleteOk() {
+		    if(confirm('게시글을 삭제 하시 겠습니까 ? ')) {
+			    let params = 'num=${dto.notice_num}&${query}';
+			    let url = '${pageContext.request.contextPath}/admin/notice/delete?' + params;
+		    	location.href = url;
+		    }
+		}
+	</script>
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>

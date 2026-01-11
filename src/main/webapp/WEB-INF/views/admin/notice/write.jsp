@@ -156,6 +156,34 @@ select.glass-input-box {
      color: #fff;
 }
 
+/* SmartEditor용 form-control 스타일 오버라이드 */
+#ir1.form-control {
+    background-color: transparent !important;
+    border: none !important;
+    color: inherit !important;
+}
+
+/* SmartEditor iframe 강제 흰색 배경 */
+#se2_iframe {
+    background-color: #ffffff !important;
+}
+
+/* iframe이 로드된 후에도 흰색 유지 */
+.se2_input_wysiwyg {
+    background-color: #ffffff !important;
+}
+
+.se2_input_area {
+    background-color: #ffffff !important;
+}
+
+/* 부트스트랩 focus 효과 제거 */
+#ir1.form-control:focus {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+}
+
 </style>
 </head>
 <body class="bg-background-dark text-white">
@@ -216,7 +244,11 @@ select.glass-input-box {
 
 				<form name="noticeForm" method="post" enctype="multipart/form-data">
 					<div class="card-dark p-4 p-md-5 shadow-lg">
-
+						<input type="hidden" name="size" value="${size}">
+						<c:if test="${mode=='update'}">
+							<input type="hidden" name="num" value="${dto.notice_num}">
+							<input type="hidden" name="page" value="${page}">
+						</c:if>
 						<div class="row mb-4">
 							<div class="col-md-6 mb-4 mb-md-0">
 								<label class="form-label">공지 설정</label> <select
@@ -248,7 +280,7 @@ select.glass-input-box {
 							<label class="form-label">상세 내용</label>
 							<tr>
 								<td>
-									<textarea name="content" id="ir1" class="form-control" style="width: 99%; height: 300px;">${dto.content}</textarea>
+									<textarea name="content" id="ir1" class="form-control" style="width: 99%; height: 300px;">${dto.noti_content}</textarea>
 								</td>
 							</tr>
 						</div>
@@ -256,7 +288,7 @@ select.glass-input-box {
 						<div class="mb-0">
 							<!-- <label class="form-label">첨부 파일</label> -->
 							<tr>
-								<td class="bg-light col-sm-2" scope="row">첨&nbsp;&nbsp;&nbsp;&nbsp;부</td>
+								<td class="bg-light col-sm-2" scope="row">첨부 파일</td>
 								<td>
 									<input type="file" name="selectFile" class="form-control" multiple>
 								</td>
@@ -276,14 +308,13 @@ select.glass-input-box {
 										<td class="bg-light col-sm-2" scope="row">첨부된파일</td>
 										<td> 
 											<p class="form-control-plaintext">
-												<a href="javascript:deleteFile('${vo.fileNum}');"><i class="bi bi-trash"></i></a>
+												<a href="javascript:deleteFile('${vo.fileNum}');">파일 삭제<i class="bi bi-trash"></i></a>
 												${vo.originalFilename}
 											</p>
 										</td>
 									</tr>
 								</c:forEach>
 							</c:if>
-							<input type="hidden" name="size" value="${size}">
 							<!-- <div id="fileList" class="mt-2"></div> -->
 						</div>
 					</div>
@@ -325,7 +356,7 @@ function check() {
 			return;
 		}
 		
-		let params = 'num=${dto.num}&fileNum=' + fileNum + '&page=${page}&size=${size}';
+		let params = 'num=${dto.notice_num}&fileNum=' + fileNum + '&page=${page}&size=${size}';
 		let url = '${pageContext.request.contextPath}/admin/notice/deleteFile?' + params;
 		location.href = url;
 	}

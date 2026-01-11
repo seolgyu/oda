@@ -152,4 +152,62 @@ public class NoticeServiceImpl implements NoticeService{
 
 		return list;
 	}
+
+	@Override
+	public NoticeDTO findByPrev(Map<String, Object> map) {
+		NoticeDTO dto = null;
+		
+		try {
+			dto = mapper.findByPrev(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return dto;
+	}
+
+	@Override
+	public NoticeDTO findByNext(Map<String, Object> map) {
+		NoticeDTO dto = null;
+		
+		try {
+			dto = mapper.findByNext(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return dto;
+	}
+
+	@Override
+	public void updateHitCount(long num) throws Exception {
+		try {
+			mapper.updateHitCount(num);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
+	}
+
+	@Override
+	public void updateNotice(NoticeDTO dto) throws Exception {
+		try {
+			mapper.updateNotice(dto);
+			
+			if (dto.getListFile().size() != 0) {
+				for (MyMultipartFile mf: dto.getListFile()) {
+					dto.setSaveFilename(mf.getSaveFilename());
+					dto.setOriginalFilename(mf.getOriginalFilename());
+					dto.setFileSize(mf.getSize());
+					
+					mapper.insertNoticeFile(dto);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
+	}
 }

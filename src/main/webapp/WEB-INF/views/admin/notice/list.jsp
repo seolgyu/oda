@@ -283,18 +283,17 @@
 									<!-- <span class="material-icons-round text-primary fs-5"> -->${dto.notice_num}<!-- </span> -->
 									</td>
 									<td>
-										<span class="badge badge-normal">${dto.state}
-										</span>
+										<span class="badge badge-normal">${dto.state}</span>
 									</td>
 									<td>
 										<div class="d-flex align-items-center gap-2">
-											<span class="fw-bold">${dto.noti_title}</span> <!-- <span class="badge bg-danger p-1 rounded-circle">
+											<a href="${articleUrl}&num=${dto.notice_num}" class="text-reset"><span class="fw-bold">${dto.noti_title}</span></a> <!-- <span class="badge bg-danger p-1 rounded-circle">
 											<span class="visually-hidden">New</span></span> -->
 										</div>
 									</td>
 									<td>${dto.user_nickname}</td>
 									<td class="text-white-50">${dto.noti_reg_date }</td>
-									<td class="text-center text-white-50">${dto.hitCount }</td>
+									<td class="text-center text-white-50">${dto.noti_hitCount }</td>
 								</tr>
 							</c:forEach>
 							<c:forEach var="dto" items="${list}"  varStatus="status">
@@ -323,13 +322,13 @@
 									</td>
 									<td>
 										<div class="d-flex align-items-center gap-2">
-											<span class="fw-bold">${dto.noti_title}</span> <!-- <span class="badge bg-danger p-1 rounded-circle">
+											<a href="${articleUrl}&num=${dto.notice_num}" class="text-reset"><span class="fw-bold">${dto.noti_title}</span></a> <!-- <span class="badge bg-danger p-1 rounded-circle">
 											<span class="visually-hidden">New</span></span> -->
 										</div>
 									</td>
 									<td>${dto.user_nickname}</td>
 									<td class="text-white-50">${dto.noti_reg_date }</td>
-									<td class="text-center text-white-50">${dto.hitCount }</td>
+									<td class="text-center text-white-50">${dto.noti_hitCount }</td>
 								</tr>
 							</c:forEach>
 							</tbody>

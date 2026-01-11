@@ -12,7 +12,7 @@ public class NoticeDTO {
 	private String noti_content;
 	private String noti_reg_date;
 	private String update_date;
-	private int hitCount;
+	private int noti_hitCount;
 	private String is_notice;
 	private Long user_num;
 	
@@ -102,11 +102,11 @@ public class NoticeDTO {
 	public void setUpdate_date(String update_date) {
 		this.update_date = update_date;
 	}
-	public int getHitCount() {
-		return hitCount;
+	public int getNoti_hitCount() {
+		return noti_hitCount;
 	}
-	public void setHitCount(int hitCount) {
-		this.hitCount = hitCount;
+	public void setNoti_hitCount(int noti_hitCount) {
+		this.noti_hitCount = noti_hitCount;
 	}
 	public String getIs_notice() {
 		return is_notice;

@@ -96,13 +96,14 @@
 	</delete>
 	
 	<select id="findById" parameterType="Long" resultType="com.hs.model.admin.NoticeDTO">
-	SELECT notice_num num,
+	SELECT notice_num,
 		 	noti.user_num user_num,
 		 	memb.user_Id user_Id,
 		 	memb.user_nickname user_nickname,
 		 	noti_title,
 		 	noti_content,
 		 	noti_reg_date,
+		 	update_date,
 			noti_hitCount,
 			is_notice,
 			memb.user_updated_date user_updated_date
@@ -160,4 +161,51 @@
 		DELETE FROM noticeFile
 		WHERE ${field} = #{num}
 	</delete>
+	
+	<update id="updateHitCount" parameterType="Long">
+		UPDATE notice SET noti_hitCount = noti_hitCount + 1
+		WHERE notice_num = #{num}
+	</update>
+	
+	<select id="findByPrev" parameterType="map" resultType="com.hs.model.admin.NoticeDTO">
+		SELECT notice_num, noti_title
+		FROM notice n
+		JOIN member m ON n.user_num = m.user_num
+		<where>
+			<if test="state != null and state != '' and state != 'null'">
+				AND noti.state = #{state}
+			</if>		
+			<if test="kwd != null and kwd != '' ">
+				AND <include refid="where-list"/>
+			</if>
+			AND (update_date &gt; TO_DATE(#{update_date}, 'YYYY-MM-DD HH24:MI:SS'))
+		</where>
+		ORDER BY update_date ASC, notice_num ASC
+		FETCH FIRST 1 ROWS ONLY
+    </select>
+
+    <!-- 다음글 -->
+    <select id="findByNext" parameterType="map" resultType="com.hs.model.admin.NoticeDTO">
+		SELECT notice_num, noti_title
+		FROM notice n
+		JOIN member m ON n.user_num = m.user_num
+		<where>
+			<if test="state != null and state != '' and state != 'null'">
+				AND noti.state = #{state}
+			</if>		
+			<if test="kwd != null and kwd != '' ">
+				AND <include refid="where-list"/>
+			</if>
+			AND (update_date &lt; TO_DATE(#{update_date}, 'YYYY-MM-DD HH24:MI:SS'))
+		</where>
+		ORDER BY update_date DESC, notice_num DESC
+		FETCH FIRST 1 ROWS ONLY
+    </select>
+    
+    <update id="updateNotice" parameterType="com.hs.model.admin.NoticeDTO">
+		UPDATE notice SET noti_title = #{noti_title}, noti_content = #{noti_content}, 
+			is_notice = #{is_notice}, state = #{state}, 
+			update_date = SYSDATE
+		WHERE notice_num = #{notice_num}
+	</update>
 </mapper>

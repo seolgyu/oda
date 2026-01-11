@@ -2,6 +2,7 @@ package com.hs.controller.admin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,11 +77,6 @@ public class noticeManageController {
 		}
 		
 		return new ModelAndView("redirect:/admin/notice/list?size=" + size);
-	}
-	@GetMapping("article")
-	public ModelAndView article(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		ModelAndView mav = new ModelAndView("admin/notice/article");
-		return mav;
 	}
 	
 	@GetMapping("list")
@@ -187,12 +183,17 @@ public class noticeManageController {
 			if (schType == null) {
 				schType = "all";
 				kwd = "";
+			} else if (state == null) {
+				state = "";
 			}
 			kwd = util.decodeUrl(kwd);
 
 			if (! kwd.isBlank()) {
 				query += "&schType=" + schType + "&kwd=" + util.encodeUrl(kwd);
 			}
+			if (state != null) {
+	            query += "&state=" + util.encodeUrl(state);
+	        }
 
 			NoticeDTO dto = service.findById(num);
 			if (dto == null) {
@@ -200,17 +201,17 @@ public class noticeManageController {
 			}
 
 			// 실제 파일 삭제
-			/*
-			 * List<NoticeDTO> listFile = service.listNoticeFile(num); for (NoticeDTO vo :
-			 * listFile) { fileManager.doFiledelete(pathname, vo.getSaveFilename()); }
-			 */
+			
+			List<NoticeDTO> listFile = service.listNoticeFile(num); for (NoticeDTO vo :
+			listFile) { fileManager.doFiledelete(pathname, vo.getSaveFilename()); }
+			 
 			
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("field", "num");
 			map.put("num", num);
 			
-			// 파일이름 등의 정보 삭제
-			//service.deleteNoticeFile(map);			
+			//파일이름 등의 정보 삭제
+			service.deleteNoticeFile(map);			
 
 			// 게시글 삭제
 			service.noticeDelete(num);
@@ -289,5 +290,220 @@ public class noticeManageController {
 		}
 
 		return new ModelAndView("redirect:/admin/notice/list?" + query);
+	}
+	
+	@GetMapping("article")
+	public ModelAndView article(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 글보기
+		// 넘어온 파라미터 : 글번호, 페이지번호, size [, 검색컬럼, 검색값]
+		String page = req.getParameter("page");
+		String size = req.getParameter("size");
+		String query = "page=" + page + "&size=" + size;
+		
+		try {
+			long num = Long.parseLong(req.getParameter("num"));
+
+			String schType = req.getParameter("schType");
+			String kwd = req.getParameter("kwd");
+			String state = req.getParameter("state");
+			if (schType == null) {
+				schType = "all";
+				kwd = "";
+			} else if (state == null) {
+				state = "";
+			}
+			kwd = util.decodeUrl(kwd);
+
+			if (! kwd.isBlank()) {
+				query += "&schType=" + schType + "&kwd=" + util.encodeUrl(kwd);
+			}
+			if (state != null) {
+		        query += "&state=" + util.encodeUrl(state);
+		    }
+
+			// 조회수
+			service.updateHitCount(num);
+
+			// 게시물 가져오기
+			NoticeDTO dto = service.findById(num);
+			if (dto == null) {
+				return new ModelAndView("redirect:/admin/notice/list?" + query);
+			}
+
+			// 스마트 에디터를 사용하므로 주석 처리
+			// dto.setContent(util.htmlSymbols(dto.getContent()));
+
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("schType", schType);
+			map.put("kwd", kwd);
+			map.put("state", state);
+			// map.put("num", num);
+			map.put("update_date", dto.getUpdate_date());
+			
+			// 이전글/다음글
+			NoticeDTO prevDto = service.findByPrev(map);
+			NoticeDTO nextDto = service.findByNext(map);
+
+			// 파일
+			List<NoticeDTO> listFile = service.listNoticeFile(num);
+
+			ModelAndView mav = new ModelAndView("admin/notice/article");
+			
+			mav.addObject("dto", dto);
+			mav.addObject("prevDto", prevDto);
+			mav.addObject("nextDto", nextDto);
+			mav.addObject("listFile", listFile);
+			mav.addObject("query", query);
+			mav.addObject("page", page);
+			mav.addObject("size", size);
+
+			return mav;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ModelAndView("redirect:/admin/notice/list?" + query);
+	}
+	
+	@GetMapping("download")
+	public void download(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 파일 다운로드
+		// 넘어온 파라미터 : 파일번호
+		HttpSession session = req.getSession();
+		
+		// 파일 저장 경로
+		String root = session.getServletContext().getRealPath("/");
+		String pathname = root + "uploads" + File.separator + "notice";
+		
+		boolean b = false;
+
+		try {
+			long fileNum = Long.parseLong(req.getParameter("fileNum"));
+
+			NoticeDTO dto = service.findByFileId(fileNum);
+			if (dto != null) {
+				b = fileManager.doFiledownload(dto.getSaveFilename(), dto.getOriginalFilename(), pathname, resp);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if ( ! b ) {
+			resp.setContentType("text/html;charset=utf-8");
+			PrintWriter out = resp.getWriter();
+			out.print("<script>alert('파일다운로드가 실패 했습니다.');history.back();</script>");
+		}
+	}
+	
+	@GetMapping("update")
+	public ModelAndView updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 수정 폼
+		// 넘어온 파라미터 : 글번호, 페이지번호, size
+		String page = req.getParameter("page");
+		String size = req.getParameter("size");
+
+		try {
+			long num = Long.parseLong(req.getParameter("num"));
+
+			NoticeDTO dto = service.findById(num);
+			if (dto == null) {
+				return new ModelAndView("redirect:/admin/notice/list?page=" + page + "&size=" + size);
+			}
+
+			// 파일
+			List<NoticeDTO> listFile = service.listNoticeFile(num);
+
+			ModelAndView mav = new ModelAndView("admin/notice/write");
+			
+			mav.addObject("dto", dto);
+			mav.addObject("listFile", listFile);
+			mav.addObject("page", page);
+			mav.addObject("size", size);
+
+			mav.addObject("mode", "update");
+
+			return mav;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ModelAndView("redirect:/admin/notice/list?page=" + page + "&size=" + size);
+	}
+	
+	@PostMapping("update")
+	public ModelAndView updateSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 수정 완료
+		// 폼 데이터 : 글번호, 제목, 내용, 공지여부, 표시여부, [새로운파일, ] 페이지번호, size
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+
+		if (info.getUserLevel() < 51) {
+			return new ModelAndView("redirect:/");
+		}
+		
+		// 파일 저장 경로
+		String root = session.getServletContext().getRealPath("/");
+		String pathname = root + "uploads" + File.separator + "notice";
+		
+		String page = req.getParameter("page");
+		String size = req.getParameter("size");
+
+		try {
+			NoticeDTO dto = new NoticeDTO();
+			
+			dto.setNotice_num(Long.parseLong(req.getParameter("num")));
+			dto.setIs_notice(req.getParameter("is_Notice"));
+			dto.setState(req.getParameter("state"));			
+			dto.setNoti_title(req.getParameter("title"));
+			dto.setNoti_content(req.getParameter("content"));
+
+			List<MyMultipartFile> listFile = fileManager.doFileUpload(req.getParts(), pathname);
+			dto.setListFile(listFile);
+
+			service.updateNotice(dto);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ModelAndView("redirect:/admin/notice/list?page=" + page + "&size=" + size);
+	}
+	
+	@GetMapping("deleteFile")
+	public ModelAndView deleteFile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 수정에서 파일만 삭제
+		// 넘어온 파라미터 : 글번호, 파일번호, 페이지번호, size
+		HttpSession session = req.getSession();
+		
+		// 파일 저장 경로
+		String root = session.getServletContext().getRealPath("/");
+		String pathname = root + "uploads" + File.separator + "notice";
+
+		String page = req.getParameter("page");
+		String size = req.getParameter("size");
+
+		try {
+			long num = Long.parseLong(req.getParameter("num"));
+			long fileNum = Long.parseLong(req.getParameter("fileNum"));
+			NoticeDTO dto = service.findByFileId(fileNum);
+			if (dto != null) {
+				// 파일삭제
+				fileManager.doFiledelete(pathname, dto.getSaveFilename());
+				
+				// 테이블 파일 정보 삭제
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("field", "fileNum");
+				map.put("num", fileNum);
+				
+				service.deleteNoticeFile(map);
+			}
+
+			// 다시 수정 화면으로
+			return new ModelAndView("redirect:/admin/notice/update?num=" + num + "&page=" + page + "&size=" + size);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ModelAndView("redirect:/admin/notice/list?page=" + page + "&size=" + size);
 	}
 }
