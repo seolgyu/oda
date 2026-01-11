@@ -319,8 +319,28 @@ input:-webkit-autofill:active {
 					<div class="position-relative">
 						<span
 							class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y input-icon text-secondary">mail</span>
-						<input type="email" name="email" class="form-control login-input"
+						<input type="email" id="emailInput" name="email" class="form-control login-input"
 							autocomplete="off" placeholder="Email Address">
+							
+						<span id="sendCodeBtn" class="zip-search-btn" style="display: none;" onclick="sendAuthMail();"> SEND CODE </span>
+					</div>
+
+					<div id="emailAuthSection" class="mt-2" style="display: none;">
+						<div class="position-relative">
+							<span
+								class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y input-icon text-secondary">verified_user</span>
+							<input type="text" id="authCode" class="form-control login-input"
+								placeholder="Verification Code" maxlength="6">
+
+							<div
+								class="position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2 pe-2">
+								<span id="authTimer"
+									style="font-size: 0.75rem; color: #fb923c; font-weight: bold;">03:00</span>
+								<span class="zip-search-btn position-static transform-none" id="verifyBtn"
+									style="height: 1.8rem;" onclick="verifyAuthCode();">
+									VERIFY </span>
+							</div>
+						</div>
 					</div>
 
 					<div class="d-flex align-items-center my-1 opacity-50">
@@ -375,6 +395,22 @@ input:-webkit-autofill:active {
 	let isIdOk = false;
     let isNickOk = false;
     let isMemberOkChecking = false;
+    
+    let authTimerInterval;
+    let isEmailVerified = false;
+    
+    $(function() {
+        $("#emailInput").on("input", function() {
+            if (isEmailVerified) return;
+            
+            const email = $(this).val().trim();
+            if (email.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                $("#sendCodeBtn").fadeIn(200);
+            } else {
+                $("#sendCodeBtn").fadeOut(200);
+            }
+        });
+    });
     
 	$(function() {
 		
@@ -609,6 +645,97 @@ input:-webkit-autofill:active {
         setTimeout(() => {
             location.href = '${pageContext.request.contextPath}/member/login';
         }, 3000);
+    }
+    
+    function sendAuthMail() {
+        const email = $("#emailInput").val().trim();
+        const $btn = $("#sendCodeBtn");
+
+        $btn.text("SENDING...").prop("onclick", null);
+
+        $.ajax({
+            type: "POST",
+            url: "${pageContext.request.contextPath}/member/sendAuthMail",
+            data: { email: email },
+            success: function(data) {
+                if(data.status === "success") {
+                    $("#emailInput").prop("readonly", true).css("opacity", "0.7");
+                    $("#sendCodeBtn").hide();
+                    $("#emailAuthSection").slideDown(300);
+                    startAuthTimer(180);
+                } else {
+                    alert("이메일 전송에 실패했습니다. 다시 전송해주세요.");
+                    $btn.text("SEND CODE").attr("onclick", "sendAuthMail();");
+                }
+            },
+            error: function() {
+                alert("Server Error.");
+                $btn.text("SEND CODE").attr("onclick", "sendAuthMail();");
+            }
+        });
+    }
+    
+    function verifyAuthCode() {
+    	const $email = $("#emailInput");
+    	const $authCode = $("#authCode");
+    	const $verifyBtn = $("");
+    	
+    	const email = $("#emailInput").val().trim();
+    	const authCode = $authCode.val().trim();
+    	
+    	$verifyBtn.prop("disabled", true);
+    	
+    	$.ajax({
+            type: "POST",
+            url: "${pageContext.request.contextPath}/member/chkAuthEmail",
+            data: { email: email, userCode: authCode },
+            success: function(data) {
+                if(data.status === "success") {
+                    $("#emailInput").prop("readonly", true).css("opacity", "0.7");
+                    $("#sendCodeBtn").hide();
+                    $("#emailAuthSection").slideDown(300);
+                    startAuthTimer(180);
+                } else if(data.status === "expired") {
+                    alert("세션이 만료되었습니다. 다시 시도해주세요.");
+                    $verifyBtn.prop("disabled", false);
+                } else if(data.status === "invalidEmail") {
+                    alert("현재 이메일이 인증을 요청한 이메일과 다릅니다.");
+                    $verifyBtn.prop("disabled", false);
+                } else if(data.status === "timeout") {
+                    alert("인증 시간이 초과되었습니다. 다시 요청해주세요.");
+                    $verifyBtn.prop("disabled", false);
+                } else {
+	                alert("인증에 실패하였습니다.", "error");
+	                $verifyBtn.prop("disabled", false);
+	            }
+            },
+            error: function() {
+                alert("Server Error.");
+                $btn.text("SEND CODE").attr("onclick", "sendAuthMail();");
+            }
+        });
+    	
+    }
+
+    function startAuthTimer(duration) {
+        let timer = duration, minutes, seconds;
+        if (authTimerInterval) clearInterval(authTimerInterval);
+
+        authTimerInterval = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            $("#authTimer").text(minutes + ":" + seconds);
+
+            if (--timer < 0) {
+                clearInterval(authTimerInterval);
+                $("#authTimer").text("00:00").css("color", "#ff5555");
+                alert("인증 시간이 만료되었습니다. 다시 시도해주세요.");
+            }
+        }, 1000);
     }
     
 	</script>

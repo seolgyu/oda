@@ -173,19 +173,23 @@ public class MemberController {
 	@GetMapping("noAuthorized")
 	public ModelAndView noAuthorized(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		// 권한이 없는 경우
 		return new ModelAndView("member/noAuthorized");
 	}
 
-	// 1. 회원가입 폼으로 이동 (GET 방식)
 	@GetMapping("signup")
 	public ModelAndView signupForm(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		// webapp/WEB-INF/views/member/signup.jsp 파일을 찾아감
+		
+		HttpSession session = req.getSession();
+		 
+		session.removeAttribute("isVerified");
+	    session.removeAttribute("targetEmail");
+	    session.removeAttribute("authCode");
+	    session.removeAttribute("authCodeTime");
+	    
 		return new ModelAndView("member/signup");
 	}
 
-	// 2. 회원가입 처리 (POST 방식)
 	@PostMapping("signup")
 	public ModelAndView signupSubmit(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -243,47 +247,55 @@ public class MemberController {
 	@ResponseBody
 	public Map<String, Object> signupSubmitAjax(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		
+		HttpSession session = req.getSession();
 		Map<String, Object> map = new HashMap<>();
 
-		// 한글 깨짐 방지 (필터 설정이 안 되어 있을 경우 대비)
 		req.setCharacterEncoding("UTF-8");
 
 		try {
-			// [1] 사용자 입력값 모두 받기 (signup.jsp의 input name과 일치해야 함)
+			Boolean isVerified = (Boolean) session.getAttribute("isVerified");
+	        String verifiedEmail = (String) session.getAttribute("verifiedEmail");
+
+	        if (isVerified == null || !isVerified || verifiedEmail == null) {
+	            map.put("status", "fail");
+	            map.put("message", "이메일 인증이 되지 않았거나, 인증이 만료되었습니다.");
+	            return map;
+	        }
+	        
 			String userId = req.getParameter("userId");
 			String userPwd = req.getParameter("userPwd");
 			String userName = req.getParameter("userName");
 			String userNickname = req.getParameter("userNickname");
 			String birth = req.getParameter("birth");
-			String email = req.getParameter("email");
 			String addr1 = req.getParameter("addr1");
 			String addr2 = req.getParameter("addr2");
 			String tel = req.getParameter("tel");
 			String zip = req.getParameter("zip");
 
-			// [2] DTO에 모든 데이터 담기
 			MemberDTO dto = new MemberDTO();
 			dto.setUserId(userId);
 			dto.setUserPwd(userPwd);
 			dto.setUserName(userName);
 			dto.setUserNickname(userNickname);
 			dto.setBirth(birth);
-			dto.setEmail(email);
+			dto.setEmail(verifiedEmail);
 			dto.setAddr1(addr1);
 			dto.setAddr2(addr2);
 			dto.setTel(tel);
 			dto.setZip(zip);
 
-			// [3] 서비스 호출 (이미 존재하는 insertMember 활용)
-			// 서비스 내부에서 member1(기본)과 member2(상세) 테이블에 각각 저장될 것입니다.
 			service.insertMember(dto);
+			
+			session.removeAttribute("isVerified");
+			session.removeAttribute("verifiedEmail");
+			session.removeAttribute("targetEmail");
 			
 			map.put("status", "success");
 	        map.put("message", "회원가입이 완료되었습니다.");
 
 		} catch (Exception e) {
 	        e.printStackTrace();
-	        // [4] 실패 데이터 구성
 	        map.put("status", "fail");
 	        map.put("message", "가입 도중 오류가 발생했습니다: " + e.getMessage());
 	    }
@@ -327,6 +339,125 @@ public class MemberController {
 		}
 	    
 	    return map;
+	}
+	
+	@PostMapping("sendAuthEmail")
+	@ResponseBody
+	public Map<String, Object> sendAuthEmail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    Map<String, Object> model = new HashMap<>();
+	    
+	    HttpSession session = req.getSession();
+	    req.setCharacterEncoding("UTF-8");
+
+		try {
+	        String email = req.getParameter("email");
+
+	        String subject = "[ODA Community] 회원가입 본인확인 인증번호입니다.";
+	        String authCode = MyUtil.generateAuthCode();
+	        String content = "<div style='font-family: \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif; max-width: 500px; margin: 20px auto; padding: 40px; border: 1px solid #ebebeb; border-radius: 20px; text-align: center; color: #333;'>"
+	                + "  <h2 style='font-size: 24px; margin-bottom: 20px; color: #000;'>본인 확인 인증번호</h2>"
+	                + "  <p style='font-size: 15px; line-height: 1.6; color: #666; margin-bottom: 30px;'>"
+	                + "    안녕하세요.<br>요청하신 본인 확인을 위한 인증번호를 보내드립니다.<br>"
+	                + "    아래의 6자리 번호를 인증창에 입력해 주세요."
+	                + "  </p>"
+	                + "  <div style='background-color: #f8f9fa; border-radius: 12px; padding: 25px; margin-bottom: 30px; border: 1px solid #e9ecef;'>"
+	                + "    <span style='font-size: 32px; font-weight: bold; color: #007bff; letter-spacing: 8px;'>" + authCode + "</span>"
+	                + "  </div>"
+	                + "  <p style='font-size: 13px; color: #999;'>"
+	                + "    ※ 인증번호의 유효 시간은 <b>3분</b>입니다.<br>"
+	                + "    시간이 만료되었다면 다시 요청해 주세요."
+	                + "  </p>"
+	                + "  <hr style='border: 0; border-top: 1px solid #eee; margin: 30px 0;'>"
+	                + "  <p style='font-size: 12px; color: #bbb;'>본 메일은 발신 전용입니다. 문의 사항은 고객센터를 이용해 주세요.</p>"
+	                + "</div>";
+	        
+	        
+	        Mail dto = new Mail();
+			
+			dto.setSenderName("ODA");
+			dto.setSenderEmail("kimchowon417@gmail.com");
+			dto.setReceiverEmail(email);
+			dto.setSubject(subject);
+			dto.setContent(content);
+					
+			MailSender sender = new MailSender();
+			boolean b = sender.mailSend(dto);
+			
+			
+			if(! b) {
+				model.put("status", "emailSendError");
+				return model;
+			}
+			
+			session.setAttribute("isVerified", false);
+			session.setAttribute("targetEmail", email);
+			session.setAttribute("authCode", authCode);
+			session.setAttribute("authCodeTime", System.currentTimeMillis());
+	        
+		    model.put("status", "success");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("status", "error");
+		}
+	    
+	    return model;
+	}
+	
+	@PostMapping("chkAuthEmail")
+	@ResponseBody
+	public Map<String, Object> chkAuthEmail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    Map<String, Object> model = new HashMap<>();
+	    
+	    HttpSession session = req.getSession();
+	    req.setCharacterEncoding("UTF-8");
+
+		try {
+			String userCode = req.getParameter("userCode");
+			String currentEmail = req.getParameter("email");
+			
+	        String authCode = (String)session.getAttribute("authCode");
+	        Long authCodeTime = (Long) session.getAttribute("authCodeTime");
+	        String targetEmail = (String)session.getAttribute("targetEmail");
+	        
+	        if (authCode == null || authCodeTime == null || targetEmail == null) {
+	            model.put("status", "expired");
+	            return model;
+	        }
+	        
+	        if(!targetEmail.equals(currentEmail)) {
+	        	model.put("status", "invalidEmail");
+	        	return model;
+	        }
+	        
+	        long currentTime = System.currentTimeMillis();
+	        if (currentTime - authCodeTime > 3 * 60 * 1000) { // 3분
+	            session.removeAttribute("authCode");
+	            session.removeAttribute("authCodeTime");
+	            session.removeAttribute("targetEmail");
+	            model.put("status", "timeout");
+	            return model;
+	        }
+
+	        if (!authCode.equals(userCode)) {
+	            model.put("status", "fail");
+	            return model;
+	        }
+	        
+	        session.setAttribute("isVerified", true);
+	        session.setAttribute("verifiedEmail", targetEmail);
+	        
+	        session.removeAttribute("authCode");
+	        session.removeAttribute("authCodeTime");
+	        
+		    model.put("status", "success");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("status", "error");
+		}
+	    
+	    return model;
 	}
 
 	@GetMapping("page")
@@ -480,7 +611,6 @@ public class MemberController {
 			session.setAttribute("authCode", authCode);
 			session.setAttribute("authCodeTime", System.currentTimeMillis());
 	        
-			System.out.println("이메일 전송 성공 - 서버");
 		    model.put("status", "exist");
 			
 		} catch (Exception e) {
@@ -588,6 +718,13 @@ public class MemberController {
 		}
 	    
 	    return model;
+	}
+	
+	@GetMapping("settings")
+	public ModelAndView settings(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		
+		return new ModelAndView("member/settings");
 	}
 
 }

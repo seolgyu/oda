@@ -97,6 +97,7 @@
 										<c:if
 											test="${not empty sessionScope.member and sessionScope.member.userId eq user.userId}">
 											<button
+												onclick="location.href='${pageContext.request.contextPath}/member/settings';"
 												class="btn-icon border border-white border-opacity-10 rounded-circle p-2">
 												<span class="material-symbols-outlined text-white">settings</span>
 											</button>
