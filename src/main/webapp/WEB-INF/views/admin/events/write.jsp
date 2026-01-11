@@ -154,6 +154,22 @@ select.glass-input-box {
      color: #fff;
 }
 
+
+.file-upload-wrapper {
+	border: 2px dashed rgba(255, 255, 255, 0.1);
+	border-radius: 0.5rem;
+	padding: 1.5rem;
+	text-align: center;
+	transition: all 0.2s;
+	cursor: pointer;
+}
+
+.file-upload-wrapper:hover {
+	border-color: #3b82f6;
+	background: rgba(59, 130, 246, 0.05);
+}
+
+
 </style>
 </head>
 <body class="bg-background-dark text-white">
@@ -179,7 +195,7 @@ select.glass-input-box {
 				<ol class="breadcrumb">
 					<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin">홈</a></li>
 					<li class="breadcrumb-item"><a href="#">서비스 관리</a></li>
-					<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin/events">이벤트</a></li>
+					<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin/events/list">이벤트</a></li>
 					<li aria-current="page" class="breadcrumb-item active">이벤트 작성</li>
 				</ol>
 			</nav>
@@ -258,6 +274,20 @@ select.glass-input-box {
 								<textarea class="editor-textarea" name="content"
 									placeholder="사용자들에게 안내할 이벤트 상세 내용을 작성하세요..."></textarea>
 							</div>
+						</div>
+						
+						<div class="mb-0">
+							<label class="form-label">첨부 파일</label>
+							<div class="file-upload-wrapper">
+								<input type="file" name="upload" id="fileInput" class="hidden"
+									style="display: none;" multiple>
+								<div onclick="document.getElementById('fileInput').click();">
+									<span class="material-icons-round fs-2 text-white-50 mb-2">cloud_upload</span>
+									<p class="mb-1 text-white">클릭하여 파일을 업로드하거나 드래그하세요.</p>
+									<p class="text-white-50 small mb-0">최대 10MB까지 가능합니다.</p>
+								</div>
+							</div>
+							<div id="fileList" class="mt-2"></div>
 						</div>
 					</div>
 				</form>

@@ -1,27 +1,25 @@
-// 체크박스 공통 제어
 $(function(){
-    function searchList() {
-        const f = document.searchForm;
-        if(!f) {
-            return;
-        }
+	function search() {
+		const f = document.searchForm;
+		if(!f) {
+		    return;
+		}
+			const formData = new FormData(f);
+			let params = new URLSearchParams(formData).toString();
+			const pathname = window.location.pathname;
+			let url = pathname.substring(0, pathname.lastIndexOf('/')) + '/list';
 
-        const formData = new FormData(f);
-        let params = new URLSearchParams(formData).toString();
-        const pathname = window.location.pathname;
-        let url = pathname.substring(0, pathname.lastIndexOf('/')) + '/list';
+			location.href = url + '?' + params;
+			}
 
-        location.href = url + '?' + params;
-    }
-
-    // 전역 함수로 등록 (onclick에서 사용)
-    window.searchList = searchList;
+    // 검색
+    window.search = search;
 
     // 엔터키 검색
     $('input[name="kwd"]').on('keypress', function(e) {
         if(e.key === 'Enter' || e.keyCode === 13) {
             e.preventDefault();
-            searchList();
+            search();
         }
     });
 
@@ -36,13 +34,13 @@ $(function(){
         console.log('버튼 클릭됨'); 
         
         // 모든 버튼의 active 클래스 제거
-        $('.glass-btn-group .btn').removeClass('active');
+        $('.glass-btn-group .btn').removeClass('activestatus');
 
         // 클릭한 버튼에 active 클래스 추가
-        $(this).addClass('active');
+        $(this).addClass('activestatus');
 
         // 버튼의 value 값 또는 텍스트 가져오기
-        const stateValue = $(this).val() || $(this).attr('value') || '';
+        const activestatus = $(this).val() || $(this).attr('value') || '';
         
         // 현재 검색 조건 가져오기
         const schType = $('select[name="schType"]').val() || 'all';
@@ -55,17 +53,30 @@ $(function(){
         params.append('schType', schType);
         params.append('kwd', kwd);
 
-        // state 값이 있으면 추가 (전체 버튼은 빈 값)
-        if(stateValue) {
+        
+        if(activestatus) {
             params.append('activestatus', activestatus);
         }
 
         // 페이지 이동
         const pathname = window.location.pathname;
         const url = pathname + '?' + params.toString();
+	
         
         console.log('이동할 URL:', url);
         
         location.href = url;
-    });
+		
+		});
+
+	// 검색 조회 시 top고정 리스트 숨기기
+
+	
+	// 클릭한 이벤트로 이동
+	$('.eventlink').on('click', function() {
+	    const no = $(this).data('no');
+	    location.href = '/event/detail?no=' + no;
+	});
 });
+
+

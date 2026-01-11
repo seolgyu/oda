@@ -20,10 +20,8 @@
 	rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <%@ include file="/WEB-INF/views/home/head.jsp"%>
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/dist/css/adminmain.css">
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminmain.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
 <style>
 /* [1] 공지사항 전용 글래스모피즘 보정 스타일  */
@@ -69,16 +67,27 @@
 }
 
 .glass-input {
-	background: transparent;
-	border: none;
-	color: white;
-	padding-left: 0.5rem;
+	background: rgba(15, 23, 42, 0.5);
+    border: none;
+    color: #fff !important;
+    padding-left: 0.5rem;
 }
 
 .glass-input:focus {
-	box-shadow: none;
-	background: transparent;
-	color: white;
+	background: rgba(15, 23, 42, 0.5);
+    box-shadow: none !important;
+    outline: none;
+    color: #fff !important;
+}
+
+
+/* 🔥 Chrome autofill 강제 제거 */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.05) inset !important;
+    -webkit-text-fill-color: #fff !important;
+    transition: background-color 9999s ease-out;
 }
 
 /* [3] 뱃지 스타일 보정 */
@@ -190,7 +199,30 @@
     color: #ffffff80 !important;
     opacity: 1;
 }
+
+.text-wrap { 
+  display: inline-flex;
+  max-width: 550px;
+  > a {
+     flex: 1;  /* 플렉스 아이템이 자신의 컨테이너가 차지하는 공간을 맞추기 위해 크기를 키우거나 줄이는 방법 지정 */
+     white-space: nowrap;
+     overflow: hidden;
+     text-overflow: ellipsis;
+ } 
+}
+
+.eventlink {
+    cursor: pointer;       /* 마우스 손가락 모양 */
+    text-decoration: none; /* 밑줄 제거 */
+}
+
+.eventlink:hover {
+    text-decoration: underline; /* 마우스를 올렸을 때만 밑줄이 생기게 하고 싶다면 추가 */
+    color: #ccc;               /* 살짝 밝게 변하는 효과 */
+}
+
 </style>
+
 </head>
 <body class="bg-background-dark text-white">
 
@@ -231,18 +263,20 @@
 								<p class="text-white-50 small mb-0">프로모션 일정을 확인하고 이벤트를 효율적으로
 									관리하세요.</p>
 							</div>
+							</div>
+							<div class="d-flex gap-2">
+							<button	
+								class="btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2" onclick="location.href='${pageContext.request.contextPath}/admin/events/write';">
+								<span class="material-icons-round fs-3">edit</span> <span>작성</span>
+							</button>
+							<button type = "button" id="btnDeleteList" class = "btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2">
+								<span class="material-icons-round fs-3">delete</span> <span>삭제</span>
+							</button>
 						</div>
-
-						<button
-							class="btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2"
-							 onclick="location.href='${pageContext.request.contextPath}/admin/events/write';">
-							<span class="material-icons-round fs-6">add_box</span> <span>새
-								이벤트 등록</span>
-						</button>
 					</div>
 				</div>
 
-				<div class="card-dark mb-4 p-3">
+				<div id="topFilterArea" class="card-dark mb-4 p-3">
 					<div class="row g-3 align-items-center">
 						<div class="col-12 col-lg-6">
 							<div class="btn-group glass-btn-group">
@@ -266,7 +300,7 @@
 						            </select>
 						            
 						            <span style="width:10px;"></span>
-						            <span class="material-icons-round text-white-25 mt-2" onclick="searchList();" style="cursor: pointer;">search</span> 
+						            <span class="material-icons-round text-white-25 mt-2" onclick="search();" style="cursor: pointer;">search</span> 
 						            <input type="text" name="kwd" class="form-control glass-input" value="${kwd}" placeholder="제목,내용,시작일 검색...">
 						        </div>
 							</form>
@@ -299,7 +333,9 @@
 										<span class="badge badge-ongoing">진행</span>
 									</td>
 									<td>
-										<span class="fw-bold text-white">${dto.event_title}</span>
+										<span class="eventlink fw-bold text-white">
+											<a href="${articleUrl}&num=${dto.event_num}" class="text-reset"><c:out value="${dto.event_title}"/></a>
+										</span>
 									</td>
 									<td class="text-white-50 date-text">${dto.start_date}</td>
 									<td class="text-white-50 date-text">${dto.end_date}</td>
@@ -324,34 +360,15 @@
 										</c:if>
 									</td>
 									<td>
-										<span class="fw-bold text-white">${dto.event_title}</span>
+										<span class="eventlink fw-bold text-white">
+											<a href="${articleUrl}&num=${dto.event_num}" class="text-reset"><c:out value="${dto.event_title}"/></a>
+										</span>
 									</td>
 									<td class="text-white-50 date-text">${dto.start_date}</td>
 									<td class="text-white-50 date-text">${dto.end_date}</td>
 									<td class="text-center text-white-50">${dto.hitCount}</td>
 								</tr>
 								</c:forEach>
-							<tr>
-									<td class="text-center"><input type="checkbox"
-										class="form-check-input"></td>
-									<td class="text-white-50">14</td>
-									<td><span class="badge badge-upcoming">진행</span></td>
-									<td>설 연휴 특별 출석 체크 프로모션</td>
-									<td class="text-white-50 date-text">2026-01-25</td>
-									<td class="text-white-50 date-text">2026-02-05</td>
-									<td class="text-center text-white-50">128</td>
-								</tr>
-								<tr>
-									<td class="text-center"><input type="checkbox"
-										class="form-check-input"></td>
-									<td class="text-white-50">13</td>
-									<td><span class="badge badge-ended">종료됨</span></td>
-									<td class="text-white-50">크리스마스 창작 공모전</td>
-									<td class="text-white-50 date-text">2025-12-01</td>
-									<td class="text-white-50 date-text">2025-12-25</td>
-									<td class="text-center text-white-50">5,102</td>
-								</tr>
-								
 							</tbody>
 						</table>
 					</div>
@@ -362,6 +379,7 @@
 						 	<span class="font-semibold text-white">(${page}/${total_page} page)</span> of <span class="font-semibold text-white">${dataCount}</span>
 						</span>
 							<div class="page-navigation">${dataCount == 0 ? "등록된 게시물이 없습니다." : paging}</div>
+
 						</nav>
 					</div>
 				</div>
@@ -369,7 +387,7 @@
 		</main>
 	</div>
 
-
+	<form name="deleteForm" method="post"></form>
 
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
