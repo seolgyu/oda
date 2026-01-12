@@ -102,7 +102,7 @@
 							            </button>
 							        </c:forEach>
                                 </div>
-                                <input type="hidden" name="category_id" id="selectedTopic" value="">
+                                <input type="hidden" name="category_id" id="category_id_input" value="">
                             </div>
 
                             <div class="flex justify-end items-center gap-6 pt-6 border-t border-white/5">

@@ -1,5 +1,6 @@
 package com.hs.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,10 +23,10 @@ public class CommunityServiceImpl implements CommunityService{
 	}
 
 	@Override
-	public CommunityDTO findById(Long community_id) {
+	public CommunityDTO findById(Map<String, Object> map) {
 		CommunityDTO dto = null;
 		try {
-			dto = mapper.findById(community_id);
+			dto = mapper.findById(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -58,7 +59,10 @@ public class CommunityServiceImpl implements CommunityService{
 	public void updateCommunity(CommunityDTO dto) throws Exception {
 		try {
 			mapper.updateCommunity(dto);
-			dto = mapper.findById(dto.getCommunity_id());
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("community_id", dto.getCommunity_id());
+			map.put("user_num", dto.getUser_num());
+			dto = mapper.findById(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -71,25 +75,25 @@ public class CommunityServiceImpl implements CommunityService{
 	}
 
 	@Override
-	public void joinCommunity(Long community_id, Long user_num) throws Exception {
+	public void joinCommunity(Map<String, Object> map) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void leaveCommunity(Long community_id, Long user_num) throws Exception {
+	public void leaveCommunity(Map<String, Object> map) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void addFavorite(Long community_id, Long user_num) throws Exception {
+	public void addFavorite(Map<String, Object> map) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void removeFavorite(Long community_id, Long user_num) throws Exception {
+	public void removeFavorite(Map<String, Object> map) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
@@ -103,6 +107,32 @@ public class CommunityServiceImpl implements CommunityService{
 			e.printStackTrace();
 		}
 		return list;
-	}	
+	}
+
+	@Override
+	public void checkJoinCommunity(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String checkFavorite(Map<String, Object> map) {
+		try {
+			int result = mapper.checkFavorite(map);
+			
+			if(result > 0) {
+				mapper.removeFavorite(map);
+				return "removed";
+			} else {
+				mapper.addFavorite(map);
+				return "added";
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+	}
+	
 	
 }

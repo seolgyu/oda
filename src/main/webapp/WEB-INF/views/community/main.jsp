@@ -43,10 +43,14 @@
                                         <p class="text-secondary mb-0">• 가입자 수 ${dto.member_count} • 방문자 수 ${dto.today_visit}</p>
                                     </div>
                                     <div class="ms-auto pb-2 d-flex gap-2">
-                                        <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">바꿀거임</button>
+                                        <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">가입하기</button>
                                         <button class="btn-icon border border-white border-opacity-10 rounded-circle p-2">
                                             <span class="material-symbols-outlined text-white">notifications</span>
                                         </button>
+                                        <button class="btn-icon btn-favorite border border-white border-opacity-10 rounded-circle p-2 ${dto.is_favorite == 1 ? 'active' : ''}"
+											onclick="toggleFavorite(this, '${dto.community_id}')">
+											<span class="material-symbols-outlined text-white" style="${dto.is_favorite == 1 ? 'color: #ffca28 !important; font-variation-settings: \'FILL\' 1, \'wght\' 700 !important;' : ''}">star</span>
+										</button>
                                     </div>
                                 </div>
                             </div>
@@ -207,7 +211,8 @@
             </div>
         </main>
 	</div>
-
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/util-jquery.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/community.js"></script>
 </body>

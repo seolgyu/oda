@@ -30,6 +30,11 @@
 		WHERE community_id = #{community_id} AND user_num = #{user_num}
 	</delete>
 	
+	<select id="checkFavorite" parameterType="map" resultType="int">
+		SELECT COUNT(*) from community_favorites
+		WHERE community_id = #{community_id} AND user_num = #{user_num}
+	</select>
+	
 	<insert id="addFavorite" parameterType="map">
 		INSERT INTO community_favorites(community_id, user_num)
 		VALUES(#{community_id}, #{user_num})
@@ -80,10 +85,12 @@
 		WHERE com_name = #{com_name}
 	</select>
 	
-	<select id="findById" parameterType="Long" resultType="com.hs.model.CommunityDTO">
+	<select id="findById" parameterType="map" resultType="com.hs.model.CommunityDTO">
 		SELECT community_id, com_name, com_description, icon_image, banner_image, is_private, 
 			member_count, post_count, TO_CHAR(created_date, 'YYYY-MM-DD') created_date, 
-			today_visit, total_visit, user_num, category_id
+			today_visit, total_visit, user_num, category_id,
+			(SELECT COUNT(*) FROM community_favorites
+			 WHERE community_id = COMMUNITY.community_id AND user_num = #{user_num}) is_favorite
 		FROM COMMUNITY 
 		WHERE community_id = #{community_id}
 	</select>

@@ -12,13 +12,16 @@ public interface CommunityMapper {
 	public void updateCommunity(CommunityDTO dto) throws SQLException;
 	public void deleteCommunity(Long community_id) throws SQLException;
 	
+	public int checkJoinCommunity(Map<String, Object> map);
 	public void joinCommunity(Map<String, Object> map) throws SQLException;
 	public void leaveCommunity(Map<String, Object> map) throws SQLException;
+	
+	public int checkFavorite(Map<String, Object> map);
 	public void addFavorite(Map<String, Object> map) throws SQLException;
 	public void removeFavorite(Map<String, Object> map) throws SQLException;
 	
 	public List<CommunityDTO> getCategoryList();
-	public CommunityDTO findById(Long community_id) throws SQLException;
+	public CommunityDTO findById(Map<String, Object> map) throws SQLException;
 	public CommunityDTO findByName(String com_name) throws SQLException;
 	public List<CommunityDTO> selectAll(Map<String, Object> map);
 	

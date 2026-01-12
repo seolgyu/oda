@@ -9,15 +9,18 @@ public interface CommunityService {
 	
 	public void insertCommunity(CommunityDTO dto) throws Exception;
 	public List<CommunityDTO> getCategoryList();
-	public CommunityDTO findById(Long community_id);
+	public CommunityDTO findById(Map<String, Object> map);
 	public CommunityDTO isCommunityName(String com_name);
 	public void updateCommunity(CommunityDTO dto) throws Exception;
 	public void deleteCommunity(Long community_id) throws Exception;
 	
-	public void joinCommunity(Long community_id, Long user_num) throws Exception;
-	public void leaveCommunity(Long community_id, Long user_num) throws Exception;
-	public void addFavorite(Long community_id, Long user_num) throws Exception;
-	public void removeFavorite(Long community_id, Long user_num) throws Exception;
+	public void checkJoinCommunity(Map<String, Object> map);
+	public void joinCommunity(Map<String, Object> map) throws Exception;
+	public void leaveCommunity(Map<String, Object> map) throws Exception;
+	
+	public String checkFavorite(Map<String, Object> map);
+	public void addFavorite(Map<String, Object> map) throws Exception;
+	public void removeFavorite(Map<String, Object> map) throws Exception;
 	
 	public List<CommunityDTO> searchCommunity(Map<String, Object> map);
 }

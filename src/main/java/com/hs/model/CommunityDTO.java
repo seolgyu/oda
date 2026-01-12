@@ -7,7 +7,7 @@ public class CommunityDTO {
 	private String com_name;
 	private String com_short_name;
 	private String com_description; // CLOB
-	private String category_id;
+	private Long category_id;
 	private String category_name;
 	private String icon_image;
 	private String banner_image;
@@ -19,7 +19,9 @@ public class CommunityDTO {
 	private Long user_num; // FK (User)
 	private String created_date;
 	private String favorites_date;
+	private int is_favorite;
 	private String follow_date;
+	private String is_follew;
 
 	// 조인용 필드 (화면 표시용)
 	private String creatorNickname;
@@ -56,11 +58,11 @@ public class CommunityDTO {
 		this.com_description = com_description;
 	}
 
-	public String getCategory_id() {
+	public Long getCategory_id() {
 		return category_id;
 	}
 
-	public void setCategory_id(String category_id) {
+	public void setCategory_id(Long category_id) {
 		this.category_id = category_id;
 	}
 
@@ -166,6 +168,22 @@ public class CommunityDTO {
 
 	public void setFollow_date(String follow_date) {
 		this.follow_date = follow_date;
+	}
+
+	public int getIs_favorite() {
+		return is_favorite;
+	}
+
+	public void setIs_favorite(int is_favorite) {
+		this.is_favorite = is_favorite;
+	}
+
+	public String getIs_follew() {
+		return is_follew;
+	}
+
+	public void setIs_follew(String is_follew) {
+		this.is_follew = is_follew;
 	}
 
 	

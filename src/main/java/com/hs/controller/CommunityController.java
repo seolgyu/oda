@@ -37,58 +37,54 @@ public class CommunityController {
 		return mav;
 	}
 	
+	@ResponseBody
 	@PostMapping("create")
-	public ModelAndView createSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+	public Map<String, Object> createSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+		Map<String, Object> map = new HashMap<String, Object>();
+		
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
-		String com_name = req.getParameter("com_name");
-		String com_description = req.getParameter("com_description");
-		String is_private = req.getParameter("is_private");
-		String category_id = req.getParameter("category_id");
-		
 		CommunityDTO dto = new CommunityDTO();
-		dto.setCom_name(com_name);
-		dto.setCom_description(com_description);
-		dto.setIs_private("private".equals(is_private) ? "1" : "0");
-		dto.setCategory_id(category_id);
-		dto.setUser_num(info.getMemberIdx());
+		dto.setCom_name(req.getParameter("com_name"));
+	    dto.setCom_description(req.getParameter("com_description"));
+	    dto.setIs_private("private".equals(req.getParameter("is_private")) ? "1" : "0");
+	    dto.setCategory_id(Long.parseLong(req.getParameter("category_id")));
+	    dto.setUser_num(info.getMemberIdx());
 		
 		try {
 			cservice.insertCommunity(dto);
 			
 			CommunityDTO saveDto = cservice.isCommunityName(dto.getCom_name());
 			
-			ModelAndView mav = new ModelAndView("community/main");
-			mav.addObject("dto", saveDto);
-			
-			return mav;
+			map.put("status", "success");
+			map.put("community_id", saveDto.getCommunity_id());
+
 		} catch (Exception e) {
-			e.printStackTrace();
-			
-			ModelAndView mav = new ModelAndView("community/create");
-			
 			List<CommunityDTO> categoryList = cservice.getCategoryList();
-			mav.addObject("categories", categoryList);
-			mav.addObject("dto", dto);
-			mav.addObject("mode", "error");
-			
-			return mav;
+			map.put("categories", categoryList);
+			map.put("status", "error");
+			map.put("dto", dto);
+			e.printStackTrace();
 		}
-		
+		return map;
 	}
 	
 	@GetMapping("main")
 	public ModelAndView mainPage(HttpServletRequest req, HttpServletResponse resp) {
 		String com_id = req.getParameter("community_id");
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
 		if(com_id == null || com_id.isEmpty()) {
 			return new ModelAndView("redirect:/community/list");
 		}
 		
 		try {
-			Long community_id = Long.parseLong(com_id);
-			CommunityDTO dto = cservice.findById(community_id);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("community_id", Long.parseLong(com_id));
+			map.put("user_num", info.getMemberIdx());
+			CommunityDTO dto = cservice.findById(map);
 				
 			if(dto != null) {
 				ModelAndView mav = new ModelAndView("community/main");
@@ -104,13 +100,17 @@ public class CommunityController {
 	@GetMapping("update")
 	public ModelAndView updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String com_id = req.getParameter("community_id");
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
 		ModelAndView mav = new ModelAndView("community/update");
 		
 		try {
 			if(com_id != null) {
-				Long community_id = Long.parseLong(com_id);
-				CommunityDTO dto = cservice.findById(community_id);
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("community_id", Long.parseLong(com_id));
+				map.put("user_num", info.getMemberIdx());
+				CommunityDTO dto = cservice.findById(map);
 	            mav.addObject("dto", dto);
 	            
 	            List<CommunityDTO> categoryList = cservice.getCategoryList();
@@ -123,25 +123,55 @@ public class CommunityController {
 	}
 	
 	@ResponseBody
+	@GetMapping("checkName")
+	public Map<String, Object> checkName(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Map<String, Object> map = new HashMap<>();
+		Boolean isDuplicate;
+		String com_name = req.getParameter("com_name");
+		
+		try {
+			CommunityDTO dto = cservice.isCommunityName(com_name);
+
+			if( dto != null) {
+				isDuplicate = true;
+			} else {
+				isDuplicate = false;
+			}
+			map.put("isDuplicate", isDuplicate);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	    return map;
+	}
+	
+	@ResponseBody
 	@PostMapping("update")
 	public Map<String, Object> updateSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 		try {
 			String com_id = req.getParameter("community_id");
-	        String name = req.getParameter("com_name");
+	        String com_name = req.getParameter("com_name");
 	        String description = req.getParameter("com_description");
 	        String is_private = req.getParameter("is_private");
 	        String topic_id = req.getParameter("category_id");
 	        String icon = req.getParameter("icon_image");
 	        String banner = req.getParameter("banner_image");
+	        
+	        if(com_name == null || com_name.trim().isEmpty() || description == null || description.trim().isEmpty()) {
+	            map.put("status", "fail");
+	            map.put("message", "모든 필드를 입력해주세요.");
+	            return map;
+	        }
 
 	        CommunityDTO dto = new CommunityDTO();
 	        dto.setCommunity_id(Long.parseLong(com_id));
-	        dto.setCom_name(name);
+	        dto.setCom_name(com_name);
 	        dto.setCom_description(description);
 	        dto.setIs_private("private".equals(is_private) ? "1" : "0");
-	        dto.setCategory_id(topic_id);
+	        dto.setCategory_id(Long.parseLong(topic_id));
 	        dto.setIcon_image(icon); 
 	        dto.setBanner_image(banner);
 	        
@@ -196,6 +226,29 @@ public class CommunityController {
 	@GetMapping("list")
 	public ModelAndView communityList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		return new ModelAndView("community/list");
+	}
+	
+	@ResponseBody
+	@PostMapping("checkFavorite")
+	public Map<String, Object> checkFavorite(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		try {
+			String community_id = req.getParameter("community_id");
+			map.put("community_id", community_id);
+			map.put("user_num", info.getMemberIdx());
+			
+			String result = cservice.checkFavorite(map);
+			map.put("status", result);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("status", "error");
+		}
+		
+		return map;
 	}
 	
 }

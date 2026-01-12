@@ -120,3 +120,13 @@
     background: rgba(168, 85, 247, 0.3);
     border-radius: 10px;
 }
+
+.btn-icon.btn-favorite.active span.material-symbols-outlined {
+	color: #ffca28 !important;
+	font-variation-settings: 'FILL' 1, 'wght' 700 !important;
+	text-shadow: 0 0 10px rgba(255, 202, 40, 0.4);
+}
+
+.btn-favorite:hover .material-symbols-outlined {
+	filter: brightness(1.2);
+}

@@ -36,7 +36,7 @@
             </div>
 
             <div class="feed-scroll-container custom-scrollbar w-full">
-                <div class="max-w-4xl mx-auto py-12 px-4 relative z-10">
+                <div class="max-w-3xl mx-auto py-12 px-4 relative z-10">
                     
                     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 px-2">
                         <div>
@@ -95,6 +95,7 @@
                                         <div class="space-y-2">
                                             <label class="text-sm font-medium text-gray-400 ml-1">커뮤니티 이름</label>
                                             <input type="text" name="com_name" class="custom-input w-full rounded-xl py-3.5 px-5" value="${dto.com_name}">
+                                            <span id="nameError" class="text-xs text-red-500 ml-1"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -102,6 +103,7 @@
                                 <div class="space-y-2">
                                     <label class="text-sm font-medium text-gray-400 ml-1">커뮤니티 소개</label>
                                     <textarea name="com_description" rows="4" class="custom-input w-full rounded-2xl py-4 px-5 resize-none">${dto.com_description}</textarea>
+                                    <span id="descError" class="text-xs text-red-500 ml-1"></span>
                                 </div>
                             </div>
 
@@ -172,6 +174,6 @@
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/util-jquery.js"></script>
-	<script src="${pageContext.request.contextPath}/dist/js/community_update.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/community.js"></script>
 </body>
 </html>
