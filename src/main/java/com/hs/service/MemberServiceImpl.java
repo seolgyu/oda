@@ -79,11 +79,11 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public MemberDTO findByIdx(Long userIdx) {
+	public MemberDTO findByIdx(Long userNum) {
 		MemberDTO dto = null;
 		
 		try {
-			dto = mapper.findByIdx(userIdx);
+			dto = mapper.findByIdx(userNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -149,7 +149,16 @@ public class MemberServiceImpl implements MemberService {
 			e.printStackTrace();
 			throw e;
 		}
-		
+	}
+
+	@Override
+	public void updateLastLoginDate(Long userNum) throws SQLException {
+		try {
+			mapper.updateLastLoginDate(userNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 }

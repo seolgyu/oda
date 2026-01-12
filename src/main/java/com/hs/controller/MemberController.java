@@ -86,6 +86,9 @@ public class MemberController {
 
 			// 세션에 member이라는 이름으로 저장
 			session.setAttribute("member", info);
+			
+			// 로그인 기록
+			service.updateLastLoginDate(dto.getUserIdx());
 
 			// 로그인 성공 여부
 			session.setAttribute("toastMsg", dto.getUserName() + "님, 환영합니다!");
@@ -143,6 +146,8 @@ public class MemberController {
 			info.setAvatar(dto.getProfile_photo());
 
 			session.setAttribute("member", info);
+			
+			service.updateLastLoginDate(dto.getUserIdx());
 
 			session.setAttribute("toastMsg", dto.getUserName() + "님, 환영합니다!");
 		    session.setAttribute("toastType", "success");

@@ -16,9 +16,10 @@ public interface MemberService {
 	public void deleteMember(Map<String, Object> map) throws Exception;
 	
 	public void updatePwd(Map<String, Object> map) throws SQLException;
+	public void updateLastLoginDate(Long userNum) throws SQLException;
 	
 	public MemberDTO findById(String userId);
-	public MemberDTO findByIdx(Long userIdx);
+	public MemberDTO findByIdx(Long userNum);
 	
 	public int checkId(String userId) throws SQLException;
 	public int checkNickname(String userNickname) throws SQLException;

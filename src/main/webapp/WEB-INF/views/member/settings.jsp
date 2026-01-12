@@ -6,7 +6,7 @@
 <html lang="ko">
 <head>
 <%@ include file="/WEB-INF/views/home/head.jsp"%>
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <style type="text/css">
 /* 설정 메뉴 아이템 기본 스타일 */
 .setting-nav-item {
@@ -88,7 +88,7 @@
 
 		<main class="app-main">
 			<div class="space-background">
-				<div class="stars"></div>
+				<div class="stars"></div>S
 				<div class="stars2"></div>
 				<div class="stars3"></div>
 				<div class="planet planet-1"></div>
@@ -178,7 +178,6 @@
 		</main>
 	</div>
 
-	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
@@ -215,20 +214,18 @@
 	});
 	
 	function loadSettings(url) {
-	    $('#settings-content').fadeOut(150, function() {
 	        $.ajax({
 	            type: "GET",
 	            url: url,
 	            dataType: "html",
 	            success: function(data) {
-	                $('#settings-content').html(data).fadeIn(150);
+	            	$('#settings-content').html(data);
 	            },
 	            error: function() {
 	                alert("설정 페이지를 불러오는 데 실패했습니다.");
 	                $('#settings-content').show();
 	            }
 	        });
-	    });
 	}
 	</script>
 </body>

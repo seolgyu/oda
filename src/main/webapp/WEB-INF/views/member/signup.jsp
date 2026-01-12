@@ -348,7 +348,7 @@ input:-webkit-autofill:active {
 							class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y input-icon text-secondary">calendar_today</span>
 						<input type="text" name="birth" class="form-control login-input"
 							autocomplete="off" placeholder="Birth Date"
-							onfocus="(this.type='date')"
+							onfocus="this.type='date'; this.max=new Date().toISOString().split('T')[0]"
 							onblur="if(!this.value) this.type='text'">
 					</div>
 

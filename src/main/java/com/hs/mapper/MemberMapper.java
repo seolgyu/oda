@@ -27,9 +27,10 @@ public interface MemberMapper {
 	public void deleteMember2(Map<String, Object> map) throws SQLException;
 	
 	public void updatePwd(Map<String, Object> map) throws SQLException;
+	public void updateLastLoginDate(Long userNum) throws SQLException;
 	
 	public MemberDTO findById(String userId) throws SQLException;
-	public MemberDTO findByIdx(Long userIdx) throws SQLException;
+	public MemberDTO findByIdx(Long userNum) throws SQLException;
 	
 	public int checkId(String userId) throws SQLException;
 	public int checkNickname(String userId) throws SQLException;

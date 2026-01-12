@@ -121,6 +121,12 @@
 		WHERE user_num = #{userNum}
 	</update>
 	
+	<update id="updateLastLoginDate" parameterType="Long">
+		UPDATE member 
+		SET last_login_Date = SYSDATE 
+		WHERE user_num = #{userNum}
+	</update>
+	
 	<select id="loginMember1" parameterType="map" resultType="com.hs.model.MemberDTO">
 		SELECT memberIdx, userId, userPwd, userName, userLevel, register_date, modify_date
 		FROM member1
