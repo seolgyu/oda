@@ -208,4 +208,70 @@
 			update_date = SYSDATE
 		WHERE notice_num = #{notice_num}
 	</update>
+	<insert id="insertReply" parameterType="com.hs.model.admin.NoticeReplyDTO">
+		INSERT INTO noticeReply
+		(
+			replyNum,
+			num,
+			userId,
+			content,
+			parentNum,
+			showReply,
+			reg_date,
+			block,
+			update_date
+		)VALUES(
+			noticeReply_seq.NEXTVAL,
+			#{num}, 
+			#{userId},
+			#{content},
+			#{parentNum}, 
+			1,
+			SYSDATE, 
+			0,
+			SYSDATE
+		)
+	</insert>
+	
+	<select id="listReply" parameterType="map" resultType="com.hs.model.admin.NoticeReplyDTO">
+		SELECT r.replyNum, r.userId, user_Name, num, 
+			content, r.reg_date, showReply,
+			NVL(answerCount, 0) answerCount,
+			NVL(likeCount, 0) likeCount,
+			NVL(disLikeCount, 0) disLikeCount
+		FROM noticeReply r
+		JOIN member m ON r.userId = m.user_Id
+		LEFT OUTER JOIN
+		(
+			SELECT parentNum, COUNT(*) answerCount
+			FROM noticeReply
+			WHERE parentNum != 0 AND block = 0
+			<if test="userLevel lt 51">
+				AND ( showReply = 1 OR userId = #{userId} )
+			</if>
+			GROUP BY parentNum
+		) a ON r.replyNum = a.parentNum
+		
+		LEFT OUTER JOIN
+		(
+			SELECT replyNum,
+					COUNT(DECODE(ReplyLike, 1, 1)) likeCount,
+					COUNT(DECODE(ReplyLike, 0, 1)) disLikeCount
+			FROM noticeReplyLike
+			GROUP BY replyNum
+		) c ON r.replyNum = c.replyNum
+		WHERE num = #{num} AND r.parentNum = 0 AND r.block = 0
+		<if test="userLevel lt 51">
+			AND ( showReply = 1 OR r.userId = #{userId} )
+		</if>
+		ORDER BY r.replyNum DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	<!-- 유저의 댓글 좋아요 / 싫어요 여부 -->
+	<select id="hasUserReplyLiked" parameterType="map" resultType="Integer">
+		SELECT replyLike
+		FROM  noticeReplyLike
+		WHERE replyNum = #{replyNum} AND userId = #{userId}
+	</select>
 </mapper>

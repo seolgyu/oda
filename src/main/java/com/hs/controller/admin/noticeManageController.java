@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.hs.model.MemberDTO;
+import com.hs.model.admin.NoticeReplyDTO;
 import com.hs.model.SessionInfo;
 import com.hs.model.admin.NoticeDTO;
 import com.hs.mvc.annotation.Controller;
@@ -17,8 +17,6 @@ import com.hs.mvc.annotation.PostMapping;
 import com.hs.mvc.annotation.RequestMapping;
 import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
-import com.hs.service.MemberService;
-import com.hs.service.MemberServiceImpl;
 import com.hs.service.admin.NoticeService;
 import com.hs.service.admin.NoticeServiceImpl;
 import com.hs.util.FileManager;
@@ -505,5 +503,104 @@ public class noticeManageController {
 		}
 
 		return new ModelAndView("redirect:/admin/notice/list?page=" + page + "&size=" + size);
+	}
+	
+	@ResponseBody
+	@PostMapping("insertReply")
+	public Map<String, Object> insertReply(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Map<String, Object> model = new HashMap<String, Object>();
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		String state = "false";
+		try {
+			NoticeReplyDTO dto = new NoticeReplyDTO();
+			
+			dto.setNum(Long.parseLong(req.getParameter("num")));
+			dto.setContent(req.getParameter("content"));
+			dto.setParentNum(Long.parseLong(req.getParameter("parentNum")));
+			
+			dto.setUserId(info.getUserId());
+			
+			service.insertReply(dto);
+			
+			state = "true";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		model.put("state", state);
+		
+		return model;
+	}
+	
+	@ResponseBody
+	@GetMapping("listReply")
+	public Map<String, Object> listReply(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		try {
+			Map<String, Object> model = new HashMap<String, Object>();
+			
+			// 넘어온파라미터 : num, pageNo
+			long num = Long.parseLong(req.getParameter("num"));
+			String pageNo = req.getParameter("pageNo");
+			int current_page = 1;
+			if(pageNo != null) {
+				current_page = Integer.parseInt(pageNo);
+			}
+			
+			int size = 10;
+			int total_page = 0;
+			int replyCount = 0;
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("num", num);
+			map.put("userId", info.getUserId());
+			map.put("userLevel", info.getUserLevel());
+			
+			replyCount = service.replyCount(map);
+			total_page = util.pageCount(replyCount, size);
+			current_page = Math.min(current_page, total_page);
+			
+			int offset = (current_page - 1) * size;
+			if(offset < 0) offset = 0;
+			
+			map.put("offset", offset);
+			map.put("size", size);
+			
+			List<NoticeReplyDTO> listReply = service.listReply(map);
+			
+			for(NoticeReplyDTO dto : listReply) {
+				dto.setContent(util.htmlSymbols(dto.getContent()));
+				
+				// 유저의 좋아요/싫어요 유무
+				  map.put("replyNum", dto.getReplyNum());
+				  dto.setUserLikedReply(service.hasUserReplyLiked(map));
+			}
+			Map<String, Object> sessionMember = new HashMap<String, Object>();
+			sessionMember.put("userId", info.getUserId());
+			sessionMember.put("userLevel", info.getUserLevel());
+			// 페이징 : AJAX - loadContent(page) 메소드 호출
+						String paging = util.pagingMethod(current_page, total_page, "loadContent");
+						
+			// JSON 으로 클라이언트에게 전송
+			model.put("sessionMember", sessionMember);
+			model.put("listReply", listReply);
+			model.put("pageNo", current_page);
+			model.put("replyCount", replyCount);
+			model.put("total_page", total_page);
+			model.put("paging", paging);
+			
+			return model;
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp.sendError(406);
+			
+			throw e;
+		}
+		
 	}
 }

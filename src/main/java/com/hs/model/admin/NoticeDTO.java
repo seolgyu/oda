@@ -17,6 +17,9 @@ public class NoticeDTO {
 	private String user_id;
 	private Long user_num;
 	
+	private int replyCount;
+	private int boardLikeCount;
+	
 	private List<MyMultipartFile> listFile;
 	
 	private long fileNum;
@@ -120,5 +123,17 @@ public class NoticeDTO {
 	}
 	public void setUser_id(String user_id) {
 		this.user_id = user_id;
+	}
+	public int getReplyCount() {
+		return replyCount;
+	}
+	public void setReplyCount(int replyCount) {
+		this.replyCount = replyCount;
+	}
+	public int getBoardLikeCount() {
+		return boardLikeCount;
+	}
+	public void setBoardLikeCount(int boardLikeCount) {
+		this.boardLikeCount = boardLikeCount;
 	}
 }

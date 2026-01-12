@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.hs.mapper.admin.NoticeMapper;
 import com.hs.model.admin.NoticeDTO;
+import com.hs.model.admin.NoticeReplyDTO;
 import com.hs.mybatis.support.MapperContainer;
 import com.hs.util.MyMultipartFile;
 
@@ -209,5 +210,73 @@ public class NoticeServiceImpl implements NoticeService{
 			
 			throw e;
 		}
+	}
+
+	@Override
+	public void insertReply(NoticeReplyDTO dto) throws Exception {
+		try {
+			mapper.insertReply(dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
+	}
+
+	@Override
+	public void deleteReply(Map<String, Object> map) throws Exception {
+		
+	}
+
+	@Override
+	public int replyCount(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<NoticeReplyDTO> listReply(Map<String, Object> map) {
+		try {
+			return mapper.listReply(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public List<NoticeReplyDTO> listReplyAnswer(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int replyAnswerCount(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void updateReplyShowHide(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Integer hasUserReplyLiked(Map<String, Object> map) {
+Integer result = -1;
+		
+		//-1 : 공감여부를 하지 않은 상태, 0 : 비공감, 1 : 공감
+		
+		try {
+			result = mapper.hasUserReplyLiked(map);
+			
+			if(result == null) {
+				result = -1;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 }

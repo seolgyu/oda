@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import com.hs.model.admin.NoticeReplyDTO;
 import com.hs.model.admin.NoticeDTO;
 
 public interface NoticeMapper {
@@ -29,4 +30,14 @@ public interface NoticeMapper {
 	public void updateHitCount(long num) throws SQLException;
 	
 	public void updateNotice(NoticeDTO dto) throws SQLException;
+	
+	public void insertReply(NoticeReplyDTO dto) throws SQLException;
+	public void deleteReply(Map<String, Object> map) throws SQLException;
+	public int replyCount(Map<String, Object> map);
+	public List<NoticeReplyDTO> listReply(Map<String, Object> map);
+	public List<NoticeReplyDTO> listReplyAnswer(Map<String, Object> map);
+	public int replyAnswerCount(Map<String, Object> map);
+	public void updateReplyShowHide(Map<String, Object> map);
+	
+	public Integer hasUserReplyLiked(Map<String, Object> map);
 }
