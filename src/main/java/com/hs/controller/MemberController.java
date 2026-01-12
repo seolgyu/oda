@@ -258,7 +258,7 @@ public class MemberController {
 	        String verifiedEmail = (String) session.getAttribute("verifiedEmail");
 
 	        if (isVerified == null || !isVerified || verifiedEmail == null) {
-	            map.put("status", "fail");
+	            map.put("status", "emailFail");
 	            map.put("message", "이메일 인증이 되지 않았거나, 인증이 만료되었습니다.");
 	            return map;
 	        }
@@ -351,6 +351,7 @@ public class MemberController {
 
 		try {
 	        String email = req.getParameter("email");
+	        System.out.println(">>> 수신 이메일: " + email);
 
 	        String subject = "[ODA Community] 회원가입 본인확인 인증번호입니다.";
 	        String authCode = MyUtil.generateAuthCode();
@@ -382,6 +383,7 @@ public class MemberController {
 					
 			MailSender sender = new MailSender();
 			boolean b = sender.mailSend(dto);
+			System.out.println(">>> 메일 발송 결과: " + b);
 			
 			
 			if(! b) {

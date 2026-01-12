@@ -184,6 +184,42 @@ input[type="date"].login-input {
     animation: overlayFadeIn 0.6s ease;
 }
 
+/* 버튼을 감싸는 wrapper를 input 우측에 강제로 고정 */
+.verify-btn-wrapper {
+    position: absolute !important;
+    top: 1.25rem !important; /* 입력창 높이의 절반 (login-input 높이가 2.5rem일 때) */
+    right: 5px !important;
+    transform: translateY(-50%) !important;
+    z-index: 20; /* 에러 메시지보다 위에 오도록 설정 */
+    display: flex;
+    align-items: center;
+}
+
+/* VERIFY 버튼이 수직 중앙 정렬을 유지하도록 */
+#verifyBtn {
+    margin: 0 !important;
+    position: static !important; /* wrapper가 위치를 잡으므로 버튼은 정적 배치 */
+    transform: none !important;
+}
+
+/* 전송 중일 때 버튼을 어둡게 만드는 스타일 */
+.btn-darken {
+    opacity: 0.5 !important;           /* 반투명하게 */
+    filter: brightness(0.7) !important; /* 밝기 감소 */
+    cursor: not-allowed !important;    /* 마우스 커서 변경 */
+    pointer-events: none !important;    /* 클릭 효과 차단 */
+}
+
+/* readonly 속성이 들어간 입력창 전용 스타일 */
+.login-input[readonly] {
+    opacity: 0.7 !important;
+    cursor: not-allowed !important; /* default보다는 금지 표시가 '잠금' 느낌을 더 줍니다 */
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    color: #888 !important; /* 글자색을 살짝 흐리게 하면 더 확실합니다 */
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    pointer-events: none; /* 클릭이나 포커스 자체를 무시하게 만듭니다 */
+}
+
 /* 메시지 박스 */
 .success-content {
     text-align: center;
@@ -319,27 +355,29 @@ input:-webkit-autofill:active {
 					<div class="position-relative">
 						<span
 							class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y input-icon text-secondary">mail</span>
-						<input type="email" id="emailInput" name="email" class="form-control login-input"
-							autocomplete="off" placeholder="Email Address">
-							
-						<span id="sendCodeBtn" class="zip-search-btn" style="display: none;" onclick="sendAuthMail();"> SEND CODE </span>
+						<input type="email" id="emailInput" name="email"
+							class="form-control login-input" autocomplete="off"
+							placeholder="Email Address"> <span id="sendCodeBtn"
+							class="zip-search-btn" style="display: none;"
+							onclick="sendAuthMail();"> SEND CODE </span>
 					</div>
 
 					<div id="emailAuthSection" class="mt-2" style="display: none;">
 						<div class="position-relative">
-							<span
-								class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y input-icon text-secondary">verified_user</span>
+							<span class="material-symbols-outlined input-icon text-secondary">verified_user</span>
 							<input type="text" id="authCode" class="form-control login-input"
-								placeholder="Verification Code" maxlength="6">
+								placeholder="Verification Code" maxlength="6"
+								style="padding-right: 70px !important;"> <span
+								class="zip-search-btn" id="verifyBtn"
+								onclick="verifyAuthCode();"
+								style="position: absolute !important; top: 1.25rem !important; right: 5px !important; transform: translateY(-50%) !important; z-index: 20; height: 1.8rem; display: flex; align-items: center;">
+								VERIFY </span>
+						</div>
 
-							<div
-								class="position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-2 pe-2">
-								<span id="authTimer"
-									style="font-size: 0.75rem; color: #fb923c; font-weight: bold;">03:00</span>
-								<span class="zip-search-btn position-static transform-none" id="verifyBtn"
-									style="height: 1.8rem;" onclick="verifyAuthCode();">
-									VERIFY </span>
-							</div>
+						<div class="text-center mt-2">
+							<span id="authTimer"
+								style="font-size: 0.85rem; color: #fb923c; font-weight: bold; background: rgba(251, 146, 60, 0.1); padding: 4px 10px; border-radius: 4px; display: inline-block;">
+								03:00 </span>
 						</div>
 					</div>
 
@@ -372,7 +410,7 @@ input:-webkit-autofill:active {
 					<input type="text" name="addr2" id="addr2" autocomplete="off"
 						class="form-control login-input" placeholder="Detailed Address">
 
-					<button type="button"
+					<button type="button" id="signupBtn"
 						class="btn w-100 fw-bold text-white submit-btn"
 						onclick="memberOk();">SIGN UP</button>
 				</form>
@@ -392,15 +430,71 @@ input:-webkit-autofill:active {
 	
 	<script type="text/javascript">
 	
-	let isIdOk = false;
-    let isNickOk = false;
-    let isMemberOkChecking = false;
-    
     let authTimerInterval;
+    let isMemberOkChecking = false;
     let isEmailVerified = false;
+    let isSendingMail = false;
     
+    // 상태 값 함수
+    const signupStatus = {
+    	    idChecked: false,
+    	    nicknameChecked: false,
+    	    emailVerified: false,
+    	    pwdMatched: false,
+    	    nameEntered: false,
+    	    birthEntered: false,
+
+    	    checkAll: function() {
+    	        const isReady = this.idChecked && 
+    	                        this.pwdMatched && 
+    	                        this.nameEntered && 
+    	                        this.nicknameChecked && 
+    	                        this.birthEntered &&
+    	                        this.emailVerified; 
+    	        
+    	        $("#signupBtn").prop("disabled", !isReady);
+    	    }
+    	};
+    
+    // 필수 입력사항 입력 시 버튼 활성화, 검증이 필요한 입력사항은 입력 값 변경 시 false
+    $(document).ready(function() {
+        $('input[name=userId], input[name=userNickname], input[name=email]').on('input', function() {
+            const name = $(this).attr('name');
+            if(name === 'userId') signupStatus.idChecked = false;
+            if(name === 'userNickname') signupStatus.nicknameChecked = false;
+            if(name === 'email') {
+            	signupStatus.emailVerified = false;
+            	$("#emailAuthSection").slideUp(200);
+            	$("#sendCodeBtn").text("SEND CODE").prop("disabled", false);
+            	
+            	if (authTimerInterval) {
+                    clearInterval(authTimerInterval);
+                    $("#authTimer").text("03:00");
+                }
+            };
+            
+            signupStatus.checkAll();
+        });
+
+        $('input[name=userName], input[name=birth]').on('input', function() {
+            const val = $(this).val().trim();
+            const name = $(this).attr('name');
+            
+            if(name === 'userName') signupStatus.nameEntered = val.length > 0;
+            if(name === 'birth') signupStatus.birthEntered = val.length > 0;
+            
+            signupStatus.checkAll();
+        });
+        
+        $('input[name=userPwd], input[name=userPwd2]').on('input', function() {
+            signupStatus.pwdMatched = false;
+            signupStatus.checkAll();
+        });
+    });
+    
+    // 정규식에 일치하는 이메일 입력 시 "SEND CODE" 버튼 생성
     $(function() {
-        $("#emailInput").on("input", function() {
+        $("input[name=email]").on("input", function() {
             if (isEmailVerified) return;
             
             const email = $(this).val().trim();
@@ -413,34 +507,29 @@ input:-webkit-autofill:active {
     });
     
 	$(function() {
-		
+		// input 입력 또는 변경 시 에러 표시 제거 (최종 단계에서 강제 포커스 된 건 에러를 그대로 띄움)
 		$("input").on("focus input change", function() {
-		    // memberOk에서 강제로 포커스를 준 게 아닐 때만 에러를 지움
 		    if (!isMemberOkChecking) {
 		        $(this).removeClass("is-invalid");
-		        const $errorMsg = $(this).parent().find('.error-text');
-		        if ($errorMsg.length > 0) {
-		            $errorMsg.remove();
-		        }
+		        $(this).parent().find('.error-text').remove();
 		    }
 		});
-		
-		$("input[name=userId], input[name=userNickname]").on("input", function() {
-            if(this.name === "userId") isIdOk = false;
-            if(this.name === "userNickname") isNickOk = false;
-        });
-		
+
+		// 아이디 입력 검증 ( 실시간 )
 	    $("input[name=userId]").on("blur", function() {
-	    	isIdOk = false;
 	    	const userId = ($(this).val() || "").trim();
 	        const $input = $(this);
+	        
+	        signupStatus.idChecked = false;
 
 	        if (! userId ) {
 	        	showFieldError($input[0], "아이디를 입력해주세요.");
+	        	signupStatus.checkAll();
 	        	return;
 	        }
 	        if (!/^[a-z][a-z0-9]{4,11}$/.test(userId)) {
 	            showFieldError($input[0], "영문 시작, 5~12자 조합이어야 합니다.");
+	            signupStatus.checkAll();
 	            return;
 	        }
 
@@ -450,30 +539,35 @@ input:-webkit-autofill:active {
 	            data: { userId: userId },
 	            dataType: "json",
 	            success: function(data) {
-	            	isIdOk = false;
 	                if (data.status === "failId") {
+	                	signupStatus.idChecked = false;
 	                    showFieldError($input[0], data.message);
 	                } else {
-	                	isIdOk = true;
+	                	signupStatus.idChecked = true;
 	                    $input.removeClass("is-invalid");
 	                    const existingError = $input[0].parentElement.querySelector('.error-text');
 	                    if (existingError) existingError.remove();
 	                }
+	                signupStatus.checkAll();
 	            }
 	        });
 	    });
 
+	 	// 닉네임 입력 검증 ( 실시간 )
 	    $("input[name=userNickname]").on("blur", function() {
-	    	isNickOk = false;
 	    	const userNickname = ($(this).val() || "").trim();
 	        const $input = $(this);
+	        
+	        signupStatus.nicknameChecked = false;
 
 	        if (! userNickname ) {
 	        	showFieldError($input[0], "닉네임을 입력해주세요.");
+	        	signupStatus.checkAll();
 	        	return;
 	        }
 	        if (!/^[a-zA-Z0-9가-힣]{2,10}$/.test(userNickname)) {
 	            showFieldError($input[0], "닉네임은 특수문자 제외 2~10자여야 합니다.");
+	            signupStatus.checkAll();
 	            return;
 	        }
 
@@ -483,91 +577,204 @@ input:-webkit-autofill:active {
 	            data: { userNickname: userNickname },
 	            dataType: "json",
 	            success: function(data) {
-	            	isNickOk = false;
 	                if (data.status === "failNickname") {
+	                	signupStatus.nicknameChecked = false;
 	                    showFieldError($input[0], data.message);
 	                } else {
-	                	isNickOk = true;
+	                	signupStatus.nicknameChecked = true;
 	                    $input.removeClass("is-invalid");
 	                    const existingError = $input[0].parentElement.querySelector('.error-text');
 	                    if (existingError) existingError.remove();
 	                }
+	                signupStatus.checkAll();
 	            }
 	        });
 	    });
+	    
+	 	// 비밀번호 입력 검증 ( 실시간 )
+	    $("input[name=userPwd]").on("blur", function() {
+	    	const userPwd = $(this).val().trim();
+	        const $input = $(this);
+	        
+	        if (! userPwd ) {
+	        	showFieldError($input[0], "비밀번호를 입력해주세요.");
+	        	signupStatus.pwdMatched = false;
+	        } else if (!/^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/.test(userPwd)) {
+	            showFieldError($input[0], "비밀번호는 영문, 숫자, 특수문자 포함 8 ~ 16자여야 합니다.");
+	            signupStatus.pwdMatched = false;
+	        } else {
+	        	chkPwdMatch();
+	        }
+	        signupStatus.checkAll();
+	    });
+	    
+	    $("input[name=userPwd2]").on("blur", function() {
+	    	chkPwdMatch();
+	        signupStatus.checkAll();
+	    });
+	    
+	    function chkPwdMatch() {
+	    	const $input2 = $('input[name=userPwd2]');
+	    	const pwd1 = $('input[name=userPwd]').val().trim();
+	    	const pwd2 = $('input[name=userPwd2]').val().trim();
+	    	
+	    	if(pwd1 === pwd2 && pwd2.length > 0) {
+	    		signupStatus.pwdMatched = true;
+	            $input2.removeClass("is-invalid");
+	            $input2.parent().find('.error-text').remove();
+	        } else {
+	            signupStatus.pwdMatched = false;
+	            if (pwd2.length > 0 && pwd1 !== pwd2) {
+	                showFieldError($input2[0], "비밀번호가 일치하지 않습니다.");
+	            }
+	        }
+	    }
 	});
+
+    function sendAuthMail() {
+    	if (isSendingMail) return;
+    	
+    	const $input = $("#emailInput");
+        const email = $("#emailInput").val().trim();
+        const $btn = $("#sendCodeBtn");
+
+        isSendingMail = true;
+        $btn.addClass("btn-darken").text("SENDING...");
+
+        $.ajax({
+            type: "POST",
+            url: "${pageContext.request.contextPath}/member/sendAuthEmail",
+            data: { email: email },
+            dataType: "json",
+            success: function(data) {
+                if(data.status === "success") {
+                    $("#emailAuthSection").slideDown(300);
+                    startAuthTimer(180);
+                    setTimeout(function() {
+                    	isSendingMail = false;
+                    	if ($("#sendCodeBtn").length > 0) {
+                    		$btn.removeClass("btn-darken").text("RESEND");
+                        }
+                    }, 10000);
+                } else if(data.status === "emailSendError"){
+                	showFieldError($input[0], "이메일 전송에 실패했습니다. 다시 전송해주세요.");
+                	isSendingMail = false;
+                	$btn.removeClass("btn-darken").text("SEND CODE");
+                } else {
+                	showFieldError($input[0], "서버 에러 발생. 다시 전송해주세요.");
+                	isSendingMail = false;
+                	$btn.removeClass("btn-darken").text("SEND CODE");
+                }
+            },
+            error: function() {
+            	showFieldError($input[0], "서버 통신 중 오류 발생.");
+            	isSendingMail = false;
+            	$btn.removeClass("btn-darken").text("SEND CODE");
+            }
+        });
+    }
+    
+    function verifyAuthCode() {
+    	const $email = $("#emailInput");
+    	const $authCode = $("#authCode");
+    	const $verifyBtn = $("#verifyBtn");
+    	
+    	const email = $email.val().trim();
+    	const authCode = $authCode.val().trim();
+    	
+    	$verifyBtn.prop("disabled", true);
+    	
+    	$.ajax({
+            type: "POST",
+            url: "${pageContext.request.contextPath}/member/chkAuthEmail",
+            data: { email: email, userCode: authCode },
+            success: function(data) {
+                if(data.status === "success") {
+                	signupStatus.emailVerified = true;
+                	if (authTimerInterval) clearInterval(authTimerInterval);
+                	$("#emailInput").prop("readonly", true);
+                    $("#sendCodeBtn").remove();
+                    
+                    $verifyBtn
+                    .prop("disabled", true)
+                    .css({"background": "#22c55e", "border-color": "#22c55e", "color": "white"})
+                    .text("VERIFIED ✓");
+                    
+                	setTimeout(function() {
+                    	$("#emailAuthSection").slideUp(300);
+                    	signupStatus.checkAll();
+                	}, 800);
+                } else if(data.status === "expired") {
+                	showFieldError($authCode[0], "세션이 만료되었습니다. 다시 시도해주세요.");
+                    $verifyBtn.prop("disabled", false);
+                } else if(data.status === "invalidEmail") {
+                	showFieldError($authCode[0], "현재 이메일이 인증을 요청한 이메일과 다릅니다.");
+                    $verifyBtn.prop("disabled", false);
+                } else if(data.status === "timeout") {
+                	showFieldError($authCode[0], "인증 시간이 초과되었습니다. 다시 요청해주세요.");
+                    $verifyBtn.prop("disabled", false);
+                } else {
+                	showFieldError($authCode[0], "인증에 실패하였습니다.");
+	                $verifyBtn.prop("disabled", false);
+	            }
+            },
+            error: function() {
+            	showFieldError($authCode[0], "서버 통신 중 오류 발생.");
+            	$verifyBtn.prop("disabled", false);
+            }
+        });
+    	
+    }
 	
 	function memberOk() {
 		isMemberOkChecking = true;
-		
 	    const f = document.memberForm;
-	    const btn = document.querySelector(".submit-btn");
+	    const btn = document.querySelector("#signupBtn");
 
 	    document.querySelectorAll('.error-text').forEach(el => el.remove());
 	    document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
 	    
-	    // 아이디 유효성 검사
-	   	if (!isIdOk) {
-        	showFieldError(f.userId, "아이디 중복 확인이 필요하거나 형식이 올바르지 않습니다.");
-        	f.userId.focus();
-        	isMemberOkChecking = false;
-        	return;
-    	}
-	   	
-    	if( ! f.userPwd.value.trim() ) {
-    		showFieldError(f.userPwd, "비밀번호를 입력해주세요.");
-    		f.userPwd.focus();
-    		isMemberOkChecking = false;
-        	return;
-    	} else if(!/^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/.test(f.userPwd.value)) {
-    		showFieldError(f.userPwd, "영문, 숫자, 특수문자 포함 8 ~ 16자여야 합니다.");
-    		f.userPwd.focus();
-    		isMemberOkChecking = false;
-        	return;
-    	}
-    	
-    	// 비밀번호 확인
-    	if (f.userPwd.value !== f.userPwd2.value) {
-            showFieldError(f.userPwd2, "비밀번호가 일치하지 않습니다.");
-            f.userPwd2.focus();
-            isMemberOkChecking = false;
-            return;
-        }
-    	
-    	if( ! f.userName.value.trim() ) {
-    		showFieldError(f.userName, "이름을 입력해주세요.");
-    		f.userName.focus();
-    		isMemberOkChecking = false;
-        	return;
-    	}
-    	
-    	// 닉네임 확인
-    	if (!isNickOk) {
-        	showFieldError(f.userNickname, "닉네임 중복 확인이 필요하거나 형식이 올바르지 않습니다.");
-        	f.userNickname.focus();
-        	isMemberOkChecking = false;
-        	return;
-    	}
-    	
-    	if( ! f.birth.value.trim() ) {
-    		showFieldError(f.birth, "생년월일을 입력해주세요.");
-    		f.birth.focus();
-    		isMemberOkChecking = false;
-        	return;
-    	}
-    	
-    	// 이메일 확인
-    	if( ! f.email.value.trim() ) {
-    		showFieldError(f.email, "이메일을 입력해주세요.");
-    		f.email.focus();
-    		isMemberOkChecking = false;
-        	return;
-    	} else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.value)) {
-    		showFieldError(f.email, "올바른 이메일 형식이 아닙니다.");
-    		f.email.focus();
-    		isMemberOkChecking = false;
-        	return;
-    	}
+	    if (!signupStatus.idChecked) {
+	        showFieldError(f.userId, "아이디 중복 확인이 필요합니다.");
+	        f.userId.focus();
+	        isMemberOkChecking = false;
+	        return;
+	    }
+	    
+	    if (!signupStatus.pwdMatched) {
+	        showFieldError(f.userPwd2, "비밀번호가 일치하지 않거나 형식이 올바르지 않습니다.");
+	        f.userPwd2.focus();
+	        isMemberOkChecking = false;
+	        return;
+	    }
+
+	    if (!signupStatus.nicknameChecked) {
+	        showFieldError(f.userNickname, "닉네임 중복 확인이 필요합니다.");
+	        f.userNickname.focus();
+	        isMemberOkChecking = false;
+	        return;
+	    }
+
+	    if (!signupStatus.emailVerified) {
+	        showFieldError(f.email, "이메일 인증이 필요합니다.");
+	        f.email.focus();
+	        isMemberOkChecking = false;
+	        return;
+	    }
+
+	    if (!f.userName.value.trim()) {
+	        showFieldError(f.userName, "이름을 입력해주세요.");
+	        f.userName.focus();
+	        isMemberOkChecking = false;
+	        return;
+	    }
+
+	    if (!f.birth.value.trim()) {
+	        showFieldError(f.birth, "생년월일을 입력해주세요.");
+	        f.birth.focus();
+	        isMemberOkChecking = false;
+	        return;
+	    }
 
         const url = '${pageContext.request.contextPath}/member/signupAjax';
         
@@ -583,13 +790,15 @@ input:-webkit-autofill:active {
             success: function(data) {
                 if (data.status === "success") {
                     showSuccessOverlay();
+                } else if (data.status === "emailFail") {
+                	alert(data.message);
+                	if(btn) btn.disabled = false;
                 } else {
                 	alert(data.message);
                 	if(btn) btn.disabled = false;
                 }
             },
             error: function(e) {
-                console.error(e.responseText);
                 alert("서버 통신 오류가 발생했습니다.");
                 if(btn) btn.disabled = false;
             }
@@ -647,75 +856,6 @@ input:-webkit-autofill:active {
         }, 3000);
     }
     
-    function sendAuthMail() {
-        const email = $("#emailInput").val().trim();
-        const $btn = $("#sendCodeBtn");
-
-        $btn.text("SENDING...").prop("onclick", null);
-
-        $.ajax({
-            type: "POST",
-            url: "${pageContext.request.contextPath}/member/sendAuthMail",
-            data: { email: email },
-            success: function(data) {
-                if(data.status === "success") {
-                    $("#emailInput").prop("readonly", true).css("opacity", "0.7");
-                    $("#sendCodeBtn").hide();
-                    $("#emailAuthSection").slideDown(300);
-                    startAuthTimer(180);
-                } else {
-                    alert("이메일 전송에 실패했습니다. 다시 전송해주세요.");
-                    $btn.text("SEND CODE").attr("onclick", "sendAuthMail();");
-                }
-            },
-            error: function() {
-                alert("Server Error.");
-                $btn.text("SEND CODE").attr("onclick", "sendAuthMail();");
-            }
-        });
-    }
-    
-    function verifyAuthCode() {
-    	const $email = $("#emailInput");
-    	const $authCode = $("#authCode");
-    	const $verifyBtn = $("");
-    	
-    	const email = $("#emailInput").val().trim();
-    	const authCode = $authCode.val().trim();
-    	
-    	$verifyBtn.prop("disabled", true);
-    	
-    	$.ajax({
-            type: "POST",
-            url: "${pageContext.request.contextPath}/member/chkAuthEmail",
-            data: { email: email, userCode: authCode },
-            success: function(data) {
-                if(data.status === "success") {
-                    $("#emailInput").prop("readonly", true).css("opacity", "0.7");
-                    $("#sendCodeBtn").hide();
-                    $("#emailAuthSection").slideDown(300);
-                    startAuthTimer(180);
-                } else if(data.status === "expired") {
-                    alert("세션이 만료되었습니다. 다시 시도해주세요.");
-                    $verifyBtn.prop("disabled", false);
-                } else if(data.status === "invalidEmail") {
-                    alert("현재 이메일이 인증을 요청한 이메일과 다릅니다.");
-                    $verifyBtn.prop("disabled", false);
-                } else if(data.status === "timeout") {
-                    alert("인증 시간이 초과되었습니다. 다시 요청해주세요.");
-                    $verifyBtn.prop("disabled", false);
-                } else {
-	                alert("인증에 실패하였습니다.", "error");
-	                $verifyBtn.prop("disabled", false);
-	            }
-            },
-            error: function() {
-                alert("Server Error.");
-                $btn.text("SEND CODE").attr("onclick", "sendAuthMail();");
-            }
-        });
-    	
-    }
 
     function startAuthTimer(duration) {
         let timer = duration, minutes, seconds;

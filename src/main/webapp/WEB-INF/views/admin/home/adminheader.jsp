@@ -2,6 +2,7 @@
 <%@ page trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions"%>
 <header class="app-header">
         <a href="${pageContext.request.contextPath}/" class="brand-logo">ODA</a>
 
@@ -24,7 +25,9 @@
 
             <div class="dropdown">
                 <button class="btn-icon p-0 border-0 ms-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <div class="avatar-img d-flex align-items-center justify-content-center text-white small fw-bold">AD</div>
+                    <div class="avatar-img d-flex align-items-center justify-content-center text-white small fw-bold">
+                    ${not empty sessionScope.member ? fn:substring(sessionScope.member.userName, 0, 1) : "MK"}
+                    </div>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow-lg mt-2">
                     <li><h6 class="dropdown-header">메인페이지</h6></li>
