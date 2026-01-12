@@ -10,47 +10,72 @@
 <style type="text/css">
 /* 설정 메뉴 아이템 기본 스타일 */
 .setting-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 15px;
-    border-radius: 0.75rem;
-    color: rgba(255, 255, 255, 0.6);
-    text-decoration: none;
-    transition: all 0.2s ease;
-    font-size: 0.9rem;
-    font-weight: 500;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 15px;
+	border-radius: 0.75rem;
+	color: rgba(255, 255, 255, 0.6);
+	text-decoration: none;
+	transition: all 0.2s ease;
+	font-size: 0.9rem;
+	font-weight: 500;
 }
 
 .setting-nav-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: white;
+	background: rgba(255, 255, 255, 0.05);
+	color: white;
 }
 
 /* 활성화된 메뉴 스타일 */
 .active-setting-tab {
-    background: rgba(99, 102, 241, 0.15);
-    color: #818cf8;
-    box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.2);
+	background: rgba(99, 102, 241, 0.15);
+	color: #818cf8;
+	box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.2);
 }
 
 .setting-nav-item span.material-symbols-outlined {
-    font-size: 20px;
+	font-size: 20px;
 }
 
 /* 설정 페이지용 입력창 스타일 (기존 login-input 활용) */
 .login-input {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
+	background: rgba(255, 255, 255, 0.05) !important;
+	border: 1px solid rgba(255, 255, 255, 0.1) !important;
+	color: white !important;
 }
 
 .login-input:focus {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-color: #6366f1 !important;
-    box-shadow: 0 0 0 0.25 dark-blue !important;
+	background: rgba(255, 255, 255, 0.08) !important;
+	border-color: #6366f1 !important;
+	box-shadow: 0 0 0 0.25 dark-blue !important;
 }
 
+/* 드롭다운 화살표 회전 */
+.dropdown-trigger.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* 서브 메뉴 컨테이너: 왼쪽 간격을 본체 메뉴 아이콘 라인에 맞춤 */
+.dropdown-container {
+    margin-top: 2px;
+    margin-bottom: 5px;
+    /* 선을 없애거나 아주 흐리게 하여 왼쪽 여백 확보 */
+    border-left: 1px solid rgba(255, 255, 255, 0.05); 
+    margin-left: 20px; 
+}
+
+/* 서브 메뉴 아이템: 텍스트가 너무 치우치지 않게 패딩 최소화 */
+.dropdown-container .setting-nav-item {
+    padding-left: 12px !important;
+    gap: 10px !important; /* 아이콘과 텍스트 간격 */
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.dropdown-container .setting-nav-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+    color: #818cf8;
+}
 </style>
 </head>
 <body>
@@ -82,20 +107,52 @@
 									Settings</h3>
 
 								<nav class="d-flex flex-column gap-1">
-									<a href="#" class="setting-nav-item active-setting-tab"> <span
+									<a href="#" class="setting-nav-item active-setting-tab" data-url="${pageContext.request.contextPath}/member/settings/profile"> <span
 										class="material-symbols-outlined">person</span> <span>Profile
 											Interface</span>
-									</a> <a href="#" class="setting-nav-item"> <span
+									</a> <a href="#" class="setting-nav-item" data-url="${pageContext.request.contextPath}/member/settings/account"> <span
 										class="material-symbols-outlined">account_circle</span> <span>Account
 											Info</span>
-									</a> <a href="#" class="setting-nav-item"> <span
+									</a>
+
+									<div class="setting-nav-dropdown">
+										<button
+											class="setting-nav-item w-100 border-0 bg-transparent dropdown-trigger"
+											type="button" style="display: flex; align-items: center;">
+											<span class="material-symbols-outlined">analytics</span> <span
+												class="flex-grow-1 text-start">My Activity</span> <span
+												class="material-symbols-outlined dropdown-arrow"
+												style="font-size: 1.2rem; transition: transform 0.3s;">expand_more</span>
+										</button>
+
+										<div class="dropdown-container"
+											style="display: none; padding-left: 15px; flex-direction: column; gap: 2px;">
+											<a href="#" class="setting-nav-item py-2"
+												style="font-size: 0.85rem;"> <span
+												class="material-symbols-outlined" style="font-size: 18px;">favorite</span>
+												좋아요
+											</a> <a href="#" class="setting-nav-item py-2"
+												style="font-size: 0.85rem;"> <span
+												class="material-symbols-outlined" style="font-size: 18px;">bookmark</span>
+												저장
+											</a> <a href="#" class="setting-nav-item py-2"
+												style="font-size: 0.85rem;"> <span
+												class="material-symbols-outlined" style="font-size: 18px;">group</span>
+												팔로우
+											</a>
+										</div>
+									</div>
+
+									<a href="#" class="setting-nav-item"> <span
 										class="material-symbols-outlined">security</span> <span>Privacy
 											& Security</span>
 									</a> <a href="#" class="setting-nav-item"> <span
 										class="material-symbols-outlined">notifications_active</span>
 										<span>Notifications</span>
 									</a>
+
 									<div class="border-top border-white border-opacity-10 my-2"></div>
+
 									<a href="#" class="setting-nav-item text-danger opacity-75">
 										<span class="material-symbols-outlined">logout</span> <span>Sign
 											Out</span>
@@ -111,56 +168,8 @@
 							</div>
 						</aside>
 
-						<section class="flex-grow-1 d-flex flex-column gap-4"
-							style="min-width: 0;">
-							<div class="glass-card p-4 shadow-lg">
-								<div
-									class="mb-4 border-bottom border-white border-opacity-10 pb-3">
-									<h2 class="text-white fs-4 fw-bold mb-1">Profile Interface</h2>
-									<p class="text-secondary text-sm mb-0">Manage how your
-										profile looks to other stargazers.</p>
-								</div>
-
-								<div class="d-flex flex-column gap-4">
-									<div class="d-flex align-items-center gap-4">
-										<div
-											class="rounded-4 shadow-lg d-flex align-items-center justify-content-center text-white fw-bold fs-2"
-											style="width: 100px; height: 100px; background: linear-gradient(135deg, #6366f1, #a855f7);">
-											${fn:substring(user.userName, 0, 1)}</div>
-										<div>
-											<button
-												class="btn btn-sm btn-outline-light rounded-pill px-3 mb-2">Change
-												Photo</button>
-											<p class="text-xs text-gray-500 mb-0">JPG, GIF or PNG.
-												Max size of 800K</p>
-										</div>
-									</div>
-
-									<div class="row g-3">
-										<div class="col-md-6">
-											<label class="text-white text-xs fw-bold mb-2 d-block">Display
-												Name</label> <input type="text" class="form-control login-input"
-												value="${user.userNickname}">
-										</div>
-										<div class="col-md-6">
-											<label class="text-white text-xs fw-bold mb-2 d-block">Location</label>
-											<input type="text" class="form-control login-input"
-												placeholder="Earth">
-										</div>
-										<div class="col-12">
-											<label class="text-white text-xs fw-bold mb-2 d-block">Bio</label>
-											<textarea class="form-control login-input" rows="3"
-												placeholder="Tell us about yourself..."></textarea>
-										</div>
-									</div>
-
-									<div class="d-flex justify-content-end pt-3">
-										<button class="btn btn-primary rounded-pill px-5 fw-bold"
-											style="background: #2563eb; border: none;">Save
-											Changes</button>
-									</div>
-								</div>
-							</div>
+						<section class="flex-grow-1 d-flex flex-column gap-4" id="settings-content" style="min-width: 0;">
+							<jsp:include page="setting/settings_profile.jsp" />
 						</section>
 
 					</div>
@@ -173,5 +182,54 @@
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
+	<script type="text/javascript">
+	$(function() {
+	    $('.dropdown-trigger').on('click', function() {
+	        const $this = $(this);
+	        const $container = $this.next('.dropdown-container');
+	        
+	        $this.toggleClass('active');
+	        
+	        $container.stop().slideToggle(300, function() {
+	            if ($container.is(':visible')) {
+	                $container.css('display', 'flex');
+	            }
+	        });
+	    });
+	});
+	
+	$(function() {
+	    $('.setting-nav-item').on('click', function(e) {
+	        if($(this).hasClass('dropdown-trigger') || $(this).hasClass('text-danger')) return;
+	        
+	        e.preventDefault();
+	        
+	        const url = $(this).data('url');
+	        if(!url) return;
+
+	        $('.setting-nav-item').removeClass('active-setting-tab');
+	        $(this).addClass('active-setting-tab');
+
+	        loadSettings(url);
+	    });
+	});
+	
+	function loadSettings(url) {
+	    $('#settings-content').fadeOut(150, function() {
+	        $.ajax({
+	            type: "GET",
+	            url: url,
+	            dataType: "html",
+	            success: function(data) {
+	                $('#settings-content').html(data).fadeIn(150);
+	            },
+	            error: function() {
+	                alert("설정 페이지를 불러오는 데 실패했습니다.");
+	                $('#settings-content').show();
+	            }
+	        });
+	    });
+	}
+	</script>
 </body>
 </html>

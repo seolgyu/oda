@@ -757,12 +757,4 @@ public class MemberController {
 	    
 	    return model;
 	}
-	
-	@GetMapping("settings")
-	public ModelAndView settings(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		
-		return new ModelAndView("member/settings");
-	}
-
 }
