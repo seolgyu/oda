@@ -353,24 +353,42 @@ public class MemberController {
 	        String email = req.getParameter("email");
 	        System.out.println(">>> 수신 이메일: " + email);
 
-	        String subject = "[ODA Community] 회원가입 본인확인 인증번호입니다.";
+	        String subject = "[ODA Community] 회원가입 본인 인증코드입니다.";
 	        String authCode = MyUtil.generateAuthCode();
-	        String content = "<div style='font-family: \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif; max-width: 500px; margin: 20px auto; padding: 40px; border: 1px solid #ebebeb; border-radius: 20px; text-align: center; color: #333;'>"
-	                + "  <h2 style='font-size: 24px; margin-bottom: 20px; color: #000;'>본인 확인 인증번호</h2>"
-	                + "  <p style='font-size: 15px; line-height: 1.6; color: #666; margin-bottom: 30px;'>"
-	                + "    안녕하세요.<br>요청하신 본인 확인을 위한 인증번호를 보내드립니다.<br>"
-	                + "    아래의 6자리 번호를 인증창에 입력해 주세요."
-	                + "  </p>"
-	                + "  <div style='background-color: #f8f9fa; border-radius: 12px; padding: 25px; margin-bottom: 30px; border: 1px solid #e9ecef;'>"
-	                + "    <span style='font-size: 32px; font-weight: bold; color: #007bff; letter-spacing: 8px;'>" + authCode + "</span>"
-	                + "  </div>"
-	                + "  <p style='font-size: 13px; color: #999;'>"
-	                + "    ※ 인증번호의 유효 시간은 <b>3분</b>입니다.<br>"
-	                + "    시간이 만료되었다면 다시 요청해 주세요."
-	                + "  </p>"
-	                + "  <hr style='border: 0; border-top: 1px solid #eee; margin: 30px 0;'>"
-	                + "  <p style='font-size: 12px; color: #bbb;'>본 메일은 발신 전용입니다. 문의 사항은 고객센터를 이용해 주세요.</p>"
-	                + "</div>";
+	        String content = 
+	        	    "<div style='background-color: #ffffff; padding: 50px 20px; font-family: \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif;'>"
+	        	    + "  <div style='max-width: 460px; margin: 0 auto; background-color: #1a1c23; background-image: linear-gradient(160deg, #1f232d 0%, #111318 100%); border-radius: 24px; padding: 50px 40px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);'>"
+	        	    
+	        	    + "    "
+	        	    + "    <div style='margin: 0 auto 30px auto; width: 48px; height: 48px; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); border-radius: 50%; display: block;'>"
+	        	    + "      <div style='line-height: 48px; color: #ffffff; font-size: 20px;'>◈</div>"
+	        	    + "    </div>"
+	        	    
+	        	    + "    <h2 style='font-size: 22px; font-weight: 700; color: #ffffff; margin: 0 0 12px 0; letter-spacing: -0.5px;'>Security Verification</h2>"
+	        	    + "    <p style='font-size: 14px; color: #94a3b8; line-height: 1.6; margin: 0 0 40px 0;'>"
+	        	    + "      요청하신 본인 확인 인증번호입니다.<br>"
+	        	    + "      보안을 위해 <b>3분</b> 이내에 입력해 주세요."
+	        	    + "    </p>"
+	        	    
+	        	    + "    "
+	        	    + "    <div style='background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 35px 0; margin-bottom: 40px; text-align: center;'>"
+	        	    + "      <div style='font-size: 11px; color: #818cf8; font-weight: bold; letter-spacing: 2px; margin-bottom: 12px; text-transform: uppercase;'>Authentication Code</div>"
+	        	    + "      <div style='font-size: 38px; font-weight: 800; color: #ffffff; letter-spacing: 12px; margin-left: 12px; display: inline-block; vertical-align: middle;'>" + authCode + "</div>"
+	        	    + "    </div>"
+	        	    
+	        	    + "    <p style='font-size: 13px; color: #64748b; line-height: 1.6; margin: 0;'>"
+	        	    + "      본인이 요청하지 않은 경우 이 메일을 무시하셔도 됩니다.<br>"
+	        	    + "      타인에게 인증번호가 노출되지 않도록 주의해 주세요."
+	        	    + "    </p>"
+	        	    
+	        	    + "    <div style='margin: 40px 0 30px; border-top: 1px solid rgba(255, 255, 255, 0.06);'></div>"
+	        	    
+	        	    + "    <p style='font-size: 11px; color: #475569; line-height: 1.8;'>"
+	        	    + "      본 메일은 발신 전용입니다. ⓒ 2026 ODA.<br>"
+	        	    + "      All rights reserved."
+	        	    + "    </p>"
+	        	    + "  </div>"
+	        	    + "</div>";
 	        
 	        
 	        Mail dto = new Mail();
@@ -570,24 +588,42 @@ public class MemberController {
 	        }
 		    
 	        // 메일 전송 로직
-	        String subject = "[ODA Community] 비밀번호 찾기 인증번호 안내";
+	        String subject = "[ODA Community] 비밀번호 찾기 인증코드입니다.";
 	        String authCode = MyUtil.generateAuthCode();
-	        String content = "<div style='font-family: \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif; max-width: 500px; margin: 20px auto; padding: 40px; border: 1px solid #ebebeb; border-radius: 20px; text-align: center; color: #333;'>"
-	                + "  <h2 style='font-size: 24px; margin-bottom: 20px; color: #000;'>본인 확인 인증번호</h2>"
-	                + "  <p style='font-size: 15px; line-height: 1.6; color: #666; margin-bottom: 30px;'>"
-	                + "    안녕하세요.<br>요청하신 본인 확인을 위한 인증번호를 보내드립니다.<br>"
-	                + "    아래의 6자리 번호를 인증창에 입력해 주세요."
-	                + "  </p>"
-	                + "  <div style='background-color: #f8f9fa; border-radius: 12px; padding: 25px; margin-bottom: 30px; border: 1px solid #e9ecef;'>"
-	                + "    <span style='font-size: 32px; font-weight: bold; color: #007bff; letter-spacing: 8px;'>" + authCode + "</span>"
-	                + "  </div>"
-	                + "  <p style='font-size: 13px; color: #999;'>"
-	                + "    ※ 인증번호의 유효 시간은 <b>3분</b>입니다.<br>"
-	                + "    시간이 만료되었다면 다시 요청해 주세요."
-	                + "  </p>"
-	                + "  <hr style='border: 0; border-top: 1px solid #eee; margin: 30px 0;'>"
-	                + "  <p style='font-size: 12px; color: #bbb;'>본 메일은 발신 전용입니다. 문의 사항은 고객센터를 이용해 주세요.</p>"
-	                + "</div>";
+	        String content = 
+	        	    "<div style='background-color: #ffffff; padding: 50px 20px; font-family: \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif;'>"
+	        	    + "  <div style='max-width: 460px; margin: 0 auto; background-color: #1a1c23; background-image: linear-gradient(160deg, #1f232d 0%, #111318 100%); border-radius: 24px; padding: 50px 40px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);'>"
+	        	    
+	        	    + "    "
+	        	    + "    <div style='margin: 0 auto 30px auto; width: 48px; height: 48px; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); border-radius: 50%; display: block;'>"
+	        	    + "      <div style='line-height: 48px; color: #ffffff; font-size: 20px;'>◈</div>"
+	        	    + "    </div>"
+	        	    
+	        	    + "    <h2 style='font-size: 22px; font-weight: 700; color: #ffffff; margin: 0 0 12px 0; letter-spacing: -0.5px;'>Security Verification</h2>"
+	        	    + "    <p style='font-size: 14px; color: #94a3b8; line-height: 1.6; margin: 0 0 40px 0;'>"
+	        	    + "      요청하신 본인 확인 인증번호입니다.<br>"
+	        	    + "      보안을 위해 <b>3분</b> 이내에 입력해 주세요."
+	        	    + "    </p>"
+	        	    
+	        	    + "    "
+	        	    + "    <div style='background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 35px 0; margin-bottom: 40px; text-align: center;'>"
+	        	    + "      <div style='font-size: 11px; color: #818cf8; font-weight: bold; letter-spacing: 2px; margin-bottom: 12px; text-transform: uppercase;'>Authentication Code</div>"
+	        	    + "      <div style='font-size: 38px; font-weight: 800; color: #ffffff; letter-spacing: 12px; margin-left: 12px; display: inline-block; vertical-align: middle;'>" + authCode + "</div>"
+	        	    + "    </div>"
+	        	    
+	        	    + "    <p style='font-size: 13px; color: #64748b; line-height: 1.6; margin: 0;'>"
+	        	    + "      본인이 요청하지 않은 경우 이 메일을 무시하셔도 됩니다.<br>"
+	        	    + "      타인에게 인증번호가 노출되지 않도록 주의해 주세요."
+	        	    + "    </p>"
+	        	    
+	        	    + "    <div style='margin: 40px 0 30px; border-top: 1px solid rgba(255, 255, 255, 0.06);'></div>"
+	        	    
+	        	    + "    <p style='font-size: 11px; color: #475569; line-height: 1.8;'>"
+	        	    + "      본 메일은 발신 전용입니다. ⓒ 2026 ODA.<br>"
+	        	    + "      All rights reserved."
+	        	    + "    </p>"
+	        	    + "  </div>"
+	        	    + "</div>";
 	        
 	        
 	        Mail dto = new Mail();
