@@ -56,7 +56,7 @@
 }
 
 .image-container {
-	height: 650px;
+	height: 350px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -97,8 +97,8 @@
 .compact-card {
 	display: flex;
 	flex-direction: row;
-	gap: 1.5rem;
-	padding: 1.5rem;
+	gap: 1rem;
+	padding: 0.8rem 1rem;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 	background: rgba(25, 25, 25, 0.6);
 	margin-bottom: 0 !important;
@@ -125,8 +125,8 @@
 }
 
 .compact-thumbnail-area {
-	width: 140px;
-	height: 105px;
+	width: 90px;
+	height: 65px;
 	border-radius: 8px;
 	flex-shrink: 0;
 	overflow: hidden;
@@ -151,46 +151,45 @@
 	transform: scale(1.05);
 }
 
-.compact-action-group {
-	display: flex !important;
-	flex-direction: row !important;
-	align-items: center !important;
-	gap: 1.5rem !important;
+.card-action-btn {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px !important; /* 카드형은 넉넉하게 */
+	border-radius: 50px !important;
+	color: #d1d5db;
+	font-weight: 600;
+	font-size: 0.9rem !important;
+	background: transparent;
+	border: none;
+	transition: all 0.2s ease-in-out;
+	cursor: pointer;
 }
 
-.card-action-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 20px !important; /* 카드형은 넉넉하게 */
-    border-radius: 50px !important;
-    color: #d1d5db;
-    font-weight: 600;
-    font-size: 1.05rem !important;
-    background: transparent;
-    border: none;
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
+.card-action-btn .material-symbols-outlined {
+	font-size: 1.2rem;
 }
-.card-action-btn .material-symbols-outlined { font-size: 1.5rem; }
 
 .compact-action-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    /* 축약형은 공간 확보를 위해 패딩과 폰트를 카드형보다 조금 줄임 */
-    padding: 8px 14px !important; 
-    border-radius: 50px !important;
-    color: #9ca3af;
-    font-size: 0.95rem !important; /* 폰트 사이즈 조절 */
-    font-weight: 600;
-    background: transparent;
-    border: none;
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
-    white-space: nowrap !important; /* 버튼 글자 줄바꿈 방지 */
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	/* 축약형은 공간 확보를 위해 패딩과 폰트를 카드형보다 조금 줄임 */
+	padding: 6px 10px !important;
+	border-radius: 50px !important;
+	color: #9ca3af;
+	font-size: 0.85rem !important; /* 폰트 사이즈 조절 */
+	font-weight: 600;
+	background: transparent;
+	border: none;
+	transition: all 0.2s ease-in-out;
+	cursor: pointer;
+	white-space: nowrap !important; /* 버튼 글자 줄바꿈 방지 */
 }
-.compact-action-btn .material-symbols-outlined { font-size: 1.3rem !important; }
+
+.compact-action-btn .material-symbols-outlined {
+	font-size: 1.1rem !important;
+}
 
 /* 축약형 버튼들 사이의 간격만 따로 넓게 조정 */
 .compact-action-group {
@@ -202,7 +201,7 @@
 
 /* 레이아웃 */
 .feed-container-center {
-	max-width: 950px;
+	max-width: 650px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -240,11 +239,10 @@
 }
 
 .compact-meta-info {
-    white-space: nowrap !important; /* 글자가 좁아도 절대 줄바꿈 안 함 */
-    flex-shrink: 0; /* 공간이 부족해도 찌그러지지 않음 */
-    min-width: 0;   /* 플렉스 박스 내 오동작 방지 */
+	white-space: nowrap !important; /* 글자가 좁아도 절대 줄바꿈 안 함 */
+	flex-shrink: 0; /* 공간이 부족해도 찌그러지지 않음 */
+	min-width: 0; /* 플렉스 박스 내 오동작 방지 */
 }
-
 </style>
 </head>
 <body>
@@ -278,7 +276,7 @@
 			</div>
 
 			<div class="feed-scroll-container custom-scrollbar">
-				<div class="container-fluid py-5">
+				<div class="container-fluid pt-2 pb-5">
 					<div class="row justify-content-center">
 						<div
 							class="col-12 col-lg-11 col-xl-10 mx-auto feed-container-center">
@@ -351,11 +349,11 @@
 											style="background: rgba(30, 30, 30, 0.6);">
 
 											<div
-												class="p-4 d-flex align-items-center justify-content-between">
-												<div class="d-flex align-items-center gap-3">
+												class="p-2 d-flex align-items-center justify-content-between">
+												<div class="d-flex align-items-center gap-2">
 													<div
 														class="avatar-md text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden shadow-sm"
-														style="background: linear-gradient(45deg, #a855f7, #6366f1); border-radius: 50%; width: 52px; height: 52px;">
+														style="background: linear-gradient(45deg, #a855f7, #6366f1); border-radius: 50%; width: 24px; height: 24px;">
 														<c:choose>
 															<c:when test="${not empty dto.authorProfileImage}">
 																<img
@@ -368,15 +366,15 @@
 														</c:choose>
 													</div>
 													<div>
-														<h3 class="text-base fw-bold text-white mb-0">${dto.authorNickname}</h3>
+														<div class="fs-6">${dto.authorNickname}</div>
 														<p class="text-sm text-gray-400 mb-0">${dto.timeAgo}</p>
 													</div>
 												</div>
 											</div>
 
-											<div class="px-4 pb-3">
-												<h5 class="text-white fw-bold fs-3 mb-3">${dto.title}</h5>
-												<p class="text-gray-300 text-lg mb-4 text-ellipsis">${dto.content}</p>
+											<div class="px-3 pb-2">
+												<h5 class="text-white fw-bold fs-6 mb-1">${dto.title}</h5>
+												<p class="text-gray-300 text-sm mb-2 text-ellipsis">${dto.content}</p>
 											</div>
 
 											<c:if test="${not empty dto.fileList}">
@@ -406,15 +404,18 @@
 													<c:if test="${fn:length(dto.fileList) > 1}">
 														<button class="carousel-control-prev ps-3" type="button"
 															data-bs-target="#carousel-${dto.postId}"
-															data-bs-slide="prev">
-															<span class="carousel-btn-glass"><span
-																class="material-symbols-outlined fs-4">chevron_left</span></span>
+															data-bs-slide="prev" style="display: none;">
+															<span class="carousel-btn-glass"> <span
+																class="material-symbols-outlined fs-4">chevron_left</span>
+															</span>
 														</button>
+
 														<button class="carousel-control-next pe-3" type="button"
 															data-bs-target="#carousel-${dto.postId}"
 															data-bs-slide="next">
-															<span class="carousel-btn-glass"><span
-																class="material-symbols-outlined fs-4">chevron_right</span></span>
+															<span class="carousel-btn-glass"> <span
+																class="material-symbols-outlined fs-4">chevron_right</span>
+															</span>
 														</button>
 													</c:if>
 												</div>
@@ -486,7 +487,7 @@
 											<div class="flex-grow-1 d-flex flex-column"
 												style="min-width: 0;">
 
-												<h5 class="text-white fw-bold fs-4 mb-2 text-truncate">${dto.title}</h5>
+												<h5 class="text-white fw-bold fs-6 mb-2 text-truncate">${dto.title}</h5>
 
 												<div
 													class="d-flex align-items-center justify-content-between mt-auto pt-2">
@@ -496,7 +497,7 @@
 														<div class="d-flex align-items-center gap-2 text-white-50">
 															<div
 																class="rounded-circle overflow-hidden d-flex align-items-center justify-content-center shadow-sm"
-																style="width: 28px; height: 28px; background: linear-gradient(45deg, #a855f7, #6366f1);">
+																style="width: 20px; height: 20px; background: linear-gradient(45deg, #a855f7, #6366f1);">
 																<c:choose>
 																	<c:when test="${not empty dto.authorProfileImage}">
 																		<img
@@ -504,11 +505,12 @@
 																			style="width: 100%; height: 100%; object-fit: cover;">
 																	</c:when>
 																	<c:otherwise>
-																		<span class="text-white small fw-bold">${fn:substring(dto.authorNickname, 0, 1)}</span>
+																		<span class="text-white small fw-bold"
+																			style="font-size: 10px;">${fn:substring(dto.authorNickname, 0, 1)}</span>
 																	</c:otherwise>
 																</c:choose>
 															</div>
-															<span class="fw-bold text-base text-white">${dto.authorNickname}</span>
+															<span class="fw-bold text-sm text-white">${dto.authorNickname}</span>
 														</div>
 
 														<span class="opacity-50">&bull;</span> <span
@@ -621,5 +623,42 @@
         }
         function closeImageModal() { if (myModalInstance) myModalInstance.hide(); }
     </script>
+
+	<script>
+	
+
+	$(document).ready(function() {
+    // 1. 모든 캐러셀을 선택
+    const carousels = document.querySelectorAll('.carousel');
+
+    carousels.forEach(function(carousel) {
+        // 캐러셀 슬라이드가 끝났을 때 발생하는 이벤트 리스너 등록
+        carousel.addEventListener('slid.bs.carousel', function (e) {
+            const $carousel = $(e.target);
+            const $items = $carousel.find('.carousel-item');
+            const totalItems = $items.length;
+            const currentIndex = e.to; // 이동한 인덱스
+            
+            // 해당 캐러셀 내부의 버튼 찾기
+            const $btnPrev = $carousel.find('.carousel-control-prev');
+            const $btnNext = $carousel.find('.carousel-control-next');
+
+            // (1) 첫 번째 슬라이드이면 Prev 숨김
+            if (currentIndex === 0) {
+                $btnPrev.hide();
+            } else {
+                $btnPrev.css('display', 'flex'); // flex로 보여줘야 중앙 정렬 유지
+            }
+
+            // (2) 마지막 슬라이드이면 Next 숨김
+            if (currentIndex === totalItems - 1) {
+                $btnNext.hide();
+            } else {
+                $btnNext.css('display', 'flex');
+            }
+        });
+    });
+});
+</script>
 </body>
 </html>

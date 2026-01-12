@@ -7,7 +7,6 @@
 <head>
 <%@ include file="../home/head.jsp"%>
 <style>
-
 .board-input {
 	background: rgba(255, 255, 255, 0.05);
 	border: 1px solid rgba(255, 255, 255, 0.2);
@@ -62,19 +61,18 @@ textarea.board-input::-webkit-scrollbar-thumb {
 	object-fit: cover;
 	display: block;
 }
-
 </style>
 </head>
 <body>
 
 	<%@ include file="../home/header.jsp"%>
-	
+
 	<div class="app-body">
 
 		<%@ include file="../home/sidebar.jsp"%>
 
 		<main class="app-main">
-			
+
 			<div class="space-background">
 				<div class="stars"></div>
 				<div class="stars2"></div>
@@ -84,7 +82,7 @@ textarea.board-input::-webkit-scrollbar-thumb {
 			</div>
 
 			<div class="feed-scroll-container custom-scrollbar w-100">
-				
+
 				<div class="container py-5">
 					<div class="row justify-content-center">
 						<div class="col-12 col-lg-8 col-xl-7">
@@ -92,7 +90,8 @@ textarea.board-input::-webkit-scrollbar-thumb {
 							<div class="p-4 p-md-5 shadow-lg d-flex flex-column gap-4 mb-5"
 								style="border-radius: 1rem; backdrop-filter: blur(12px); background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
 
-								<div class="border-bottom border-secondary border-opacity-25 pb-3">
+								<div
+									class="border-bottom border-secondary border-opacity-25 pb-3">
 									<h2 class="text-white fw-bold fs-4 mb-1">
 										<span class="material-symbols-outlined align-middle me-2">edit_note</span>
 										<c:if test="${mode=='update'}">게시글 수정</c:if>
@@ -100,7 +99,8 @@ textarea.board-input::-webkit-scrollbar-thumb {
 									</h2>
 								</div>
 
-								<form name="postForm" method="post" enctype="multipart/form-data">
+								<form name="postForm" method="post"
+									enctype="multipart/form-data">
 
 									<div class="mb-3">
 										<label class="text-white-50 fw-bold mb-2 ms-1">Subject</label>
@@ -110,8 +110,8 @@ textarea.board-input::-webkit-scrollbar-thumb {
 									</div>
 
 									<div class="mb-3">
-										<label class="text-white-50 fw-bold mb-2 ms-1">Writer</label> <input
-											type="text" class="form-control board-input"
+										<label class="text-white-50 fw-bold mb-2 ms-1">Writer</label>
+										<input type="text" class="form-control board-input"
 											value="${sessionScope.member.userName}" readonly
 											style="background: rgba(0, 0, 0, 0.2); cursor: default;">
 									</div>
@@ -162,15 +162,15 @@ textarea.board-input::-webkit-scrollbar-thumb {
 											<input class="form-check-input" type="checkbox" role="switch"
 												id="chkCounts" name="chkCounts" value="true"
 												<c:if test="${dto.showCounts == '0'}">checked</c:if>>
-											<label class="form-check-label text-secondary" for="chkCounts">좋아요/조회수
-												숨기기</label>
+											<label class="form-check-label text-secondary"
+												for="chkCounts">좋아요/조회수 숨기기</label>
 										</div>
 
 										<c:if test="${sessionScope.member.userLevel > 50}">
 											<div
 												class="form-check form-switch ms-1 mt-1 pt-2 border-top border-secondary border-opacity-25">
-												<input class="form-check-input" type="checkbox" role="switch"
-													id="noticeCheck" name="isNotice" value="1"
+												<input class="form-check-input" type="checkbox"
+													role="switch" id="noticeCheck" name="isNotice" value="1"
 													<c:if test="${dto.postType == 'NOTICE'}">checked</c:if>>
 												<label class="form-check-label text-warning fw-bold"
 													for="noticeCheck">공지사항 등록</label>
@@ -180,7 +180,7 @@ textarea.board-input::-webkit-scrollbar-thumb {
 
 									<div class="d-flex justify-content-end gap-2 mt-4 pb-3">
 										<button type="button" class="btn btn-outline-light px-4"
-											onclick="location.href='${pageContext.request.contextPath}/post/list';">Cancel</button>
+											onclick="location.href='${pageContext.request.contextPath}/main';">Cancel</button>
 										<button type="button" class="btn text-white px-4 fw-bold"
 											style="background: linear-gradient(to right, #a855f7, #6366f1); border: none;"
 											onclick="sendOk();">Submit</button>
@@ -190,67 +190,150 @@ textarea.board-input::-webkit-scrollbar-thumb {
 							<div style="height: 50px;"></div>
 						</div>
 					</div>
-				</div> </div> </main>
+				</div>
+			</div>
+		</main>
 	</div>
+
+	<div class="modal fade" id="deleteConfirmModal" tabindex="-1"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content"
+				style="background: rgba(30, 30, 30, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 1rem; color: #fff;">
+				<div class="modal-body text-center p-4">
+					<div class="mb-3">
+						<span class="material-symbols-outlined text-danger"
+							style="font-size: 3rem;">delete_forever</span>
+					</div>
+					<h5 class="fw-bold mb-3">이미지 삭제</h5>
+					<p class="text-white-50 mb-4">선택한 이미지를 삭제하시겠습니까?</p>
+					<div class="d-flex justify-content-center gap-2">
+						<button type="button" class="btn btn-outline-light px-4"
+							data-bs-dismiss="modal">아니요</button>
+						<button type="button" class="btn btn-danger px-4"
+							id="btnDeleteConfirm">예, 삭제합니다</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
+
 	<script type="text/javascript">
-        const dataTransfer = new DataTransfer();
+    // 전역 변수로 파일 관리
+    const dataTransfer = new DataTransfer();
+    let deleteTargetIndex = -1; // 삭제할 파일 인덱스 임시 저장용
 
-        function handleImgFileSelect(e) {
-            const newFiles = e.files;
+    // 1. 파일 선택 시 실행
+    function handleImgFileSelect(e) {
+        const newFiles = e.files;
+        
+        if(newFiles != null && newFiles.length > 0) {
+            for(let i=0; i < newFiles.length; i++){
+                // 이미지 파일인지 확인
+                if(!newFiles[i].type.match("image.*")) continue;
+                dataTransfer.items.add(newFiles[i]);
+            }
+            updateFileInputAndPreview();
+        }
+    }
+
+    // 2. 미리보기 업데이트 및 input 업데이트 (공통 함수)
+    function updateFileInputAndPreview() {
+        // input에 최신 파일 리스트 할당
+        document.getElementById("selectFile").files = dataTransfer.files;
+
+        const previewArea = document.getElementById("preview-area");
+        previewArea.innerHTML = ""; 
+
+        const allFiles = dataTransfer.files;
+        
+        for(let i=0; i < allFiles.length; i++) {
+            const f = allFiles[i];
+            const reader = new FileReader();
             
-            if(newFiles != null && newFiles.length > 0) {
-                for(let i=0; i < newFiles.length; i++){
-                    dataTransfer.items.add(newFiles[i]);
-                }
-                document.getElementById("selectFile").files = dataTransfer.files;
+            reader.onload = function(e) {
+                // 클릭 시 openDeleteModal(인덱스) 실행
+                const html = `
+                    <div class="preview-box" onclick="openDeleteModal(\${i})" style="cursor: pointer;">
+                        <img src="\${e.target.result}" class="preview-img">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 hover-overlay" 
+                             style="background: rgba(0,0,0,0.5); transition: opacity 0.2s;">
+                             <span class="material-symbols-outlined text-white">delete</span>
+                        </div>
+                    </div>`;
+                previewArea.innerHTML += html;
+                
+                // 마지막 파일 로드 후 CSS 호버 효과 주입 (JS로 동적 생성된 요소라 스타일 태그에 추가 권장)
+                // *CSS style 태그에 .preview-box:hover .hover-overlay { opacity: 1 !important; } 추가하면 더 예쁩니다.
             }
+            reader.readAsDataURL(f);
+        }
+    }
 
-            const previewArea = document.getElementById("preview-area");
-            previewArea.innerHTML = ""; 
+    // 3. 삭제 모달 열기
+    function openDeleteModal(index) {
+        deleteTargetIndex = index;
+        const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+        modal.show();
+    }
 
-            const allFiles = dataTransfer.files;
-            for(let i=0; i<allFiles.length; i++) {
-                const f = allFiles[i];
-                if(!f.type.match("image.*")) continue;
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const html = `
-                        <div class="preview-box">
-                            <img src="\${e.target.result}" class="preview-img">
-                        </div>`;
-                    previewArea.innerHTML += html;
+    // 4. 모달에서 '예' 버튼 클릭 시 실제 삭제 처리
+    document.addEventListener("DOMContentLoaded", function(){
+        document.getElementById("btnDeleteConfirm").addEventListener("click", function(){
+            if(deleteTargetIndex > -1) {
+                const newDt = new DataTransfer();
+                const files = dataTransfer.files;
+                
+                for(let i=0; i < files.length; i++) {
+                    // 삭제할 인덱스는 건너뛰고 새 DataTransfer에 담기
+                    if(i !== deleteTargetIndex) {
+                        newDt.items.add(files[i]);
+                    }
                 }
-                reader.readAsDataURL(f);
+                
+                // 전역 변수 교체
+                dataTransfer.items.clear();
+                for(let i=0; i<newDt.files.length; i++){
+                    dataTransfer.items.add(newDt.files[i]);
+                }
+
+                // 화면 갱신
+                updateFileInputAndPreview();
+                
+                // 모달 닫기
+                const modalEl = document.getElementById('deleteConfirmModal');
+                const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                modalInstance.hide();
             }
+        });
+    });
+
+    function sendOk() {
+        const f = document.postForm;
+        if(!f.title.value.trim()) {
+            alert("제목을 입력하세요.");
+            f.title.focus();
+            return;
+        }
+        if(!f.content.value.trim()) {
+            alert("내용을 입력하세요.");
+            f.content.focus();
+            return;
         }
 
-        function sendOk() {
-            const f = document.postForm;
-            if(!f.title.value.trim()) {
-                alert("제목을 입력하세요.");
-                f.title.focus();
-                return;
-            }
-            if(!f.content.value.trim()) {
-                alert("내용을 입력하세요.");
-                f.content.focus();
-                return;
-            }
-
-            let mode = "${mode}";
-            if(mode === "write") {
-                f.action = "${pageContext.request.contextPath}/post/write";
-            } else if(mode === "update") {
-                f.action = "${pageContext.request.contextPath}/post/update";
-            }
-
-            f.submit();
+        let mode = "${mode}";
+        if(mode === "write") {
+            f.action = "${pageContext.request.contextPath}/post/write";
+        } else if(mode === "update") {
+            f.action = "${pageContext.request.contextPath}/post/update";
         }
-    </script>
+        f.submit();
+    }
+</script>
 </body>
 </html>
