@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hs.model.PostDTO;
+import com.hs.model.SessionInfo;
 import com.hs.mvc.annotation.Controller;
 import com.hs.mvc.annotation.RequestMapping;
 import com.hs.mvc.view.ModelAndView;
@@ -15,6 +16,7 @@ import com.hs.service.PostServiceImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class HomeController {
@@ -41,6 +43,15 @@ public class HomeController {
 		// 2. 서비스에 전달할 맵 생성
 		Map<String, Object> map = new HashMap<>();
 		map.put("sort", sort);
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		if (info != null) {
+			map.put("userNum", info.getMemberIdx());
+		} else {
+			map.put("userNum", 0); // 비로그인 시 0
+		}
 		
 		// 3. 게시글 리스트 가져오기 (Step 1에서 만든 메서드 호출)
 		// listPostMain 메서드가 PostService에 정의되어 있어야 합니다.

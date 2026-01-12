@@ -111,7 +111,8 @@ public class LoginFilter implements Filter {
 				"/uploads/photo/**",
 				"/dist/**",
 				"/resources/**",
-				"/post/article"
+				"/post/article",
+				"/post/listReply"
 		};
 		
 		if(uri.length() <= 1) {

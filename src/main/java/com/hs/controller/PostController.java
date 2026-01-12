@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.json.JSONObject;
+
+import com.hs.model.CommentDTO;
 import com.hs.model.FileAtDTO;
 import com.hs.model.MemberDTO;
 import com.hs.model.PostDTO;
@@ -258,11 +261,174 @@ public class PostController {
 
 		MemberDTO memberdto = memberservice.findByIdx(dto.getUserNum());
 
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+
+		if (info != null) {
+			boolean liked = service.isLiked(postId, info.getMemberIdx());
+			dto.setLikedByUser(liked); 
+		}
+
 		ModelAndView mav = new ModelAndView("post/article");
 		mav.addObject("dto", dto);
 		mav.addObject("memberdto", memberdto);
-		// mav.addObject("page", page); // 이 줄이 있었다면 삭제
 
 		return mav;
 	}
+
+	// 1. 게시글 좋아요 (AJAX)
+	@PostMapping("insertPostLike")
+	public void insertPostLike(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+
+		JSONObject jobj = new JSONObject();
+
+		if (info == null) {
+			jobj.put("state", "login_required");
+			resp.setContentType("application/json; charset=UTF-8");
+			resp.getWriter().print(jobj.toString());
+			return;
+		}
+
+		try {
+			long postId = Long.parseLong(req.getParameter("postId"));
+
+			// 서비스 호출 (토글 수행)
+			boolean liked = service.insertPostLike(postId, info.getMemberIdx());
+
+			// 변경된 좋아요 개수 가져오기
+			int likeCount = service.countPostLike(postId); // 서비스/매퍼에 메소드 필요
+
+			jobj.put("state", "success");
+			jobj.put("liked", liked); // true: 핑크 하트, false: 빈 하트
+			jobj.put("likeCount", likeCount);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			jobj.put("state", "error");
+		}
+
+		resp.setContentType("application/json; charset=UTF-8");
+		resp.getWriter().print(jobj.toString());
+	}
+
+	// 2. 댓글 등록 (AJAX)
+	@PostMapping("insertReply")
+	public void insertReply(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+
+		if (info == null) {
+			resp.getWriter().print("login_required");
+			return;
+		}
+
+		try {
+			CommentDTO dto = new CommentDTO();
+			dto.setPostId(Long.parseLong(req.getParameter("postId")));
+			dto.setContent(req.getParameter("content"));
+			dto.setUserNum(info.getMemberIdx());
+			dto.setUserId(info.getUserId()); // 세션에서 아이디 가져옴
+
+			// 대댓글인 경우 부모 ID 설정
+			String parentId = req.getParameter("parentCommentId");
+			if (parentId != null && !parentId.isEmpty()) {
+				dto.setParentCommentId(Long.parseLong(parentId));
+			}
+
+			service.insertComment(dto);
+
+			resp.getWriter().print("success");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp.getWriter().print("error");
+		}
+	}
+
+	// 3. 댓글 리스트 (AJAX - HTML 조각 리턴)
+	@GetMapping("listReply")
+	public ModelAndView listReply(HttpServletRequest req, HttpServletResponse resp) {
+		// 로그인 여부와 상관없이 리스트는 볼 수 있음 (단, 좋아요 여부는 로그인 유저 기준)
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+
+		long userNum = 0;
+		if (info != null) {
+			userNum = info.getMemberIdx();
+		}
+
+		long postId = Long.parseLong(req.getParameter("postId"));
+
+		// 서비스에서 댓글 목록 가져오기 (계층형으로 정렬됨)
+		List<CommentDTO> list = service.listComment(postId, userNum);
+
+		// 댓글 목록만 뿌려줄 전용 JSP 페이지로 포워딩
+		ModelAndView mav = new ModelAndView("post/listReply");
+		mav.addObject("listReply", list);
+
+		// 게시글 작성자 번호도 넘기면 좋음 (댓글 삭제 권한 체크용)
+		// mav.addObject("postUserNum", ...);
+
+		return mav;
+	}
+
+	// 4. 댓글 삭제 (AJAX)
+	@PostMapping("deleteReply")
+	public void deleteReply(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		// 본인 확인 로직 필요
+		try {
+			long commentId = Long.parseLong(req.getParameter("commentId"));
+			service.deleteComment(commentId);
+			resp.getWriter().print("success");
+		} catch (Exception e) {
+			resp.getWriter().print("error");
+		}
+	}
+
+	// 5. 댓글 좋아요 (AJAX)
+	@PostMapping("insertCommentLike")
+	public void insertCommentLike(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+
+		JSONObject jobj = new JSONObject();
+
+		if (info == null) {
+			jobj.put("state", "login_required");
+			resp.setContentType("application/json; charset=UTF-8");
+			resp.getWriter().print(jobj.toString());
+			return;
+		}
+
+		try {
+			long commentId = Long.parseLong(req.getParameter("commentId"));
+
+			// 서비스 호출 (토글 수행)
+			boolean liked = service.insertCommentLike(commentId, info.getMemberIdx());
+
+			// 변경된 좋아요 개수 가져오기 (화면 갱신용)
+			int likeCount = 0;
+			try {
+		
+				likeCount = service.countCommentLike(commentId);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			jobj.put("state", "success");
+			jobj.put("liked", liked);
+			jobj.put("likeCount", likeCount);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			jobj.put("state", "error");
+		}
+
+		resp.setContentType("application/json; charset=UTF-8");
+		resp.getWriter().print(jobj.toString());
+	}
+
 }

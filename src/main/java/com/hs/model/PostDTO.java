@@ -16,14 +16,13 @@ public class PostDTO {
 	private Long commentCount;
 	private String isDeleted;
 	private String createdDate;
-
 	private String updatedDate;
 	private String state;
 	private String replyEnabled;
 	private String showCounts;
-
 	private List<FileAtDTO> fileList;
 	private String thumbnail;
+	private boolean likedByUser;
 
 	// 조인용 필드 (작성자 닉네임 등)
 	private String authorNickname;
@@ -179,6 +178,14 @@ public class PostDTO {
 
 	public void setThumbnail(String thumbnail) {
 		this.thumbnail = thumbnail;
+	}
+
+	public boolean isLikedByUser() {
+		return likedByUser;
+	}
+
+	public void setLikedByUser(boolean likedByUser) {
+		this.likedByUser = likedByUser;
 	}
 
 	// 1. "n시간 전" 계산 로직

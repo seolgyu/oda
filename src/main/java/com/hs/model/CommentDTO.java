@@ -1,53 +1,56 @@
 package com.hs.model;
 
-import java.util.Date;
-
 public class CommentDTO {
-	private Long commentId; // PK
-	private Long postId; // FK
-	private Long authorId; // FK
-	private Long parentCommentId; // FK (대댓글)
-	private String content; // CLOB
-	private Long likeCount;
-	private String isDeleted;
-	private Date createdAt;
-	private Date updatedAt;
+	// 1. COMMENTS 테이블 컬럼 매핑
+	private long commentId;
+	private long postId;
+	private long userNum;
+	private String userId; // 테이블의 user_id (작성자 ID)
+	private String content;
+	private String createdDate; // 포맷팅된 날짜 문자열
+	private String updatedDate;
+	private long parentCommentId; // 부모 댓글 ID (대댓글일 경우)
+	private String isDeleted; // '0': 정상, '1': 삭제됨
 
-	// 조인용 필드
-	private String authorNickname;
-	private String authorProfileImage;
-	private int depth; // depth = 0: 원본 댓글 (들여쓰기 없음) depth = 1: 댓글의 댓글 (한 번 들여쓰기)
+	// 2. 화면 표시를 위한 추가 필드 (JOIN으로 가져옴)
+	private String userNickName; // 작성자 닉네임
+	private String profileImage; // 작성자 프로필 사진
 
-	public Long getCommentId() {
+	// 3. 좋아요/대댓글 기능용 필드
+	private int likeCount; // 좋아요 개수
+	private boolean likedByUser; // 현재 로그인한 유저가 좋아요 눌렀는지 여부
+
+	// Getter & Setter 생성 (필수)
+	public long getCommentId() {
 		return commentId;
 	}
 
-	public void setCommentId(Long commentId) {
+	public void setCommentId(long commentId) {
 		this.commentId = commentId;
 	}
 
-	public Long getPostId() {
+	public long getPostId() {
 		return postId;
 	}
 
-	public void setPostId(Long postId) {
+	public void setPostId(long postId) {
 		this.postId = postId;
 	}
 
-	public Long getAuthorId() {
-		return authorId;
+	public long getUserNum() {
+		return userNum;
 	}
 
-	public void setAuthorId(Long authorId) {
-		this.authorId = authorId;
+	public void setUserNum(long userNum) {
+		this.userNum = userNum;
 	}
 
-	public Long getParentCommentId() {
-		return parentCommentId;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setParentCommentId(Long parentCommentId) {
-		this.parentCommentId = parentCommentId;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public String getContent() {
@@ -58,12 +61,28 @@ public class CommentDTO {
 		this.content = content;
 	}
 
-	public Long getLikeCount() {
-		return likeCount;
+	public String getCreatedDate() {
+		return createdDate;
 	}
 
-	public void setLikeCount(Long likeCount) {
-		this.likeCount = likeCount;
+	public void setCreatedDate(String createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(String updatedDate) {
+		this.updatedDate = updatedDate;
+	}
+
+	public long getParentCommentId() {
+		return parentCommentId;
+	}
+
+	public void setParentCommentId(long parentCommentId) {
+		this.parentCommentId = parentCommentId;
 	}
 
 	public String getIsDeleted() {
@@ -74,44 +93,36 @@ public class CommentDTO {
 		this.isDeleted = isDeleted;
 	}
 
-	public Date getCreatedAt() {
-		return createdAt;
+	public String getUserNickName() {
+		return userNickName;
 	}
 
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
+	public void setUserNickName(String userNickName) {
+		this.userNickName = userNickName;
 	}
 
-	public Date getUpdatedAt() {
-		return updatedAt;
+	public String getProfileImage() {
+		return profileImage;
 	}
 
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setProfileImage(String profileImage) {
+		this.profileImage = profileImage;
 	}
 
-	public String getAuthorNickname() {
-		return authorNickname;
+	public int getLikeCount() {
+		return likeCount;
 	}
 
-	public void setAuthorNickname(String authorNickname) {
-		this.authorNickname = authorNickname;
+	public void setLikeCount(int likeCount) {
+		this.likeCount = likeCount;
 	}
 
-	public String getAuthorProfileImage() {
-		return authorProfileImage;
+	public boolean isLikedByUser() {
+		return likedByUser;
 	}
 
-	public void setAuthorProfileImage(String authorProfileImage) {
-		this.authorProfileImage = authorProfileImage;
-	}
-
-	public int getDepth() {
-		return depth;
-	}
-
-	public void setDepth(int depth) {
-		this.depth = depth;
+	public void setLikedByUser(boolean likedByUser) {
+		this.likedByUser = likedByUser;
 	}
 
 }
