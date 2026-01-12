@@ -1,8 +1,13 @@
 package com.hs.model.admin;
 
+import java.util.List;
+
+import com.hs.util.MyMultipartFile;
+
 public class EventDTO {
-	private long user_num; 
+	private long user_num;
 	private long event_num;
+	private int events;
 	private String event_title;
 	private String event_content;
 	private String start_date;
@@ -13,42 +18,16 @@ public class EventDTO {
 	private String update_date;
 	private int hitCount;
 	private int showEvent;
-	private String state; // 임시저장, 신고, 정상, 나만보기
+
+	private List<MyMultipartFile> listFile;
 	
 	// 첨부파일
 	private long file_at_id;
-	private String file_name;
-	private String file_path;
+	private String originalFilename;
+	private String saveFilename;
 	private long file_size;
-	private String file_type;
-	private String file_order;
-	private String uploaded_date;
-	
-	
-	
-	// 댓글	
-	
-	
-	public int getHitCount() {
-		return hitCount;
-	}
-	public int getShowNotice() {
-		return showEvent;
-	}
-	public void setShowNotice(int showEvent) {
-		this.showEvent = showEvent;
-	}
-	public void setHitCount(int hitCount) {
-		this.hitCount = hitCount;
-	}
 	public long getUser_num() {
 		return user_num;
-	}
-	public String getActive_status() {
-		return active_status;
-	}
-	public void setActive_status(String active_status) {
-		this.active_status = active_status;
 	}
 	public void setUser_num(long user_num) {
 		this.user_num = user_num;
@@ -89,6 +68,12 @@ public class EventDTO {
 	public void setIs_active(int is_active) {
 		this.is_active = is_active;
 	}
+	public String getActive_status() {
+		return active_status;
+	}
+	public void setActive_status(String active_status) {
+		this.active_status = active_status;
+	}
 	public String getCreated_date() {
 		return created_date;
 	}
@@ -101,11 +86,24 @@ public class EventDTO {
 	public void setUpdate_date(String update_date) {
 		this.update_date = update_date;
 	}
-	public String getState() {
-		return state;
+	public int getHitCount() {
+		return hitCount;
 	}
-	public void setState(String state) {
-		this.state = state;
+	public void setHitCount(int hitCount) {
+		this.hitCount = hitCount;
+	}
+	public int getShowEvent() {
+		return showEvent;
+	}
+	public void setShowEvent(int showEvent) {
+		this.showEvent = showEvent;
+	}
+
+	public List<MyMultipartFile> getListFile() {
+		return listFile;
+	}
+	public void setListFile(List<MyMultipartFile> listFile) {
+		this.listFile = listFile;
 	}
 	public long getFile_at_id() {
 		return file_at_id;
@@ -113,17 +111,17 @@ public class EventDTO {
 	public void setFile_at_id(long file_at_id) {
 		this.file_at_id = file_at_id;
 	}
-	public String getFile_name() {
-		return file_name;
+	public String getOriginalFilename() {
+		return originalFilename;
 	}
-	public void setFile_name(String file_name) {
-		this.file_name = file_name;
+	public void setOriginalFilename(String originalFilename) {
+		this.originalFilename = originalFilename;
 	}
-	public String getFile_path() {
-		return file_path;
+	public String getSaveFilename() {
+		return saveFilename;
 	}
-	public void setFile_path(String file_path) {
-		this.file_path = file_path;
+	public void setSaveFilename(String saveFilename) {
+		this.saveFilename = saveFilename;
 	}
 	public long getFile_size() {
 		return file_size;
@@ -131,26 +129,16 @@ public class EventDTO {
 	public void setFile_size(long file_size) {
 		this.file_size = file_size;
 	}
-	public String getFile_type() {
-		return file_type;
+	public int getEvents() {
+		return events;
 	}
-	public void setFile_type(String file_type) {
-		this.file_type = file_type;
+	public void setEvents(int events) {
+		this.events = events;
 	}
-	public String getFile_order() {
-		return file_order;
-	}
-	public void setFile_order(String file_order) {
-		this.file_order = file_order;
-	}
-	public String getUploaded_date() {
-		return uploaded_date;
-	}
-	public void setUploaded_date(String uploaded_date) {
-		this.uploaded_date = uploaded_date;
-	}
+	
+	// 댓글
+	
+	
 	
 
-	
-	
 }

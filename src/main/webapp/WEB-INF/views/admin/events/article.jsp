@@ -92,8 +92,10 @@
         }
         .title-divider {
             border-top: 1px solid #374151;
+            margin-top: 1rem;
             margin-bottom: 1rem;
         }
+        
         .view-info-bar {
             display: flex;
             justify-content: space-between;
@@ -101,12 +103,22 @@
             color: #94A3B8;
             font-size: 0.875rem;
         }
+        
+        .view-info-bardate {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #94A3B8;
+            font-size: 0.875rem;
+        }
+        
         .view-content {
             padding: 2rem 2rem 1rem 2rem;
             min-height: 300px;
             line-height: 1.6;
             color: #E2E8F0;
             border-top: 1px solid #374151;
+            border: none;
         }
         .like-button-container {
             padding: 2rem 0 3rem 0;
@@ -378,20 +390,35 @@
 
 	<div class="view-card">
 		<div class="view-header">
-			<h1 class="view-title">강사님이 보고있습니다.</h1>
+			<h1 class="view-title">
+				<c:out value="${dto.event_title}" default="제목없음"/>
+			</h1>
 			<div class="title-divider"></div>
 			
 			<div class="view-info-bar">
-				<div>이름 : 관리자</div>
-				<div>2025-12-31 09:11:47 <span class="mx-2">|</span> 조회 7</div>
+				<div>작성자 : 관리자</div>
+				<div>작성일자 : ${dto.created_date} <span class="mx-2">|</span> 조회 : ${dto.hitCount}</div>
+			</div>
+			<div class="title-divider"></div>
+			
+			<div class="view-info-bardate" >
+				<div>시작일자 : ${dto.start_date} </div>
+				<div>종료일자 : ${dto.end_date}</div>
 			</div>
 		</div>
 		
 	<div class="view-content">
-		<p>안녕하세요. 공지사항 내용입니다.</p>
-		<p>시스템 점검 안내 및 교육 일정에 대한 상세 내용을 확인해 주시기 바랍니다.</p>
-			<img alt="Announcement Image" class="content-image-placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBU-bCLB_bG8ykPdI7eLB-HnY3-XXQXn2xqgugPmbR3z4u91yF5yFKJJlRMoO7QBkLJwJrajtYVVbmzPY1bk7OiXBSFFxMyYsA8O-QReyUWV0fSYcCmanxOWFh6dWYsNHM_Q5BPNWguJ781w_meYo5Gysmqeb_gE8q1liKubB-VO-djC6vfIDs44Mm4zIRIQjcdIliZSD_kVYFNYRdefpD9Zm11sfEPYK6VmwuI9vZCGd14sdM2Jrb0DGGhd3sw2e4T2AUwFPCaDa4"/>
-		<p>추가 문의사항은 관리자에게 연락 부탁드립니다. 감사합니다.</p>
+		<p>${dto.event_content}</p>
+ 
+			<c:if test="${listFile.size() != 0}">
+
+					<i class="bi bi-folder2-open"></i>
+						<c:forEach var="vo" items="${listFile}" varStatus="status">
+							<a href="${pageContext.request.contextPath}/events/download?fileNum=${vo.fileNum}" class="text-reset">${vo.originalFilename}</a>
+								<c:if test="${not status.last}">|</c:if>
+						</c:forEach>
+			</c:if>
+
 	</div>
 	
 	<div class="like-button-container">
@@ -514,7 +541,7 @@
 	</div>
 	
 	<div class="action-footer">
-		<button class="btn btn-action btn-list">리스트</button>
+		<button class="btn btn-action btn-list" onclick="location.href='${pageContext.request.contextPath}/events/list?${query}';">리스트</button>
 	</div>
 
 			</div>

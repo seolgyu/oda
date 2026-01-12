@@ -334,7 +334,7 @@ input:-webkit-autofill:focus {
 									</td>
 									<td>
 										<span class="eventlink fw-bold text-white">
-											<a href="${articleUrl}&num=${dto.event_num}" class="text-reset"><c:out value="${dto.event_title}"/></a>
+											<a href="${articleUrl}&event_num=${dto.event_num}" class="text-reset"><c:out value="${dto.event_title}"/></a>
 										</span>
 									</td>
 									<td class="text-white-50 date-text">${dto.start_date}</td>
@@ -361,7 +361,7 @@ input:-webkit-autofill:focus {
 									</td>
 									<td>
 										<span class="eventlink fw-bold text-white">
-											<a href="${articleUrl}&num=${dto.event_num}" class="text-reset"><c:out value="${dto.event_title}"/></a>
+											<a href="${articleUrl}&event_num=${dto.event_num}" class="text-reset"><c:out value="${dto.event_title}"/></a>
 										</span>
 									</td>
 									<td class="text-white-50 date-text">${dto.start_date}</td>

@@ -5,10 +5,17 @@
 	<!-- 이벤트 등록  -->
 	<insert id="insertEvent" parameterType="map">
 		  INSERT INTO EVENT(event_num, event_title, event_content, start_date, 
-			end_date, is_active, created_date, update_date, state)
-		VALUES(#{event_num}, #{event_title}, #{event_content}, #{start_date}, #{end_date}, 0, SYSDATE, SYSDATE, #{state})
+			end_date, is_active, created_date, update_date, ev_hitcount)
+		VALUES(#{event_num}, #{event_title}, #{event_content}, #{start_date}, #{end_date}, 0, SYSDATE, SYSDATE, #{ev_hitcount})
 	</insert>
 	
+	<!-- 이벤트 등록 파일 -->
+	<insert id="insertEventFile" parameterType="com.hs.model.admin.EventDTO">
+		INSERT INTO EVENT_FILEAT(file_at_id, event_num, user_num, originalFilename, saveFilename, file_size)
+			VALUES(EV_FILEAT_SEQ.NEXTVAL, #{event_num}, #{user_num}, #{originalFilename}, #{saveFilename}, #{file_size})
+	</insert>
+	
+	<!-- 검색 조건 -->
 	<sql id="search-list">
 		<if test="schType == 'all' ">
 			(INSTR(event_title, #{kwd}) &gt; 0 
@@ -34,7 +41,7 @@
 		    		WHEN SYSDATE > start_date AND SYSDATE &lt;= end_date THEN '진행'
 		            WHEN is_active = 2 OR (SYSDATE >= end_date) THEN '종료'
 		            ELSE '진행예정'
-		            END AS active_status, is_active, created_date, update_date, state, NVL(fileCount, 0) fileCount
+		            END AS active_status, is_active, created_date, update_date, ev_hitcount, NVL(fileCount, 0) fileCount
 		       FROM EVENT e
 		       JOIN MEMBER m ON e.user_num = m.user_num
 		          LEFT OUTER JOIN (
@@ -72,8 +79,7 @@
                     WHEN is_active = 2 OR (SYSDATE >= end_date) THEN '종료'
                 ELSE '진행예정'
                 END AS active_status,
-                is_active, 
-                created_date, update_date, state, NVL(fileCount, 0) fileCount
+                is_active, created_date, update_date, ev_hitcount, NVL(fileCount, 0) fileCount
     	FROM EVENT e
     	JOIN MEMBER m ON e.user_num = m.user_num
        	LEFT OUTER JOIN (
@@ -93,10 +99,21 @@
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
 	
+	<!-- 글보기 -->
+	<select id="findById" parameterType="Long" resultType="com.hs.model.admin.EventDTO">
+		SELECT event_num, e.user_num, event_title, event_content, 
+			TO_CHAR(start_date, 'YYYY-MM-DD') start_date, 
+			TO_CHAR(end_date, 'YYYY-MM-DD') end_date, 
+			TO_CHAR(created_date, 'YYYY-MM-DD') created_date, ev_hitcount
+		FROM event e
+		JOIN member m ON e.user_num = m.user_num
+		WHERE event_num = #{event_num}
+	</select>
+	
 	<!-- 조회수 증가 -->
 	<update id="updateHitCount" parameterType="Long">
-		UPDATE EVENT SET hitCount = hitCount + 1
-		WHERE num = #{num}
+		UPDATE EVENT SET ev_hitcount = ev_hitcount + 1
+		WHERE event_num = #{event_num}
 	</update>
 	
 </mapper>
