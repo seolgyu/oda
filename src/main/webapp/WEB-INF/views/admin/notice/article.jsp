@@ -340,271 +340,6 @@ body {
 }
 
 /* ==========================================
-   댓글 섹션 - 전체 컨테이너
-   ========================================== */
-.comments-section {
-    padding: 2rem 1.5rem;
-    border-top: 1px solid #374151;
-    background-color: rgba(0,0,0,0.1);
-}
-
-/* ==========================================
-   댓글 입력 영역
-   ========================================== */
-.comment-input-container {
-    margin-bottom: 2rem;
-    background: #0F172A;
-    border: 1px solid #334155;
-    border-radius: 0.5rem;
-    padding: 1rem;
-}
-
-.comment-textarea {
-    background: transparent;
-    border: none;
-    color: #F1F5F9;
-    width: 100%;
-    resize: none;
-    min-height: 80px;
-    font-size: 0.9375rem;
-}
-
-.comment-textarea:focus {
-    outline: none;
-}
-
-.comment-input-footer {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 0.5rem;
-}
-
-.btn-register {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.4rem 1.25rem;
-    font-size: 0.875rem;
-    border-radius: 0.375rem;
-    transition: background-color 0.2s;
-}
-
-.btn-register:hover {
-    background-color: var(--primary-hover);
-    color: white;
-}
-
-/* ==========================================
-   댓글 헤더 (개수, 페이지 표시)
-   ========================================== */
-.comment-header {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #F8FAFC;
-}
-
-/* ==========================================
-   댓글 리스트 컨테이너
-   ========================================== */
-.comment-list,
-.list-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    width: 100%;
-}
-
-/* 비어있을 때도 최소 공간 확보 */
-.list-content:empty::after {
-    content: '';
-    display: block;
-    min-height: 1px;
-}
-#listReply .list-content {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 1.25rem !important;
-    width: 100% !important;
-}
-
-#listReply .comment-box {
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-/* ==========================================
-   개별 댓글 박스
-   ========================================== */
-.comment-box {
-    background-color: var(--comment-box-bg);
-    border: 1px solid #334155;
-    border-radius: 0.5rem;
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-}
-
-/* 댓글 메타 정보 (작성자, 날짜, 메뉴) */
-.comment-meta {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    gap: 0.75rem;
-}
-
-.comment-author {
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: #F8FAFC;
-}
-
-.comment-date {
-    font-size: 0.75rem;
-    color: #94A3B8;
-}
-
-/* 댓글 내용 */
-.comment-body {
-    font-size: 0.9375rem;
-    color: #CBD5E1;
-    line-height: 1.5;
-    margin-bottom: 0.75rem;
-}
-
-/* 숨겨진 댓글 스타일 */
-.comment-body.text-primary.text-opacity-50 {
-    color: rgba(37, 99, 235, 0.5) !important;
-}
-
-/* ==========================================
-   댓글 액션 버튼 (답글, 좋아요/싫어요)
-   ========================================== */
-.comment-actions {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.btn-reply, 
-.btn-view-replies {
-    background: none;
-    border: none;
-    color: #64748B;
-    font-size: 0.75rem;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.btn-reply:hover, 
-.btn-view-replies:hover {
-    color: #94A3B8;
-}
-
-/* ==========================================
-   댓글 드롭다운 메뉴 (삭제, 숨김, 차단 등)
-   ========================================== */
-.reply-dropdown {
-    cursor: pointer;
-    color: #64748B;
-    transition: color 0.2s;
-    padding: 0.25rem;
-}
-
-.reply-dropdown:hover {
-    color: #94A3B8;
-}
-
-.reply-menu {
-    position: absolute;
-    background: #1E293B;
-    border: 1px solid #334155;
-    border-radius: 0.375rem;
-    padding: 0.5rem;
-    z-index: 1000;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-    min-width: 120px;
-}
-
-.reply-menu-item {
-    padding: 0.5rem 0.75rem;
-    cursor: pointer;
-    color: #E2E8F0;
-    font-size: 0.875rem;
-    transition: background-color 0.2s;
-    border-radius: 0.25rem;
-}
-
-.reply-menu-item:hover {
-    background-color: #334155;
-}
-
-/* ==========================================
-   좋아요/싫어요 버튼
-   ========================================== */
-.btnSendReplyLike {
-    background-color: transparent;
-    border: 1px solid #334155;
-    color: #94A3B8;
-    padding: 0.25rem 0.75rem;
-    font-size: 0.875rem;
-    border-radius: 0.375rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    transition: all 0.2s;
-}
-
-.btnSendReplyLike:hover {
-    background-color: #334155;
-    border-color: #475569;
-    color: #fff;
-}
-
-.btnSendReplyLike i {
-    font-size: 1rem;
-}
-
-/* ==========================================
-   답글 컨테이너
-   ========================================== */
-.re-comment-container {
-    margin-top: 1rem;
-    padding-left: 1.5rem;
-    display: none;
-    flex-direction: column;
-    gap: 1.25rem;
-}
-
-/* d-none이 아닐 때만 표시 */
-.re-comment-container:not(.d-none) {
-    display: flex;
-}
-
-.answer-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.re-comment-item {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    background: #0F172A;
-    border: 1px solid #334155;
-    border-radius: 0.5rem;
-}
-
-/* ==========================================
    페이징
    ========================================== */
 .list-footer {
@@ -665,6 +400,38 @@ body {
 .text-opacity-50 {
     opacity: 0.5 !important;
 }
+
+
+
+/* 댓글 */
+.reply { clear: both; padding: 20px 0 10px; }
+.reply .bold { font-weight: 600; }
+
+.reply .form-header { padding-bottom: 7px; }
+.reply-form  tr > td { padding: 2px 0 2px; }
+.reply-form textarea { width: 100%; height: 75px; resize: none; }
+.reply-form button { padding: 8px 25px; }
+
+.reply .reply-info { padding-top: 25px; padding-bottom: 7px; }
+.reply-info .reply-count { color: #3EA9CD; font-weight: 600; }
+
+.reply-writer .icon { font-size: 1.6rem; color: #999; }
+.reply-writer .name { font-size: 13px; font-weight: 600; }
+.reply-writer .date { font-size: 10px; }
+
+.reply .deleteReply, .reply .deleteReplyAnswer { cursor: pointer; }
+.reply .notifyReply, .reply .notifyReplyAnswer { cursor: pointer; }
+.reply .hideReply, .reply .hideReplyAnswer { cursor: pointer; }
+.reply .blockReply, .reply .blockReplyAnswer { cursor: pointer; }
+
+.reply .reply-dropdown { cursor: pointer; }
+.reply .reply-dropdown:hover { color: #0d6efd; font-weight: 500; }
+.reply .reply-menu { position: absolute; width: 80px; min-height: 65px; background:#fff; border: 1px solid #d5d5d5; border-radius: 3px; z-index: 9999; }
+.reply .reply-menu-item { text-align: center; cursor: pointer; padding: 7px; }
+.reply .reply-menu-item:nth-child(2n+1) { border-bottom: 1px solid #d5d5d5; }
+.reply .reply-menu-item:hover { color: #0d6efd; font-weight: 500; }
+
+.reply-answer textarea { width:98%; height: 75px; resize: none; }
 </style>
 </head> 
 <body class="bg-background-dark text-white">
@@ -750,8 +517,8 @@ body {
     </div>
 	</c:if>
 	<div class="like-button-container">
-		<button class="btn btn-like">
-			<span class="material-symbols-outlined">favorite</span>
+		<button type="button" class="btn btn-like btnSendBoardLike">
+			<span class="material-symbols-outlined">favorite<i class="bi ${isUserLiked ? 'bi-hand-thumbs-up':'bi-hand-thumbs-up-fill' }"></i><span id="boardLikeCount">${dto.boardLikeCount}</span></span>
 		</button>
 	</div>
 	
@@ -783,42 +550,46 @@ body {
     </c:if>
 </div>
 	
-	<div class="comments-section">
-    
-    <!-- 댓글 입력창 -->
-    <div class="comment-input-container">
-        <textarea class="comment-textarea" name="content" placeholder="댓글을 입력해주세요."></textarea>
-        <div class="comment-input-footer">
-            <button class="btn btn-register btnSendReply">등록</button>
-        </div>
-    </div>
-    
-    <!-- ✅ 댓글 리스트 영역 -->
-    <div id="listReply" 
-         data-contextPath="${pageContext.request.contextPath}" 
-         data-postsUrl="${pageContext.request.contextPath}/admin/notice"
-         data-num="${dto.notice_num}"
-         data-liked="1">
-        
-        <!-- 댓글 헤더 (개수, 페이지 정보) -->
-        <div class="comment-header">
-            <span class="material-symbols-outlined">forum</span>
-            <span class="reply-count"></span>
-            <span class="reply-page"></span>
-        </div>
-        
-        <!-- ✅ 댓글 컨텐츠 영역 (동적으로 삽입될 부분) -->
-        <div class="comment-list list-content" data-pageNo="0" data-totalPage="0">
-            <!-- 여기에 renderReplies()가 생성한 HTML이 삽입됨 -->
-        </div>
-        
-        <!-- 페이징 -->
-        <div class="list-footer">
-            <div class="page-navigation"></div>
-        </div>
-    </div>
-    
-</div>
+	<div class="reply">
+		<form name="replyForm" method="post">
+			<div class="form-header">
+				<span class="bold">댓글</span><span> - 타인을 비방하거나 개인정보를 유출하는 글의 게시를 삼가해 주세요.</span>
+			</div>
+			
+			<table class="table table-borderless reply-form">
+				<tr>
+					<td>
+						<textarea class="form-control" name="content"></textarea>
+					</td>
+				</tr>
+				<tr>
+				   <td align="right">
+						<button type="button" class="btn btn-light btnSendReply">댓글 등록</button>
+					</td>
+				 </tr>
+			</table>
+		</form>
+		
+		<div id="listReply" data-contextPath="${pageContext.request.contextPath}" 
+				data-postsUrl="${pageContext.request.contextPath}/admin/notice"
+				data-num="${dto.notice_num}"
+				data-liked="1">
+			<div class="reply-info">
+				<span class="reply-count"></span>
+				<span class="reply-page"></span>
+			</div>
+			
+			<div class="list-content" data-pageNo="0" data-totalPage="0">
+				<table class="table table-borderless">
+					<tbody></tbody>
+				</table>
+			</div>
+			
+			<div class="list-footer">
+				<div class="page-navigation"></div>
+			</div>
+		</div>
+	</div>
 	
 	<div class="action-footer">
 		<button class="btn btn-action btn-list">리스트</button>
@@ -837,6 +608,54 @@ body {
 		    }
 		}
 	</script>
+	<script type="text/javascript">
+	// 게시글 공감 여부
+	$(function() {
+	    $('button.btnSendBoardLike').click(function() {
+	        const $i = $(this).find('i');
+	        
+	        // 현재 좋아요 상태 확인 (filled = 이미 좋아요 누른 상태)
+	        let userLiked = $i.hasClass('bi-hand-thumbs-up-fill');
+	        let msg = userLiked ? '게시글 좋아요를 취소하시겠습니까?' : '게시글에 공감하시겠습니까?';
+	        
+	        if(!confirm(msg)){
+	            return false;
+	        }
+	        
+	        let url = '${pageContext.request.contextPath}/admin/notice/insertBoardLike';
+	        let num = '${dto.notice_num}';
+	        
+	        // userLiked를 문자열로 변환하여 전달
+	        let params = {num: num, userLiked: userLiked ? 'true' : 'false'};
+	        
+	        const fn = function(data) {
+	            let state = data.state;
+	            
+	            if(state === 'true'){
+	                // 성공 시 UI 업데이트
+	                if(userLiked){
+	                    // 좋아요 취소 -> 빈 하트
+	                    $i.removeClass('bi-hand-thumbs-up-fill').addClass('bi-hand-thumbs-up');
+	                } else {
+	                    // 좋아요 등록 -> 채워진 하트
+	                    $i.removeClass('bi-hand-thumbs-up').addClass('bi-hand-thumbs-up-fill');
+	                }
+	                
+	                // 좋아요 개수 업데이트
+	                let count = data.boardLikeCount;
+	                $('#boardLikeCount').text(count);
+	                
+	            } else if(state === 'liked'){
+	                alert('게시글 공감은 한번만 가능합니다.');
+	            } else if(state === 'false'){  // 오타 수정
+	                alert('게시글 공감에 실패했습니다.');
+	            }
+	        };
+	        
+	        ajaxRequest(url, 'post', params, 'json', fn);
+	    });
+	});
+</script>
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>

@@ -38,4 +38,10 @@ public interface NoticeService {
 	public void updateReplyShowHide(Map<String, Object> map);
 	
 	public Integer hasUserReplyLiked(Map<String, Object> map);
+	
+	public void insertBoardLike(Map<String, Object> map) throws Exception;
+	public void deleteBoardLike(Map<String, Object> map) throws Exception;
+	public int boardLikeCount(long num);
+	
+	public boolean isUserBoardLiked(Map<String, Object> map);
 }

@@ -3,6 +3,7 @@ package com.hs.controller.admin;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,7 +88,7 @@ public class noticeManageController {
 			if (page != null) {
 				current_page = Integer.parseInt(page);
 			}
-
+			
 			String schType = req.getParameter("schType");
 			String kwd = req.getParameter("kwd");
 			String state = req.getParameter("state");
@@ -294,6 +295,10 @@ public class noticeManageController {
 	public ModelAndView article(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 글보기
 		// 넘어온 파라미터 : 글번호, 페이지번호, size [, 검색컬럼, 검색값]
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
 		String page = req.getParameter("page");
 		String size = req.getParameter("size");
 		String query = "page=" + page + "&size=" + size;
@@ -318,7 +323,7 @@ public class noticeManageController {
 			if (state != null) {
 		        query += "&state=" + util.encodeUrl(state);
 		    }
-
+			
 			// 조회수
 			service.updateHitCount(num);
 
@@ -341,6 +346,11 @@ public class noticeManageController {
 			// 이전글/다음글
 			NoticeDTO prevDto = service.findByPrev(map);
 			NoticeDTO nextDto = service.findByNext(map);
+			
+			//좋아요 여부
+			map.put("num", num);
+			map.put("userId", info.getUserId());
+			boolean isUserLiked = service.isUserBoardLiked(map);
 
 			// 파일
 			List<NoticeDTO> listFile = service.listNoticeFile(num);
@@ -354,6 +364,7 @@ public class noticeManageController {
 			mav.addObject("query", query);
 			mav.addObject("page", page);
 			mav.addObject("size", size);
+			mav.addObject("isUserLiked", isUserLiked);
 
 			return mav;
 		} catch (Exception e) {
@@ -574,6 +585,7 @@ public class noticeManageController {
 			List<NoticeReplyDTO> listReply = service.listReply(map);
 			
 			for(NoticeReplyDTO dto : listReply) {
+				
 				dto.setContent(util.htmlSymbols(dto.getContent()));
 				
 				// 유저의 좋아요/싫어요 유무
@@ -603,4 +615,124 @@ public class noticeManageController {
 		}
 		
 	}
+	
+	@ResponseBody
+	@PostMapping("deleteReply")
+	public Map<String, Object> deleteReply(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Map<String, Object> model = new HashMap<String, Object>();
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		String state = "false";
+		try {
+			long replyNum = Long.parseLong(req.getParameter("replyNum"));
+			String mode = req.getParameter("mode");
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("replyNum", replyNum);
+			map.put("userId", info.getUserId());
+			map.put("userLevel",info.getUserLevel());
+			map.put("mode",mode);
+			
+			service.deleteReply(map);
+			
+			state = "true";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		model.put("state", state);
+		
+		return model;
+	}
+	
+	// 댓글의 답글 리스트 : AJAX - JSON
+		@ResponseBody
+		@GetMapping("listReplyAnswer")
+		public Map<String, Object> listReplyAnswer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+			Map<String, Object> model = new HashMap<String, Object>();
+			
+			HttpSession session = req.getSession();
+			SessionInfo info = (SessionInfo)session.getAttribute("member");
+			
+			try {
+				long parentNum = Long.parseLong(req.getParameter("parentNum"));
+				
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("parentNum", parentNum);
+				map.put("usrtId", info.getUserId());
+				map.put("userLevel",info.getUserLevel());
+				
+				int count = service.replyAnswerCount(map);
+				
+				List<NoticeReplyDTO> listReplyAnswer = service.listReplyAnswer(map);
+				
+				for(NoticeReplyDTO dto : listReplyAnswer) {
+					dto.setContent(util.htmlSymbols(dto.getContent()));
+				}
+				
+				Map<String, Object> sessionMember = new HashMap<String, Object>();
+				sessionMember.put("userId", info.getUserId());
+				sessionMember.put("userLevel", info.getUserLevel());
+				
+				model.put("sessionMember", sessionMember);
+				model.put("count", count);
+				model.put("listReplyAnswer", listReplyAnswer);
+			} catch (Exception e) {
+				e.printStackTrace();
+				
+				resp.sendError(406);
+				throw e;
+			}
+			
+			
+			return model;
+		}
+		
+		// 게시글 공감 저장 : AJAX-JSON
+		@ResponseBody
+		@PostMapping("insertBoardLike")
+		public Map<String, Object> insertBoardLike(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+			Map<String, Object> model = new HashMap<String, Object>();
+			
+			// 넘어온 파라미터 :글번호, 공감/취소 여부
+			
+			HttpSession session = req.getSession();
+			SessionInfo info = (SessionInfo)session.getAttribute("member");
+			
+			String state = "false";
+			int boardLikeCount = 0;
+			
+			try {
+				long num = Long.parseLong(req.getParameter("num"));
+				String userLiked = req.getParameter("userLiked");
+				
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("num", num);
+				map.put("userId", info.getUserId());
+				
+				if(userLiked.equals("true")) {
+					// 공감취소
+					service.deleteBoardLike(map);
+				} else {
+					// 공감
+					service.insertBoardLike(map);
+				}
+				
+				// 공감 개수
+				boardLikeCount = service.boardLikeCount(num);
+				
+				state = "true";
+				
+			} catch (SQLException e) {
+				state = "liked";
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			model.put("state", state); // 상태
+			model.put("boardLikeCount", boardLikeCount);
+			
+			return model;
+		}
 }

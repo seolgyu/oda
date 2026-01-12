@@ -96,20 +96,26 @@
 	</delete>
 	
 	<select id="findById" parameterType="Long" resultType="com.hs.model.admin.NoticeDTO">
-	SELECT notice_num,
-		 	noti.user_num user_num,
-		 	memb.user_id user_id,
-		 	memb.user_nickname user_nickname,
-		 	noti_title,
-		 	noti_content,
-		 	noti_reg_date,
-		 	update_date,
-			noti_hitCount,
-			is_notice,
-			memb.user_updated_date user_updated_date
-	FROM notice noti, member memb
-	WHERE noti.user_num = memb.user_num
-	AND notice_num = #{num}
+	SELECT noti.notice_num,
+       noti.user_num,
+       memb.user_id,
+       memb.user_nickname,
+       noti.noti_title,
+       noti.noti_content,
+       noti.noti_reg_date,
+       noti.update_date,
+       noti.noti_hitCount,
+       noti.is_notice,
+       memb.user_updated_date,
+       NVL(nolike.boardLikeCount, 0) AS boardLikeCount
+		FROM notice noti
+		INNER JOIN member memb ON noti.user_num = memb.user_num
+		LEFT OUTER JOIN (
+		    SELECT num, COUNT(*) AS boardLikeCount
+		    FROM noticeLike
+		    GROUP BY num		
+		) nolike ON noti.notice_num = nolike.num
+		WHERE noti.notice_num = #{num}
 	</select>
 	
 	<insert id="noticeInsert" parameterType="com.hs.model.admin.NoticeDTO">
@@ -138,6 +144,24 @@
 	       #{user_num}
 		)
 	</insert>
+	
+	<!-- 게시글 좋아요 추가 -->
+	<insert id="insertBoardLike" parameterType="map">
+		INSERT INTO noticeLike(num, userId, reg_date) VALUES(#{num}, #{userId}, SYSDATE)
+	</insert>
+	
+	<!-- 게시글 좋아요 삭제 -->
+	<delete id="deleteBoardLike" parameterType="map">
+		DELETE FROM noticeLike
+		WHERE num = #{num} AND userId = #{userId}
+	</delete>
+	
+	<!-- 게시글의 좋아요 개수 -->
+	<select id="boardLikeCount" parameterType="Long" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM noticeLike
+		WHERE num = #{num}
+	</select>
 	
 	<insert id="insertNoticeFile" parameterType="com.hs.model.admin.NoticeDTO">
 		INSERT INTO noticeFile(fileNum, num, saveFilename, originalFilename, fileSize)
@@ -234,7 +258,7 @@
 	</insert>
 	
 	<select id="listReply" parameterType="map" resultType="com.hs.model.admin.NoticeReplyDTO">
-		SELECT r.replyNum, r.userId, user_Name, num, 
+		SELECT r.replyNum, r.userId, user_nickname, num, 
 			content, r.reg_date, showReply,
 			NVL(answerCount, 0) answerCount,
 			NVL(likeCount, 0) likeCount,
@@ -273,5 +297,54 @@
 		SELECT replyLike
 		FROM  noticeReplyLike
 		WHERE replyNum = #{replyNum} AND userId = #{userId}
+	</select>
+	
+	<select id="replyCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM noticereply
+		WHERE num = #{num} AND parentNum = 0 AND block = 0 
+		<if test="userLevel lt 51">
+			AND ( showReply = 1 OR userId = #{userId} )
+		</if>
+	</select>
+	
+	<delete id="deleteReply" parameterType="map">
+		DELETE FROM noticereply
+		WHERE replyNum = #{replyNum}
+		<if test="mode == 'reply'">
+			OR parentNum = #{replyNum}
+		</if>
+	</delete>
+	
+	<update id="updateReplyShowHide" parameterType="map">
+		UPDATE noticereply SET showNotice = #{showNotice}
+		WHERE replyNum = #{replyNum} AND userId = #{userId}
+	</update>
+	
+	<select id="listReplyAnswer" parameterType="map" resultType="com.hs.model.admin.NoticeReplyDTO">
+		SELECT replyNum, num, r.userId, user_nickname, content, reg_date, parentNum, showReply
+		FROM noticereply r
+		JOIN member m ON r.userId = m.user_Id
+		WHERE parentNum = #{parentNum}
+		<if test="userLevel lt 51">
+			AND ( showReply = 1 OR r.userId = #{userId})
+		</if>
+		ORDER BY replyNum DESC
+	</select>
+	
+	<select id="replyAnswerCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM noticereply
+		WHERE parentNum = #{parentNum} AND block = 0
+		<if test="userLevel lt 51">
+			AND ( showReply = 1 OR userId = #{userId})
+		</if>
+	</select>
+	
+	<!-- 유저의 게시글 좋아요 여부 -->
+	<select id="hasUserBoardLiked" parameterType="map" resultType="com.hs.model.admin.NoticeDTO">
+		SELECT num, userId
+		FROM noticeLike
+		WHERE num = #{num} AND userId = #{userId}
 	</select>
 </mapper>

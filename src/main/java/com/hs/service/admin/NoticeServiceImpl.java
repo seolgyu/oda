@@ -225,12 +225,22 @@ public class NoticeServiceImpl implements NoticeService{
 
 	@Override
 	public void deleteReply(Map<String, Object> map) throws Exception {
-		
+		try {
+			mapper.deleteReply(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
 	}
 
 	@Override
 	public int replyCount(Map<String, Object> map) {
-		// TODO Auto-generated method stub
+		try {
+			return mapper.replyCount(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return 0;
 	}
 
@@ -246,25 +256,42 @@ public class NoticeServiceImpl implements NoticeService{
 
 	@Override
 	public List<NoticeReplyDTO> listReplyAnswer(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
+		List<NoticeReplyDTO> list = null;
+		
+		try {
+			list = mapper.listReplyAnswer(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 	@Override
 	public int replyAnswerCount(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		try {
+			result = mapper.replyAnswerCount(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	@Override
 	public void updateReplyShowHide(Map<String, Object> map) {
-		// TODO Auto-generated method stub
 		
+		try {
+			mapper.updateReplyShowHide(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
 	}
 
 	@Override
 	public Integer hasUserReplyLiked(Map<String, Object> map) {
-Integer result = -1;
+		Integer result = -1;
 		
 		//-1 : 공감여부를 하지 않은 상태, 0 : 비공감, 1 : 공감
 		
@@ -278,5 +305,50 @@ Integer result = -1;
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	@Override
+	public void insertBoardLike(Map<String, Object> map) throws Exception {
+		try {
+			mapper.insertBoardLike(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public void deleteBoardLike(Map<String, Object> map) throws Exception {
+		try {
+			mapper.deleteBoardLike(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+	
+	@Override
+	public int boardLikeCount(long num) {
+		try {
+			return mapper.boardLikeCount(num);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	@Override
+	public boolean isUserBoardLiked(Map<String, Object> map) {
+		try {
+			NoticeDTO dto = mapper.hasUserBoardLiked(map);
+			
+			if(dto != null) {
+				return true;
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

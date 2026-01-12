@@ -5,6 +5,7 @@ public class NoticeReplyDTO {
 	private long num;
 	private String userId;
 	private String userName;
+	private String user_nickname;
 	private String content;
 	private String reg_date;
 	private long parentNum;
@@ -107,5 +108,11 @@ public class NoticeReplyDTO {
 	}
 	public void setUserLikedReply(int userLikedReply) {
 		this.userLikedReply = userLikedReply;
+	}
+	public String getUser_nickname() {
+		return user_nickname;
+	}
+	public void setUser_nickname(String user_nickname) {
+		this.user_nickname = user_nickname;
 	}
 }
