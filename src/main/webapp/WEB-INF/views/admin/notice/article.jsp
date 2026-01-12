@@ -11,6 +11,7 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -370,6 +371,84 @@
         .material-symbols-outlined {
             font-size: 1.1rem;
         }
+       /* 첨부파일 섹션 - 수정된 CSS */
+		.attachment-section {
+		    padding: 1.5rem;
+		    background-color: rgba(15, 23, 42, 0.5);
+		    border-top: 1px solid #374151;
+		    border-bottom: 1px solid #374151;
+		}
+		
+		.attachment-header {
+		    display: flex;
+		    align-items: center;
+		    gap: 0.5rem;
+		    font-size: 0.875rem;
+		    font-weight: 600;
+		    color: #94A3B8;
+		    margin-bottom: 1rem;
+		}
+		
+		/* ✅ i → .material-symbols-outlined 로 변경 */
+		.attachment-header .material-symbols-outlined {
+		    font-size: 1.25rem;
+		    color: #60A5FA;
+		}
+		
+		.file-count {
+		    color: #60A5FA;
+		    font-weight: 500;
+		}
+		
+		.attachment-list {
+		    display: flex;
+		    flex-direction: column;
+		    gap: 0.5rem;
+		}
+		
+		.attachment-item {
+		    display: flex;
+		    align-items: center;
+		    gap: 0.75rem;
+		    padding: 0.75rem 1rem;
+		    background-color: #1E293B;
+		    border: 1px solid #334155;
+		    border-radius: 0.375rem;
+		    color: #E2E8F0;
+		    text-decoration: none;
+		    transition: all 0.2s ease;
+		}
+		
+		.attachment-item:hover {
+		    background-color: #334155;
+		    border-color: #60A5FA;
+		    color: #fff;
+		    transform: translateX(4px);
+		}
+		
+		/* ✅ i → .material-symbols-outlined 로 변경 */
+		.attachment-item .material-symbols-outlined {
+		    font-size: 1.25rem;
+		    color: #60A5FA;
+		    flex-shrink: 0;
+		}
+		
+		.file-name {
+		    flex: 1;
+		    font-size: 0.9375rem;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		    white-space: nowrap;
+		}
+		
+		.download-icon {
+		    opacity: 0;
+		    transition: opacity 0.2s;
+		}
+		
+		.attachment-item:hover .download-icon {
+		    opacity: 1;
+		}
 
 </style>
 </head> 
@@ -402,10 +481,23 @@
 	</nav>
 	
 	<div class="d-flex gap-2">
+	<c:choose>
+		<c:when test="${sessionScope.member.userId==dto.user_id}">
 			<button type="button" class="btn btn-action btn-outline-custom" onclick="location.href='${pageContext.request.contextPath}/admin/notice/update?num=${dto.notice_num}&page=${page}&size=${size}';">수정</button>
-		
+		</c:when>
+		<c:otherwise>
+			<button type="button" class="btn btn-action btn-outline-custom" disabled>수정</button>
+		</c:otherwise>
+	</c:choose>
+	<c:choose>
+		<c:when test="${sessionScope.member.userId==dto.user_id}">
 			<button type="button" class="btn btn-action btn-outline-custom" onclick="deleteOk();">삭제</button>
-		</div>
+		</c:when>
+		<c:otherwise>
+			<button type="button" class="btn btn-action btn-outline-custom" disabled>삭제</button>
+		</c:otherwise>
+	</c:choose>
+	</div>
 </div>
 
 
@@ -424,13 +516,23 @@
 		${dto.noti_content}
 	</div>
 	<c:if test="${listFile.size() != 0}">
-		<p class="text-secondary mb-1 p-2">첨부파일 : 
-			<i class="bi bi-folder2-open"></i>
-			<c:forEach var="vo" items="${listFile}" varStatus="status">
-				<a href="${pageContext.request.contextPath}/admin/notice/download?fileNum=${vo.fileNum}" class="text-reset">${vo.originalFilename}</a>
-				<c:if test="${not status.last}">|</c:if>
-			</c:forEach>
-		</p>
+    <div class="attachment-section">
+        <div class="attachment-header">
+            <i class="material-symbols-outlined">attach_file</i>
+            <span>첨부파일</span>
+            <span class="file-count">(${listFile.size()})</span>
+        </div>
+        <div class="attachment-list">
+            <c:forEach var="vo" items="${listFile}" varStatus="status">
+                <a href="${pageContext.request.contextPath}/admin/notice/download?fileNum=${vo.fileNum}" 
+                   class="attachment-item">
+                    <i class="material-symbols-outlined">description</i>
+                    <span class="file-name">${vo.originalFilename}</span>
+                    <i class="material-symbols-outlined download-icon">download</i>
+                </a>
+            </c:forEach>
+        </div>
+    </div>
 	</c:if>
 	<div class="like-button-container">
 		<button class="btn btn-like">

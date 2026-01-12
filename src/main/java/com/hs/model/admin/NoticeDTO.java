@@ -14,6 +14,7 @@ public class NoticeDTO {
 	private String update_date;
 	private int noti_hitCount;
 	private String is_notice;
+	private String user_id;
 	private Long user_num;
 	
 	private List<MyMultipartFile> listFile;
@@ -113,5 +114,11 @@ public class NoticeDTO {
 	}
 	public void setIs_notice(String is_notice) {
 		this.is_notice = is_notice;
+	}
+	public String getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
 	}
 }

@@ -16,6 +16,8 @@
 	href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
 	rel="stylesheet" />
 <link
+	 href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link
 	href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
 	rel="stylesheet" />
 
@@ -183,7 +185,84 @@ select.glass-input-box {
     box-shadow: none !important;
     border-color: transparent !important;
 }
+/* 첨부파일 섹션 - 수정된 CSS */
+.attachment-section {
+    padding: 1.5rem;
+    background-color: rgba(15, 23, 42, 0.5);
+    border-top: 1px solid #374151;
+    border-bottom: 1px solid #374151;
+}
 
+.attachment-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #94A3B8;
+    margin-bottom: 1rem;
+}
+
+/* ✅ i → .material-symbols-outlined 로 변경 */
+.attachment-header .material-symbols-outlined {
+    font-size: 1.25rem;
+    color: #60A5FA;
+}
+
+.file-count {
+    color: #60A5FA;
+    font-weight: 500;
+}
+
+.attachment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.attachment-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background-color: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 0.375rem;
+    color: #E2E8F0;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.attachment-item:hover {
+    background-color: #334155;
+    border-color: #60A5FA;
+    color: #fff;
+    transform: translateX(4px);
+}
+
+/* ✅ i → .material-symbols-outlined 로 변경 */
+.attachment-item .material-symbols-outlined {
+    font-size: 1.25rem;
+    color: #60A5FA;
+    flex-shrink: 0;
+}
+
+.file-name {
+    flex: 1;
+    font-size: 0.9375rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.download-icon {
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.attachment-item:hover .download-icon {
+    opacity: 1;
+}
 </style>
 </head>
 <body class="bg-background-dark text-white">
@@ -302,18 +381,24 @@ select.glass-input-box {
 									<p class="text-white-50 small mb-0">최대 10MB까지 가능합니다.</p>
 								</div>
 							</div> -->
-							<c:if test="${mode=='update'}">
-								<c:forEach var="vo" items="${listFile}">
-									<tr>
-										<td class="bg-light col-sm-2" scope="row">첨부된파일</td>
-										<td> 
-											<p class="form-control-plaintext">
-												<a href="javascript:deleteFile('${vo.fileNum}');">파일 삭제<i class="bi bi-trash"></i></a>
-												${vo.originalFilename}
-											</p>
-										</td>
-									</tr>
-								</c:forEach>
+							<c:if test="${listFile.size() != 0}">
+							    <div class="attachment-section">
+							        <div class="attachment-header">
+							            <i class="material-symbols-outlined">attach_file</i>
+							            <span>첨부파일</span>
+							            <span class="file-count">(${listFile.size()})</span>
+							        </div>
+							        <div class="attachment-list">
+							            <c:forEach var="vo" items="${listFile}" varStatus="status">
+							                <a href="${pageContext.request.contextPath}/admin/notice/download?fileNum=${vo.fileNum}" 
+							                   class="attachment-item">
+							                    <i class="material-symbols-outlined">description</i>
+							                    <span class="file-name">${vo.originalFilename}</span>
+							                    <i class="material-symbols-outlined download-icon">download</i>
+							                </a>
+							            </c:forEach>
+							        </div>
+							    </div>
 							</c:if>
 							<!-- <div id="fileList" class="mt-2"></div> -->
 						</div>

@@ -98,7 +98,7 @@
 	<select id="findById" parameterType="Long" resultType="com.hs.model.admin.NoticeDTO">
 	SELECT notice_num,
 		 	noti.user_num user_num,
-		 	memb.user_Id user_Id,
+		 	memb.user_id user_id,
 		 	memb.user_nickname user_nickname,
 		 	noti_title,
 		 	noti_content,
