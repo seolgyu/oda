@@ -3,6 +3,7 @@ package com.hs.controller.admin;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -732,6 +733,89 @@ public class noticeManageController {
 			
 			model.put("state", state); // 상태
 			model.put("boardLikeCount", boardLikeCount);
+			
+			return model;
+		}
+		
+		@ResponseBody
+		@PostMapping("replyShowHide")
+		public Map<String, Object> replyShowHide(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+			Map<String, Object> model = new HashMap<String, Object>();
+			
+			HttpSession session = req.getSession();
+			SessionInfo info = (SessionInfo)session.getAttribute("member");
+			
+			String state = "true";
+			
+			try {
+				long replyNum = Long.parseLong(req.getParameter("replyNum"));
+				int showReply = Integer.parseInt(req.getParameter("showReply"));
+				
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("replyNum", replyNum);
+				map.put("showReply", showReply);
+				map.put("userId",info.getUserId());
+				
+				service.updateReplyShowHide(map);
+			} catch (Exception e) {
+				e.printStackTrace();
+				
+				state = "false";
+			}
+			
+			model.put("state", state);
+			
+			return model;
+		}
+		
+		@ResponseBody
+		@PostMapping("insertReplyLike")
+		public Map<String, Object> insertReplyLike(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+			Map<String, Object> model = new HashMap<String, Object>();
+			
+			HttpSession session = req.getSession();
+			SessionInfo info = (SessionInfo)session.getAttribute("member");
+			
+			String state = "false";
+			int likeCount = 0;
+			int disLikeCount = 0;
+			
+			try {
+				long replyNum = Long.parseLong(req.getParameter("replyNum"));
+				int replyLike = Integer.parseInt(req.getParameter("replyLike"));
+				
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("replyNum", replyNum);
+				map.put("replyLike", replyLike);
+				map.put("userId", info.getUserId());
+				
+				
+				service.insertReplyLike(map);
+				
+				Map<String, Object> countMap = service.replyLikeCount(map);
+				//마이바티스에서 resultType이 map 인경우
+				// : int 는 BigDecimal로 넘어온다,
+				// : oracle 은 컬럼명을 모두 대문자로  map에 저장한다.
+				// : countMap을 model에 담아 JSON으로 바로 넘겨도 가능
+				
+				if(countMap.containsKey("LIKECOUNT")) {
+					likeCount = ((BigDecimal)countMap.get("LIKECOUNT")).intValue();
+				}
+				if(countMap.containsKey("DISLIKECOUNT")) {
+					disLikeCount = ((BigDecimal)countMap.get("DISLIKECOUNT")).intValue();
+				}
+				state = "true";
+			} catch (SQLException e) {
+				if(e.getErrorCode() == 1) {
+					state = "liked";
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			model.put("state", state);
+			model.put("likeCount", likeCount);
+			model.put("disLikeCount", disLikeCount);
 			
 			return model;
 		}

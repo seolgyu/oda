@@ -1,339 +1,275 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page trimDirectiveWhitespaces="true"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <%@ include file="../home/head.jsp"%>
 <style>
-.board-input {
-	background: rgba(255, 255, 255, 0.05);
-	border: 1px solid rgba(255, 255, 255, 0.2);
-	color: #fff;
-	transition: all 0.3s;
-}
+    /* [스타일] 미리보기 이미지 아이템 */
+    .img-item {
+        position: relative;
+        display: inline-block;
+        margin: 5px;
+        width: 100px;
+        height: 100px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.2);
+        background: #000;
+    }
+    .img-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    /* [추가] 삭제 버튼 (이미지 위 X 표시) */
+    .btn-delete-img {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 20px;
+        height: 20px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 18px;
+        font-size: 14px;
+        cursor: pointer;
+        z-index: 10;
+        border: 1px solid rgba(255,255,255,0.3);
+        transition: all 0.2s;
+    }
+    .btn-delete-img:hover {
+        background: #ef4444; /* 빨간색 */
+        transform: scale(1.1);
+    }
 
-.board-input:focus {
-	background: rgba(255, 255, 255, 0.1);
-	border-color: #a855f7;
-	box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
-	color: #fff;
-}
-
-.board-input::placeholder {
-	color: rgba(255, 255, 255, 0.5);
-}
-
-.form-check-input {
-	background-color: rgba(255, 255, 255, 0.2);
-	border-color: rgba(255, 255, 255, 0.3);
-	cursor: pointer;
-}
-
-.form-check-input:checked {
-	background-color: #a855f7;
-	border-color: #a855f7;
-}
-
-textarea.board-input::-webkit-scrollbar {
-	width: 8px;
-}
-
-textarea.board-input::-webkit-scrollbar-thumb {
-	background: rgba(255, 255, 255, 0.2);
-	border-radius: 4px;
-}
-
-.preview-box {
-	width: 100px;
-	height: 100px;
-	border-radius: 1rem;
-	overflow: hidden;
-	border: 1px solid rgba(255, 255, 255, 0.2);
-	position: relative;
-	flex-shrink: 0;
-}
-
-.preview-img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	display: block;
-}
+    /* 입력 폼 스타일 */
+    .write-input {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        font-size: 0.9rem;
+    }
+    .write-input:focus {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-color: #a855f7 !important;
+        color: white !important;
+        box-shadow: none !important;
+    }
+    .write-input::placeholder { color: rgba(255, 255, 255, 0.3); }
+    .form-check-label { color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; }
 </style>
 </head>
 <body>
 
-	<%@ include file="../home/header.jsp"%>
+    <%@ include file="../home/header.jsp"%>
 
-	<div class="app-body">
+    <div class="app-body">
+        <%@ include file="../home/sidebar.jsp"%>
 
-		<%@ include file="../home/sidebar.jsp"%>
+        <main class="app-main">
+            <div class="space-background">
+                <div class="stars"></div><div class="stars2"></div><div class="stars3"></div>
+                <div class="planet planet-1"></div><div class="planet planet-2"></div>
+            </div>
 
-		<main class="app-main">
+            <div class="container py-4" style="position: relative; z-index: 1;">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-lg-8">
+                        <div class="glass-card shadow-lg p-4 rounded-4" 
+                             style="background: rgba(30, 30, 30, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1);">
+                            
+                            <h5 class="text-white fw-bold mb-3 border-bottom border-secondary border-opacity-25 pb-2">
+                                <c:choose>
+                                    <c:when test="${mode == 'update'}">Edit Post</c:when>
+                                    <c:otherwise>New Post</c:otherwise>
+                                </c:choose>
+                            </h5>
 
-			<div class="space-background">
-				<div class="stars"></div>
-				<div class="stars2"></div>
-				<div class="stars3"></div>
-				<div class="planet planet-1"></div>
-				<div class="planet planet-2"></div>
-			</div>
+                            <form name="postForm" method="post" enctype="multipart/form-data">
+                                <c:if test="${mode == 'update'}">
+                                    <input type="hidden" name="postId" value="${dto.postId}">
+                                </c:if>
 
-			<div class="feed-scroll-container custom-scrollbar w-100">
+                                <div class="mb-3">
+                                    <label class="form-label text-white-50 small text-uppercase fw-bold mb-1">Title</label>
+                                    <input type="text" name="title" class="form-control write-input" 
+                                           value="${dto.title}" placeholder="제목을 입력하세요">
+                                </div>
 
-				<div class="container py-5">
-					<div class="row justify-content-center">
-						<div class="col-12 col-lg-8 col-xl-7">
+                                <div class="mb-3">
+                                    <label class="form-label text-white-50 small text-uppercase fw-bold mb-1">Content</label>
+                                    <textarea name="content" class="form-control write-input" 
+                                              style="height: 150px; resize: none;" 
+                                              placeholder="내용을 입력하세요">${dto.content}</textarea>
+                                </div>
 
-							<div class="p-4 p-md-5 shadow-lg d-flex flex-column gap-4 mb-5"
-								style="border-radius: 1rem; backdrop-filter: blur(12px); background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+                                <div class="mb-3 d-flex gap-4 p-2 rounded-3" style="background: rgba(0,0,0,0.2);">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="chkReply" id="chkReply" value="0"
+                                               ${mode == 'update' && dto.replyEnabled == '0' ? 'checked' : ''}>
+                                        <label class="form-check-label" for="chkReply">댓글 비허용</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="chkCounts" id="chkCounts" value="0"
+                                               ${mode == 'update' && dto.showCounts == '0' ? 'checked' : ''}>
+                                        <label class="form-check-label" for="chkCounts">카운트 숨김</label>
+                                    </div>
+                                </div>
 
-								<div
-									class="border-bottom border-secondary border-opacity-25 pb-3">
-									<h2 class="text-white fw-bold fs-4 mb-1">
-										<span class="material-symbols-outlined align-middle me-2">edit_note</span>
-										<c:if test="${mode=='update'}">게시글 수정</c:if>
-										<c:if test="${mode=='write'}">게시글 작성</c:if>
-									</h2>
-								</div>
+                                <div class="mb-3">
+                                    <label class="form-label text-white-50 small text-uppercase fw-bold mb-1">Images</label>
+                                    <input type="file" name="selectFile" id="selectFile" class="form-control write-input" multiple 
+                                           accept="image/*" onchange="handleFileSelect(this);">
+                                    
+                                    <div class="viewer mt-2 d-flex flex-wrap gap-2"></div>
+                                    
+                                    <div id="deletedFileContainer"></div>
+                                </div>
 
-								<form name="postForm" method="post"
-									enctype="multipart/form-data">
-
-									<div class="mb-3">
-										<label class="text-white-50 fw-bold mb-2 ms-1">Subject</label>
-										<input type="text" name="title"
-											class="form-control board-input py-3" placeholder="제목을 입력하세요"
-											value="${dto.title}">
-									</div>
-
-									<div class="mb-3">
-										<label class="text-white-50 fw-bold mb-2 ms-1">Writer</label>
-										<input type="text" class="form-control board-input"
-											value="${sessionScope.member.userName}" readonly
-											style="background: rgba(0, 0, 0, 0.2); cursor: default;">
-									</div>
-
-									<div class="mb-3">
-										<label class="text-white-50 fw-bold mb-2 ms-1">Images</label>
-										<div class="d-flex gap-3 align-items-center flex-wrap">
-											<div onclick="document.getElementById('selectFile').click();"
-												style="width: 100px; height: 100px; border-radius: 1rem; border: 2px dashed rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.05); cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: all 0.2s;"
-												onmouseover="this.style.borderColor='#a855f7'; this.style.color='#fff';"
-												onmouseout="this.style.borderColor='rgba(255,255,255,0.3)';">
-												<span class="material-symbols-outlined text-white-50 fs-1">add_photo_alternate</span>
-												<span class="text-white-50" style="font-size: 0.7rem;">Add
-													Image</span>
-											</div>
-
-											<div id="preview-area" class="d-flex gap-2 flex-wrap"></div>
-										</div>
-
-										<input type="file" name="selectFile" id="selectFile"
-											accept="image/*" multiple style="display: none;"
-											onclick="this.value=null;"
-											onchange="handleImgFileSelect(this)">
-									</div>
-
-									<div class="mb-3">
-										<label class="text-white-50 fw-bold mb-2 ms-1">Content</label>
-										<textarea name="content" class="form-control board-input"
-											rows="10" placeholder="내용을 입력하세요">${dto.content}</textarea>
-									</div>
-
-									<div class="d-flex flex-column gap-3 mt-2 p-3 rounded-3"
-										style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);">
-										<h5 class="text-white-50 fs-6 fw-bold mb-2">
-											<span class="material-symbols-outlined align-middle me-1">settings</span>Post
-											Settings
-										</h5>
-
-										<div class="form-check form-switch ms-1">
-											<input class="form-check-input" type="checkbox" role="switch"
-												id="chkReply" name="chkReply" value="true"
-												<c:if test="${dto.replyEnabled == '0'}">checked</c:if>>
-											<label class="form-check-label text-secondary" for="chkReply">댓글
-												기능 끄기</label>
-										</div>
-
-										<div class="form-check form-switch ms-1">
-											<input class="form-check-input" type="checkbox" role="switch"
-												id="chkCounts" name="chkCounts" value="true"
-												<c:if test="${dto.showCounts == '0'}">checked</c:if>>
-											<label class="form-check-label text-secondary"
-												for="chkCounts">좋아요/조회수 숨기기</label>
-										</div>
-
-										<c:if test="${sessionScope.member.userLevel > 50}">
-											<div
-												class="form-check form-switch ms-1 mt-1 pt-2 border-top border-secondary border-opacity-25">
-												<input class="form-check-input" type="checkbox"
-													role="switch" id="noticeCheck" name="isNotice" value="1"
-													<c:if test="${dto.postType == 'NOTICE'}">checked</c:if>>
-												<label class="form-check-label text-warning fw-bold"
-													for="noticeCheck">공지사항 등록</label>
-											</div>
-										</c:if>
-									</div>
-
-									<div class="d-flex justify-content-end gap-2 mt-4 pb-3">
-										<button type="button" class="btn btn-outline-light px-4"
-											onclick="location.href='${pageContext.request.contextPath}/main';">Cancel</button>
-										<button type="button" class="btn text-white px-4 fw-bold"
-											style="background: linear-gradient(to right, #a855f7, #6366f1); border: none;"
-											onclick="sendOk();">Submit</button>
-									</div>
-								</form>
-							</div>
-							<div style="height: 50px;"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</main>
-	</div>
-
-	<div class="modal fade" id="deleteConfirmModal" tabindex="-1"
-		aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content"
-				style="background: rgba(30, 30, 30, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 1rem; color: #fff;">
-				<div class="modal-body text-center p-4">
-					<div class="mb-3">
-						<span class="material-symbols-outlined text-danger"
-							style="font-size: 3rem;">delete_forever</span>
-					</div>
-					<h5 class="fw-bold mb-3">이미지 삭제</h5>
-					<p class="text-white-50 mb-4">선택한 이미지를 삭제하시겠습니까?</p>
-					<div class="d-flex justify-content-center gap-2">
-						<button type="button" class="btn btn-outline-light px-4"
-							data-bs-dismiss="modal">아니요</button>
-						<button type="button" class="btn btn-danger px-4"
-							id="btnDeleteConfirm">예, 삭제합니다</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
-
-	<script type="text/javascript">
-    // 전역 변수로 파일 관리
-    const dataTransfer = new DataTransfer();
-    let deleteTargetIndex = -1; // 삭제할 파일 인덱스 임시 저장용
-
-    // 1. 파일 선택 시 실행
-    function handleImgFileSelect(e) {
-        const newFiles = e.files;
-        
-        if(newFiles != null && newFiles.length > 0) {
-            for(let i=0; i < newFiles.length; i++){
-                // 이미지 파일인지 확인
-                if(!newFiles[i].type.match("image.*")) continue;
-                dataTransfer.items.add(newFiles[i]);
-            }
-            updateFileInputAndPreview();
-        }
-    }
-
-    // 2. 미리보기 업데이트 및 input 업데이트 (공통 함수)
-    function updateFileInputAndPreview() {
-        // input에 최신 파일 리스트 할당
-        document.getElementById("selectFile").files = dataTransfer.files;
-
-        const previewArea = document.getElementById("preview-area");
-        previewArea.innerHTML = ""; 
-
-        const allFiles = dataTransfer.files;
-        
-        for(let i=0; i < allFiles.length; i++) {
-            const f = allFiles[i];
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                // 클릭 시 openDeleteModal(인덱스) 실행
-                const html = `
-                    <div class="preview-box" onclick="openDeleteModal(\${i})" style="cursor: pointer;">
-                        <img src="\${e.target.result}" class="preview-img">
-                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 hover-overlay" 
-                             style="background: rgba(0,0,0,0.5); transition: opacity 0.2s;">
-                             <span class="material-symbols-outlined text-white">delete</span>
+                                <div class="d-flex justify-content-end gap-2 pt-2 border-top border-secondary border-opacity-25">
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="location.href='${pageContext.request.contextPath}/main'">Cancel</button>
+                                    <button type="button" class="btn btn-sm btn-primary px-4 fw-bold" 
+                                            style="background: #a855f7; border: none;" onclick="sendOk();">
+                                        ${mode == 'update' ? 'Update' : 'Post'}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                    </div>`;
-                previewArea.innerHTML += html;
-                
-                // 마지막 파일 로드 후 CSS 호버 효과 주입 (JS로 동적 생성된 요소라 스타일 태그에 추가 권장)
-                // *CSS style 태그에 .preview-box:hover .hover-overlay { opacity: 1 !important; } 추가하면 더 예쁩니다.
-            }
-            reader.readAsDataURL(f);
-        }
-    }
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
-    // 3. 삭제 모달 열기
-    function openDeleteModal(index) {
-        deleteTargetIndex = index;
-        const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-        modal.show();
-    }
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 
-    // 4. 모달에서 '예' 버튼 클릭 시 실제 삭제 처리
-    document.addEventListener("DOMContentLoaded", function(){
-        document.getElementById("btnDeleteConfirm").addEventListener("click", function(){
-            if(deleteTargetIndex > -1) {
-                const newDt = new DataTransfer();
-                const files = dataTransfer.files;
-                
-                for(let i=0; i < files.length; i++) {
-                    // 삭제할 인덱스는 건너뛰고 새 DataTransfer에 담기
-                    if(i !== deleteTargetIndex) {
-                        newDt.items.add(files[i]);
-                    }
-                }
-                
-                // 전역 변수 교체
-                dataTransfer.items.clear();
-                for(let i=0; i<newDt.files.length; i++){
-                    dataTransfer.items.add(newDt.files[i]);
-                }
+    <script>
+        const contextPath = "${pageContext.request.contextPath}";
+        const mode = "${mode}";
+        
+        // [새 파일 관리용 DataTransfer 객체]
+        const dataTransfer = new DataTransfer();
 
-                // 화면 갱신
-                updateFileInputAndPreview();
-                
-                // 모달 닫기
-                const modalEl = document.getElementById('deleteConfirmModal');
-                const modalInstance = bootstrap.Modal.getInstance(modalEl);
-                modalInstance.hide();
+        $(function() {
+            // [수정 모드] 기존 이미지 표시
+            if (mode === "update") {
+                const $viewer = $(".viewer");
+                <c:if test="${not empty dto.fileList}">
+                    <c:forEach var="file" items="${dto.fileList}">
+                        {
+                            let imgPath = "${file.filePath}";
+                            if (!imgPath.startsWith("http")) {
+                                imgPath = contextPath + "/uploads/photo/" + imgPath;
+                            }
+                            
+                            // 기존 파일은 deleteOldFile 함수 호출
+                            let html = `
+                                <div class="img-item" id="old-img-${file.fileAtId}">
+                                    <img src="\${imgPath}">
+                                    <div class="btn-delete-img" onclick="deleteOldFile('${file.fileAtId}');">&times;</div>
+                                </div>
+                            `;
+                            $viewer.append(html);
+                        }
+                    </c:forEach>
+                </c:if>
             }
         });
-    });
 
-    function sendOk() {
-        const f = document.postForm;
-        if(!f.title.value.trim()) {
-            alert("제목을 입력하세요.");
-            f.title.focus();
-            return;
-        }
-        if(!f.content.value.trim()) {
-            alert("내용을 입력하세요.");
-            f.content.focus();
-            return;
+        // [기존 파일 삭제] - 화면에서 숨기고 hidden input 추가
+        function deleteOldFile(fileId) {
+            if(!confirm("기존 이미지를 삭제하시겠습니까? (수정 완료 시 반영됩니다)")) return;
+            
+            $("#old-img-" + fileId).remove(); // 화면 제거
+            
+            // 삭제할 파일 ID를 form에 추가 (name="delfile")
+            let input = `<input type="hidden" name="delfile" value="\${fileId}">`;
+            $("#deletedFileContainer").append(input);
         }
 
-        let mode = "${mode}";
-        if(mode === "write") {
-            f.action = "${pageContext.request.contextPath}/post/write";
-        } else if(mode === "update") {
-            f.action = "${pageContext.request.contextPath}/post/update";
+        // [새 파일 선택 핸들러]
+        function handleFileSelect(input) {
+            if (input.files) {
+                const filesArr = Array.from(input.files);
+                filesArr.forEach(file => {
+                    if (!file.type.match("image.*")) return;
+                    
+                    // DataTransfer에 담기
+                    dataTransfer.items.add(file);
+                    
+                    // 미리보기 생성 (새 파일은 deleteNewFile 호출)
+                    // file 객체를 식별하기 위해 lastModified 등을 활용하거나 인덱스 사용
+                    // 여기선 간단히 렌더링 시점에 매핑
+                    renderNewFiles();
+                });
+                
+                // input 파일 리스트 업데이트
+                input.files = dataTransfer.files;
+            }
         }
-        f.submit();
-    }
-</script>
+
+        // [새 파일 렌더링 및 삭제 기능]
+        function renderNewFiles() {
+            // 기존에 렌더링된 '새 파일' 미리보기만 제거 (기존 DB파일은 건드리지 않음)
+            $(".new-img-item").remove();
+            
+            const $viewer = $(".viewer");
+            const files = dataTransfer.files;
+
+            for(let i=0; i<files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    let html = `
+                        <div class="img-item new-img-item">
+                            <img src="\${e.target.result}">
+                            <div class="btn-delete-img" onclick="deleteNewFile(\${i});">&times;</div>
+                        </div>
+                    `;
+                    $viewer.append(html);
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // [새 파일 삭제]
+        function deleteNewFile(index) {
+            // DataTransfer에서 해당 인덱스 파일 제거
+            const newDataTransfer = new DataTransfer();
+            const files = dataTransfer.files;
+            
+            for(let i=0; i<files.length; i++) {
+                if(i !== index) {
+                    newDataTransfer.items.add(files[i]);
+                }
+            }
+            
+            // 전역 dataTransfer 업데이트
+            dataTransfer.items.clear();
+            for(let i=0; i<newDataTransfer.files.length; i++){
+                dataTransfer.items.add(newDataTransfer.files[i]);
+            }
+            
+            // input 업데이트 및 다시 그리기
+            document.getElementById("selectFile").files = dataTransfer.files;
+            renderNewFiles();
+        }
+
+        function sendOk() {
+            const f = document.postForm;
+            if(!f.title.value.trim()) { alert("제목을 입력하세요."); f.title.focus(); return; }
+            if(!f.content.value.trim()) { alert("내용을 입력하세요."); f.content.focus(); return; }
+            
+            f.action = contextPath + "/post/" + mode;
+            f.submit();
+        }
+    </script>
 </body>
 </html>

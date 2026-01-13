@@ -215,5 +215,6 @@
 	<script src="${pageContext.request.contextPath}/dist/js/util-jquery.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/community.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/community_form.js"></script>
 </body>
 </html>

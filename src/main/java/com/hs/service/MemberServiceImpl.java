@@ -36,9 +36,13 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public void updateMember(MemberDTO dto) throws Exception {
-		// TODO Auto-generated method stub
-		
+	public void updateMember(Map<String, Object> map) throws SQLException {
+		try {
+			mapper.updateMember(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 	@Override
@@ -155,6 +159,26 @@ public class MemberServiceImpl implements MemberService {
 	public void updateLastLoginDate(Long userNum) throws SQLException {
 		try {
 			mapper.updateLastLoginDate(userNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public void updateProfile(Map<String, Object> map) throws SQLException {
+		try {
+			mapper.updateProfile(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public void updateBanner(Map<String, Object> map) throws SQLException {
+		try {
+			mapper.updateBanner(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;

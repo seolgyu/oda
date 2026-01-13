@@ -16,6 +16,8 @@ public interface MemberMapper {
 	public void insertMember(MemberDTO dto) throws Exception;
 	public void insertMember1(MemberDTO dto) throws SQLException;
 	
+	// 내 정보 수정 페이지에서 사용
+	public void updateMember(Map<String, Object> map) throws SQLException;
 	
 	public void insertMember2(MemberDTO dto) throws SQLException;
 	public void insertMember12(MemberDTO dto) throws SQLException;
@@ -28,6 +30,9 @@ public interface MemberMapper {
 	
 	public void updatePwd(Map<String, Object> map) throws SQLException;
 	public void updateLastLoginDate(Long userNum) throws SQLException;
+	
+	public void updateProfile(Map<String, Object> map) throws SQLException;
+	public void updateBanner(Map<String, Object> map) throws SQLException;
 	
 	public MemberDTO findById(String userId) throws SQLException;
 	public MemberDTO findByIdx(Long userNum) throws SQLException;

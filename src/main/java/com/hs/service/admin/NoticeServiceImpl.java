@@ -351,4 +351,28 @@ public class NoticeServiceImpl implements NoticeService{
 		}
 		return false;
 	}
+
+	@Override
+	public void insertReplyLike(Map<String, Object> map) throws Exception {
+		try {
+			mapper.insertReplyLike(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	@Override
+	public Map<String, Object> replyLikeCount(Map<String, Object> map) {
+		Map<String, Object> countMap = null;
+		
+		try {
+			countMap = mapper.replyLikeCount(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return countMap;
+	}
+	
+	
 }

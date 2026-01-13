@@ -45,4 +45,7 @@ public interface NoticeMapper {
 	public void deleteBoardLike(Map<String, Object> map) throws SQLException;
 	public int boardLikeCount(long num);
 	public NoticeDTO hasUserBoardLiked(Map<String, Object> map);
+	
+	public void insertReplyLike(Map<String, Object> map) throws SQLException;
+	public Map<String, Object> replyLikeCount(Map<String, Object> map);
 }

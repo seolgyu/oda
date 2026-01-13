@@ -73,6 +73,7 @@
 	<select id="findByIdx" parameterType="Long" resultType="com.hs.model.MemberDTO">
 		SELECT user_num AS userIdx, 
 		user_id AS userId, 
+		user_pwd AS userPwd,
 		user_name AS userName, 
 		user_nickname AS userNickname, 
 		user_level AS userLevel,
@@ -118,6 +119,41 @@
 	<update id="updatePwd" parameterType="map">
 		UPDATE member 
 		SET user_pwd = #{userPwd} 
+		WHERE user_num = #{userNum}
+	</update>
+	
+	<update id="updateProfile" parameterType="map">
+		UPDATE member 
+		SET user_profile = #{userProfile} 
+		WHERE user_num = #{userNum}
+	</update>
+	
+	<update id="updateBanner" parameterType="map">
+		UPDATE member 
+		SET user_banner = #{userBanner} 
+		WHERE user_num = #{userNum}
+	</update>
+
+	<update id="updateMember" parameterType="map">
+		UPDATE member
+		<set>
+			user_name = #{userName},
+			user_nickname = #{userNickname},
+			user_birth = #{birth},
+
+			<if test="tel != null and tel != ''">
+				user_tel = #{tel},
+			</if>
+			<if test="zip != null and zip != ''">
+				user_zip = #{zip},
+			</if>
+			<if test="addr1 != null and addr1 != ''">
+				user_addr1 = #{addr1},
+			</if>
+			<if test="addr2 != null">
+				user_addr2 = #{addr2}
+			</if>
+		</set>
 		WHERE user_num = #{userNum}
 	</update>
 	

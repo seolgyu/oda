@@ -26,10 +26,15 @@
 }
 
 .comment-input:focus {
-	background: rgba(255, 255, 255, 0.1);
-	border-color: #a855f7;
-	box-shadow: none;
-	color: #fff;
+	background: transparent !important;
+	border-bottom-color: #a855f7 !important;
+	box-shadow: none !important;
+	color: #fff !important;
+}
+
+.comment-input::placeholder {
+	color: rgba(255, 255, 255, 0.4);
+	text-align: left;
 }
 
 .article-content {
@@ -39,19 +44,36 @@
 	line-height: 1.7;
 }
 
-/* 2. 호버 효과 및 좋아요 색상 추가 */
-.hover-pink:hover { color: #ec4899 !important; }
-.hover-blue:hover { color: #60a5fa !important; }
-.hover-green:hover { color: #4ade80 !important; }
-.hover-yellow:hover { color: #facc15 !important; }
-.hover-purple:hover { color: #c084fc !important; }
+.hover-pink:hover {
+	color: #ec4899 !important;
+}
 
-/* [필수] 좋아요 활성화(핑크) 스타일 */
-.text-pink { color: #ec4899 !important; }
+.hover-blue:hover {
+	color: #60a5fa !important;
+}
 
-/* 3. 캐러셀 버튼 스타일 유지 */
-.carousel-control-prev , .carousel-control-next {
-	width : 10%;
+.hover-green:hover {
+	color: #4ade80 !important;
+}
+
+.hover-yellow:hover {
+	color: #facc15 !important;
+}
+
+.hover-purple:hover {
+	color: #c084fc !important;
+}
+
+.hover-opacity-100:hover {
+	opacity: 1 !important;
+}
+
+.text-pink {
+	color: #ec4899 !important;
+}
+
+.carousel-control-prev, .carousel-control-next {
+	width: 10%;
 	opacity: 1;
 }
 
@@ -70,7 +92,8 @@
 	transition: all 0.3s ease;
 }
 
-.carousel-control-prev:hover .carousel-btn-glass, .carousel-control-next:hover .carousel-btn-glass {
+.carousel-control-prev:hover .carousel-btn-glass, .carousel-control-next:hover .carousel-btn-glass
+	{
 	background: rgba(168, 85, 247, 0.6);
 	border-color: #a855f7;
 	transform: scale(1.1);
@@ -80,20 +103,34 @@
 	width: 100%;
 	background-color: rgba(0, 0, 0, 0.2);
 }
+
+.form-control-sm {
+	background-color: rgba(255, 255, 255, 0.05) !important;
+	border: 1px solid rgba(255, 255, 255, 0.1) !important;
+	color: white !important;
+}
+
+.form-control-sm:focus {
+	border-color: #a855f7 !important;
+	box-shadow: none !important;
+}
 </style>
 
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
 		const carouselEl = document.getElementById('imageCarousel');
-		if (!carouselEl) return;
+		if (!carouselEl)
+			return;
 
 		const items = carouselEl.querySelectorAll('.carousel-item');
 		const btnPrev = document.getElementById('btnPrev');
 		const btnNext = document.getElementById('btnNext');
 
 		if (items.length <= 1) {
-			if (btnPrev) btnPrev.style.display = 'none';
-			if (btnNext) btnNext.style.display = 'none';
+			if (btnPrev)
+				btnPrev.style.display = 'none';
+			if (btnNext)
+				btnNext.style.display = 'none';
 			return;
 		}
 
@@ -105,11 +142,15 @@
 			const currentIndex = e.to;
 			const lastIndex = items.length - 1;
 
-			if (currentIndex === 0) btnPrev.style.display = 'none';
-			else btnPrev.style.display = 'flex';
+			if (currentIndex === 0)
+				btnPrev.style.display = 'none';
+			else
+				btnPrev.style.display = 'flex';
 
-			if (currentIndex === lastIndex) btnNext.style.display = 'none';
-			else btnNext.style.display = 'flex';
+			if (currentIndex === lastIndex)
+				btnNext.style.display = 'none';
+			else
+				btnNext.style.display = 'flex';
 		});
 	});
 </script>
@@ -137,23 +178,26 @@
 						<div class="col-12 col-lg-8 col-xl-7">
 
 							<div class="d-flex align-items-center gap-2 mb-3 px-1">
-								<button type="button" class="btn-icon text-white" onclick="history.back()">
+								<button type="button" class="btn-icon text-white"
+									onclick="history.back()">
 									<span class="material-symbols-outlined">arrow_back</span>
 								</button>
 								<span class="text-white fw-bold fs-5">Post</span>
 							</div>
 
 							<div class="glass-card shadow-lg mb-4"
-								style="background: rgba(255, 255, 255, 0.05);
-								backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem;">
+								style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem;">
 
-								<div class="p-4 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
+								<div
+									class="p-4 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
 									<div class="d-flex align-items-center gap-3">
-										<div class="avatar-md text-white fw-bold d-flex align-items-center justify-content-center"
+										<div
+											class="avatar-md text-white fw-bold d-flex align-items-center justify-content-center"
 											style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(45deg, #a855f7, #6366f1); overflow: hidden;">
 											<c:choose>
 												<c:when test="${not empty memberdto.profile_photo}">
-													<img src="${pageContext.request.contextPath}/uploads/profile/${memberdto.profile_photo}"
+													<img
+														src="${pageContext.request.contextPath}/uploads/profile/${memberdto.profile_photo}"
 														style="width: 100%; height: 100%; object-fit: cover;">
 												</c:when>
 												<c:otherwise>
@@ -163,18 +207,24 @@
 										</div>
 										<div>
 											<h3 class="text-sm fw-medium text-white mb-0">${not empty memberdto.userNickname ? memberdto.userNickname : memberdto.userId}</h3>
-											<p class="text-xs text-gray-500 mb-0">${dto.detailDate} &bull; 조회 ${dto.viewCount}</p>
+											<p class="text-xs text-gray-500 mb-0">${dto.detailDate}
+												&bull; 조회 ${dto.viewCount}</p>
 										</div>
 									</div>
 
-									<c:if test="${sessionScope.member.memberIdx == memberdto.userIdx}">
+									<c:if
+										test="${sessionScope.member.memberIdx == memberdto.userIdx}">
 										<div class="dropdown">
-											<button class="btn btn-icon text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+											<button class="btn btn-icon text-white" type="button"
+												data-bs-toggle="dropdown" aria-expanded="false">
 												<span class="material-symbols-outlined">more_horiz</span>
 											</button>
-											<ul class="dropdown-menu dropdown-menu-dark glass-dropdown" style="background: rgba(30, 30, 30, 0.9);">
-												<li><a class="dropdown-item" href="#" onclick="updatePost('${dto.postId}'); return false;">수정</a></li>
-												<li><a class="dropdown-item text-danger" href="#" onclick="deletePost('${dto.postId}'); return false;">삭제</a></li>
+											<ul class="dropdown-menu dropdown-menu-dark glass-dropdown"
+												style="background: rgba(30, 30, 30, 0.9);">
+												<li><a class="dropdown-item" href="#"
+													onclick="updatePost('${dto.postId}'); return false;">수정</a></li>
+												<li><a class="dropdown-item text-danger" href="#"
+													onclick="deletePost('${dto.postId}'); return false;">삭제</a></li>
 											</ul>
 										</div>
 									</c:if>
@@ -185,30 +235,45 @@
 
 									<c:if test="${not empty dto.fileList}">
 										<div class="mb-4">
-											<div id="imageCarousel" class="carousel slide" data-bs-interval="false">
+											<div id="imageCarousel" class="carousel slide"
+												data-bs-interval="false">
 												<div class="carousel-inner rounded-3 overflow-hidden">
-													<c:forEach var="fileDto" items="${dto.fileList}" varStatus="status">
+													<c:forEach var="fileDto" items="${dto.fileList}"
+														varStatus="status">
 														<div class="carousel-item ${status.first ? 'active' : ''}">
-															<div class="image-wrapper d-flex justify-content-center align-items-center bg-dark bg-opacity-25"
+															<div
+																class="image-wrapper d-flex justify-content-center align-items-center bg-dark bg-opacity-25"
 																style="height: 500px;">
 																<c:choose>
-																	<c:when test="${fn:startsWith(fileDto.filePath, 'http')}">
-																		<img src="${fileDto.filePath}" class="d-block" style="max-width: 100%; max-height: 100%; object-fit: contain;" alt="Post Image">
+																	<c:when
+																		test="${fn:startsWith(fileDto.filePath, 'http')}">
+																		<img src="${fileDto.filePath}" class="d-block"
+																			style="max-width: 100%; max-height: 100%; object-fit: contain;"
+																			alt="Post Image">
 																	</c:when>
 																	<c:otherwise>
-																		<img src="${pageContext.request.contextPath}/uploads/photo/${fileDto.filePath}"
-																			class="d-block" style="max-width: 100%; max-height: 100%; object-fit: contain;" alt="Post Image">
+																		<img
+																			src="${pageContext.request.contextPath}/uploads/photo/${fileDto.filePath}"
+																			class="d-block"
+																			style="max-width: 100%; max-height: 100%; object-fit: contain;"
+																			alt="Post Image">
 																	</c:otherwise>
 																</c:choose>
 															</div>
 														</div>
 													</c:forEach>
 												</div>
-												<button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev" id="btnPrev" style="display: none;">
-													<span class="carousel-btn-glass"><span class="material-symbols-outlined fs-4">chevron_left</span></span>
+												<button class="carousel-control-prev" type="button"
+													data-bs-target="#imageCarousel" data-bs-slide="prev"
+													id="btnPrev" style="display: none;">
+													<span class="carousel-btn-glass"><span
+														class="material-symbols-outlined fs-4">chevron_left</span></span>
 												</button>
-												<button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next" id="btnNext">
-													<span class="carousel-btn-glass"><span class="material-symbols-outlined fs-4">chevron_right</span></span>
+												<button class="carousel-control-next" type="button"
+													data-bs-target="#imageCarousel" data-bs-slide="next"
+													id="btnNext">
+													<span class="carousel-btn-glass"><span
+														class="material-symbols-outlined fs-4">chevron_right</span></span>
 												</button>
 											</div>
 										</div>
@@ -217,32 +282,37 @@
 									<div class="article-content">${dto.content}</div>
 								</div>
 
-								<div class="px-4 py-3 d-flex align-items-center justify-content-between border-top border-white border-opacity-10"
+								<div
+									class="px-4 py-3 d-flex align-items-center justify-content-between border-top border-white border-opacity-10"
 									style="background: rgba(255, 255, 255, 0.02);">
-									
+
 									<div class="d-flex gap-4">
 										<%-- [기능 연결] 좋아요 버튼: onClick 이벤트 & DTO 상태 반영 --%>
-										<button type="button" 
+										<button type="button"
 											class="d-flex align-items-center gap-2 btn btn-link text-decoration-none p-0 hover-pink ${dto.likedByUser ? 'text-pink' : 'text-white-50'}"
 											onclick="sendLike('${dto.postId}', this)">
 											<span class="material-symbols-outlined fs-5">${dto.likedByUser ? 'favorite' : 'favorite_border'}</span>
 											<span class="small like-count">${dto.likeCount}</span>
 										</button>
-										
-										<button class="d-flex align-items-center gap-2 btn btn-link text-decoration-none text-white-50 p-0 hover-blue">
+
+										<button
+											class="d-flex align-items-center gap-2 btn btn-link text-decoration-none text-white-50 p-0 hover-blue">
 											<span class="material-symbols-outlined fs-5">chat_bubble_outline</span>
-											<span class="small">${dto.commentCount}</span>
+											<span class="small" id="postCommentCount">${dto.commentCount}</span>
 										</button>
-										<button class="d-flex align-items-center gap-2 btn btn-link text-decoration-none text-white-50 p-0 hover-green">
+										<button
+											class="d-flex align-items-center gap-2 btn btn-link text-decoration-none text-white-50 p-0 hover-green">
 											<span class="material-symbols-outlined fs-5">repeat</span>
 										</button>
 									</div>
 
 									<div class="d-flex gap-3">
-										<button class="btn btn-link text-decoration-none text-white-50 p-0 hover-yellow">
+										<button
+											class="btn btn-link text-decoration-none text-white-50 p-0 hover-yellow">
 											<span class="material-symbols-outlined fs-5">bookmark_border</span>
 										</button>
-										<button class="btn btn-link text-decoration-none text-white-50 p-0 hover-purple">
+										<button
+											class="btn btn-link text-decoration-none text-white-50 p-0 hover-purple">
 											<span class="material-symbols-outlined fs-5">share</span>
 										</button>
 									</div>
@@ -251,20 +321,23 @@
 
 							<c:if test="${dto.replyEnabled != '0'}">
 								<div class="glass-card shadow-lg p-4"
-									style="background: rgba(255, 255, 255, 0.05);
-									backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem;">
+									style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem;">
 									<h5 class="text-white text-sm fw-bold mb-3">Comments</h5>
 
-									<div class="d-flex gap-3 mb-4">
-										<div class="avatar-sm bg-secondary text-white fw-bold flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle"
-											style="width: 36px; height: 36px;">ME</div>
+									<div class="d-flex gap-2 mb-4 align-items-start">
+										<div
+											class="avatar-sm flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle fw-bold text-white"
+											style="width: 32px; height: 32px; background: #333; font-size: 0.8rem;">ME</div>
+
 										<div class="flex-grow-1 position-relative">
-											<input type="text" id="replyContent" 
-												class="form-control comment-input rounded-pill px-3 text-sm"
-												placeholder="Add a comment...">
+											<input type="text" id="replyContent"
+												class="form-control comment-input text-white border-0 border-bottom border-secondary rounded-0 px-0 py-1"
+												style="background: transparent; font-size: 0.9rem; box-shadow: none;"
+												placeholder="댓글을 입력하세요...">
+
 											<button type="button" onclick="sendReply();"
-												class="btn btn-sm btn-primary rounded-pill position-absolute top-50 end-0 translate-middle-y me-1 px-3"
-												style="background: #a855f7; border: none; font-size: 0.75rem;">Post</button>
+												class="btn btn-sm btn-link text-decoration-none text-primary fw-bold position-absolute top-50 end-0 translate-middle-y p-0"
+												style="font-size: 0.85rem;">게시</button>
 										</div>
 									</div>
 
@@ -280,150 +353,118 @@
 	</div>
 
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-	
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 
 	<script type="text/javascript">
 		const isLogin = "${not empty sessionScope.member ? 'true' : 'false'}";
 		const contextPath = "${pageContext.request.contextPath}";
-		const postId = "${dto.postId}"; 
+		const postId = "${dto.postId}";
 
-		// 페이지 로드 시 댓글 리스트 가져오기
-		$(function(){
-			if("${dto.replyEnabled}" != "0") {
+		$(function() {
+			if ("${dto.replyEnabled}" != "0") {
 				listReply();
 			}
 		});
 
-		// 게시글 삭제
-		function deletePost(postId) {
-			if (confirm("게시글을 삭제하시겠습니까?")) {
-				alert("삭제 기능 구현 예정입니다.");
-				// location.href = contextPath + '/post/delete?postId=' + postId;
-			}
-		}
+		// ---------------------------------------------------
+		// [1] 댓글 리스트 불러오기 & 개수 자동 갱신
+		// ---------------------------------------------------
+		function listReply() {
+			let url = contextPath + "/post/listReply";
 
-		// 게시글 수정
-		function updatePost(postId) {
-			location.href = contextPath + '/post/update?postId=' + postId;
-		}
-
-		// [2] 게시글 좋아요
-		function sendLike(postId, btn) {
-			if(isLogin === "false") {
-				if(confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
-					location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
+			// GET 방식으로 요청
+			$("#listReplyDiv").load(url + "?postId=" + postId, function() {
+				// ★ [핵심] 리스트 로드 완료 후, listReply.jsp에 숨겨둔 개수를 가져와서 메인 화면 갱신
+				const newCount = $("#dynamicCommentCount").val();
+				if (newCount) {
+					$("#postCommentCount").text(newCount);
 				}
-				return;
-			}
-
-			$.ajax({
-				url: contextPath + "/post/insertPostLike",
-				type: "post",
-				data: { postId: postId },
-				dataType: "json",
-				success: function(data) {
-					if(data.state === "success") {
-						const $btn = $(btn);
-						const $icon = $btn.find("span.material-symbols-outlined");
-						const $count = $btn.find(".like-count");
-						
-						$count.text(data.likeCount);
-						
-						if(data.liked) {
-							$icon.text("favorite");
-							$btn.addClass("text-pink");
-							$btn.removeClass("text-white-50");
-						} else {
-							$icon.text("favorite_border");
-							$btn.removeClass("text-pink");
-							$btn.addClass("text-white-50");
-						}
-					} else if(data.state === "login_required") {
-						location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
-					}
-				},
-				error: function(e) { console.log(e.responseText); }
 			});
 		}
 
-		// [3] 댓글 관련 기능
-		
-		// 3-1. 댓글 리스트 불러오기
-		function listReply() {
-			let url = contextPath + "/post/listReply";
-			$("#listReplyDiv").load(url, {postId: postId});
-		}
+		// ---------------------------------------------------
+		// [2] 댓글 등록/수정/삭제 기능
+		// ---------------------------------------------------
 
-		// 3-2. 댓글 등록
+		// 2-1. 원본 댓글 등록
 		function sendReply() {
-			if(isLogin === "false") {
-				if(confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
-					location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
+			if (isLogin === "false") {
+				if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
+					location.href = contextPath + '/member/login?redirect='
+							+ encodeURIComponent(location.href);
 				}
 				return;
 			}
 
 			const content = $("#replyContent").val().trim();
-			if(!content) {
+			if (!content) {
 				alert("댓글 내용을 입력하세요.");
 				$("#replyContent").focus();
 				return;
 			}
 
 			$.ajax({
-				url: contextPath + "/post/insertReply",
-				type: "post",
-				data: { postId: postId, content: content },
-				success: function(data) {
-					if(data.trim() === "success") {
-						$("#replyContent").val(""); // 입력창 초기화
-						listReply(); // 리스트 갱신
-					} else if(data.trim() === "login_required") {
+				url : contextPath + "/post/insertReply",
+				type : "post",
+				data : {
+					postId : postId,
+					content : content
+				},
+				success : function(data) {
+					if (data.trim() === "success") {
+						$("#replyContent").val("");
+						listReply(); // 리스트 갱신 (개수도 같이 갱신됨)
+					} else if (data.trim() === "login_required") {
 						location.href = contextPath + '/member/login';
 					} else {
 						alert("댓글 등록 실패");
 					}
 				},
-				error: function(e) { console.log(e.responseText); }
+				error : function(e) {
+					console.log(e);
+				}
 			});
 		}
 
-		// 3-3. 대댓글 폼 토글
-		function showReplyForm(commentId, btn) {
+		// 2-2. 대댓글(답글) 폼 열기/닫기
+		function showReplyForm(commentId) {
+			// 다른 열린 폼들 닫기
 			$(".reply-form").not("#replyForm-" + commentId).hide();
+			// 내 폼 토글
 			const $form = $("#replyForm-" + commentId);
 			$form.toggle();
 		}
 
-		// 3-4. 대댓글 등록
+		// 2-3. 대댓글 등록
 		function sendReplyAnswer(parentCommentId) {
-			if(isLogin === "false") {
+			if (isLogin === "false") {
 				alert("로그인이 필요합니다.");
 				return;
 			}
 
 			const contentObj = $("#replyContent-" + parentCommentId);
 			const content = contentObj.val().trim();
-			
-			if(!content) {
+
+			if (!content) {
 				alert("답글 내용을 입력하세요.");
 				contentObj.focus();
 				return;
 			}
 
 			$.ajax({
-				url: contextPath + "/post/insertReply",
-				type: "post",
-				data: { 
-					postId: postId, 
-					content: content, 
-					parentCommentId: parentCommentId 
+				url : contextPath + "/post/insertReply",
+				type : "post",
+				data : {
+					postId : postId,
+					content : content,
+					parentCommentId : parentCommentId
 				},
-				success: function(data) {
-					if(data.trim() === "success") {
-						listReply(); 
+				success : function(data) {
+					if (data.trim() === "success") {
+						listReply();
 					} else {
 						alert("답글 등록 실패");
 					}
@@ -431,17 +472,70 @@
 			});
 		}
 
-		// 3-5. 댓글 삭제
-		function deleteReply(commentId) {
-			if(!confirm("댓글을 삭제하시겠습니까?")) return;
+		// 2-4. 댓글 수정 폼 열기/닫기 (toggleEdit)
+		function toggleEdit(commentId) {
+			const viewArea = $("#comment-view-" + commentId);
+			const editArea = $("#comment-edit-" + commentId);
+
+			// 수정 폼이 보이면 -> 닫기 (취소)
+			if (editArea.is(":visible")) {
+				editArea.hide();
+				viewArea.show();
+			} else {
+				// 수정 폼이 안 보이면 -> 열기
+				// (다른 열린 수정 폼들 닫기)
+				$("[id^='comment-edit-']").hide();
+				$("[id^='comment-view-']").show();
+
+				viewArea.hide();
+				editArea.show();
+			}
+		}
+
+		// 2-5. 댓글 수정 처리 (updateReply)
+		function updateReply(commentId) {
+			const content = $("#editContent-" + commentId).val().trim();
+			if (!content) {
+				alert("수정할 내용을 입력하세요.");
+				return;
+			}
 
 			$.ajax({
-				url: contextPath + "/post/deleteReply",
-				type: "post",
-				data: { commentId: commentId },
-				success: function(data) {
-					if(data.trim() === "success") {
-						listReply();
+				url : contextPath + "/post/updateReply",
+				type : "post",
+				data : {
+					commentId : commentId,
+					content : content
+				},
+				success : function(data) {
+					if (data.trim() === "success") {
+						listReply(); // 성공 시 리스트 다시 불러옴
+					} else if (data.trim() === "login_required") {
+						alert("로그인이 필요합니다.");
+					} else {
+						alert("수정 실패 (본인 글만 수정 가능합니다).");
+					}
+				},
+				error : function(e) {
+					console.log(e);
+				}
+			});
+		}
+
+		// 2-6. 댓글 삭제
+		function deleteReply(commentId) {
+			if (!confirm("댓글을 완전히 삭제하시겠습니까? (대댓글도 함께 삭제됩니다)"))
+				return;
+
+			$.ajax({
+				url : contextPath + "/post/deleteReply",
+				type : "post",
+				data : {
+					commentId : commentId
+				},
+				success : function(data) {
+					if (data.trim() === "success") {
+						listReply(); // 리스트 및 개수 갱신
 					} else {
 						alert("삭제 실패했습니다.");
 					}
@@ -449,29 +543,36 @@
 			});
 		}
 
-		// 3-6. 댓글 좋아요
-		function sendCommentLike(commentId, btn) {
-			if(isLogin === "false") {
-				if(confirm("로그인이 필요합니다. 로그인 페이지로 이동합니까?")) {
-					location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
+		// ---------------------------------------------------
+		// [3] 기타 기능 (좋아요, 게시글 처리)
+		// ---------------------------------------------------
+
+		function sendLike(postId, btn) {
+			if (isLogin === "false") {
+				if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
+					location.href = contextPath + '/member/login?redirect='
+							+ encodeURIComponent(location.href);
 				}
 				return;
 			}
 
 			$.ajax({
-				url: contextPath + "/post/insertCommentLike",
-				type: "post",
-				data: { commentId: commentId },
-				dataType: "json",
-				success: function(data) {
-					if(data.state === "success") {
+				url : contextPath + "/post/insertPostLike",
+				type : "post",
+				data : {
+					postId : postId
+				},
+				dataType : "json",
+				success : function(data) {
+					if (data.state === "success") {
 						const $btn = $(btn);
-						const $icon = $btn.find("span.material-symbols-outlined");
+						const $icon = $btn
+								.find("span.material-symbols-outlined");
 						const $count = $btn.find(".like-count");
 
-						$count.text(data.likeCount > 0 ? data.likeCount : "좋아요");
+						$count.text(data.likeCount);
 
-						if(data.liked) {
+						if (data.liked) {
 							$icon.text("favorite");
 							$btn.addClass("text-pink");
 							$btn.removeClass("text-white-50");
@@ -480,9 +581,64 @@
 							$btn.removeClass("text-pink");
 							$btn.addClass("text-white-50");
 						}
+					} else if (data.state === "login_required") {
+						location.href = contextPath + '/member/login?redirect='
+								+ encodeURIComponent(location.href);
 					}
 				}
 			});
+		}
+
+		function sendCommentLike(commentId, btn) {
+			if (isLogin === "false") {
+				if (confirm("로그인이 필요합니다.")) {
+					location.href = contextPath + '/member/login?redirect='
+							+ encodeURIComponent(location.href);
+				}
+				return;
+			}
+
+			$.ajax({
+				url : contextPath + "/post/insertCommentLike",
+				type : "post",
+				data : {
+					commentId : commentId
+				},
+				dataType : "json",
+				success : function(data) {
+					if (data.state === "success") {
+						const $btn = $(btn);
+						const $icon = $btn
+								.find("span.material-symbols-outlined");
+						const $count = $btn.find(".like-count");
+
+						// 0이면 '좋아요' 텍스트, 아니면 숫자
+						$count
+								.text(data.likeCount > 0 ? data.likeCount
+										: "좋아요");
+
+						if (data.liked) {
+							$icon.text("favorite");
+							$btn.addClass("text-pink");
+							$btn.removeClass("text-secondary");
+						} else {
+							$icon.text("favorite_border");
+							$btn.removeClass("text-pink");
+							$btn.addClass("text-secondary");
+						}
+					}
+				}
+			});
+		}
+
+		function deletePost(postId) {
+			if (confirm("게시글을 삭제하시겠습니까?")) {
+				location.href = contextPath + '/post/delete?postId=' + postId;
+			}
+		}
+
+		function updatePost(postId) {
+			location.href = contextPath + '/post/update?postId=' + postId;
 		}
 	</script>
 </body>

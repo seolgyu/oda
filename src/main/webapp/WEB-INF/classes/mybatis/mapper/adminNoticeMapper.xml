@@ -317,7 +317,7 @@
 	</delete>
 	
 	<update id="updateReplyShowHide" parameterType="map">
-		UPDATE noticereply SET showNotice = #{showNotice}
+		UPDATE noticereply SET showReply = #{showReply}
 		WHERE replyNum = #{replyNum} AND userId = #{userId}
 	</update>
 	
@@ -346,5 +346,19 @@
 		SELECT num, userId
 		FROM noticeLike
 		WHERE num = #{num} AND userId = #{userId}
+	</select>
+	
+	 <!-- 댓글 좋아요/싫어요 추가 -->
+   <insert id="insertReplyLike" parameterType="map">
+      INSERT INTO noticeReplyLike(replyNum, userId, replyLike)
+      VALUES (#{replyNum}, #{userId}, #{replyLike})
+   </insert>
+   
+	<!-- 댓글 좋아요 / 싫어요 개수 -->
+	<select id="replyLikeCount" parameterType="map" resultType="map">
+		SELECT COUNT(DECODE(ReplyLike, 1, 1)) likeCount,
+		COUNT(DECODE(ReplyLike, 0, 1)) disLikeCount
+		FROM noticeReplyLike
+		WHERE replyNum = #{replyNum}
 	</select>
 </mapper>

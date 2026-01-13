@@ -77,9 +77,7 @@ public class PostController {
 			dto.setTitle(req.getParameter("title"));
 			dto.setContent(req.getParameter("content"));
 
-			// 공지사항 처리
-			String isNotice = req.getParameter("isNotice");
-			dto.setPostType(isNotice != null ? "NOTICE" : "COMMUNITY");
+			dto.setPostType("COMMUNITY");
 
 			// 댓글 기능 해제 처리
 			String chkReply = req.getParameter("chkReply");
@@ -201,9 +199,7 @@ public class PostController {
 			dto.setPostId(Long.parseLong(req.getParameter("postId")));
 			dto.setTitle(req.getParameter("title"));
 			dto.setContent(req.getParameter("content"));
-
-			String isNotice = req.getParameter("isNotice");
-			dto.setPostType(isNotice != null ? "NOTICE" : "COMMUNITY");
+			dto.setPostType("COMMUNITY");
 
 			String chkReply = req.getParameter("chkReply");
 			dto.setReplyEnabled(chkReply != null ? "0" : "1");
@@ -214,7 +210,55 @@ public class PostController {
 			dto.setState("정상");
 			dto.setUserNum(info.getMemberIdx());
 
-			service.updatePost(dto);
+			// 삭제할 파일 처리 (delfile 파라미터가 여러 개 올 수 있음)
+			String[] delFiles = req.getParameterValues("delfile");
+			if (delFiles != null && delFiles.length > 0) {
+				for (String fileIdStr : delFiles) {
+					long fileId = Long.parseLong(fileIdStr);
+					service.deleteFileAt(fileId); // ★ Service에 이 메서드 추가 필요
+				}
+			}
+			// [추가] 새로운 파일 업로드 처리 (기존 파일 뒤에 이어붙이기)
+			List<FileAtDTO> fileList = new ArrayList<>();
+			String root = req.getServletContext().getRealPath("/");
+			String tempPath = root + "temp";
+
+			File tempDir = new File(tempPath);
+			if (!tempDir.exists())
+				tempDir.mkdirs();
+
+			Collection<Part> parts = req.getParts();
+
+			for (Part part : parts) {
+				if (part.getName().equals("selectFile") && part.getSize() > 0 && part.getSubmittedFileName() != null
+						&& !part.getSubmittedFileName().trim().isEmpty()) {
+
+					String originalFileName = part.getSubmittedFileName();
+					File tempFile = new File(tempPath, originalFileName);
+					part.write(tempFile.getAbsolutePath());
+
+					// Cloudinary 업로드
+					String uploadedUrl = CloudinaryUtil.uploadFile(tempFile);
+
+					if (uploadedUrl != null) {
+						FileAtDTO fileDto = new FileAtDTO();
+						fileDto.setFileName(originalFileName);
+						fileDto.setFilePath(uploadedUrl);
+						fileDto.setFileSize(part.getSize());
+						// fileOrder는 Service에서 처리하는 게 안전함
+
+						String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+						fileDto.setFileType(ext);
+
+						fileList.add(fileDto);
+					}
+					if (tempFile.exists())
+						tempFile.delete();
+				}
+			}
+			dto.setFileList(fileList);
+
+			service.updatePost(dto); // Service 내부에서 파일 저장 처리
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -266,7 +310,7 @@ public class PostController {
 
 		if (info != null) {
 			boolean liked = service.isLiked(postId, info.getMemberIdx());
-			dto.setLikedByUser(liked); 
+			dto.setLikedByUser(liked);
 		}
 
 		ModelAndView mav = new ModelAndView("post/article");
@@ -274,6 +318,33 @@ public class PostController {
 		mav.addObject("memberdto", memberdto);
 
 		return mav;
+	}
+
+	// 7. 게시글 삭제 (GET)
+	@GetMapping("delete")
+	public ModelAndView deletePost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+
+		if (info == null) {
+			return new ModelAndView("redirect:/member/login");
+		}
+
+		try {
+			long postId = Long.parseLong(req.getParameter("postId"));
+
+			// 본인 확인 (Service에서 체크하거나 여기서 체크)
+			PostDTO dto = service.findById(postId);
+			if (dto != null && dto.getUserNum() == info.getMemberIdx()) {
+				service.deletePost(postId); // 서비스 호출
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ModelAndView("redirect:/main");
 	}
 
 	// 1. 게시글 좋아요 (AJAX)
@@ -350,7 +421,6 @@ public class PostController {
 	// 3. 댓글 리스트 (AJAX - HTML 조각 리턴)
 	@GetMapping("listReply")
 	public ModelAndView listReply(HttpServletRequest req, HttpServletResponse resp) {
-		// 로그인 여부와 상관없이 리스트는 볼 수 있음 (단, 좋아요 여부는 로그인 유저 기준)
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo) session.getAttribute("member");
 
@@ -361,15 +431,19 @@ public class PostController {
 
 		long postId = Long.parseLong(req.getParameter("postId"));
 
-		// 서비스에서 댓글 목록 가져오기 (계층형으로 정렬됨)
+		// 1. 댓글 목록 가져오기
 		List<CommentDTO> list = service.listComment(postId, userNum);
 
-		// 댓글 목록만 뿌려줄 전용 JSP 페이지로 포워딩
+		// 2. [추가] 삭제되지 않은('0') 댓글 개수 계산 (화면 갱신용)
+		long commentCount = 0;
+		if (list != null) {
+			// Java Stream을 이용해 isDeleted가 "0"인 것만 카운트
+			commentCount = list.stream().filter(dto -> "0".equals(dto.getIsDeleted())).count();
+		}
+
 		ModelAndView mav = new ModelAndView("post/listReply");
 		mav.addObject("listReply", list);
-
-		// 게시글 작성자 번호도 넘기면 좋음 (댓글 삭제 권한 체크용)
-		// mav.addObject("postUserNum", ...);
+		mav.addObject("commentCount", commentCount); // ★ 댓글 개수 전달
 
 		return mav;
 	}
@@ -377,12 +451,48 @@ public class PostController {
 	// 4. 댓글 삭제 (AJAX)
 	@PostMapping("deleteReply")
 	public void deleteReply(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		// 본인 확인 로직 필요
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+
+		if (info == null) {
+			resp.getWriter().print("login_required");
+			return;
+		}
+
 		try {
 			long commentId = Long.parseLong(req.getParameter("commentId"));
-			service.deleteComment(commentId);
+
+			// 본인 확인을 위해 userNum도 함께 전달 (Service 인터페이스 수정 필요 시 반영)
+			service.deleteComment(commentId, info.getMemberIdx());
+
 			resp.getWriter().print("success");
 		} catch (Exception e) {
+			e.printStackTrace();
+			resp.getWriter().print("error");
+		}
+	}
+
+	@PostMapping("updateReply")
+	public void updateReply(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+
+		if (info == null) {
+			resp.getWriter().print("login_required");
+			return;
+		}
+
+		try {
+			CommentDTO dto = new CommentDTO();
+			dto.setCommentId(Long.parseLong(req.getParameter("commentId")));
+			dto.setContent(req.getParameter("content"));
+			dto.setUserNum(info.getMemberIdx()); // 본인만 수정 가능하도록 DTO에 담음
+
+			service.updateComment(dto);
+
+			resp.getWriter().print("success");
+		} catch (Exception e) {
+			e.printStackTrace();
 			resp.getWriter().print("error");
 		}
 	}
@@ -411,7 +521,7 @@ public class PostController {
 			// 변경된 좋아요 개수 가져오기 (화면 갱신용)
 			int likeCount = 0;
 			try {
-		
+
 				likeCount = service.countCommentLike(commentId);
 
 			} catch (Exception e) {

@@ -13,6 +13,9 @@ public interface PostMapper {
 
 	// 게시글 수정
 	public void updatePost(PostDTO dto) throws Exception;
+	
+	// 게시글 삭제
+	public void deletePost(long postId) throws Exception;
 
 	// 게시글 조회 (수정 폼 불러오기용)
 	public PostDTO findById(long postId);
@@ -47,6 +50,8 @@ public interface PostMapper {
 	void insertComment(CommentDTO dto) throws Exception;
 
 	void deleteComment(long commentId) throws Exception;
+	
+	void updateComment(CommentDTO dto) throws Exception;
 
 	// 댓글 리스트 (로그인 유저 번호를 같이 넘겨서 좋아요 여부 확인)
 	List<CommentDTO> listComment(Map<String, Object> map) throws Exception;
@@ -59,4 +64,7 @@ public interface PostMapper {
 	int countCommentLike(long commentId) throws Exception;
 	
 	int checkCommentLiked(Map<String, Object> map) throws Exception;
+	
+	void deleteFileAt(long fileAtId) throws Exception;
+	
 }

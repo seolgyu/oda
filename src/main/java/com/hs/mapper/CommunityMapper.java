@@ -11,6 +11,8 @@ public interface CommunityMapper {
 	public void insertCommunity(CommunityDTO dto) throws SQLException;
 	public void updateCommunity(CommunityDTO dto) throws SQLException;
 	public void deleteCommunity(Long community_id) throws SQLException;
+	public void deleteFavorites(Long community_id) throws SQLException;
+	public void deleteFollow(Long community_id) throws SQLException;
 	
 	public int checkJoinCommunity(Map<String, Object> map);
 	public void joinCommunity(Map<String, Object> map) throws SQLException;
@@ -21,9 +23,10 @@ public interface CommunityMapper {
 	public void removeFavorite(Map<String, Object> map) throws SQLException;
 	
 	public List<CommunityDTO> getCategoryList();
+	public List<CommunityDTO> getPopularCategoryList();
 	public CommunityDTO findById(Map<String, Object> map) throws SQLException;
 	public CommunityDTO findByName(String com_name) throws SQLException;
-	public List<CommunityDTO> selectAll(Map<String, Object> map);
 	
-	public List<CommunityDTO> searchCommunity(Map<String, Object> map);
+	public List<CommunityDTO> selectManagementList(Map<String, Object> map);
+	public List<CommunityDTO> selectCommunityList(Map<String, Object> map);
 }

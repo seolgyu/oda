@@ -8,6 +8,7 @@
 <%@ include file="/WEB-INF/views/home/head.jsp"%>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <style type="text/css">
+
 /* 설정 메뉴 아이템 기본 스타일 */
 .setting-nav-item {
 	display: flex;
@@ -53,28 +54,28 @@
 
 /* 드롭다운 화살표 회전 */
 .dropdown-trigger.active .dropdown-arrow {
-    transform: rotate(180deg);
+	transform: rotate(180deg);
 }
 
 /* 서브 메뉴 컨테이너: 왼쪽 간격을 본체 메뉴 아이콘 라인에 맞춤 */
 .dropdown-container {
-    margin-top: 2px;
-    margin-bottom: 5px;
-    /* 선을 없애거나 아주 흐리게 하여 왼쪽 여백 확보 */
-    border-left: 1px solid rgba(255, 255, 255, 0.05); 
-    margin-left: 20px; 
+	margin-top: 2px;
+	margin-bottom: 5px;
+	/* 선을 없애거나 아주 흐리게 하여 왼쪽 여백 확보 */
+	border-left: 1px solid rgba(255, 255, 255, 0.05);
+	margin-left: 20px;
 }
 
 /* 서브 메뉴 아이템: 텍스트가 너무 치우치지 않게 패딩 최소화 */
 .dropdown-container .setting-nav-item {
-    padding-left: 12px !important;
-    gap: 10px !important; /* 아이콘과 텍스트 간격 */
-    color: rgba(255, 255, 255, 0.5);
+	padding-left: 12px !important;
+	gap: 10px !important; /* 아이콘과 텍스트 간격 */
+	color: rgba(255, 255, 255, 0.5);
 }
 
 .dropdown-container .setting-nav-item:hover {
-    background: rgba(255, 255, 255, 0.03);
-    color: #818cf8;
+	background: rgba(255, 255, 255, 0.03);
+	color: #818cf8;
 }
 </style>
 </head>
@@ -88,15 +89,28 @@
 
 		<main class="app-main">
 			<div class="space-background">
-				<div class="stars"></div>S
+				<div class="stars"></div>
 				<div class="stars2"></div>
 				<div class="stars3"></div>
 				<div class="planet planet-1"></div>
 				<div class="planet planet-2"></div>
 			</div>
+			
+			<div id="sessionToast" class="glass-toast shadow-lg">
+				<div class="d-flex align-items-center gap-3">
+					<div class="toast-icon-circle">
+						<span id="toastIcon" class="material-symbols-outlined fs-5">info</span>
+					</div>
+					<div class="toast-content">
+						<h4 id="toastTitle"
+							class="text-xs fw-bold text-uppercase tracking-widest mb-1">System</h4>
+						<p id="toastMessage" class="text-sm text-gray-300 mb-0">메시지</p>
+					</div>
+				</div>
+			</div>
 
 			<div class="feed-scroll-container custom-scrollbar">
-				<div class="d-flex justify-content-center py-4 px-3">
+				<div class="d-flex justify-content-center py-4 pb-0 px-3">
 					<div class="d-flex gap-4 w-100" style="max-width: 1100px;">
 
 						<aside class="d-flex flex-column gap-3"
@@ -107,12 +121,14 @@
 									Settings</h3>
 
 								<nav class="d-flex flex-column gap-1">
-									<a href="#" class="setting-nav-item active-setting-tab" data-url="${pageContext.request.contextPath}/member/settings/profile"> <span
-										class="material-symbols-outlined">person</span> <span>Profile
+									<a href="#" class="setting-nav-item active-setting-tab"
+										data-url="${pageContext.request.contextPath}/member/settings/profile">
+										<span class="material-symbols-outlined">person</span> <span>Profile
 											Interface</span>
-									</a> <a href="#" class="setting-nav-item" data-url="${pageContext.request.contextPath}/member/settings/account"> <span
-										class="material-symbols-outlined">account_circle</span> <span>Account
-											Info</span>
+									</a> <a href="#" class="setting-nav-item"
+										data-url="${pageContext.request.contextPath}/member/settings/account">
+										<span class="material-symbols-outlined">account_circle</span>
+										<span>Account Info</span>
 									</a>
 
 									<div class="setting-nav-dropdown">
@@ -128,25 +144,56 @@
 										<div class="dropdown-container"
 											style="display: none; padding-left: 15px; flex-direction: column; gap: 2px;">
 											<a href="#" class="setting-nav-item py-2"
+												data-url="${pageContext.request.contextPath}/member/settings/follow"
+												style="font-size: 0.85rem;"> <span
+												class="material-symbols-outlined" style="font-size: 18px;">group</span>
+												팔로우
+											</a> <a href="#" class="setting-nav-item py-2"
+												data-url="${pageContext.request.contextPath}/member/settings/like"
 												style="font-size: 0.85rem;"> <span
 												class="material-symbols-outlined" style="font-size: 18px;">favorite</span>
 												좋아요
 											</a> <a href="#" class="setting-nav-item py-2"
+												data-url="${pageContext.request.contextPath}/member/settings/saved"
 												style="font-size: 0.85rem;"> <span
 												class="material-symbols-outlined" style="font-size: 18px;">bookmark</span>
 												저장
 											</a> <a href="#" class="setting-nav-item py-2"
+												data-url="${pageContext.request.contextPath}/member/settings/comments"
 												style="font-size: 0.85rem;"> <span
-												class="material-symbols-outlined" style="font-size: 18px;">group</span>
-												팔로우
+												class="material-symbols-outlined" style="font-size: 18px;">forum</span>
+												댓글
+											</a>
+										</div>
+									</div>
+
+									<div class="setting-nav-dropdown">
+										<button
+											class="setting-nav-item w-100 border-0 bg-transparent dropdown-trigger"
+											type="button" style="display: flex; align-items: center;">
+											<span class="material-symbols-outlined">security</span> <span
+												class="flex-grow-1 text-start">Privacy & Security</span> <span
+												class="material-symbols-outlined dropdown-arrow"
+												style="font-size: 1.2rem; transition: transform 0.3s;">expand_more</span>
+										</button>
+
+										<div class="dropdown-container"
+											style="display: none; padding-left: 15px; flex-direction: column; gap: 2px;">
+											<a href="#" class="setting-nav-item py-2"
+												data-url="${pageContext.request.contextPath}/member/settings/privacyScope"
+												style="font-size: 0.85rem;"> <span
+												class="material-symbols-outlined" style="font-size: 18px;">visibility</span>
+												공개 범위 설정
+											</a> <a href="#" class="setting-nav-item py-2"
+												data-url="${pageContext.request.contextPath}/member/settings/pwdChange"
+												style="font-size: 0.85rem;"> <span
+												class="material-symbols-outlined" style="font-size: 18px;">lock_reset</span>
+												비밀번호 변경
 											</a>
 										</div>
 									</div>
 
 									<a href="#" class="setting-nav-item"> <span
-										class="material-symbols-outlined">security</span> <span>Privacy
-											& Security</span>
-									</a> <a href="#" class="setting-nav-item"> <span
 										class="material-symbols-outlined">notifications_active</span>
 										<span>Notifications</span>
 									</a>
@@ -168,7 +215,8 @@
 							</div>
 						</aside>
 
-						<section class="flex-grow-1 d-flex flex-column gap-4" id="settings-content" style="min-width: 0;">
+						<section class="flex-grow-1 d-flex flex-column gap-4"
+							id="settings-content" style="min-width: 0;">
 							<jsp:include page="setting/settings_profile.jsp" />
 						</section>
 
@@ -181,52 +229,6 @@
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
-	<script type="text/javascript">
-	$(function() {
-	    $('.dropdown-trigger').on('click', function() {
-	        const $this = $(this);
-	        const $container = $this.next('.dropdown-container');
-	        
-	        $this.toggleClass('active');
-	        
-	        $container.stop().slideToggle(300, function() {
-	            if ($container.is(':visible')) {
-	                $container.css('display', 'flex');
-	            }
-	        });
-	    });
-	});
-	
-	$(function() {
-	    $('.setting-nav-item').on('click', function(e) {
-	        if($(this).hasClass('dropdown-trigger') || $(this).hasClass('text-danger')) return;
-	        
-	        e.preventDefault();
-	        
-	        const url = $(this).data('url');
-	        if(!url) return;
-
-	        $('.setting-nav-item').removeClass('active-setting-tab');
-	        $(this).addClass('active-setting-tab');
-
-	        loadSettings(url);
-	    });
-	});
-	
-	function loadSettings(url) {
-	        $.ajax({
-	            type: "GET",
-	            url: url,
-	            dataType: "html",
-	            success: function(data) {
-	            	$('#settings-content').html(data);
-	            },
-	            error: function() {
-	                alert("설정 페이지를 불러오는 데 실패했습니다.");
-	                $('#settings-content').show();
-	            }
-	        });
-	}
-	</script>
+	<script src="${pageContext.request.contextPath}/dist/js/settings.js"></script>	
 </body>
 </html>

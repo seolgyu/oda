@@ -3,7 +3,6 @@ package com.hs.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.hs.mapper.PostMapper;
 import com.hs.model.CommentDTO;
 import com.hs.model.FileAtDTO;
@@ -12,16 +11,14 @@ import com.hs.mybatis.support.MapperContainer;
 
 public class PostServiceImpl implements PostService {
 
-	// MyBatis 매퍼 객체 가져오기
 	private PostMapper mapper = MapperContainer.get(PostMapper.class);
 
 	@Override
 	public void insertPost(PostDTO dto) throws Exception {
 		try {
-			// 1. 게시글 저장 (게시글 번호 생성)
+
 			mapper.insertPost(dto);
 
-			// 2. 파일이 있다면 파일 테이블에 저장
 			List<FileAtDTO> files = dto.getFileList();
 			if (files != null && !files.isEmpty()) {
 				for (FileAtDTO fileDto : files) {
@@ -38,7 +35,46 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void updatePost(PostDTO dto) throws Exception {
 		try {
+			// 1. 글 내용 수정
 			mapper.updatePost(dto);
+
+			// 2. 새로운 파일이 있다면 추가 저장
+			List<FileAtDTO> newFiles = dto.getFileList();
+			if (newFiles != null && !newFiles.isEmpty()) {
+
+				// 기존 파일 중 가장 큰 순서 번호를 가져옴 (순서 유지를 위해)
+				// (Mapper에 maxFileOrder 쿼리가 필요하지만, 없으면 목록 개수로 추정하거나 쿼리 추가 필요)
+				// 여기서는 간단히 현재 등록된 파일 리스트를 가져와서 사이즈를 잽니다.
+				List<FileAtDTO> oldFiles = mapper.listFileAt(dto.getPostId());
+				int startOrder = 0;
+				if (oldFiles != null && !oldFiles.isEmpty()) {
+					startOrder = oldFiles.get(oldFiles.size() - 1).getFileOrder() + 1;
+				}
+
+				for (FileAtDTO fileDto : newFiles) {
+					fileDto.setPostId(dto.getPostId());
+					fileDto.setFileOrder(startOrder++); // 순서 이어붙이기
+					mapper.insertFileAt(fileDto);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public void deletePost(long postId) throws Exception {
+		try {
+			// PostMapper.xml에 update is_deleted = '1' 쿼리가 있는지 확인 필요
+			// 만약 없다면 deletePost 쿼리를 xml에 추가해야 함.
+			// 보내주신 xml에는 updatePost만 있고 deletePost(id)는 없습니다. 추가해야 합니다.
+
+			// (임시) DTO를 만들어 updatePost 재활용 (is_deleted만 '1'로)
+			// 하지만 정석은 Mapper에 deletePost 쿼리를 만드는 것입니다.
+			// 아래는 Mapper에 deletePost가 있다고 가정하고 호출합니다.
+			mapper.deletePost(postId);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -50,13 +86,11 @@ public class PostServiceImpl implements PostService {
 		PostDTO dto = null;
 
 		try {
-			// 1. 조회수 증가 (상세 보기 시에만 증가)
+
 			mapper.updateHitCount(postId);
 
-			// 2. 게시글 상세 정보 가져오기
 			dto = mapper.findById(postId);
 
-			// 3. 첨부파일 리스트 가져오기 및 DTO에 설정
 			if (dto != null) {
 				List<FileAtDTO> files = mapper.listFileAt(postId);
 				dto.setFileList(files);
@@ -99,20 +133,18 @@ public class PostServiceImpl implements PostService {
 			map.put("postId", postId);
 			map.put("userNum", userNum);
 
-			// 1. 이미 좋아요를 눌렀는지 확인
 			int check = mapper.checkPostLiked(map);
 
 			if (check > 0) {
-				// 2. 이미 눌렀으면 -> 좋아요 취소 (삭제)
+
 				mapper.deletePostLike(map);
 				isLiked = false;
 			} else {
-				// 3. 안 눌렀으면 -> 좋아요 추가
+
 				mapper.insertPostLike(map);
 				isLiked = true;
 			}
 
-			// 4. 게시글 테이블(POSTS)의 좋아요 개수(LIKE_COUNT) 동기화 (성능 최적화)
 			mapper.updatePostLikeCount(postId);
 
 		} catch (Exception e) {
@@ -122,7 +154,6 @@ public class PostServiceImpl implements PostService {
 		return isLiked;
 	}
 
-	// [2] 좋아요 개수 조회 (Controller 오류 해결용)
 	@Override
 	public int countPostLike(long postId) {
 		int count = 0;
@@ -150,13 +181,16 @@ public class PostServiceImpl implements PostService {
 		try {
 			Map<String, Object> map = new HashMap<>();
 			map.put("postId", postId);
-			map.put("userNum", currentUserNum); // 로그인 안 했으면 0이 들어옴
+			map.put("userNum", currentUserNum);
 
 			list = mapper.listComment(map);
 
-			// (선택) 엔터키 처리: content 안의 \n을 <br>로 변환
 			for (CommentDTO dto : list) {
+
 				dto.setContent(dto.getContent().replaceAll("\n", "<br>"));
+
+				String timeMsg = com.hs.util.DateUtil.calculateTimeAgo(dto.getCreatedDate());
+				dto.setTimeAgo(timeMsg);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -165,7 +199,7 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public void deleteComment(long commentId) throws Exception {
+	public void deleteComment(long commentId, long userNum) throws Exception {
 		try {
 			mapper.deleteComment(commentId);
 		} catch (Exception e) {
@@ -176,54 +210,73 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public boolean insertCommentLike(long commentId, long userNum) throws Exception {
-	    boolean isLiked = false;
-	    try {
-	        Map<String, Object> map = new HashMap<>();
-	        map.put("commentId", commentId);
-	        map.put("userNum", userNum);
+		boolean isLiked = false;
+		try {
+			Map<String, Object> map = new HashMap<>();
+			map.put("commentId", commentId);
+			map.put("userNum", userNum);
 
-	        // 1. 이미 좋아요를 눌렀는지 확인
-	        int check = mapper.checkCommentLiked(map);
+			int check = mapper.checkCommentLiked(map);
 
-	        if (check > 0) {
-	            // 2. 이미 눌렀으면 -> 좋아요 취소
-	            mapper.deleteCommentLike(map);
-	            isLiked = false;
-	        } else {
-	            // 3. 안 눌렀으면 -> 좋아요 추가
-	            mapper.insertCommentLike(map);
-	            isLiked = true;
-	        }
+			if (check > 0) {
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        throw e;
-	    }
-	    return isLiked;
+				mapper.deleteCommentLike(map);
+				isLiked = false;
+			} else {
+
+				mapper.insertCommentLike(map);
+				isLiked = true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return isLiked;
 	}
-	
+
 	@Override
 	public int countCommentLike(long commentId) throws Exception {
-	    return mapper.countCommentLike(commentId);
+		return mapper.countCommentLike(commentId);
+	}
+
+	@Override
+	public boolean isLiked(long postId, long userNum) {
+		boolean result = false;
+		try {
+			Map<String, Object> map = new HashMap<>();
+			map.put("postId", postId);
+			map.put("userNum", userNum);
+
+			int count = mapper.checkPostLiked(map);
+			if (count > 0) {
+				result = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public void updateComment(CommentDTO dto) throws Exception {
+		try {
+			mapper.updateComment(dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 	
 	@Override
-    public boolean isLiked(long postId, long userNum) {
-        boolean result = false;
+    public void deleteFileAt(long fileAtId) throws Exception {
         try {
-            Map<String, Object> map = new HashMap<>();
-            map.put("postId", postId);
-            map.put("userNum", userNum);
-            
-            // Mapper에 이미 만들어둔 checkPostLiked 활용
-            int count = mapper.checkPostLiked(map);
-            if(count > 0) {
-                result = true;
-            }
+            // (선택) 실제 파일이나 클라우드에서 삭제하려면 여기서 먼저 조회 후 처리
+            mapper.deleteFileAt(fileAtId);
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
-        return result;
     }
 
 }

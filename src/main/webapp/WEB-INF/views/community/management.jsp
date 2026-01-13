@@ -42,17 +42,14 @@
             <div class="feed-scroll-container w-full">
                 <div class="w-full max-w-[950px] mx-auto py-12 px-6 relative z-10">
                     
-                    <div class="text-left mb-10">
+                    <div class="text-center mb-10">
                         <h1 class="text-4xl font-extrabold text-white tracking-tight mb-2">내 커뮤니티</h1>
                         <p class="text-gray-400 text-base font-light">직접 만들거나 가입한 커뮤니티를 볼 수 있습니다.</p>
                     </div>
 
                     <div class="flex flex-col lg:flex-row gap-8">
                         <div class="lg:flex-[3] w-full min-w-0 space-y-6">
-                            <div class="relative group">
-                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">search</span>
-                                <input class="custom-input block w-full pl-12 pr-4 py-4 rounded-xl text-sm text-white" placeholder="커뮤니티 이름을 입력하세요..." type="text">
-                            </div>
+                  
 
                             <div class="neon-card rounded-[2.5rem] overflow-hidden">
 							    <c:choose>
@@ -121,5 +118,6 @@
 
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/community.js"></script>
+    <script src="${pageContext.request.contextPath}/dist/js/community_form.js"></script>
 </body>
 </html>

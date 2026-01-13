@@ -15,6 +15,16 @@
 		WHERE community_id = #{community_id}
 	</update>
 	
+	<delete id="deleteFavorites" parameterType="Long">
+		DELETE FROM COMMUNITY_FAVORITES
+		WHERE community_id = #{community_id}
+	</delete>
+	
+	<delete id="deleteFollow" parameterType="Long">
+		DELETE FROM COMMUNITY_FOLLOW
+		WHERE community_id = #{community_id}
+	</delete>
+	
 	<delete id="deleteCommunity" parameterType="Long">
 		DELETE FROM community 
 		WHERE community_id = #{community_id}
@@ -50,7 +60,7 @@
 		FROM COMMUNITY_CATEGORY
 	</select>
 	
-	<select id="searchCommunity" parameterType="map" resultType="com.hs.model.CommunityDTO">
+	<select id="selectManagementList" parameterType="map" resultType="com.hs.model.CommunityDTO">
 	    SELECT 
 	        c.community_id, c.com_name, c.com_description, c.icon_image, c.banner_image, c.is_private, 
 	        c.member_count, c.post_count, TO_CHAR(c.created_date, 'YYYY-MM-DD') created_date, 
@@ -75,6 +85,35 @@
 		</choose>
 		
 		ORDER BY c.community_id DESC
+	</select>
+	
+	<select id="getPopularCategoryList" resultType="com.hs.model.CommunityDTO">
+		SELECT * FROM (
+			SELECT cc.category_id, cc.category_name, SUM(c.member_count) total_member_count
+			FROM COMMUNITY_CATEGORY cc
+			JOIN COMMUNITY c ON cc.category_id = c.category_id
+			WHERE c.is_private = '0'
+			GROUP BY cc.category_id, cc.category_name
+			ORDER BY total_member_count DESC, cc.category_name ASC
+		) WHERE ROWNUM &lt;= 5
+	</select>
+	
+	<select id="selectCommunityList" parameterType="map" resultType="com.hs.model.CommunityDTO">
+		SELECT community_id, com_name, com_description, icon_image, banner_image, is_private, member_count, post_count, created_date, today_visit, total_visit, user_num, category_id
+		FROM (
+			SELECT community_id, com_name, com_description, icon_image, banner_image, is_private, member_count, post_count, created_date, today_visit, total_visit, user_num, category_id
+			FROM COMMUNITY
+			<where>
+	            is_private = '0'
+	            <if test="keyword != null and keyword != ''">
+	                AND com_name LIKE '%' || #{keyword} || '%'
+	            </if>
+	            <if test="category_id != null and category_id != ''">
+	                AND category_id = #{category_id}
+	            </if>
+	        </where>
+			ORDER BY member_count DESC
+		) WHERE ROWNUM &lt;= 100
 	</select>
 	
 	<select id="findByName" parameterType="String" resultType="com.hs.model.CommunityDTO">

@@ -21,17 +21,6 @@ public class CommunityServiceImpl implements CommunityService{
 		}
 		
 	}
-
-	@Override
-	public CommunityDTO findById(Map<String, Object> map) {
-		CommunityDTO dto = null;
-		try {
-			dto = mapper.findById(map);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return dto;
-	}
 	
 	@Override
 	public List<CommunityDTO> getCategoryList() {
@@ -42,6 +31,17 @@ public class CommunityServiceImpl implements CommunityService{
 			e.printStackTrace();
 		}
 		return list;
+	}
+
+	@Override
+	public CommunityDTO findById(Map<String, Object> map) {
+		CommunityDTO dto = null;
+		try {
+			dto = mapper.findById(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dto;
 	}
 
 	@Override
@@ -70,6 +70,18 @@ public class CommunityServiceImpl implements CommunityService{
 
 	@Override
 	public void deleteCommunity(Long community_id) throws Exception {
+		try {
+			mapper.deleteFavorites(community_id);
+			mapper.deleteFollow(community_id);
+			
+			mapper.deleteCommunity(community_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void checkJoinCommunity(Map<String, Object> map) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -85,36 +97,7 @@ public class CommunityServiceImpl implements CommunityService{
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void addFavorite(Map<String, Object> map) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeFavorite(Map<String, Object> map) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public List<CommunityDTO> searchCommunity(Map<String, Object> map) {
-		List<CommunityDTO> list = null;
-		try {
-			list = mapper.searchCommunity(map);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return list;
-	}
-
-	@Override
-	public void checkJoinCommunity(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 	@Override
 	public String checkFavorite(Map<String, Object> map) {
 		try {
@@ -132,6 +115,55 @@ public class CommunityServiceImpl implements CommunityService{
 			e.printStackTrace();
 			return "error";
 		}
+	}
+
+	@Override
+	public void addFavorite(Map<String, Object> map) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeFavorite(Map<String, Object> map) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<CommunityDTO> managementList(Map<String, Object> map) {
+		List<CommunityDTO> list = null;
+		try {
+			list = mapper.selectManagementList(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	@Override
+	public List<CommunityDTO> communityList(String keyword, String category_id) {
+		List<CommunityDTO> list = null;
+		try {
+			Map<String, Object> map = new HashMap<String, Object>(); 
+			map.put("keyword", keyword);
+			map.put("category_id", category_id);
+			
+			list = mapper.selectCommunityList(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	@Override
+	public List<CommunityDTO> getPopularCategoryList() {
+		List<CommunityDTO> list = null;
+		try {
+			list = mapper.getPopularCategoryList();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 	
 	
