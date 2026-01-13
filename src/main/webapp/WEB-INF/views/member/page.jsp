@@ -65,18 +65,48 @@
 
             <div class="feed-scroll-container custom-scrollbar">
                 <div class="d-flex flex-column align-items-center py-4 px-3">
-                    
-                    <div class="w-100 mb-4" style="max-width: 1100px;">
-                        <div class="glass-card overflow-hidden shadow-lg border-0" style="border-radius: 1rem !important;">
-                            <div style="height: 220px; background: linear-gradient(to right, #1e1b4b, #4338ca, #1e1b4b); position: relative;">
-                                <div class="position-absolute w-100 h-100" style="background: url('https://www.transparenttextures.com/patterns/stardust.png'); opacity: 0.3;"></div>
-                            </div>
-                            <div class="px-4 pb-4 pt-4 position-relative" style="background: rgba(13, 14, 18, 0.85); backdrop-filter: blur(10px);">
+
+					<div class="w-100 mb-4" style="max-width: 1100px;">
+						<div class="glass-card overflow-hidden shadow-lg border-0"
+							style="border-radius: 1rem !important;">
+							<div class="position-relative overflow-hidden"
+								style="height: 220px;">
+								<c:choose>
+									<c:when test="${not empty user.banner_photo}">
+										<img
+											src="${pageContext.request.contextPath}/uploads/banner/${user.banner_photo}"
+											class="w-100 h-100 object-fit-cover" alt="Banner">
+									</c:when>
+									<c:otherwise>
+										<div class="w-100 h-100"
+											style="background: linear-gradient(to right, #1e1b4b, #4338ca, #1e1b4b); position: relative;">
+											<div class="position-absolute w-100 h-100"
+												style="background: url('https://www.transparenttextures.com/patterns/stardust.png'); opacity: 0.3;"></div>
+										</div>
+									</c:otherwise>
+								</c:choose>
+
+								<div class="position-absolute bottom-0 start-0 w-100"
+									style="height: 40%; background: linear-gradient(to top, rgba(13, 14, 18, 0.3), transparent); pointer-events: none;">
+								</div>
+							</div>
+							<div class="px-4 pb-4 pt-4 position-relative"
+								style="background: rgba(13, 14, 18, 0.85); backdrop-filter: blur(10px);">
 								<div class="d-flex align-items-end gap-3">
 									<div
 										class="rounded-4 border border-4 border-dark shadow-lg d-flex align-items-center justify-content-center text-white fw-bold fs-1"
-										style="width: 120px; height: 120px; background: linear-gradient(135deg, #6366f1, #a855f7); margin-top: -60px; position: relative; z-index: 2;">
-										${not empty user.profile_photo ? user.profile_photo : fn:substring(user.userName, 0, 1)}
+										style="width: 120px; height: 120px; background: linear-gradient(135deg, #6366f1, #a855f7); margin-top: -60px; position: relative; z-index: 2; overflow: hidden;">
+
+										<c:choose>
+											<c:when test="${not empty user.profile_photo}">
+												<img
+													src="${pageContext.request.contextPath}/uploads/profile/${user.profile_photo}"
+													class="w-100 h-100 object-fit-cover" alt="Profile">
+											</c:when>
+											<c:otherwise>
+            									${fn:substring(user.userName, 0, 1)}
+        									</c:otherwise>
+										</c:choose>
 									</div>
 									<div class="pb-2">
 										<h1 class="text-white fs-2 fw-bold mb-1">${user.userNickname}
@@ -105,10 +135,10 @@
 									</div>
 								</div>
 							</div>
-                        </div>
-                    </div>
+						</div>
+					</div>
 
-                    <div class="d-flex gap-4 w-100" style="max-width: 1100px;">
+					<div class="d-flex gap-4 w-100" style="max-width: 1100px;">
                         
                         <div class="flex-grow-1 d-flex flex-column gap-4" style="min-width: 0;">
 

@@ -32,6 +32,23 @@ public class SettingController {
 	public ModelAndView settings(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
+		HttpSession session = req.getSession();
+		try {
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			
+			if (info == null) {
+	            return new ModelAndView("redirect:/member/login"); 
+	        }
+			
+			Long userNum = info.getMemberIdx();
+
+			MemberDTO dto = service.findByIdx(userNum);
+			
+			req.setAttribute("user", dto);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		
 	    return new ModelAndView("member/settings");
@@ -39,6 +56,25 @@ public class SettingController {
 
     @RequestMapping("profile")
     public String settingsProfile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	HttpSession session = req.getSession();
+
+		try {
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			
+			if (info == null) {
+	            return "redirect:/member/login"; 
+	        }
+			
+			Long userNum = info.getMemberIdx();
+
+			MemberDTO dto = service.findByIdx(userNum);
+			
+			req.setAttribute("user", dto);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
         return "member/setting/settings_profile";
     }
 
@@ -244,7 +280,7 @@ public class SettingController {
                     map.put("userNum", userNum);
                     map.put("userBanner", userBanner);
                     
-                    service.updateProfile(map);
+                    service.updateBanner(map);
                     
                     String oldBanner = dto.getBanner_photo();
                     if (oldBanner != null && !oldBanner.isEmpty()) {

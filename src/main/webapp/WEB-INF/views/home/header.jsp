@@ -46,16 +46,26 @@
 				<button class="btn-icon p-0 border-0 ms-1" type="button"
 					data-bs-toggle="dropdown" aria-expanded="false">
 					<div
-						class="avatar-img d-flex align-items-center justify-content-center text-white small fw-bold">
-						${not empty sessionScope.member ? fn:substring(sessionScope.member.userName, 0, 1) : "MK"}
+						class="avatar-img d-flex align-items-center justify-content-center text-white small fw-bold"
+						style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; position: relative; background: #6366f1; border: 1px solid rgba(255, 255, 255, 0.2);">
+						<c:choose>
+							<c:when test="${not empty sessionScope.member.avatar}">
+								<img
+									src="${pageContext.request.contextPath}/uploads/profile/${sessionScope.member.avatar}"
+									class="w-100 h-100 object-fit-cover" alt="Profile">
+							</c:when>
+							<c:otherwise>
+                				${fn:substring(sessionScope.member.userName, 0, 1)}
+            				</c:otherwise>
+						</c:choose>
 					</div>
 				</button>
 				<ul
 					class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow-lg mt-2">
 					<li><h6 class="dropdown-header">내 계정</h6></li>
 					<li><a class="dropdown-item d-flex align-items-center gap-2"
-						href="${pageContext.request.contextPath}/member/page?id=${sessionScope.member.userId}"><span class="material-symbols-outlined fs-6">person</span>
-							내 피드</a></li>
+						href="${pageContext.request.contextPath}/member/page?id=${sessionScope.member.userId}"><span
+							class="material-symbols-outlined fs-6">person</span> 내 피드</a></li>
 					<li><a class="dropdown-item d-flex align-items-center gap-2"
 						href="#"><span class="material-symbols-outlined fs-6">favorite</span>
 							좋아요 누른 게시물</a></li>

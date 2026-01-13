@@ -121,16 +121,24 @@
 		SET user_pwd = #{userPwd} 
 		WHERE user_num = #{userNum}
 	</update>
-	
+
 	<update id="updateProfile" parameterType="map">
-		UPDATE member 
-		SET user_profile = #{userProfile} 
+		UPDATE member
+		<set>
+			<if test="userProfile != null">
+				user_profile = #{userProfile, jdbcType=VARCHAR}
+			</if>
+		</set>
 		WHERE user_num = #{userNum}
 	</update>
-	
+
 	<update id="updateBanner" parameterType="map">
-		UPDATE member 
-		SET user_banner = #{userBanner} 
+		UPDATE member
+		<set>
+			<if test="userBanner != null">
+				user_banner = #{userBanner, jdbcType=VARCHAR}
+			</if>
+		</set>
 		WHERE user_num = #{userNum}
 	</update>
 

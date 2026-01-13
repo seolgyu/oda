@@ -1,6 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
-<%@ taglib prefix="fn" uri="jakarta.tags.functions"%>
 
 <div class="glass-card p-4 shadow-lg mx-auto" style="width: 820px; min-width: 820px; max-width: 100%;">
     <div class="mb-4 border-bottom border-white border-opacity-10 pb-3">
@@ -9,13 +8,16 @@
     </div>
 
     <div class="d-flex flex-column gap-4">
-        <div class="profile-preview-container w-100">
-            <div id="banner-preview" class="banner-edit-wrapper rounded-4 shadow-lg" onclick="$('#banner-input').click();">
-                <div class="banner-bg w-100 h-100" 
-                     style="background-image: url('${pageContext.request.contextPath}/uploads/banner/${user.banner_photo}'); background-size: cover; background-position: center;"></div>
+		<div class="profile-preview-container w-100">
+            <div id="banner-preview" class="banner-edit-wrapper rounded-4 shadow-lg">
+                <img id="banner-img-view" 
+                     src="${pageContext.request.contextPath}/uploads/banner/${user.banner_photo}" 
+                     class="w-100 h-100 object-fit-cover ${empty user.banner_photo ? 'd-none' : ''}">
                 
                 <input type="file" id="banner-input" class="d-none" accept="image/*">
-                <div class="edit-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
+                <div class="edit-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+                	style="cursor: pointer;"
+                	onclick="$('#banner-input').click();">
                     <div class="edit-btn-style">
                         <span class="material-symbols-outlined">photo_camera</span> 
                         <span>Change Banner</span>
@@ -25,9 +27,10 @@
 
             <div class="px-4 d-flex align-items-end gap-3" style="margin-top: -50px;">
                 <div class="position-relative">
-                    <div id="avatar-preview" class="settings-avatar-wrapper shadow-lg"
-                         style="background-image: url('${pageContext.request.contextPath}/uploads/profile/${user.profile_photo}');"
-                         onclick="$('#avatar-input').click();">
+                    <div id="avatar-preview-box" class="settings-avatar-wrapper shadow-lg" onclick="$('#avatar-input').click();">
+                        <img id="avatar-img-view" 
+                             src="${pageContext.request.contextPath}/uploads/profile/${user.profile_photo}" 
+                             class="w-100 h-100 object-fit-cover ${empty user.profile_photo ? 'd-none' : ''}">
 
                         <div class="avatar-edit-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
                             <span class="material-symbols-outlined text-white" style="font-size: 32px;">photo_camera</span>
@@ -50,7 +53,7 @@
                 <span class="material-symbols-outlined align-middle" style="font-size: 14px;">info</span> 
                 This is how your profile appears to other users.
             </div>
-            <button class="btn btn-primary rounded-pill px-5 fw-bold" style="background: #2563eb; border: none;">
+            <button type="button" class="btn btn-primary rounded-pill px-5 fw-bold btn-save-changes" style="background: #2563eb; border: none;">
                 Save Changes
             </button>
         </div>
@@ -58,7 +61,7 @@
 </div>
 
 <style>
-/* 배너 스타일 */
+/* 배너 컨테이너 */
 .banner-edit-wrapper {
     width: 100%; height: 200px;
     background: linear-gradient(to right, #1e1b4b, #4338ca, #1e1b4b);
@@ -66,93 +69,83 @@
     cursor: pointer;
 }
 
-/* 프로필 사진 사각형 (마이페이지 일치) */
+/* 아바타 컨테이너 */
 .settings-avatar-wrapper {
-    width: 125px !important; height: 125px !important;
-    border-radius: 1rem !important;
-    background: linear-gradient(135deg, #6366f1, #a855f7) !important;
-    background-size: cover; background-position: center;
-    border: 5px solid #141414 !important; 
+    width: 125px; height: 125px;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    border: 5px solid #141414; 
     display: flex; align-items: center; justify-content: center;
     position: relative; z-index: 10; cursor: pointer;
     overflow: hidden;
 }
 
-/* 호버 오버레이 효과 */
+/* 이미지 스타일 공통 */
+.object-fit-cover {
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* 오버레이 */
 .edit-overlay, .avatar-edit-overlay {
     background: rgba(0, 0, 0, 0.4);
     opacity: 0;
     transition: all 0.2s ease-in-out;
     backdrop-filter: blur(2px);
+    z-index: 5;
 }
-
 .banner-edit-wrapper:hover .edit-overlay, 
 .settings-avatar-wrapper:hover .avatar-edit-overlay {
     opacity: 1;
 }
 
-/* 배너 내부 버튼 스타일 */
 .edit-btn-style {
     background: rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: white; padding: 8px 16px; border-radius: 50px;
     display: flex; align-items: center; gap: 8px; font-size: 0.85rem;
 }
-
-/* 입력창 스타일 */
-.login-input {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
-    resize: none;
-}
-.login-input:focus {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-color: #6366f1 !important;
-    box-shadow: none;
-}
 </style>
 
 <script type="text/javascript">
-
 $(function() {
     let bannerFile = null;
     let avatarFile = null;
 
-    // --- 1. 미리보기 기능 (이미지 선택 시 호출) ---
-    function readURL(input, targetSelector) {
+    // --- <img> 태그용 미리보기 함수 ---
+    function readURL(input, imgElementId) {
         if (input.files && input.files[0]) {
             let reader = new FileReader();
             reader.onload = function(e) {
-                // 배경 이미지로 미리보기 적용
-                $(targetSelector).css('background-image', 'url(' + e.target.result + ')');
+                // src를 변경하고 d-none 클래스를 제거하여 이미지를 보이게 함
+                $(imgElementId).attr('src', e.target.result).removeClass('d-none');
             };
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    // 배너 선택 시
+    // 파일 선택 이벤트
     $('#banner-input').on('change', function() {
         bannerFile = this.files[0];
-        readURL(this, '.banner-bg');
+        readURL(this, '#banner-img-view');
     });
 
-    // 아바타 선택 시
     $('#avatar-input').on('change', function() {
         avatarFile = this.files[0];
-        readURL(this, '#avatar-preview');
+        readURL(this, '#avatar-img-view');
     });
 
-    $('.btn-primary').on('click', function() {
-
-        // FormData 객체 생성
+    // 저장 버튼 클릭
+    $('.btn-save-changes').on('click', function() {
         let formData = new FormData();
-        
-        if (bannerFile) {
-            formData.append("bannerFile", bannerFile);
-        }
-        if (avatarFile) {
-            formData.append("avatarFile", avatarFile);
+        if (bannerFile) formData.append("bannerFile", bannerFile);
+        if (avatarFile) formData.append("avatarFile", avatarFile);
+
+        if (!bannerFile && !avatarFile) {
+            showToast("info", "변경사항이 없습니다.");
+            return;
         }
 
         $.ajax({
@@ -161,18 +154,14 @@ $(function() {
             data: formData,
             processData: false,
             contentType: false,
+            dataType: 'json',
             success: function(data) {
                 if(data.status === "success") {
-                	showToast("success", "프로필 사진 및 배너 사진이 성공적으로 수정되었습니다.");
-                	setTimeout(function() {
-                        loadSettings("${pageContext.request.contextPath}/member/settings/profile");
-                    }, 800);
-                } else {
-                    alert("저장 중 오류가 발생했습니다.");
+                    showToast("success", "프로필 설정이 저장되었습니다.");
+                    setTimeout(function() {
+                    	location.href = "${pageContext.request.contextPath}/member/settings";
+                    }, 1000);
                 }
-            },
-            error: function() {
-                alert("서버 통신 오류");
             }
         });
     });
