@@ -17,15 +17,16 @@
 				<label
 					class="text-white text-xs fw-bold mb-2 d-block opacity-50 text-uppercase tracking-wider">User
 					ID</label> <input type="text" name="userId"
-					class="form-control login-input opacity-50"
-					value="${user.userId}" readonly
+					class="form-control login-input opacity-50" value="${user.userId}"
+					readonly
 					style="cursor: not-allowed; padding-left: 20px !important;">
 			</div>
 			<div class="col-md-6">
 				<label
 					class="text-white text-xs fw-bold mb-2 d-block opacity-50 text-uppercase tracking-wider">Email
 					Address</label> <input type="email" name="email"
-					class="form-control login-input opacity-50" value="${user.email}" readonly
+					class="form-control login-input opacity-50" value="${user.email}"
+					readonly
 					style="cursor: not-allowed; padding-left: 20px !important;">
 			</div>
 		</div>
@@ -34,31 +35,25 @@
 			<div class="col-md-6">
 				<label
 					class="text-white text-xs fw-bold mb-2 d-block text-uppercase tracking-wider">USERNAME</label>
-					<input type="text" name="userName"
-					class="form-control login-input" value="${user.userName}" placeholder="Your Name"
+				<input type="text" name="userName" id="input-name" class="form-control login-input"
+					value="${user.userName}" placeholder="Your Name"
 					style="padding-left: 20px !important;">
 			</div>
+
 			<div class="col-md-6">
 				<label
 					class="text-white text-xs fw-bold mb-2 d-block text-uppercase tracking-wider">NICKNAME</label>
-				<div class="d-flex gap-2">
-					<input type="text" name="userNickname" id="input-nickname"
-						class="form-control login-input"
-						value="${user.userNickname}" placeholder="Nickname"
-						style="flex: 1; padding-left: 20px !important;">
-					<button class="btn btn-outline-light px-3 fw-bold" type="button"
-						id="btn-check-nickname"
-						style="border-color: rgba(255, 255, 255, 0.15); white-space: nowrap; font-size: 0.8rem; border-radius: 0.375rem !important;">
-						Check</button>
-				</div>
+				<input type="text" name="userNickname" id="input-nickname"
+					class="form-control login-input" value="${user.userNickname}"
+					placeholder="Nickname" style="padding-left: 20px !important;">
 			</div>
 		</div>
 
 		<div class="row g-3">
 			<div class="col-md-6">
 				<label
-					class="text-white text-xs fw-bold mb-2 d-block text-uppercase tracking-wider">Birth
-					Date</label> <input type="date" name="birth"
+					class="text-white text-xs fw-bold mb-2 d-block text-uppercase tracking-wider">
+					Birth Date </label> <input type="date" name="birth" id="input-birth"
 					class="form-control login-input"
 					value="${fn:substring(user.birth, 0, 10)}"
 					style="padding-left: 20px !important; color-scheme: dark;">
@@ -140,54 +135,61 @@
     }
 
     $(function() {
-        // 2. 닉네임 중복 체크 (AJAX)
-        $('#btn-check-nickname').on('click', function() {
-            const nickname = $('#input-nickname').val();
-            if(!nickname) {
-                alert("Please enter a nickname.");
+    	$('.login-input').on('input', function() {
+            hideFieldError($(this));
+        });
+    	
+        $('#btn-update-account').on('click', function() {   
+        	const $btn = $(this);
+            const $userName = $('#input-name');
+            const $userNickname = $('#input-nickname');
+            const $birth = $('#input-birth');
+            
+            const userName = $userName.val().trim();
+            const userNickname = $userNickname.val().trim();
+            const birth = $birth.val().trim();
+            
+            if(! userName ) {
+            	showFieldError($userName, "이름을 입력해주세요");
                 return;
             }
             
-            $.ajax({
-                url: '${pageContext.request.contextPath}/member/checkNickname',
-                type: 'POST',
-                data: { userNickname: nickname },
-                success: function(res) {
-                    if(res === "available") {
-                        alert("This nickname is available.");
-                        $('#input-nickname').data('checked', true);
-                    } else {
-                        alert("This nickname is already in use.");
-                        $('#input-nickname').data('checked', false);
-                    }
-                },
-                error: function() { alert("Error connecting to server."); }
-            });
-        });
-
-        // 3. 계정 정보 업데이트 (AJAX)
-        $('#btn-update-account').on('click', function() {
-            // 간단한 유효성 검사 예시
-            if(!$('#input-nickname').val()) {
-                alert("Nickname is required.");
+            if(! userNickname ) {
+            	showFieldError($userNickname, "닉네임을 입력해주세요");
                 return;
             }
-
+            
+            if(! birth ) {
+            	showFieldError($birth, "생일을 입력해주세요");
+                return;
+            }
+            
+            $btn.prop('disabled', true).addClass('opacity-50');
             const formData = $('#accountForm').serialize();
             
             $.ajax({
-                url: '${pageContext.request.contextPath}/member/updateAccount',
+                url: '${pageContext.request.contextPath}/member/settings/updateAccount',
                 type: 'POST',
                 data: formData,
-                success: function(res) {
-                    if(res === "success") {
-                        alert("Account information updated successfully!");
-                        location.reload();
+                dataType: 'json',
+                success: function(data) {
+                    if(data.status === "success") {
+                    	showToast("success", "회원 정보가 성공적으로 수정되었습니다.");
+                    	setTimeout(function() {
+                            loadSettings("${pageContext.request.contextPath}/member/settings/account");
+                        }, 800);
+                    } else if(data.status === "duplicate") {
+                    	showFieldError($userNickname, "중복된 닉네임입니다.");
+                    	$btn.prop('disabled', false).removeClass('opacity-50');
                     } else {
-                        alert("Update failed. Please check your inputs.");
+                        showToast("error", "수정을 실패했습니다.");
+                        $btn.prop('disabled', false).removeClass('opacity-50');
                     }
                 },
-                error: function() { alert("Error saving data."); }
+                error: function() {
+                	showToast("error", "서버 에러 발생.");
+                	$btn.prop('disabled', false).removeClass('opacity-50');
+                }
             });
         });
     });

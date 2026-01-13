@@ -8,7 +8,7 @@
         <p class="text-secondary text-sm mb-0">Update your cosmic identity and preview the result.</p>
     </div>
 
-    <div class="d-flex flex-column gap-5">
+    <div class="d-flex flex-column gap-4">
         <div class="profile-preview-container w-100">
             <div id="banner-preview" class="banner-edit-wrapper rounded-4 shadow-lg" onclick="$('#banner-input').click();">
                 <div class="banner-bg w-100 h-100" 

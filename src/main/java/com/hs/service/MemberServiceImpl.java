@@ -36,9 +36,13 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public void updateMember(MemberDTO dto) throws Exception {
-		// TODO Auto-generated method stub
-		
+	public void updateMember(Map<String, Object> map) throws SQLException {
+		try {
+			mapper.updateMember(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 	@Override
