@@ -94,7 +94,7 @@
                             <div class="space-y-4">
                                 <label class="block text-sm font-medium text-gray-300 ml-1">커뮤니티 주제</label>
                                 <div class="flex flex-wrap gap-2.5 pb-10">
-                                	<c:forEach var="cate" items="${categories}" varStatus="status">
+                                	<c:forEach var="cate" items="${categoryList}" varStatus="status">
 							            <button type="button" 
 							                    class="topic-btn px-4 py-2.5 rounded-xl text-xs font-medium ${status.first ? 'selected' : ''}"
 							                    data-id="${cate.category_id}">
@@ -122,5 +122,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/util-jquery.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/community.js"></script>
+    <script src="${pageContext.request.contextPath}/dist/js/community_form.js"></script>
 </body>
 </html>

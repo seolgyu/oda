@@ -15,6 +15,7 @@ public class CommunityDTO {
 	private int today_visit;
 	private int total_visit;
 	private Long member_count;
+	private Long total_member_count;
 	private Long post_count;
 	private Long user_num; // FK (User)
 	private String created_date;
@@ -104,6 +105,14 @@ public class CommunityDTO {
 
 	public void setMember_count(Long member_count) {
 		this.member_count = member_count;
+	}
+
+	public Long getTotal_member_count() {
+		return total_member_count;
+	}
+
+	public void setTotal_member_count(Long total_member_count) {
+		this.total_member_count = total_member_count;
 	}
 
 	public Long getPost_count() {

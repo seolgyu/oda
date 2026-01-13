@@ -32,7 +32,7 @@ public class CommunityController {
 
 		List<CommunityDTO> categoryList = cservice.getCategoryList();
 		
-		mav.addObject("categories", categoryList);
+		mav.addObject("categoryList", categoryList);
 		
 		return mav;
 	}
@@ -62,7 +62,7 @@ public class CommunityController {
 
 		} catch (Exception e) {
 			List<CommunityDTO> categoryList = cservice.getCategoryList();
-			map.put("categories", categoryList);
+			map.put("categoryList", categoryList);
 			map.put("status", "error");
 			map.put("dto", dto);
 			e.printStackTrace();
@@ -191,6 +191,13 @@ public class CommunityController {
 	
 	@GetMapping("delete")
 	public ModelAndView delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String com_id = req.getParameter("community_id");
+		try {
+			cservice.deleteCommunity(Long.parseLong(com_id));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return new ModelAndView("redirect:/community/management");
 	}
 	
@@ -205,7 +212,7 @@ public class CommunityController {
 			allmap.put("user_num", info.getMemberIdx());
 			allmap.put("mode", "allList");
 			
-			List<CommunityDTO> allList = cservice.searchCommunity(allmap);
+			List<CommunityDTO> allList = cservice.managementList(allmap);
 			System.out.println("디버깅 - allList 개수: " + (allList != null ? allList.size() : "null"));
 			mav.addObject("allList", allList);
 			
@@ -213,7 +220,7 @@ public class CommunityController {
 			favmap.put("user_num", info.getMemberIdx());
 			favmap.put("mode", "favOnly");
 			
-			List<CommunityDTO> favList = cservice.searchCommunity(favmap);
+			List<CommunityDTO> favList = cservice.managementList(favmap);
 			mav.addObject("favList", favList);
 			
 		} catch (Exception e) {
@@ -225,7 +232,39 @@ public class CommunityController {
 	
 	@GetMapping("list")
 	public ModelAndView communityList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		return new ModelAndView("community/list");
+		ModelAndView mav = new ModelAndView("community/list");
+		
+		try {
+			List<CommunityDTO> popularTopics = cservice.getPopularCategoryList();
+			mav.addObject("categoryList", popularTopics);
+			
+			List<CommunityDTO> list = cservice.communityList(null, null);
+			mav.addObject("list", list);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	    
+	    
+	    return mav;
+	}
+	
+	@GetMapping("list_search")
+	public ModelAndView communityListAjax(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		ModelAndView mav = new ModelAndView("community/list_search");
+	    
+		try {
+			String keyword = req.getParameter("keyword");
+			String category_id = req.getParameter("category_id");
+			
+			List<CommunityDTO> list = cservice.communityList(keyword, category_id);
+			
+			mav.addObject("list", list);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	    
+	    return mav;
 	}
 	
 	@ResponseBody

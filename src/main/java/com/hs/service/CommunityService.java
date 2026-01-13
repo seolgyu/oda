@@ -22,5 +22,7 @@ public interface CommunityService {
 	public void addFavorite(Map<String, Object> map) throws Exception;
 	public void removeFavorite(Map<String, Object> map) throws Exception;
 	
-	public List<CommunityDTO> searchCommunity(Map<String, Object> map);
+	public List<CommunityDTO> managementList(Map<String, Object> map);
+	public List<CommunityDTO> communityList(String keyword, String category_id);
+	public List<CommunityDTO> getPopularCategoryList();
 }
