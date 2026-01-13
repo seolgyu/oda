@@ -18,6 +18,7 @@
     <%@ include file="/WEB-INF/views/home/head.jsp"%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminmain.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminnoticereply.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
 <style>
 :root {
@@ -401,36 +402,6 @@ body {
     opacity: 0.5 !important;
 }
 
-
-
-/* 댓글 */
-.reply { clear: both; padding: 20px 0 10px; }
-.reply .bold { font-weight: 600; }
-
-.reply .form-header { padding-bottom: 7px; }
-.reply-form  tr > td { padding: 2px 0 2px; }
-.reply-form textarea { width: 100%; height: 75px; resize: none; }
-.reply-form button { padding: 8px 25px; }
-
-.reply .reply-info { padding-top: 25px; padding-bottom: 7px; }
-.reply-info .reply-count { color: #3EA9CD; font-weight: 600; }
-
-.reply-writer .icon { font-size: 1.6rem; color: #999; }
-.reply-writer .name { font-size: 13px; font-weight: 600; }
-.reply-writer .date { font-size: 10px; }
-
-.reply .deleteReply, .reply .deleteReplyAnswer { cursor: pointer; }
-.reply .notifyReply, .reply .notifyReplyAnswer { cursor: pointer; }
-.reply .hideReply, .reply .hideReplyAnswer { cursor: pointer; }
-.reply .blockReply, .reply .blockReplyAnswer { cursor: pointer; }
-
-.reply .reply-dropdown { cursor: pointer; }
-.reply .reply-dropdown:hover { color: #0d6efd; font-weight: 500; }
-.reply .reply-menu { position: absolute; width: 80px; min-height: 65px; background:#fff; border: 1px solid #d5d5d5; border-radius: 3px; z-index: 9999; }
-.reply .reply-menu-item { text-align: center; cursor: pointer; padding: 7px; }
-.reply .reply-menu-item:nth-child(2n+1) { border-bottom: 1px solid #d5d5d5; }
-.reply .reply-menu-item:hover { color: #0d6efd; font-weight: 500; }
-
 .reply-answer textarea { width:98%; height: 75px; resize: none; }
 </style>
 </head> 
@@ -553,7 +524,7 @@ body {
 	<div class="reply">
 		<form name="replyForm" method="post">
 			<div class="form-header">
-				<span class="bold">댓글</span><span> - 타인을 비방하거나 개인정보를 유출하는 글의 게시를 삼가해 주세요.</span>
+				<span class="bold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;댓글</span>
 			</div>
 			
 			<table class="table table-borderless reply-form">
