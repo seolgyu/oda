@@ -155,20 +155,20 @@ select.glass-input-box {
 }
 
 
-.file-upload-wrapper {
+.file-form-control {
 	border: 2px dashed rgba(255, 255, 255, 0.1);
 	border-radius: 0.5rem;
 	padding: 1.5rem;
 	text-align: center;
 	transition: all 0.2s;
 	cursor: pointer;
+	width: 100%;
 }
 
-.file-upload-wrapper:hover {
+.file-form-control:hover {
 	border-color: #3b82f6;
 	background: rgba(59, 130, 246, 0.05);
 }
-
 
 </style>
 </head>
@@ -210,40 +210,44 @@ select.glass-input-box {
 							</div>
 							<div>
 								<h1 class="h3 fw-bold mb-1 text-white">이벤트 등록</h1>
-								<p class="text-white-50 small mb-0">새로운 프로모션의 제목과 진행 기간을
+								<p class="text-white-50 small mb-0">프로모션의 제목과 진행 기간을
 									설정하세요.</p>
 							</div>
 						</div>
 						<div class="d-flex gap-2">
 							<button class="btn btn-outline-light px-4 py-2 border-opacity-25"
-								style="border-radius: 0.75rem;" onclick="history.back();">취소</button>
+								style="border-radius: 0.75rem;" onclick="location.href='${pageContext.request.contextPath}/admin/events/list';">${mode=='update'?'수정취소':'등록취소'}</button>
 							<button
 								class="btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2"
 								id="btnSubmit">
-								<span class="material-icons-round fs-6">check_circle</span> <span>등록
-									완료</span>
+								<span class="material-icons-round fs-6" onclick="sendOk();">check_circle<span>${mode=='update'?'수정완료':'등록완료'}</span></span>
 							</button>
+								<input type="hidden" name="size" value="${size}">
+									<c:if test="${mode=='update'}">
+										<input type="hidden" name="num" value="${dto.num}">
+										<input type="hidden" name="page" value="${page}">
+									</c:if>
 						</div>
 					</div>
 				</div>
 
-				<form id="eventForm" action="/admin/event/write" method="post">
+				<form name="eventForm" action="${pageContext.request.contextPath}/admin/events/write" method="post" enctype="multipart/form-data">
 					<div class="card-dark p-4 p-md-5 shadow-lg">
 
 						<div class="mb-4">
 							<label class="form-label">이벤트 제목</label> <input type="text"
-								class="glass-input-box" name="title"
+								class="glass-input-box" name="event_title"
 								placeholder="이벤트 명칭을 입력하세요.">
 						</div>
 
 						<div class="row mb-4">
 							<div class="col-md-6 mb-4 mb-md-0">
 								<label class="form-label">시작 일시</label> <input type="date"
-									class="glass-input-box" name="startDate">
+									class="glass-input-box" name="start_date">
 							</div>
 							<div class="col-md-6">
 								<label class="form-label">종료 일시</label> <input type="date"
-									class="glass-input-box" name="endDate">
+									class="glass-input-box" name="end_date">
 							</div>
 						</div>
 
@@ -271,29 +275,62 @@ select.glass-input-box {
 										<span class="material-icons-round fs-5">link</span>
 									</button>
 								</div>
-								<textarea class="editor-textarea" name="content"
+								<textarea class="editor-textarea" name="event_content"
 									placeholder="사용자들에게 안내할 이벤트 상세 내용을 작성하세요..."></textarea>
 							</div>
 						</div>
-						
-						<div class="mb-0">
-							<label class="form-label">첨부 파일</label>
-							<div class="file-upload-wrapper">
-								<input type="file" name="upload" id="fileInput" class="hidden"
-									style="display: none;" multiple>
-								<div onclick="document.getElementById('fileInput').click();">
-									<span class="material-icons-round fs-2 text-white-50 mb-2">cloud_upload</span>
-									<p class="mb-1 text-white">클릭하여 파일을 업로드하거나 드래그하세요.</p>
-									<p class="text-white-50 small mb-0">최대 10MB까지 가능합니다.</p>
-								</div>
-							</div>
-							<div id="fileList" class="mt-2"></div>
-						</div>
+
+							<tr>
+								<td>
+									<input type="file" name="selectFile" class="file-form-control" multiple style="text-align: center">
+									<input type="hidden" name="size" value="10">
+								</td>
+							</tr>
+							<c:if test="${mode=='update'}">
+								<c:forEach var="vo" items="${listFile}">
+									<tr>
+										<td> 
+											<p class="form-control-plaintext">
+												<a href="javascript:deleteFile('${vo.fileNum}');"><i class="bi bi-trash"></i></a>
+												${vo.originalFilename}
+											</p>
+										</td>
+									</tr>
+								</c:forEach>
+							</c:if>
+
 					</div>
 				</form>
 			</div>
 		</main>
 	</div>
+
+<script type="text/javascript">
+function sendOk() {
+	const f = document.eventForm;
+	let str;
+	
+	str = f.event_title.value.trim();
+	if( ! str ) {
+		alert('제목을 입력하세요. ');
+		f.event_title.focus();
+		return;
+	}
+
+	str = f.event_content.value.trim();
+	if( ! str || str === '<p><br></p>' ) {
+		alert('내용을 입력하세요. ');
+		return;
+	}
+
+	f.action = '${pageContext.request.contextPath}/admin/events/${mode}';
+	
+	f.submit();
+}
+
+
+</script>
+
 
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

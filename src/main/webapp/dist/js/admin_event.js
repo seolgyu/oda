@@ -70,13 +70,43 @@ $(function(){
 		});
 
 	// 검색 조회 시 top고정 리스트 숨기기
+	
+	// 이벤트 삭제
+	$('#btnDeleteList').on('click', function(e) {
+	    e.preventDefault();
+
+	    const checkedItems = $('input[name="event_num"]:checked');
+
+	    if(checkedItems.length === 0) {
+	        alert('삭제할 이벤트를 선택해주세요.');
+	        return;
+	    }
+
+	    if(!confirm(`선택한 ${checkedItems.length}개의 이벤트를 삭제하시겠습니까?`)) {
+	        return;
+	    }
+
+	    const f = document.deleteForm;
+	    $(f).empty();
+
+	    checkedItems.each(function() {
+	        $(this).clone().appendTo(f);
+	    });
+
+	    const params = getSearchParams();
+	    addHiddenInput(f, 'schType', params.schType);
+	    addHiddenInput(f, 'kwd', params.kwd);
+	    addHiddenInput(f, 'state', params.state);
+	    addHiddenInput(f, 'size', params.size);
+	    addHiddenInput(f, 'page', params.page);
+
+	    const pathname = window.location.pathname;
+	    const baseUrl = pathname.substring(0, pathname.lastIndexOf('/'));
+	    f.action = baseUrl + '/deleteList';
+	    f.submit();
+	});
 
 	
-	// 클릭한 이벤트로 이동
-	$('.eventlink').on('click', function() {
-	    const no = $(this).data('no');
-	    location.href = '/event/detail?no=' + no;
-	});
 });
 
 

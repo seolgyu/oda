@@ -15,8 +15,14 @@ public class EventServiceImpl implements EventService {
 	public void insertEvent(EventDTO dto) throws Exception {
 		// 이벤트 등록
 		try {
-			Long seq = mapper.eventseq();
-			dto.setEvent_num(seq);
+			Long event_num_seq = mapper.event_num_seq();
+			dto.setEvent_num(event_num_seq);
+			
+			System.out.println(dto.getEvent_num());
+			System.out.println(dto.getEvent_title());
+			System.out.println(dto.getEvent_content());
+			System.out.println(dto.getStart_date());
+			System.out.println(dto.getEnd_date());
 			
 			mapper.insertEvent(dto);
 			
@@ -39,7 +45,23 @@ public class EventServiceImpl implements EventService {
 	@Override
 	public void updateEvent(EventDTO dto) throws Exception {
 		// 이벤트 수정
-		
+		try {
+			mapper.updateEvent(dto);
+			
+			if(dto.getListFile().size() != 0) {
+				for(MyMultipartFile mf: dto.getListFile()) {
+					dto.setSaveFilename(mf.getSaveFilename());
+					dto.setOriginalFilename(mf.getOriginalFilename());
+					dto.setFile_size(mf.getSize());
+					
+					mapper.insertEventFile(dto);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
 	}
 
 	@Override
@@ -110,7 +132,6 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public EventDTO findById(long event_num) {
-		// 글보기
 		EventDTO dto = null;
 		
 		try {

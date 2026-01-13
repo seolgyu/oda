@@ -266,7 +266,7 @@ input:-webkit-autofill:focus {
 							</div>
 							<div class="d-flex gap-2">
 							<button	
-								class="btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2" onclick="location.href='${pageContext.request.contextPath}/admin/events/write';">
+								class="btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2" onclick="location.href='${pageContext.request.contextPath}/admin/events/write?size=${size}';">
 								<span class="material-icons-round fs-3">edit</span> <span>작성</span>
 							</button>
 							<button type = "button" id="btnDeleteList" class = "btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2">
@@ -280,16 +280,17 @@ input:-webkit-autofill:focus {
 					<div class="row g-3 align-items-center">
 						<div class="col-12 col-lg-6">
 							<div class="btn-group glass-btn-group">
-								<button class="btn btn-outline-light ${activestatus ? 'active' : ''} btn-sm px-3" value="">전체</button>
-								<button class="btn btn-outline-light ${activestatus == '진행중' ? 'active' : ''} btn-sm px-3" value="진행중">진행중</button>
-								<button class="btn btn-outline-light ${activestatus == '진행예정' ? 'active' : ''}btn-sm px-3" value="진행예정">진행예정</button>
-								<button class="btn btn-outline-light ${activestatus == '종료' ? 'active' : ''}btn-sm px-3" value="종료">종료</button>
+								<button class="btn btn-outline-light ${active_status ? 'active' : ''} btn-sm px-3" value="">전체</button>
+								<button class="btn btn-outline-light ${active_status == '진행중' ? 'active' : ''} btn-sm px-3" value="진행중">진행중</button>
+								<button class="btn btn-outline-light ${active_status == '진행예정' ? 'active' : ''}btn-sm px-3" value="진행예정">진행예정</button>
+								<button class="btn btn-outline-light ${active_status == '종료' ? 'active' : ''}btn-sm px-3" value="종료">종료</button>
 							</div>
 						</div>	
 							<div class="col-12 col-lg-4 offset-lg-2">
 							<form name="searchForm" method="get">
+								<input type="hidden" name="page" value="${page}">
 						        <input type="hidden" name="size" value="${size}">
-						         <input type="hidden" name="activestatus" value="${activestatus}">
+						         <input type="hidden" name="active_status" value="${active_status}">
 						         
 						        <div class="input-group search-wrapper">
 						            <select name="schType" class="form-select glass-select" style="max-width: 120px; background: transparent; border: none; border-right: 1px solid rgba(255, 255, 255, 0.1); color: white; padding-right: 2rem;">
@@ -324,7 +325,7 @@ input:-webkit-autofill:focus {
 								</tr>
 							</thead>
 							<tbody>
-								<c:forEach var="dto" items="${listTop}" varStatus="activestatus">
+								<c:forEach var="dto" items="${listTop}" varStatus="active_status">
 								<tr style="background: rgba(59, 130, 246, 0.05);">
 									<td class="text-center">
 									<span class="material-symbols-outlined text-primary fs-5">campaign</span></td>
@@ -343,10 +344,10 @@ input:-webkit-autofill:focus {
 								</tr>
 								</c:forEach>
 								
-								<c:forEach var="dto" items="${list}" varStatus="activestatus">
+								<c:forEach var="dto" items="${list}" varStatus="active_status">
 								<tr>
 									<td class="text-center">
-										<input type="checkbox" class="form-check-input"></td>
+										<input type="checkbox" class="form-check-input" name="event_num"></td>
 									<td class="text-white">${dto.event_num}</td>
 									<td>
 										<c:if test="${dto.active_status == '진행예정'}">
@@ -379,7 +380,6 @@ input:-webkit-autofill:focus {
 						 	<span class="font-semibold text-white">(${page}/${total_page} page)</span> of <span class="font-semibold text-white">${dataCount}</span>
 						</span>
 							<div class="page-navigation">${dataCount == 0 ? "등록된 게시물이 없습니다." : paging}</div>
-
 						</nav>
 					</div>
 				</div>
@@ -387,10 +387,47 @@ input:-webkit-autofill:focus {
 		</main>
 	</div>
 
-	<form name="deleteForm" method="post"></form>
+<script type="text/javascript">
+function sendOk() {
+	const f = document.eventForm;
+	let str;
+	
+	str = f.title.value.trim();
+	if( ! str ) {
+		alert('제목을 입력하세요. ');
+		f.title.focus();
+		return;
+	}
 
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	str = f.content.value.trim();
+	if( ! str ) {
+		alert('내용을 입력하세요. ');
+		f.content.focus();
+		return;
+	}
+
+	f.action = '${pageContext.request.contextPath}/admin/events/${mode}';
+	f.submit();
+	
+	return true;
+}
+
+
+<c:if test="${mode=='update'}">
+function deleteFile(fileNum) {
+	if(! confirm('파일을 삭제 하시겠습니까 ? ')) {
+		return;
+	}
+	
+	let params = 'event_num=${dto.event_num}&file_at_id=' + file_at_id + '&page=${page}&size=${size}';
+	let url = '${pageContext.request.contextPath}/admin/event/deleteFile?' + params;
+	location.href = url;
+}
+</c:if>
+</script>
+
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/admin_bbs_util.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/admin_event.js"></script>

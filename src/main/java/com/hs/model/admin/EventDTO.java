@@ -25,7 +25,8 @@ public class EventDTO {
 	private long file_at_id;
 	private String originalFilename;
 	private String saveFilename;
-	private long file_size;
+	private long file_size;	
+	
 	public long getUser_num() {
 		return user_num;
 	}
@@ -135,10 +136,5 @@ public class EventDTO {
 	public void setEvents(int events) {
 		this.events = events;
 	}
-	
-	// 댓글
-	
-	
-	
 
 }

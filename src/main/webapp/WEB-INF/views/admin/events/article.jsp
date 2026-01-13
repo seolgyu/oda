@@ -377,13 +377,13 @@
       <ol class="breadcrumb mb-0">
          <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin">홈</a></li>
          <li class="breadcrumb-item"><a href="#">서비스 관리</a></li>
-         <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin.list">리스트</a></li>
+         <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin/events/list">리스트</a></li>
          <li aria-current="page" class="breadcrumb-item active">공지사항 상세</li>
       </ol>
    </nav>
    
    <div class="d-flex gap-2">
-      <button class="btn btn-action btn-outline-custom">수정</button>
+      <button class="btn btn-action btn-outline-custom" onclick="location.href='${pageContext.request.contextPath}/admin/events/write';">수정</button>
       <button class="btn btn-action btn-outline-custom">삭제</button>
    </div>
 </div>
@@ -429,15 +429,18 @@
 	</div>
 	
 	<div class="navigation-links">
-		<a class="nav-item-link" href="#">
-			<span class="nav-label">이전글 :</span>
-			<span>시스템 업데이트 공지사항</span>
-		</a>
+		<c:if test="${not empty prevDto}">
+			<a class="nav-item-link" href="${pageContext.request.contextPath}/admin/events/article?${query}&event_num=${prevDto.event_num}">
+				<span class="nav-label">이전글 : <c:out value="${prevDto.event_title}"/></span>
+			</a>
+		</c:if>
 		
-		<a class="nav-item-link" href="#">
-			<span class="nav-label">다음글 :</span>
-			<span class="text-secondary">다음글이 없습니다.</span>
-		</a>
+		
+		<c:if test="${not empty nextDto}">
+			<a class="nav-item-link" href="${pageContext.request.contextPath}/admin/events/article?${query}&event_num=${nextDto.event_num}">
+				<span class="nav-label">다음글 : <c:out value="${nextDto.event_title}"/></span>
+			</a>
+		</c:if>
 	</div>
 	
 	<div class="comments-section">

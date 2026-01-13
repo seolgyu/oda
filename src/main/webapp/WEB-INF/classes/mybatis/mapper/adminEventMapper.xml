@@ -2,11 +2,15 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hs.mapper.admin.EventMapper">
+	<select id="event_num_seq" resultType="Long">
+		SELECT event_num_seq.NEXTVAL FROM dual
+	</select>
+	
 	<!-- 이벤트 등록  -->
 	<insert id="insertEvent" parameterType="map">
 		  INSERT INTO EVENT(event_num, event_title, event_content, start_date, 
 			end_date, is_active, created_date, update_date, ev_hitcount)
-		VALUES(#{event_num}, #{event_title}, #{event_content}, #{start_date}, #{end_date}, 0, SYSDATE, SYSDATE, #{ev_hitcount})
+		VALUES(#{event_num}, #{event_title}, #{event_content}, to_date(#{start_date}, 'yyyy-mm-dd'), to_date(#{end_date},'yyyy-mm-dd'), 0, SYSDATE, SYSDATE, 0)
 	</insert>
 	
 	<!-- 이벤트 등록 파일 -->
@@ -114,6 +118,30 @@
 	<update id="updateHitCount" parameterType="Long">
 		UPDATE EVENT SET ev_hitcount = ev_hitcount + 1
 		WHERE event_num = #{event_num}
+	</update>
+	
+	<!-- 이벤트 삭제 -->
+	<delete id="deleteEvent" parameterType="Long">
+		DELETE FROM event
+		WHERE event_num = #{event_num}
+	</delete>
+	
+	<!-- 이벤트 여러개 삭제 -->
+	<delete id="deleteListEvent" parameterType="java.util.List">
+		DELETE FROM event
+		WHRER event_num IN 
+		<foreach collection="list" item="event_nums" index="index"
+			open="(" separator="," close=")">
+			#{event_num}
+		</foreach>
+	</delete>
+	
+	<!-- 이벤트 수정 -->
+	<update id="updateEvent" parameterType="com.hs.model.admin.EventDTO">
+		    UPDATE event SET event_num = #{event_num}, event_title = #{event_title}, event_content = #{event_content}, 
+		    	start_date = #{start_date}, end_date = #{end_date}, is_active = #{is_active}, 
+		    	update_date = SYSDATE
+    		WHERE event_num = ${event_num}
 	</update>
 	
 </mapper>

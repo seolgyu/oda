@@ -7,7 +7,7 @@ import java.util.Map;
 import com.hs.model.admin.EventDTO;
 
 public interface EventMapper {
-	public long eventseq();
+	public long event_num_seq();
 	
 	// 이벤트 등록
 	public void insertEvent(EventDTO dto) throws SQLException;
@@ -25,7 +25,7 @@ public interface EventMapper {
 	public List<EventDTO> listEventTop();
 	public List<EventDTO> listEvent(Map<String, Object> map);
 	
-	// 제목 검색
+	
 	public EventDTO findById(long event_num);
 	// 이전글
 	public EventDTO findByPrev(Map<String, Object> map);
