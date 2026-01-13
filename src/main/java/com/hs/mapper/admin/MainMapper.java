@@ -1,5 +1,9 @@
 package com.hs.mapper.admin;
 
-public interface MainMapper {
+import java.util.List;
 
+import com.hs.model.admin.MainDTO;
+
+public interface MainMapper {
+	public List<MainDTO> mainList();
 }

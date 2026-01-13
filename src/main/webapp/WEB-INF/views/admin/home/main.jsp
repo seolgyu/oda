@@ -65,7 +65,7 @@
 								<div>
 									<p class="stat-label">총 가입자 수</p>
 									<div class="d-flex align-items-baseline gap-2">
-										<span class="stat-value">12,543</span> <span
+										<span class="stat-value">${list[0].membercnt}</span> <span
 											class="stat-badge bg-blue-soft">+125</span>
 									</div>
 								</div>

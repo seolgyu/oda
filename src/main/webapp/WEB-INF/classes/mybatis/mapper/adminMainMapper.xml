@@ -2,5 +2,14 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hs.mapper.admin.MainMapper">
-	
+	<select id="mainList" resultType="com.hs.model.admin.MainDTO">
+		select NVL(count(*), 0) as membercnt
+		from member
+		where user_level &lt; 90
+		AND user_status = 1
+		AND user_id is not null
+		AND user_pwd is not null
+		AND user_name is not null
+		AND user_nickname is not null
+	</select>
 </mapper>
