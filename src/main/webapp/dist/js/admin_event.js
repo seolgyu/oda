@@ -23,51 +23,66 @@ $(function(){
         }
     });
 
-    // 검색 아이콘 클릭
-    $('.search-icon').on('click', function() {
-        searchList();
+    // activestatus 버튼
+    $('.glass-btn-group .btn').on('click', function(e) {
+		e.preventDefault();
+		$('.glass-btn-group .btn').removeClass('active');
+		$(this).addClass('active');
+		
+		const statusValue = $(this).val() || $(this).attr('value') || '';
+		const schType = $('select[name="schType"]').val() || 'all';
+		const kwd = $('input[name="kwd"]').val() || '';
+		const size = $('input[name="size"]').val() || '10';
+		
+		const params = new URLSearchParams();
+		params.append('size', size);
+		params.append('schType', schType);
+		params.append('kwd', kwd);
+		
+		if(statusValue){
+			params.append('status', statusValue);
+		}
+		
+		const pathname = window.location.pathname;
+		const url = pathname + '?' + params.toString();
+		
+		location.href = url;
     });
 	
-    $('.glass-btn-group .btn').on('click', function(e){
-        e.preventDefault(); 
-        
-        console.log('버튼 클릭됨'); 
-        
-        // 모든 버튼의 active 클래스 제거
-        $('.glass-btn-group .btn').removeClass('activestatus');
-
-        // 클릭한 버튼에 active 클래스 추가
-        $(this).addClass('activestatus');
-
-        // 버튼의 value 값 또는 텍스트 가져오기
-        const activestatus = $(this).val() || $(this).attr('value') || '';
-        
-        // 현재 검색 조건 가져오기
-        const schType = $('select[name="schType"]').val() || 'all';
-        const kwd = $('input[name="kwd"]').val() || '';
-        const size = $('input[name="size"]').val() || '10';
-
-        // URLSearchParams로 쿼리스트링 생성
-        const params = new URLSearchParams();
-        params.append('size', size);
-        params.append('schType', schType);
-        params.append('kwd', kwd);
-
-        
-        if(activestatus) {
-            params.append('activestatus', activestatus);
-        }
-
-        // 페이지 이동
-        const pathname = window.location.pathname;
-        const url = pathname + '?' + params.toString();
 	
-        
-        console.log('이동할 URL:', url);
-        
-        location.href = url;
-		
-		});
+	
+    $('form-check-input-all').on('change', function(){
+		const isChecked = $(this).prop('checked');
+		$('input[name=event_num]').prop('checked', isChecked);
+	});
+	
+	
+	$(document).on('change', 'input[name=event_num]', function(){
+		const totalCount = $('input[name=event_num]').length;
+		const checkedCount = $('input[name=event_num]:checked').length;
+		$('.form-check-input-all').prop('checked', totalCount === checkedCount);
+	});
+	
+	function getSearchParams(){
+		const urlParams = new URLSearchParams(window.location.search);
+		return {
+			schType: $('select[name="schType"]').val() || 'all',
+			kwd: $('input[name="kwd"]').val() || '',
+			status: $('input[name="status"]').val() || '',
+			size: $('input[name="size"]').val() || '10',
+			page: urlParams.get('page') || '1'
+		};
+	}
+	
+	function addHiddenInput(form, name, value){
+		if(value){
+			$('<input>')
+				.attr('type', 'hidden')
+				.attr('name', name)
+				.val(value)
+				.appendTo(form)
+		}
+	}
 
 	// 검색 조회 시 top고정 리스트 숨기기
 	

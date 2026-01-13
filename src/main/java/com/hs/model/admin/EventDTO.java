@@ -23,8 +23,8 @@ public class EventDTO {
 	
 	// 첨부파일
 	private long file_at_id;
-	private String originalFilename;
-	private String saveFilename;
+	private String file_name;
+	private String file_path;
 	private long file_size;	
 	
 	public long getUser_num() {
@@ -112,18 +112,7 @@ public class EventDTO {
 	public void setFile_at_id(long file_at_id) {
 		this.file_at_id = file_at_id;
 	}
-	public String getOriginalFilename() {
-		return originalFilename;
-	}
-	public void setOriginalFilename(String originalFilename) {
-		this.originalFilename = originalFilename;
-	}
-	public String getSaveFilename() {
-		return saveFilename;
-	}
-	public void setSaveFilename(String saveFilename) {
-		this.saveFilename = saveFilename;
-	}
+
 	public long getFile_size() {
 		return file_size;
 	}
@@ -135,6 +124,18 @@ public class EventDTO {
 	}
 	public void setEvents(int events) {
 		this.events = events;
+	}
+	public String getFile_name() {
+		return file_name;
+	}
+	public void setFile_name(String file_name) {
+		this.file_name = file_name;
+	}
+	public String getFile_path() {
+		return file_path;
+	}
+	public void setFile_path(String file_path) {
+		this.file_path = file_path;
 	}
 
 }

@@ -280,24 +280,23 @@ input:-webkit-autofill:focus {
 					<div class="row g-3 align-items-center">
 						<div class="col-12 col-lg-6">
 							<div class="btn-group glass-btn-group">
-								<button class="btn btn-outline-light ${active_status ? 'active' : ''} btn-sm px-3" value="">전체</button>
-								<button class="btn btn-outline-light ${active_status == '진행중' ? 'active' : ''} btn-sm px-3" value="진행중">진행중</button>
-								<button class="btn btn-outline-light ${active_status == '진행예정' ? 'active' : ''}btn-sm px-3" value="진행예정">진행예정</button>
-								<button class="btn btn-outline-light ${active_status == '종료' ? 'active' : ''}btn-sm px-3" value="종료">종료</button>
+								<button class="btn btn-outline-light ${status ? 'active' : ''} btn-sm px-3" value="">전체</button>
+								<button class="btn btn-outline-light ${status == '진행중' ? 'active' : ''} btn-sm px-3" value="진행중">진행중</button>
+								<button class="btn btn-outline-light ${status == '진행예정' ? 'active' : ''}btn-sm px-3" value="진행예정">진행예정</button>
+								<button class="btn btn-outline-light ${status == '종료' ? 'active' : ''}btn-sm px-3" value="종료">종료</button>
 							</div>
 						</div>	
 							<div class="col-12 col-lg-4 offset-lg-2">
 							<form name="searchForm" method="get">
-								<input type="hidden" name="page" value="${page}">
 						        <input type="hidden" name="size" value="${size}">
-						         <input type="hidden" name="active_status" value="${active_status}">
+						         <input type="hidden" name="status" value="${status}">
 						         
 						        <div class="input-group search-wrapper">
 						            <select name="schType" class="form-select glass-select" style="max-width: 120px; background: transparent; border: none; border-right: 1px solid rgba(255, 255, 255, 0.1); color: white; padding-right: 2rem;">
 						                <option value="all" ${schType == 'all' ? 'selected' : ''}>전체</option>
-						                <option value="title_content" ${schType == 'title_content' ? 'selected' : ''}>제목+내용</option>
-						                <option value="content" ${schType == 'content' ? 'selected' : ''}>내용</option>
-						                <option value="startdate" ${schType == 'startdate' ? 'selected' : ''}>시작일</option>
+						                <option value="event_title" ${schType == 'event_title' ? 'selected' : ''}>제목+내용</option>
+						                <option value="event_content" ${schType == 'event_content' ? 'selected' : ''}>내용</option>
+						                <option value="event_content" ${schType == 'event_content' ? 'selected' : ''}>시작일</option>
 						            </select>
 						            
 						            <span style="width:10px;"></span>
@@ -405,6 +404,7 @@ function sendOk() {
 		f.content.focus();
 		return;
 	}
+
 
 	f.action = '${pageContext.request.contextPath}/admin/events/${mode}';
 	f.submit();

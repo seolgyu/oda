@@ -10,13 +10,13 @@
 	<insert id="insertEvent" parameterType="map">
 		  INSERT INTO EVENT(event_num, event_title, event_content, start_date, 
 			end_date, is_active, created_date, update_date, ev_hitcount)
-		VALUES(#{event_num}, #{event_title}, #{event_content}, to_date(#{start_date}, 'yyyy-mm-dd'), to_date(#{end_date},'yyyy-mm-dd'), 0, SYSDATE, SYSDATE, 0)
+		VALUES(#{event_num}, #{event_title}, #{event_content}, TO_DATE(#{start_date}, 'yyyy-mm-dd'), TO_DATE(#{end_date}, 'yyyy-mm-dd'), 0, SYSDATE, SYSDATE, 0)
 	</insert>
 	
 	<!-- 이벤트 등록 파일 -->
 	<insert id="insertEventFile" parameterType="com.hs.model.admin.EventDTO">
-		INSERT INTO EVENT_FILEAT(file_at_id, event_num, user_num, originalFilename, saveFilename, file_size)
-			VALUES(EV_FILEAT_SEQ.NEXTVAL, #{event_num}, #{user_num}, #{originalFilename}, #{saveFilename}, #{file_size})
+		INSERT INTO EVENT_FILEAT(file_at_id, event_num, file_name, file_path, file_size)
+			VALUES(ev_fileat_seq.NEXTVAL, #{event_num}, #{file_name}, #{file_path}, #{file_size})
 	</insert>
 	
 	<!-- 검색 조건 -->
@@ -26,14 +26,16 @@
 				OR DBMS_LOB.INSTR(event_content, #{kwd}) &gt; 0)
 		</if>
 		<if test="schType == 'event_title' ">
-			DBMS_LOB.INSTR(event_title, #{kwd}) &gt; 0
+			INSTR(event_title, #{kwd}) &gt; 0
 		</if>
 		<if test="schType == 'event_content' ">
 			DBMS_LOB.INSTR(event_content, #{kwd}) &gt; 0
 		</if>
 		<if test="schType == 'start_date' ">
-			DBMS_LOB.INSTR(start_date, #{kwd}) &gt; 0
+			(TO_CHAR(start_date, 'YYYY-MM-DD') = #{kwd}
+				OR TO_CHAR(start_date, 'YYYYMMDD') = #{kwd})
 		</if>
+
 	</sql>
 	
 	<!-- 이벤트 리스트 맨윗줄 출력(진행) -->
@@ -42,7 +44,7 @@
 			TO_CHAR(start_date, 'YYYY-MM-DD') start_date, 
 			TO_CHAR(end_date, 'YYYY-MM-DD') end_date,
 				CASE
-		    		WHEN SYSDATE > start_date AND SYSDATE &lt;= end_date THEN '진행'
+		    		WHEN SYSDATE &gt; start_date AND SYSDATE &lt;= end_date THEN '진행'
 		            WHEN is_active = 2 OR (SYSDATE >= end_date) THEN '종료'
 		            ELSE '진행예정'
 		            END AS active_status, is_active, created_date, update_date, ev_hitcount, NVL(fileCount, 0) fileCount
@@ -63,11 +65,23 @@
     	FROM EVENT e
     	JOIN MEMBER m ON e.user_num = m.user_num
 		<where>
-			<if test="showEvent != null">
-				showEvent = #{showEvent}
+			<if test="is_active != null">
+				is_active = #{is_active}
 			</if>		
 			<if test="kwd != null and kwd != ''  ">
 				AND <include refid="search-list"/>
+			</if>
+			<if test="status == '진행'">
+			    AND SYSDATE &gt; start_date
+			    AND SYSDATE &lt;= end_date
+			</if>
+			
+			<if test="status == '종료'">
+			    AND (is_active = 2 OR SYSDATE &gt;= end_date)
+			</if>
+			
+			<if test="status == '진행예정'">
+			    AND SYSDATE &lt; start_date
 			</if>
 		</where>
 	</select>
@@ -92,12 +106,25 @@
     		GROUP BY event_num
     	) ef ON e.event_num = ef.event_num
     	<where>
-    		<if test="showEvent != null">
-    			showEvent = #{showEvent}
+    		<if test="is_active != null">
+    			is_active = #{is_active}
     		</if>
     		<if test="kwd != null and kwd != ''">
     			AND <include refid="search-list"/>
     		</if>
+    		<!--  
+			<if test="status == '진행'">
+			    AND SYSDATE &gt; start_date
+			    AND SYSDATE &lt;= end_date
+			</if>
+			
+			<if test="status == '종료'">
+			    AND (is_active = 2 OR SYSDATE &gt;= end_date)
+			</if>
+			
+			<if test="status == '진행예정'">
+			    AND SYSDATE &lt; start_date
+			</if> -->
     	</where>
     	ORDER BY update_date DESC, event_num DESC
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
@@ -129,8 +156,8 @@
 	<!-- 이벤트 여러개 삭제 -->
 	<delete id="deleteListEvent" parameterType="java.util.List">
 		DELETE FROM event
-		WHRER event_num IN 
-		<foreach collection="list" item="event_nums" index="index"
+		WHERE event_num IN 
+		<foreach collection="list" item="event_num" index="index"
 			open="(" separator="," close=")">
 			#{event_num}
 		</foreach>
@@ -141,7 +168,7 @@
 		    UPDATE event SET event_num = #{event_num}, event_title = #{event_title}, event_content = #{event_content}, 
 		    	start_date = #{start_date}, end_date = #{end_date}, is_active = #{is_active}, 
 		    	update_date = SYSDATE
-    		WHERE event_num = ${event_num}
+    		WHERE event_num = #{event_num}
 	</update>
 	
 </mapper>

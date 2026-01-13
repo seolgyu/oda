@@ -17,19 +17,13 @@ public class EventServiceImpl implements EventService {
 		try {
 			Long event_num_seq = mapper.event_num_seq();
 			dto.setEvent_num(event_num_seq);
-			
-			System.out.println(dto.getEvent_num());
-			System.out.println(dto.getEvent_title());
-			System.out.println(dto.getEvent_content());
-			System.out.println(dto.getStart_date());
-			System.out.println(dto.getEnd_date());
-			
+
 			mapper.insertEvent(dto);
 			
 			if(dto.getListFile().size() != 0) {
 				for(MyMultipartFile mf: dto.getListFile()) {
-					dto.setSaveFilename(mf.getSaveFilename());
-					dto.setOriginalFilename(mf.getOriginalFilename());
+					dto.setFile_path(mf.getSaveFilename());
+					dto.setFile_name(mf.getOriginalFilename());
 					dto.setFile_size(mf.getSize());
 					
 					mapper.insertEventFile(dto);
@@ -50,8 +44,8 @@ public class EventServiceImpl implements EventService {
 			
 			if(dto.getListFile().size() != 0) {
 				for(MyMultipartFile mf: dto.getListFile()) {
-					dto.setSaveFilename(mf.getSaveFilename());
-					dto.setOriginalFilename(mf.getOriginalFilename());
+					dto.setFile_path(mf.getSaveFilename());
+					dto.setFile_name(mf.getOriginalFilename());
 					dto.setFile_size(mf.getSize());
 					
 					mapper.insertEventFile(dto);
@@ -186,7 +180,7 @@ public class EventServiceImpl implements EventService {
 	@Override
 	public void deleteEventFile(Map<String, Object> map) throws Exception {
 		// 첨부파일 삭제
-		
+
 	}
 
 	@Override

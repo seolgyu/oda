@@ -73,7 +73,6 @@ public class eventManageController {
 			
 			map.put("offset", offset);
 			map.put("size", size);
-			
 
 			List<EventDTO> list = service.listEvent(map);
 			
@@ -334,7 +333,7 @@ public class eventManageController {
 
 			EventDTO dto = service.findByFileId(fileNum);
 			if (dto != null) {
-				b = fileManager.doFiledownload(dto.getSaveFilename(), dto.getOriginalFilename(), pathname, resp);
+				b = fileManager.doFiledownload(dto.getFile_path(), dto.getFile_name(), pathname, resp);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -383,7 +382,7 @@ public class eventManageController {
 			// 실제 파일 삭제
 			List<EventDTO> listFile = service.listEventFile(event_num);
 			for (EventDTO vo : listFile) {
-				fileManager.doFiledelete(pathname, vo.getSaveFilename());
+				fileManager.doFiledelete(pathname, vo.getFile_path());
 			}
 			
 			Map<String, Object> map = new HashMap<String, Object>();
@@ -442,7 +441,7 @@ public class eventManageController {
 				
 				// 실제 파일 삭제
 				for (EventDTO vo : listFile) {
-					fileManager.doFiledelete(pathname, vo.getSaveFilename());
+					fileManager.doFiledelete(pathname, vo.getFile_path());
 				}
 				
 				map.put("event_nums", n);
