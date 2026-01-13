@@ -397,7 +397,18 @@
 					else $btnNext.css('display', 'flex');
 				});
 			});
-		});
+		});	
+    </script>
+    
+    <script>
+        window.addEventListener('pageshow', function(event) {
+            // event.persisted: BFCache(뒤로가기 캐시)에서 로드되었는지 확인
+            // window.performance...: 일부 브라우저 호환성 체크 (type 2가 뒤로가기)
+            if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+                // 캐시된 페이지라면 강제로 새로고침하여 최신 데이터를 가져옴
+                window.location.reload();
+            }
+        });
     </script>
 </body>
 </html>

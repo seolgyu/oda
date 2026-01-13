@@ -1,26 +1,30 @@
 package com.hs.model;
 
 public class CommentDTO {
-	// 1. COMMENTS 테이블 컬럼 매핑
+
 	private long commentId;
 	private long postId;
 	private long userNum;
-	private String userId; // 테이블의 user_id (작성자 ID)
+	private String userId;
 	private String content;
-	private String createdDate; // 포맷팅된 날짜 문자열
+	private String createdDate;
 	private String updatedDate;
-	private long parentCommentId; // 부모 댓글 ID (대댓글일 경우)
-	private String isDeleted; // '0': 정상, '1': 삭제됨
+	private long parentCommentId;
+	private String isDeleted;
+	private String userNickName;
+	private String profileImage;
+	private int likeCount;
+	private boolean likedByUser;
+	private String timeAgo;
 
-	// 2. 화면 표시를 위한 추가 필드 (JOIN으로 가져옴)
-	private String userNickName; // 작성자 닉네임
-	private String profileImage; // 작성자 프로필 사진
+	public String getTimeAgo() {
+		return timeAgo;
+	}
 
-	// 3. 좋아요/대댓글 기능용 필드
-	private int likeCount; // 좋아요 개수
-	private boolean likedByUser; // 현재 로그인한 유저가 좋아요 눌렀는지 여부
+	public void setTimeAgo(String timeAgo) {
+		this.timeAgo = timeAgo;
+	}
 
-	// Getter & Setter 생성 (필수)
 	public long getCommentId() {
 		return commentId;
 	}

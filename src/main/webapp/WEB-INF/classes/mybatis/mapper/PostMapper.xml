@@ -24,24 +24,29 @@
         reply_enabled = #{replyEnabled}, show_counts = #{showCounts}
         WHERE post_id = #{postId} AND user_num = #{userNum}
     </update>
+    
+    <update id="deletePost" parameterType="long">
+        UPDATE POSTS SET IS_DELETED = '1' WHERE POST_ID = #{postId}
+    </update>
 
     <select id="findById" parameterType="long" resultType="com.hs.model.PostDTO">
         SELECT
-        p.post_id AS postId,
-        p.user_num AS userNum,
-        p.community_id AS communityId,
-        p.title,
-        p.content,
-        p.post_type AS postType,
-        p.view_count AS viewCount,
-        p.like_count AS likeCount,
-        p.created_date AS createdDate,
-        p.updated_date AS updatedDate,
-        p.state,
-        p.reply_enabled AS replyEnabled,
-        p.show_counts AS showCounts,
-        u.user_nickname AS authorNickname,
-        u.user_profile AS authorProfileImage
+            p.post_id AS postId,
+            p.user_num AS userNum,
+            p.community_id AS communityId,
+            p.title,
+            p.content,
+            p.post_type AS postType,
+            p.view_count AS viewCount,
+            p.like_count AS likeCount,
+            (SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED = '0') AS commentCount,
+            p.created_date AS createdDate,
+            p.updated_date AS updatedDate,
+            p.state,
+            p.reply_enabled AS replyEnabled,
+            p.show_counts AS showCounts,
+            u.user_nickname AS authorNickname,
+            u.user_profile AS authorProfileImage
         FROM posts p
         JOIN member u ON p.user_num = u.user_num
         WHERE p.post_id = #{postId}
@@ -62,7 +67,7 @@
         WHERE p.is_deleted = '0'
         ORDER BY p.post_id DESC
     </select>
-
+    
     <insert id="insertFileAt" parameterType="com.hs.model.FileAtDTO">
         INSERT INTO FILEAT (
         file_at_id, file_name, file_path, file_size,
@@ -91,6 +96,10 @@
         WHERE post_id = #{postId}
         ORDER BY file_order ASC
     </select>
+    
+    <delete id="deleteFileAt" parameterType="long">
+        DELETE FROM FILEAT WHERE FILE_AT_ID = #{fileAtId}
+    </delete>
 
     <resultMap id="postMap" type="com.hs.model.PostDTO">
         <id property="postId" column="postId" />
@@ -103,9 +112,7 @@
         <result property="createdDate" column="createdDate" />
         <result property="authorNickname" column="authorNickname" />
         <result property="authorProfileImage" column="authorProfileImage" />
-        
         <result property="likedByUser" column="likedByUser" />
-
         <collection property="fileList" ofType="com.hs.model.FileAtDTO">
             <result property="fileAtId" column="fileAtId" />
             <result property="filePath" column="filePath" />
@@ -121,13 +128,12 @@
             p.CONTENT AS content,
             p.VIEW_COUNT AS viewCount,
             p.LIKE_COUNT AS likeCount,
-            p.COMMENT_COUNT AS commentCount,
+            (SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED = '0') AS commentCount,
             TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD HH24:MI:SS') AS createdDate,
 
             NVL(u.USER_NICKNAME, 'Unknown') AS authorNickname,
             u.USER_PROFILE AS authorProfileImage,
 
-            /* 좋아요 여부 체크: userNum이 null(비로그인)이면 0 반환 */
             NVL((SELECT COUNT(*) FROM LIKES WHERE POST_ID = p.POST_ID AND USER_NUM = #{userNum}), 0) AS likedByUser,
 
             f.FILE_AT_ID AS fileAtId,
@@ -179,8 +185,14 @@
         )
     </insert>
 
+    <update id="updateComment" parameterType="com.hs.model.CommentDTO">
+        UPDATE COMMENTS 
+        SET CONTENT = #{content}, UPDATED_DATE = SYSDATE 
+        WHERE COMMENT_ID = #{commentId} AND USER_NUM = #{userNum}
+    </update>
+
     <delete id="deleteComment" parameterType="Long">
-        UPDATE COMMENTS SET IS_DELETED = '1', CONTENT = '삭제된 댓글입니다.' WHERE COMMENT_ID = #{commentId}
+        DELETE FROM COMMENTS WHERE COMMENT_ID = #{commentId}
     </delete>
 
     <select id="listComment" parameterType="map" resultType="com.hs.model.CommentDTO">
