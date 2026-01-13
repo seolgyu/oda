@@ -12,7 +12,7 @@
         <div class="profile-preview-container w-100">
             <div id="banner-preview" class="banner-edit-wrapper rounded-4 shadow-lg" onclick="$('#banner-input').click();">
                 <div class="banner-bg w-100 h-100" 
-                     style="background-image: url('${user.bannerImg}'); background-size: cover; background-position: center;"></div>
+                     style="background-image: url('${pageContext.request.contextPath}/uploads/banner/${user.banner_photo}'); background-size: cover; background-position: center;"></div>
                 
                 <input type="file" id="banner-input" class="d-none" accept="image/*">
                 <div class="edit-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
@@ -26,12 +26,8 @@
             <div class="px-4 d-flex align-items-end gap-3" style="margin-top: -50px;">
                 <div class="position-relative">
                     <div id="avatar-preview" class="settings-avatar-wrapper shadow-lg"
-                         style="background-image: url('${user.profileImg}');"
+                         style="background-image: url('${pageContext.request.contextPath}/uploads/profile/${user.profile_photo}');"
                          onclick="$('#avatar-input').click();">
-                        
-                        <c:if test="${empty user.profileImg}">
-                            <span class="text-white fs-1 user-initial"></span>
-                        </c:if>
 
                         <div class="avatar-edit-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
                             <span class="material-symbols-outlined text-white" style="font-size: 32px;">photo_camera</span>
@@ -118,22 +114,67 @@
 </style>
 
 <script type="text/javascript">
+
 $(function() {
-    function readURL(input, targetId) {
+    let bannerFile = null;
+    let avatarFile = null;
+
+    // --- 1. 미리보기 기능 (이미지 선택 시 호출) ---
+    function readURL(input, targetSelector) {
         if (input.files && input.files[0]) {
-            const reader = new FileReader();
+            let reader = new FileReader();
             reader.onload = function(e) {
-                if(targetId === '#banner-preview') {
-                    $(targetId).find('.banner-bg').css('background-image', 'url(' + e.target.result + ')');
-                } else {
-                    $(targetId).css('background-image', 'url(' + e.target.result + ')');
-                    $(targetId).find('.user-initial').hide();
-                }
-            }
+                // 배경 이미지로 미리보기 적용
+                $(targetSelector).css('background-image', 'url(' + e.target.result + ')');
+            };
             reader.readAsDataURL(input.files[0]);
         }
     }
-    $('#banner-input').on('change', function() { readURL(this, '#banner-preview'); });
-    $('#avatar-input').on('change', function() { readURL(this, '#avatar-preview'); });
+
+    // 배너 선택 시
+    $('#banner-input').on('change', function() {
+        bannerFile = this.files[0];
+        readURL(this, '.banner-bg');
+    });
+
+    // 아바타 선택 시
+    $('#avatar-input').on('change', function() {
+        avatarFile = this.files[0];
+        readURL(this, '#avatar-preview');
+    });
+
+    $('.btn-primary').on('click', function() {
+
+        // FormData 객체 생성
+        let formData = new FormData();
+        
+        if (bannerFile) {
+            formData.append("bannerFile", bannerFile);
+        }
+        if (avatarFile) {
+            formData.append("avatarFile", avatarFile);
+        }
+
+        $.ajax({
+            url: '${pageContext.request.contextPath}/member/settings/updateImages',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                if(data.status === "success") {
+                	showToast("success", "프로필 사진 및 배너 사진이 성공적으로 수정되었습니다.");
+                	setTimeout(function() {
+                        loadSettings("${pageContext.request.contextPath}/member/settings/profile");
+                    }, 800);
+                } else {
+                    alert("저장 중 오류가 발생했습니다.");
+                }
+            },
+            error: function() {
+                alert("서버 통신 오류");
+            }
+        });
+    });
 });
 </script>

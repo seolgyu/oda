@@ -165,4 +165,24 @@ public class MemberServiceImpl implements MemberService {
 		}
 	}
 
+	@Override
+	public void updateProfile(Map<String, Object> map) throws SQLException {
+		try {
+			mapper.updateProfile(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public void updateBanner(Map<String, Object> map) throws SQLException {
+		try {
+			mapper.updateBanner(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
 }

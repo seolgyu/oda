@@ -1,5 +1,6 @@
 package com.hs.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,11 +14,14 @@ import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
 import com.hs.service.MemberService;
 import com.hs.service.MemberServiceImpl;
+import com.hs.util.FileManager;
+import com.hs.util.MyMultipartFile;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
 
 @Controller
 @RequestMapping("/member/settings")
@@ -190,5 +194,71 @@ public class SettingController {
 		}
 		
     	return model;
+    }
+    
+    @PostMapping("updateImages")
+    @ResponseBody
+    public Map<String, Object> updateImages(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	FileManager fm = new FileManager();
+    	
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	HttpSession session = req.getSession();
+    	
+    	String root = req.getServletContext().getRealPath("/");
+        String profilePath = root + "uploads" + File.separator + "profile";
+        String bannerPath = root + "uploads" + File.separator + "banner";
+
+        try {
+        	SessionInfo info = (SessionInfo) session.getAttribute("member");
+        	Long userNum = info.getMemberIdx();
+        	
+        	MemberDTO dto = service.findByIdx(userNum);
+						
+            Part avatarPart = req.getPart("avatarFile");
+            if (avatarPart != null && avatarPart.getSize() > 0) {
+                MyMultipartFile mFile = fm.doFileUpload(avatarPart, profilePath);
+                if (mFile != null) {
+                	Map<String, Object> map = new HashMap<String, Object>();
+                    String userProfile = mFile.getSaveFilename();
+                    
+                    map.put("userNum", userNum);
+                    map.put("userProfile", userProfile);
+                    
+                    service.updateProfile(map);
+                    info.setAvatar(userProfile);
+                    
+                    String oldProfile = dto.getProfile_photo();
+                    if (oldProfile != null && !oldProfile.isEmpty()) {
+                        fm.doFiledelete(profilePath, oldProfile);
+                    }
+                }
+            }
+
+            Part bannerPart = req.getPart("bannerFile");
+            if (bannerPart != null && bannerPart.getSize() > 0) {
+                MyMultipartFile mFile = fm.doFileUpload(bannerPart, bannerPath);
+                if (mFile != null) {
+                	Map<String, Object> map = new HashMap<String, Object>();
+                    String userBanner = mFile.getSaveFilename();
+                    
+                    map.put("userNum", userNum);
+                    map.put("userBanner", userBanner);
+                    
+                    service.updateProfile(map);
+                    
+                    String oldBanner = dto.getBanner_photo();
+                    if (oldBanner != null && !oldBanner.isEmpty()) {
+                        fm.doFiledelete(bannerPath, oldBanner);
+                    }
+                }
+            }
+
+            model.put("status", "success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("status", "error");
+        }
+
+        return model;
     }
 }

@@ -20,6 +20,9 @@ public interface MemberService {
 	public void updatePwd(Map<String, Object> map) throws SQLException;
 	public void updateLastLoginDate(Long userNum) throws SQLException;
 	
+	public void updateProfile(Map<String, Object> map) throws SQLException;
+	public void updateBanner(Map<String, Object> map) throws SQLException;
+	
 	public MemberDTO findById(String userId);
 	public MemberDTO findByIdx(Long userNum);
 	

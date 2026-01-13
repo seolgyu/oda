@@ -121,6 +121,18 @@
 		SET user_pwd = #{userPwd} 
 		WHERE user_num = #{userNum}
 	</update>
+	
+	<update id="updateProfile" parameterType="map">
+		UPDATE member 
+		SET user_profile = #{userProfile} 
+		WHERE user_num = #{userNum}
+	</update>
+	
+	<update id="updateBanner" parameterType="map">
+		UPDATE member 
+		SET user_banner = #{userBanner} 
+		WHERE user_num = #{userNum}
+	</update>
 
 	<update id="updateMember" parameterType="map">
 		UPDATE member
