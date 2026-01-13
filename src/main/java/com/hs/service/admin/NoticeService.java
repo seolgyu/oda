@@ -35,6 +35,7 @@ public interface NoticeService {
 	public List<NoticeReplyDTO> listReply(Map<String, Object> map);
 	public List<NoticeReplyDTO> listReplyAnswer(Map<String, Object> map);
 	public int replyAnswerCount(Map<String, Object> map);
+	
 	public void updateReplyShowHide(Map<String, Object> map);
 	
 	public Integer hasUserReplyLiked(Map<String, Object> map);
@@ -44,4 +45,7 @@ public interface NoticeService {
 	public int boardLikeCount(long num);
 	
 	public boolean isUserBoardLiked(Map<String, Object> map);
+	
+	public void insertReplyLike (Map<String, Object> map) throws Exception;
+	public Map<String, Object> replyLikeCount(Map<String, Object> map);
 }
