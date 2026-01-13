@@ -3,6 +3,22 @@
 	    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
 	    generalVisitors: [4200, 4500, 3800, 4100, 5200, 4800, 5230],
 	    memberVisitors: [2800, 2900, 2600, 2850, 3400, 3100, 3150]
+		/*labels: [
+		        <c:forEach var="stat" items="${visitorStats}" varStatus="status">
+		            '${stat.dayShort}'<c:if test="${!status.last}">,</c:if>
+		        </c:forEach>
+		    ],
+		    generalVisitors: [
+		        <c:forEach var="stat" items="${visitorStats}" varStatus="status">
+		            ${stat.generalCount}<c:if test="${!status.last}">,</c:if>
+		        </c:forEach>
+		    ],
+		    memberVisitors: [
+		        <c:forEach var="stat" items="${visitorStats}" varStatus="status">
+		            ${stat.memberCount}<c:if test="${!status.last}">,</c:if>
+		        </c:forEach>
+		    ]
+		};*/
 	};
 	
 	// 합계 계산 및 표시

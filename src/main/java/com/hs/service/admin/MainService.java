@@ -1,5 +1,9 @@
 package com.hs.service.admin;
 
-public interface MainService {
+import java.util.List;
 
+import com.hs.model.admin.MainDTO;
+
+public interface MainService {
+	public List<MainDTO> mainList();
 }
