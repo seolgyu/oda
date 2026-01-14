@@ -2,8 +2,8 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hs.mapper.admin.MainMapper">
-	<select id="mainList" resultType="com.hs.model.admin.MainDTO">
-		select NVL(count(*), 0) as membercnt
+	<select id="memberCountList" resultType="com.hs.model.admin.MainDTO">
+		select NVL(count(*), 0) as memberCountList
 		from member
 		where user_level &lt; 90
 		AND user_status = 1
@@ -11,5 +11,141 @@
 		AND user_pwd is not null
 		AND user_name is not null
 		AND user_nickname is not null
+	</select>
+	
+	<select id="memberDayCountList" resultType="com.hs.model.admin.MainDTO">
+		SELECT NVL(COUNT(*), 0) memberdaycount
+		FROM MEMBER
+		WHERE user_level &lt; 90
+		AND TO_CHAR(user_created_date, 'YYYYMMDDHH24MISS') >= TO_CHAR((SYSDATE - INTERVAL '1' DAY), 'YYYYMMDDHH24MISS')
+		AND user_id IS NOT NULL
+		AND user_pwd IS NOT NULL
+		AND user_name IS NOT NULL
+		AND user_nickname IS NOT NULL
+	</select>
+	
+	<select id="memberInCount" resultType="com.hs.model.admin.MainDTO">
+		SELECT NVL(COUNT(*), 0) inmembercount
+		FROM member
+		WHERE user_level &lt; 90
+		AND user_status = 1
+		AND user_id IS NOT NULL
+		AND user_pwd IS NOT NULL
+		AND user_name IS NOT NULL
+		AND user_nickname IS NOT NULL
+	</select>
+	
+	<select id="memberDrewCount" resultType="com.hs.model.admin.MainDTO">
+		SELECT NVL(COUNT(*), 0) drewmembercount
+		FROM member
+		WHERE TO_CHAR(user_updated_date, 'YYYYMMDDHH24MISS') >= TO_CHAR((SYSDATE - INTERVAL '30' DAY), 'YYYYMMDDHH24MISS')
+		AND user_id IS NULL
+		AND user_pwd IS NULL
+		AND user_name IS NULL
+		AND user_nickname IS NULL
+	</select>
+	
+	<select id="memberDorCount" resultType="com.hs.model.admin.MainDTO">
+		SELECT NVL(COUNT(*), 0) dormembercount
+		FROM member
+		WHERE user_level &lt; 90
+		AND user_status = 7
+		AND user_id IS NOT NULL
+		AND user_pwd IS NOT NULL
+		AND user_name IS NOT NULL
+		AND user_nickname IS NOT NULL
+	</select>
+	
+	<select id="memberDorExpcount" resultType="com.hs.model.admin.MainDTO">
+		SELECT NVL(COUNT(*), 0) dorexpmembercount
+		FROM member memb, log_login log
+		WHERE memb.user_num = log.login_usernum 
+		AND user_level &lt; 90
+		AND TO_CHAR(log.login_time, 'YYYYMMDDHH24MISS') &lt;= TO_CHAR((SYSDATE - INTERVAL '1' YEAR), 'YYYYMMDDHH24MISS')
+		AND user_status = 1
+		AND user_id IS NOT NULL
+		AND user_pwd IS NOT NULL
+		AND user_name IS NOT NULL
+		AND user_nickname IS NOT NULL
+	</select>
+	
+	<select id="postCount" resultType="com.hs.model.admin.MainDTO">
+		SELECT NVL(COUNT(*), 0) postcount
+		FROM POSTS 
+		WHERE state = '정상'
+		AND is_deleted = 0
+	</select>
+	
+	<select id="recentPostCount" resultType="com.hs.model.admin.MainDTO">
+		SELECT NVL(COUNT(*), 0) recentpostcount
+		FROM POSTS
+		WHERE TO_CHAR(CREATED_DATE, 'YYYYMMDDHH24MISS') >= TO_CHAR((SYSDATE - INTERVAL '6' HOUR), 'YYYYMMDDHH24MISS')
+		AND state = '정상'
+		AND is_deleted = 0	
+	</select>
+	
+	<select id="communityCount" resultType="com.hs.model.admin.MainDTO">
+	select NVL(COUNT(*), 0) comCount
+	from community
+	</select>
+	
+	<select id="communityDayCount" resultType="com.hs.model.admin.MainDTO">
+	select NVL(COUNT(*), 0) comDayCount 
+	from community
+	WHERE TO_CHAR(CREATED_DATE, 'YYYYMMDDHH24MISS') >= TO_CHAR((SYSDATE - INTERVAL '24' HOUR), 'YYYYMMDDHH24MISS')
+	</select>
+	
+	<select id="selectWeeklyStats" resultType="com.hs.model.admin.MainDTO">
+    SELECT 
+        days.dayOfWeek,
+        days.dayName,
+        NVL(n.noticeCount, 0) AS noticeCount,
+        NVL(l.loginCount, 0) AS loginCount
+    FROM (
+        SELECT '2' AS dayOfWeek, '월' AS dayName, 1 AS sortOrder FROM DUAL UNION ALL
+        SELECT '3' AS dayOfWeek, '화' AS dayName, 2 AS sortOrder FROM DUAL UNION ALL
+        SELECT '4' AS dayOfWeek, '수' AS dayName, 3 AS sortOrder FROM DUAL UNION ALL
+        SELECT '5' AS dayOfWeek, '목' AS dayName, 4 AS sortOrder FROM DUAL UNION ALL
+        SELECT '6' AS dayOfWeek, '금' AS dayName, 5 AS sortOrder FROM DUAL UNION ALL
+        SELECT '7' AS dayOfWeek, '토' AS dayName, 6 AS sortOrder FROM DUAL UNION ALL
+        SELECT '1' AS dayOfWeek, '일' AS dayName, 7 AS sortOrder FROM DUAL
+    ) days
+    LEFT JOIN (
+        SELECT 
+            TO_CHAR(created_date, 'D') AS dayOfWeek,
+            COUNT(*) AS noticeCount
+        FROM posts
+        WHERE created_date >= TRUNC(SYSDATE, 'IW')
+        GROUP BY TO_CHAR(created_date, 'D')
+    ) n ON days.dayOfWeek = n.dayOfWeek
+    LEFT JOIN (
+        SELECT 
+            TO_CHAR(login_time, 'D') AS dayOfWeek,
+            COUNT(*) AS loginCount
+        FROM log_login
+        WHERE login_time >= TRUNC(SYSDATE, 'IW')
+        GROUP BY TO_CHAR(login_time, 'D')
+    ) l ON days.dayOfWeek = l.dayOfWeek
+    ORDER BY days.sortOrder
+	</select>
+
+	<select id="reportPosts" resultType="com.hs.model.admin.MainDTO">
+	SELECT NVL(COUNT(*), 0) reportcount
+		FROM POSTS 
+		WHERE state = '신고'
+		AND is_deleted = 0
+	</select>
+	
+	<select id="reportpostcount" resultType="com.hs.model.admin.MainDTO">
+	SELECT NVL(COUNT(*), 0) reportpostcount
+		FROM POSTS 
+		WHERE state = '신고'
+		AND is_deleted = 1
+	</select>
+	
+	<select id="comPriCount" resultType="com.hs.model.admin.MainDTO">
+	select NVL(COUNT(*), 0) comPriCount
+	from community
+	where is_private = 1
 	</select>
 </mapper>

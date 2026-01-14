@@ -65,8 +65,8 @@
 								<div>
 									<p class="stat-label">총 가입자 수</p>
 									<div class="d-flex align-items-baseline gap-2">
-										<span class="stat-value">${list[0].membercnt}</span> <span
-											class="stat-badge bg-blue-soft">+125</span>
+										<span class="stat-value">${list[0].memberCountList}</span> <span
+											class="stat-badge bg-blue-soft">${dayDto.memberdaycount}+</span>
 									</div>
 								</div>
 								<div class="stat-icon-wrapper">
@@ -80,7 +80,7 @@
 								<div>
 									<p class="stat-label">이용 중인 회원</p>
 									<div class="d-flex align-items-baseline gap-2">
-										<span class="stat-value">8,920</span> <span
+										<span class="stat-value">${inDto.inmembercount }</span> <span
 											class="stat-badge text-green d-flex align-items-center p-0">
 											<span class="material-icons-round"
 											style="font-size: 14px; margin-right: 2px;">trending_up</span>
@@ -99,7 +99,7 @@
 								<div>
 									<p class="stat-label">탈퇴 회원 수</p>
 									<div class="d-flex align-items-baseline gap-2">
-										<span class="stat-value">142</span> <span class="text-orange"
+										<span class="stat-value">${drewDto.drewmembercount}</span> <span class="text-orange"
 											style="font-size: 0.75rem;">최근 30일</span>
 									</div>
 								</div>
@@ -114,8 +114,8 @@
 								<div>
 									<p class="stat-label">휴면 회원 수</p>
 									<div class="d-flex align-items-baseline gap-2">
-										<span class="stat-value">450</span> <span class="text-orange"
-											style="font-size: 0.75rem;">전환 예정 12</span>
+										<span class="stat-value">${dorDto.dormembercount }</span> <span class="text-orange"
+											style="font-size: 0.75rem;">${dorexpDto.dorexpmembercount }명 휴면 처리예정 회원</span>
 									</div>
 								</div>
 								<div class="stat-icon-wrapper">
@@ -136,11 +136,11 @@
 											style="font-size: 0.875rem; font-weight: 500;">콘텐츠 업로드
 											수</span>
 									</div>
-									<h3 class="big-stat-value">85</h3>
+									<h3 class="big-stat-value">${postDto.postcount }</h3>
 									<span class="stat-badge bg-yellow-soft"> <span
 										class="material-icons-round"
 										style="font-size: 12px; margin-right: 4px;">verified</span> 신규
-										14건 등록됨
+										${recentDto.recentpostcount} 건 등록됨(6시간 이내)
 									</span>
 								</div>
 								<span class="material-icons-round big-stat-bg-icon">folder</span>
@@ -155,11 +155,11 @@
 											style="font-size: 0.875rem; font-weight: 500;">개설 커뮤니티
 											수</span>
 									</div>
-									<h3 class="big-stat-value">1,280</h3>
+									<h3 class="big-stat-value">${comDto.comCount}</h3>
 									<span class="stat-badge bg-purple-soft"> <span
 										class="material-icons-round"
 										style="font-size: 12px; margin-right: 4px;">trending_up</span>
-										+24 (오늘)
+										+${comDayDto.comDayCount } (24시간 내)
 									</span>
 								</div>
 								<span class="material-icons-round big-stat-bg-icon">groups</span>
@@ -169,25 +169,25 @@
 							<div
 								class="card-dark flex-fill d-flex flex-column justify-content-between">
 								<div class="d-flex justify-content-between align-items-start">
-									<span class="stat-label">신고 콘텐츠 수</span> <span
+									<span class="stat-label">신고 처리된 콘텐츠 수</span> <span
 										class="material-icons-round text-red" style="font-size: 1rem;">error</span>
 								</div>
 								<div class="d-flex justify-content-between align-items-end mt-2">
-									<span class="stat-value fs-2">12</span> <span
-										class="stat-badge bg-red-soft">처리필요 3건</span>
+									<span class="stat-value fs-2">${reportpostcount.reportpostcount }</span> <span
+										class="stat-badge bg-red-soft">처리필요 ${reportcount.reportcount }건</span>
 								</div>
 							</div>
 							<div
 								class="card-dark flex-fill d-flex flex-column justify-content-between">
 								<div class="d-flex justify-content-between align-items-start">
-									<span class="stat-label">신고 커뮤니티 수</span> <span
+									<span class="stat-label">비공개 커뮤니티 수</span> <span
 										class="material-icons-round text-orange"
 										style="font-size: 1rem;">flag</span>
 								</div>
 								<div class="d-flex justify-content-between align-items-end mt-2">
-									<span class="stat-value fs-2">3</span> 
+									<span class="stat-value fs-2">${priDto.comPriCount }</span> 
 									<span class="stat-badge bg-red-soft">
-										검토대기중</span>
+										커뮤니티 공개여부</span>
 								</div>
 							</div>
 						</div>
@@ -199,9 +199,9 @@
 						<div>
 							<div class="d-flex align-items-center gap-2 mb-1">
 								<span class="material-icons-round text-primary fs-5">ssid_chart</span>
-								<h2 class="h5 fw-bold mb-0">방문자 추이 (주간)</h2>
+								<h2 class="h5 fw-bold mb-0">방문자, 콘텐츠 추이 (주간)</h2>
 							</div>
-							<p class="text-light small mb-0">지난 7일간의 일반 방문자와 회원 방문자 변화
+							<p class="text-light small mb-0">지난 7일간의 회원 방문자와 회원 콘텐츠 업로드 변화
 								그래프</p>
 						</div>
 						<div class="d-flex align-items-center gap-3 px-3 py-2 rounded"
@@ -211,8 +211,8 @@
 									style="width: 10px; height: 10px;"></span>
 								<div class="d-flex flex-column lh-1">
 									<span class="text-light"
-										style="font-size: 10px; margin-bottom: 2px;">일반 방문자</span> 
-									<span class="fw-bold text-light" style="font-size: 0.875rem;" id="totalGeneral">5,230</span>
+										style="font-size: 10px; margin-bottom: 2px;">콘텐츠 등록 수</span> 
+									<span class="fw-bold text-light" style="font-size: 0.875rem;" id="totalGeneral">0</span>
 								</div>
 							</div>
 							<div
@@ -222,8 +222,8 @@
 									style="width: 10px; height: 10px; background-color: #a855f7;"></span>
 								<div class="d-flex flex-column lh-1">
 									<span class="text-light"
-										style="font-size: 10px; margin-bottom: 2px;">회원 방문자</span> 
-									<span class="fw-bold text-light" style="font-size: 0.875rem;" id="totalMember">3,150</span>
+										style="font-size: 10px; margin-bottom: 2px;">회원 방문자 수</span> 
+									<span class="fw-bold text-light" style="font-size: 0.875rem;" id="totalMember">0</span>
 								</div>
 							</div>
 						</div>
@@ -366,6 +366,26 @@
 			</div>
 		</main>
 	</div>
+	<script>
+    // 서버 데이터를 JavaScript 변수로 전달
+	    window.chartData = {
+	        labels: [
+	            <c:forEach var="stats" items="${weeklyStatsList}" varStatus="status">
+	                '${stats.dayName}'<c:if test="${!status.last}">,</c:if>
+	            </c:forEach>
+	        ],
+	        noticeCount: [
+	            <c:forEach var="stats" items="${weeklyStatsList}" varStatus="status">
+	                ${stats.noticeCount}<c:if test="${!status.last}">,</c:if>
+	            </c:forEach>
+	        ],
+	        loginCount: [
+	            <c:forEach var="stats" items="${weeklyStatsList}" varStatus="status">
+	                ${stats.loginCount}<c:if test="${!status.last}">,</c:if>
+	            </c:forEach>
+	        ]
+	    };
+	</script>
 	
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
