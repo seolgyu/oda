@@ -169,6 +169,7 @@ public class PostServiceImpl implements PostService {
 	public void insertComment(CommentDTO dto) throws Exception {
 		try {
 			mapper.insertComment(dto);
+			mapper.updatePostCommentCount(dto.getPostId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -201,7 +202,12 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void deleteComment(long commentId, long userNum) throws Exception {
 		try {
+			long postId = mapper.getPostIdByCommentId(commentId);
+			
 			mapper.deleteComment(commentId);
+			
+			mapper.updatePostCommentCount(postId);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;

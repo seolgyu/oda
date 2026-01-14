@@ -6,11 +6,14 @@
 		INSERT INTO posts (
 		post_id, user_num, community_id, title, content,
 		post_type, is_deleted, created_date, state,
-		reply_enabled, show_counts )
+		reply_enabled, show_counts
+		)
 		VALUES (
-		posts_seq.NEXTVAL, #{userNum}, #{communityId, jdbcType=INTEGER},
+		posts_seq.NEXTVAL, #{userNum}, #{communityId,
+		jdbcType=INTEGER},
 		#{title}, #{content}, #{postType},
-		'0', SYSTIMESTAMP, #{state},
+		'0', SYSTIMESTAMP,
+		#{state},
 		#{replyEnabled}, #{showCounts} )
 		<selectKey keyProperty="postId" resultType="long"
 			order="AFTER">
@@ -20,14 +23,17 @@
 
 	<update id="updatePost" parameterType="com.hs.model.PostDTO">
 		UPDATE posts
-		SET title = #{title}, content = #{content},
-		updated_date = SYSTIMESTAMP, state = #{state},
+		SET title =
+		#{title}, content = #{content},
+		updated_date = SYSTIMESTAMP, state =
+		#{state},
 		reply_enabled = #{replyEnabled}, show_counts = #{showCounts}
 		WHERE post_id = #{postId} AND user_num = #{userNum}
 	</update>
 
 	<update id="deletePost" parameterType="long">
-		UPDATE POSTS SET IS_DELETED = '1' WHERE POST_ID = #{postId}
+		UPDATE POSTS SET
+		IS_DELETED = '1' WHERE POST_ID = #{postId}
 	</update>
 
 	<select id="findById" parameterType="long"
@@ -38,18 +44,24 @@
 		p.community_id AS communityId,
 		p.title,
 		p.content,
-		p.post_type AS postType,
+		p.post_type AS
+		postType,
 		p.view_count AS viewCount,
 		p.like_count AS likeCount,
-		(SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED =
-		'0') AS commentCount,
+		(SELECT
+		COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED =
+		'0')
+		AS commentCount,
 		p.created_date AS createdDate,
-		p.updated_date AS updatedDate,
+		p.updated_date AS
+		updatedDate,
 		p.state,
 		p.reply_enabled AS replyEnabled,
-		p.show_counts AS showCounts,
+		p.show_counts AS
+		showCounts,
 		u.user_nickname AS authorNickname,
-		u.user_profile AS authorProfileImage
+		u.user_profile AS
+		authorProfileImage
 		FROM posts p
 		JOIN member u ON p.user_num = u.user_num
 		WHERE p.post_id = #{postId}
@@ -61,12 +73,15 @@
 		p.user_num AS userNum,
 		p.title,
 		p.view_count AS viewCount,
-		p.like_count AS likeCount,
+		p.like_count
+		AS likeCount,
 		p.created_date AS createdDate,
-		u.user_nickname AS authorNickname,
+		u.user_nickname AS
+		authorNickname,
 		NULL AS authorProfileImage
 		FROM posts p
-		JOIN member u ON p.user_num = u.user_num
+		JOIN member u ON
+		p.user_num = u.user_num
 		WHERE p.is_deleted = '0'
 		ORDER BY p.post_id DESC
 	</select>
@@ -74,15 +89,19 @@
 	<insert id="insertFileAt" parameterType="com.hs.model.FileAtDTO">
 		INSERT INTO FILEAT (
 		file_at_id, file_name, file_path, file_size,
-		file_type, file_order, uploaded_date, post_id
+		file_type, file_order,
+		uploaded_date, post_id
 		) VALUES (
-		fileat_seq.NEXTVAL, #{fileName}, #{filePath}, #{fileSize},
-		#{fileType}, #{fileOrder}, SYSTIMESTAMP, #{postId}
+		fileat_seq.NEXTVAL, #{fileName},
+		#{filePath}, #{fileSize},
+		#{fileType}, #{fileOrder}, SYSTIMESTAMP,
+		#{postId}
 		)
 	</insert>
 
 	<update id="updateHitCount" parameterType="long">
-		UPDATE posts SET view_count = view_count + 1 WHERE post_id = #{postId}
+		UPDATE posts SET
+		view_count = view_count + 1 WHERE post_id = #{postId}
 	</update>
 
 	<select id="listFileAt" parameterType="long"
@@ -95,14 +114,16 @@
 		file_type AS fileType,
 		file_order AS fileOrder,
 		uploaded_date AS uploadedDate,
-		post_id AS postId
+		post_id AS
+		postId
 		FROM FILEAT
 		WHERE post_id = #{postId}
 		ORDER BY file_order ASC
 	</select>
 
 	<delete id="deleteFileAt" parameterType="long">
-		DELETE FROM FILEAT WHERE FILE_AT_ID = #{fileAtId}
+		DELETE FROM FILEAT WHERE
+		FILE_AT_ID = #{fileAtId}
 	</delete>
 
 	<resultMap id="postMap" type="com.hs.model.PostDTO">
@@ -134,23 +155,30 @@
 		p.TITLE AS title,
 		p.CONTENT AS content,
 		p.VIEW_COUNT AS viewCount,
-		p.LIKE_COUNT AS likeCount,
-		(SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED =
+		p.LIKE_COUNT AS
+		likeCount,
+		(SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND
+		IS_DELETED =
 		'0') AS commentCount,
-		TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD HH24:MI:SS') AS createdDate,
+		TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD
+		HH24:MI:SS') AS createdDate,
 
-		NVL(u.USER_NICKNAME, 'Unknown') AS authorNickname,
+		NVL(u.USER_NICKNAME, 'Unknown') AS
+		authorNickname,
 		u.USER_PROFILE AS authorProfileImage,
 
-		NVL((SELECT COUNT(*) FROM LIKES WHERE POST_ID = p.POST_ID AND USER_NUM =
+		NVL((SELECT
+		COUNT(*) FROM LIKES WHERE POST_ID = p.POST_ID AND USER_NUM =
 		#{userNum}), 0) AS likedByUser,
 
 		f.FILE_AT_ID AS fileAtId,
-		f.FILE_PATH AS filePath,
+		f.FILE_PATH AS
+		filePath,
 		f.FILE_ORDER AS fileOrder
 
 		FROM (
-		SELECT P_SUB.* FROM POSTS P_SUB
+		SELECT P_SUB.* FROM POSTS
+		P_SUB
 		WHERE P_SUB.IS_DELETED = '0'
 		<choose>
 			<when test="sort == 'likes'">
@@ -165,15 +193,19 @@
 		</choose>
 		OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
 		) p
-		LEFT JOIN MEMBER u ON p.USER_NUM = u.USER_NUM
-		LEFT JOIN FILEAT f ON p.POST_ID = f.POST_ID
+		LEFT JOIN MEMBER
+		u ON p.USER_NUM = u.USER_NUM
+		LEFT JOIN FILEAT f ON p.POST_ID =
+		f.POST_ID
 
 		<choose>
 			<when test="sort == 'likes'">
-				ORDER BY p.LIKE_COUNT DESC, p.POST_ID DESC, NVL(f.FILE_ORDER, 0) ASC
+				ORDER BY p.LIKE_COUNT DESC, p.POST_ID DESC,
+				NVL(f.FILE_ORDER, 0) ASC
 			</when>
 			<when test="sort == 'views'">
-				ORDER BY p.VIEW_COUNT DESC, p.POST_ID DESC, NVL(f.FILE_ORDER, 0) ASC
+				ORDER BY p.VIEW_COUNT DESC, p.POST_ID DESC,
+				NVL(f.FILE_ORDER, 0) ASC
 			</when>
 			<otherwise>
 				ORDER BY p.POST_ID DESC, NVL(f.FILE_ORDER, 0) ASC
@@ -182,30 +214,37 @@
 	</select>
 
 	<insert id="insertPostLike" parameterType="map">
-		INSERT INTO LIKES (POST_ID, USER_NUM, CREATED_DATE) VALUES (#{postId},
-		#{userNum}, SYSDATE)
+		INSERT INTO LIKES
+		(POST_ID, USER_NUM, CREATED_DATE) VALUES (#{postId},
+		#{userNum},
+		SYSDATE)
 	</insert>
 	<delete id="deletePostLike" parameterType="map">
-		DELETE FROM LIKES WHERE POST_ID = #{postId} AND USER_NUM = #{userNum}
+		DELETE FROM LIKES
+		WHERE POST_ID = #{postId} AND USER_NUM = #{userNum}
 	</delete>
 	<select id="countPostLike" parameterType="Long"
 		resultType="Integer">
 		SELECT COUNT(*) FROM LIKES WHERE POST_ID = #{postId}
 	</select>
 	<update id="updatePostLikeCount" parameterType="Long">
-		UPDATE POSTS SET LIKE_COUNT = (SELECT COUNT(*) FROM LIKES WHERE POST_ID =
-		#{postId}) WHERE POST_ID = #{postId}
+		UPDATE POSTS SET
+		LIKE_COUNT = (SELECT COUNT(*) FROM LIKES WHERE POST_ID =
+		#{postId})
+		WHERE POST_ID = #{postId}
 	</update>
 	<select id="checkPostLiked" parameterType="map"
 		resultType="Integer">
-		SELECT COUNT(*) FROM LIKES WHERE POST_ID = #{postId} AND USER_NUM =
+		SELECT COUNT(*) FROM LIKES WHERE POST_ID = #{postId} AND
+		USER_NUM =
 		#{userNum}
 	</select>
 
 	<insert id="insertComment"
 		parameterType="com.hs.model.CommentDTO">
 		INSERT INTO COMMENTS (
-		COMMENT_ID, POST_ID, USER_NUM, USER_ID, CONTENT,
+		COMMENT_ID, POST_ID, USER_NUM,
+		USER_ID, CONTENT,
 		PARENT_COMMENT_ID, CREATED_DATE, IS_DELETED
 		) VALUES (
 		SEQ_COMMENTS.NEXTVAL, #{postId}, #{userNum}, #{userId}, #{content},
@@ -216,12 +255,14 @@
 	<update id="updateComment"
 		parameterType="com.hs.model.CommentDTO">
 		UPDATE COMMENTS
-		SET CONTENT = #{content}, UPDATED_DATE = SYSDATE
+		SET CONTENT = #{content}, UPDATED_DATE =
+		SYSDATE
 		WHERE COMMENT_ID = #{commentId} AND USER_NUM = #{userNum}
 	</update>
 
 	<delete id="deleteComment" parameterType="Long">
-		DELETE FROM COMMENTS WHERE COMMENT_ID = #{commentId}
+		DELETE FROM COMMENTS
+		WHERE COMMENT_ID = #{commentId}
 	</delete>
 
 	<select id="listComment" parameterType="map"
@@ -231,39 +272,67 @@
 		c.POST_ID AS postId,
 		c.USER_NUM AS userNum,
 		c.CONTENT AS content,
-		TO_CHAR(c.CREATED_DATE, 'YYYY-MM-DD HH24:MI') AS createdDate,
-		c.PARENT_COMMENT_ID AS parentCommentId,
+		TO_CHAR(c.CREATED_DATE,
+		'YYYY-MM-DD HH24:MI') AS createdDate,
+		c.PARENT_COMMENT_ID AS
+		parentCommentId,
 		c.IS_DELETED AS isDeleted,
-		m.USER_NICKNAME AS userNickName,
+		m.USER_NICKNAME AS
+		userNickName,
 		m.USER_PROFILE AS profileImage,
-		(SELECT COUNT(*) FROM COMMENTS_LIKES cl WHERE cl.COMMENT_ID = c.COMMENT_ID)
+		(SELECT COUNT(*) FROM
+		COMMENTS_LIKES cl WHERE cl.COMMENT_ID = c.COMMENT_ID)
 		AS likeCount,
-		NVL((SELECT COUNT(*) FROM COMMENTS_LIKES cl WHERE cl.COMMENT_ID = c.COMMENT_ID
+		NVL((SELECT COUNT(*) FROM COMMENTS_LIKES cl WHERE cl.COMMENT_ID =
+		c.COMMENT_ID
 		AND cl.USER_NUM = #{userNum}), 0) AS likedByUser
-		FROM COMMENTS c
+		FROM
+		COMMENTS c
 		JOIN MEMBER m ON c.USER_NUM = m.USER_NUM
-		WHERE c.POST_ID = #{postId}
+		WHERE c.POST_ID =
+		#{postId}
 		START WITH c.PARENT_COMMENT_ID IS NULL
-		CONNECT BY PRIOR c.COMMENT_ID = c.PARENT_COMMENT_ID
+		CONNECT BY PRIOR
+		c.COMMENT_ID = c.PARENT_COMMENT_ID
 		ORDER SIBLINGS BY c.CREATED_DATE ASC
 	</select>
 
+	<update id="updatePostCommentCount" parameterType="long">
+		UPDATE POSTS
+		SET COMMENT_COUNT = (
+		SELECT COUNT(*)
+		FROM COMMENTS
+		WHERE POST_ID =
+		#{postId} AND IS_DELETED = '0'
+		)
+		WHERE POST_ID = #{postId}
+	</update>
+
 	<insert id="insertCommentLike" parameterType="map">
-		INSERT INTO COMMENTS_LIKES (COMMENT_ID, USER_NUM, CREATED_DATE) VALUES
+		INSERT INTO
+		COMMENTS_LIKES (COMMENT_ID, USER_NUM, CREATED_DATE) VALUES
 		(#{commentId}, #{userNum}, SYSDATE)
 	</insert>
 	<delete id="deleteCommentLike" parameterType="map">
-		DELETE FROM COMMENTS_LIKES WHERE COMMENT_ID = #{commentId} AND USER_NUM =
+		DELETE FROM
+		COMMENTS_LIKES WHERE COMMENT_ID = #{commentId} AND USER_NUM =
 		#{userNum}
 	</delete>
 	<select id="countCommentLike" parameterType="Long"
 		resultType="Integer">
-		SELECT COUNT(*) FROM COMMENTS_LIKES WHERE COMMENT_ID = #{commentId}
+		SELECT COUNT(*) FROM COMMENTS_LIKES WHERE COMMENT_ID =
+		#{commentId}
 	</select>
 	<select id="checkCommentLiked" parameterType="map"
 		resultType="Integer">
-		SELECT COUNT(*) FROM COMMENTS_LIKES WHERE COMMENT_ID = #{commentId} AND
+		SELECT COUNT(*) FROM COMMENTS_LIKES WHERE COMMENT_ID =
+		#{commentId} AND
 		USER_NUM = #{userNum}
+	</select>
+
+	<select id="getPostIdByCommentId" parameterType="long"
+		resultType="long">
+		SELECT POST_ID FROM COMMENTS WHERE COMMENT_ID = #{commentId}
 	</select>
 
 </mapper>
