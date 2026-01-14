@@ -109,8 +109,8 @@
 	cursor: pointer;
 	transition: background 0.2s;
 	align-items: stretch;
-	width: 100%; 
-    box-sizing: border-box; 
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .compact-card:hover {
@@ -214,14 +214,14 @@
 }
 
 .feed-wrapper-compact .compact-card:first-child {
-    border-top-left-radius: 1rem !important;
-    border-top-right-radius: 1rem !important;
+	border-top-left-radius: 1rem !important;
+	border-top-right-radius: 1rem !important;
 }
 
 .feed-wrapper-compact .compact-card:last-child {
-    border-bottom-left-radius: 1rem !important;
-    border-bottom-right-radius: 1rem !important;
-    border-bottom: none;
+	border-bottom-left-radius: 1rem !important;
+	border-bottom-right-radius: 1rem !important;
+	border-bottom: none;
 }
 
 .modal-close-btn {
@@ -254,31 +254,51 @@
 }
 
 .loading-bar-wrapper {
-    width: 100%;
-    padding: 20px 0;
-    display: none; /* 기본 숨김 */
-    justify-content: center;
+	width: 100%;
+	padding: 20px 0;
+	display: none; /* 기본 숨김 */
+	justify-content: center;
 }
 
 .loading-bar-wrapper.active {
-    display: flex;
+	display: flex;
 }
 
 .loading-bar {
-    width: 50px;
-    height: 4px;
-    background: #a855f7;
-    border-radius: 2px;
-    animation: loading-expand 1s ease-in-out infinite;
-    box-shadow: 0 0 10px #a855f7;
+	width: 50px;
+	height: 4px;
+	background: #a855f7;
+	border-radius: 2px;
+	animation: loading-expand 1s ease-in-out infinite;
+	box-shadow: 0 0 10px #a855f7;
 }
 
-@keyframes loading-expand {
-    0% { width: 50px; opacity: 0.5; }
-    50% { width: 200px; opacity: 1; }
-    100% { width: 50px; opacity: 0.5; }
+@
+keyframes loading-expand { 0% {
+	width: 50px;
+	opacity: 0.5;
 }
-
+50
+%
+{
+width
+:
+200px;
+opacity
+:
+1;
+}
+100
+%
+{
+width
+:
+50px;
+opacity
+:
+0.5;
+}
+}
 </style>
 </head>
 <body>
@@ -317,8 +337,10 @@
 						<div
 							class="col-12 col-lg-11 col-xl-10 mx-auto feed-container-center">
 
-							<div class="filter-bar d-flex justify-content-between align-items-center px-2">
-								<div class="d-flex align-items-center gap-4 text-sm fw-medium text-gray-500 text-uppercase tracking-widest">
+							<div
+								class="filter-bar d-flex justify-content-between align-items-center px-2">
+								<div
+									class="d-flex align-items-center gap-4 text-sm fw-medium text-gray-500 text-uppercase tracking-widest">
 									<span class="text-white fs-4 fw-bold">Latest Updates</span>
 								</div>
 
@@ -335,10 +357,14 @@
 												</c:choose>
 											</span> <span class="material-symbols-outlined fs-6 small ms-1">expand_more</span>
 										</button>
-										<ul class="dropdown-menu dropdown-menu-dark glass-dropdown dropdown-menu-end shadow-lg">
-											<li><a class="dropdown-item" href="javascript:changeSort('latest')">최신순</a></li>
-											<li><a class="dropdown-item" href="javascript:changeSort('likes')">좋아요 순</a></li>
-											<li><a class="dropdown-item" href="javascript:changeSort('views')">조회수 순</a></li>
+										<ul
+											class="dropdown-menu dropdown-menu-dark glass-dropdown dropdown-menu-end shadow-lg">
+											<li><a class="dropdown-item"
+												href="javascript:changeSort('latest')">최신순</a></li>
+											<li><a class="dropdown-item"
+												href="javascript:changeSort('likes')">좋아요 순</a></li>
+											<li><a class="dropdown-item"
+												href="javascript:changeSort('views')">조회수 순</a></li>
 										</ul>
 									</div>
 
@@ -350,9 +376,12 @@
 											<span class="material-symbols-outlined fs-6">
 												${viewMode == 'compact' ? 'view_list' : 'view_day'} </span>
 										</button>
-										<ul class="dropdown-menu dropdown-menu-dark glass-dropdown dropdown-menu-end shadow-lg">
-											<li><a class="dropdown-item" href="javascript:changeView('card')">카드형</a></li>
-											<li><a class="dropdown-item" href="javascript:changeView('compact')">축약형</a></li>
+										<ul
+											class="dropdown-menu dropdown-menu-dark glass-dropdown dropdown-menu-end shadow-lg">
+											<li><a class="dropdown-item"
+												href="javascript:changeView('card')">카드형</a></li>
+											<li><a class="dropdown-item"
+												href="javascript:changeView('compact')">축약형</a></li>
 										</ul>
 									</div>
 								</div>
@@ -368,7 +397,7 @@
 
 								<jsp:include page="../post/listPostData.jsp" />
 							</div>
-							
+
 							<div id="infiniteLoadingBar" class="loading-bar-wrapper">
 								<div class="loading-bar"></div>
 							</div>
@@ -382,7 +411,8 @@
 		</main>
 	</div>
 
-	<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+	<div class="modal fade" id="imageModal" tabindex="-1"
+		aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-xl">
 			<div class="modal-content bg-transparent border-0 position-relative">
 				<button type="button" class="modal-close-btn"
@@ -398,7 +428,8 @@
 	</div>
 
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 
 	<c:if test="${not empty sessionScope.toastMsg}">
@@ -545,121 +576,147 @@
 	</script>
 
 	<script>
-		window.addEventListener(
-				'pageshow',
-				function(event) {
-					if (event.persisted
-							|| (window.performance && window.performance.navigation.type == 2)) {
-						window.location.reload();
-					}
-				});
+		window.addEventListener('pageshow', function(event) {
+			if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+				window.location.reload();
+			}
+		});
 	</script>
 
 	<script>
-    // 1. 전역 변수 설정
-    let currentPage = 1;
-    let isLoading = false;
-    let isFinished = false;
+		let currentPage = 1;
+		let isLoading = false;
+		let isFinished = false;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentSort = urlParams.get('sort') || 'latest';
-    const currentView = urlParams.get('view') || 'card';
+		const urlParams = new URLSearchParams(window.location.search);
+		const currentSort = urlParams.get('sort') || 'latest';
+		const currentView = urlParams.get('view') || 'card';
 
-    // 2. [문제 해결] observerOptions를 observer 생성보다 '먼저' 정의해야 합니다.
-    const observerOptions = {
-        root : null,      // 브라우저 뷰포트 기준
-        rootMargin : '0px',
-        threshold : 0.1   // 타겟이 10% 정도 보이면 실행
-    };
+		const observerOptions = {
+			root : null, 
+			rootMargin : '0px',
+			threshold : 0.1
+		};
 
-    // 3. IntersectionObserver 생성 (위에서 만든 options 사용)
-    const observer = new IntersectionObserver(function(entries, observer) {
-        entries.forEach(function(entry) {
-            // 화면에 보이고(isIntersecting), 로딩 중이 아니며(!isLoading), 끝이 아닐 때(!isFinished)
-            if (entry.isIntersecting && !isLoading && !isFinished) {
-                loadMorePosts();
-            }
-        });
-    }, observerOptions); // <--- 여기서 observerOptions를 사용하므로, 반드시 위에 정의되어 있어야 함
+		
+		const observer = new IntersectionObserver(function(entries, observer) {
+			entries.forEach(function(entry) {
+				
+				if (entry.isIntersecting && !isLoading && !isFinished) {
+					loadMorePosts();
+				}
+			});
+		}, observerOptions); 
 
-    // 4. 페이지 로드 완료 후 센티넬(감지 대상) 연결
-    document.addEventListener("DOMContentLoaded", function() {
-        const sentinel = document.getElementById('scrollSentinel');
-        if (sentinel) {
-            observer.observe(sentinel);
-        }
-    });
-    
-    // 5. 데이터 로드 함수 (디버깅 로그 포함)
-    function loadMorePosts() {
-        if(isFinished) return; // 데이터가 끝났으면 요청하지 않음
+		document.addEventListener("DOMContentLoaded", function() {
+			const sentinel = document.getElementById('scrollSentinel');
+			if (sentinel) {
+				observer.observe(sentinel);
+			}
+		});
 
-        console.log("무한 스크롤 요청 시작: Page " + (currentPage + 1)); 
+		
+		function loadMorePosts() {
+			if (isFinished)
+				return; 
 
-        isLoading = true;
-        $('#infiniteLoadingBar').addClass('active');
+			console.log("무한 스크롤 요청 시작: Page " + (currentPage + 1));
 
-        currentPage++;
-        
-        $.ajax({
-            url : '${pageContext.request.contextPath}/post/listPostAjax',
-            type : 'GET',
-            data : {
-                page : currentPage,
-                sort : currentSort,
-                view : currentView
-            },
-            success : function(data) {
-                console.log("데이터 수신 성공. 데이터 길이: " + (data ? data.length : 0));
-                
-                if (!data || data.trim() === "") {
-                    console.log("더 이상 데이터가 없습니다.");
-                    isFinished = true;
-                    // 관찰 중단
-                    const sentinel = document.getElementById('scrollSentinel');
-                    if(sentinel) observer.unobserve(sentinel);
-                } else {
-                    $('#postListContainer').append(data);
-                    initCarouselButtons(); // 새로 불러온 게시글의 슬라이드 버튼 초기화
-                }
-            },
-            error : function(xhr, status, error) {
-                console.error("데이터 로드 실패!");
-                console.error("Status: " + status);
-                console.error("Response: " + xhr.responseText);
-                
-                currentPage--; // 에러 발생 시 페이지 번호 되돌리기
-            },
-            complete : function() {
-                isLoading = false;
-                setTimeout(function() {
-                    $('#infiniteLoadingBar').removeClass('active');
-                }, 500);
-            }
-        });
-    }
+			isLoading = true;
+			$('#infiniteLoadingBar').addClass('active');
 
-    // 6. 캐러셀 버튼 초기화 함수
-    function initCarouselButtons() {
-        const carousels = document.querySelectorAll('.carousel');
-        carousels.forEach(function(carousel) {
-            $(carousel).off('slid.bs.carousel').on('slid.bs.carousel', function(e) {
-                const $carousel = $(e.target);
-                const $items = $carousel.find('.carousel-item');
-                const totalItems = $items.length;
-                const currentIndex = e.to;
+			currentPage++;
 
-                const $btnPrev = $carousel.find('.carousel-control-prev');
-                const $btnNext = $carousel.find('.carousel-control-next');
+			$.ajax({ 	url : '${pageContext.request.contextPath}/post/listPostAjax',
+					 	type : 'GET',
+						data : {
+						page : currentPage,
+						sort : currentSort,
+						view : currentView
+						},
 
-                if (currentIndex === 0) $btnPrev.hide();
-                else $btnPrev.css('display', 'flex');
+						success : function(data) {
+							console.log("데이터 수신 성공. 길이: "
+									+ (data ? data.length : 0));
 
-                if (currentIndex === totalItems - 1) $btnNext.hide();
-                else $btnNext.css('display', 'flex');
-            });
-        });
-    }
-</script>
+							if (!data || data.trim() === "") {
+								console.log("더 이상 데이터가 없습니다.");
+								isFinished = true;
+								const sentinel = document
+										.getElementById('scrollSentinel');
+								if (sentinel)
+									observer.unobserve(sentinel);
+							} else {
+								
+								var $tempHtml = $('<div>').html(data);
+
+								var $items = $tempHtml
+										.find('.feed-card, .compact-card')
+										.add(
+												$tempHtml
+														.filter('.feed-card, .compact-card'));
+	
+								if ($items.length > 0) {
+									console.log("게시글 " + $items.length
+											+ "개 추출 성공. 화면에 추가합니다.");
+									$('#postListContainer').append($items);
+									
+									initCarouselButtons();
+								} else {
+									
+									console.log("게시글 카드를 찾을 수 없습니다. (로그인 페이지나 전체 페이지가 로드되었을 가능성)");
+
+									if (data.indexOf("Welcome Back") > -1
+											|| data.indexOf("로그인") > -1) {
+									}
+								}
+							}
+						},
+
+						error : function(xhr, status, error) {
+							console.error("데이터 로드 실패!");
+							console.error("Status: " + status);
+							console.error("Response: " + xhr.responseText);
+
+							currentPage--; 
+						},
+						complete : function() {
+							isLoading = false;
+							setTimeout(function() {
+								$('#infiniteLoadingBar').removeClass('active');
+							}, 500);
+						}
+					});
+		}
+
+		function initCarouselButtons() {
+			const carousels = document.querySelectorAll('.carousel');
+			carousels.forEach(function(carousel) {
+				$(carousel).off('slid.bs.carousel').on(
+						'slid.bs.carousel',
+						function(e) {
+							const $carousel = $(e.target);
+							const $items = $carousel.find('.carousel-item');
+							const totalItems = $items.length;
+							const currentIndex = e.to;
+
+							const $btnPrev = $carousel
+									.find('.carousel-control-prev');
+							const $btnNext = $carousel
+									.find('.carousel-control-next');
+
+							if (currentIndex === 0)
+								$btnPrev.hide();
+							else
+								$btnPrev.css('display', 'flex');
+
+							if (currentIndex === totalItems - 1)
+								$btnNext.hide();
+							else
+								$btnNext.css('display', 'flex');
+						});
+			});
+		}
+	</script>
 </body>
 </html>
