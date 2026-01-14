@@ -49,6 +49,11 @@
     )
 </insert>
 
+	<insert id="insertLoginlog" parameterType="Long">
+		INSERT INTO log_login (login_num, login_usernum, login_time)
+		VALUES (log_login_seq.NEXTVAL, #{userNum}, SYSDATE)
+	</insert>
+
 	<select id="findById" parameterType="String" resultType="com.hs.model.MemberDTO">
 		SELECT user_num AS userIdx, 
 		user_id AS userId, 

@@ -74,7 +74,7 @@
 								<c:choose>
 									<c:when test="${not empty user.banner_photo}">
 										<img
-											src="${pageContext.request.contextPath}/uploads/banner/${user.banner_photo}"
+											src="${user.banner_photo}"
 											class="w-100 h-100 object-fit-cover" alt="Banner">
 									</c:when>
 									<c:otherwise>
@@ -100,7 +100,7 @@
 										<c:choose>
 											<c:when test="${not empty user.profile_photo}">
 												<img
-													src="${pageContext.request.contextPath}/uploads/profile/${user.profile_photo}"
+													src="${user.profile_photo}"
 													class="w-100 h-100 object-fit-cover" alt="Profile">
 											</c:when>
 											<c:otherwise>

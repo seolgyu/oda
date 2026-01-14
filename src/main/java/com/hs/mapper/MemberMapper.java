@@ -16,6 +16,8 @@ public interface MemberMapper {
 	public void insertMember(MemberDTO dto) throws Exception;
 	public void insertMember1(MemberDTO dto) throws SQLException;
 	
+	public void insertLoginlog(Long userNum) throws SQLException;
+	
 	// 내 정보 수정 페이지에서 사용
 	public void updateMember(Map<String, Object> map) throws SQLException;
 	

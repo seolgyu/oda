@@ -148,6 +148,7 @@ public class MemberController {
 			session.setAttribute("member", info);
 			
 			service.updateLastLoginDate(dto.getUserIdx());
+			service.insertLoginlog(dto.getUserIdx());
 
 			session.setAttribute("toastMsg", dto.getUserName() + "님, 환영합니다!");
 		    session.setAttribute("toastType", "success");

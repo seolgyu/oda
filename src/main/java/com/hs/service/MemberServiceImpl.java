@@ -185,4 +185,14 @@ public class MemberServiceImpl implements MemberService {
 		}
 	}
 
+	@Override
+	public void insertLoginlog(Long userNum) throws SQLException {
+		try {
+			mapper.insertLoginlog(userNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
 }

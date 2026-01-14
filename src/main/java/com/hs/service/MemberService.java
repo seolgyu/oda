@@ -11,6 +11,8 @@ public interface MemberService {
 	
 	public void insertMember(MemberDTO dto) throws Exception;
 	
+	public void insertLoginlog(Long userNum) throws SQLException;
+	
 	public void updateMember(Map<String, Object> map) throws SQLException;
 	
 	public void updateMemberLevel(Map<String, Object> map) throws Exception;
