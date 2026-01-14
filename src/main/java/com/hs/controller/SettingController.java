@@ -14,6 +14,7 @@ import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
 import com.hs.service.MemberService;
 import com.hs.service.MemberServiceImpl;
+import com.hs.util.CloudinaryUtil;
 import com.hs.util.FileManager;
 import com.hs.util.MyMultipartFile;
 
@@ -326,5 +327,97 @@ public class SettingController {
         }
 
         return model;
+    }
+    
+    @PostMapping("updateImagesCloud")
+    @ResponseBody
+    public Map<String, Object> updateImagesCloud(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        
+        Map<String, Object> model = new HashMap<>();
+        HttpSession session = req.getSession();
+
+        String root = req.getServletContext().getRealPath("/");
+        String tempPath = root + "temp"; 
+        
+        File tempDir = new File(tempPath);
+        if (!tempDir.exists()) tempDir.mkdirs();
+
+        try {
+            SessionInfo info = (SessionInfo) session.getAttribute("member");
+            Long userNum = info.getMemberIdx();
+
+            String isAvatarDeleted = req.getParameter("isAvatarDeleted");
+            String isBannerDeleted = req.getParameter("isBannerDeleted");
+
+            Part avatarPart = req.getPart("avatarFile");
+            
+            if ("true".equals(isAvatarDeleted)) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("userNum", userNum);
+                map.put("userProfile", null);
+
+                service.updateProfile(map);
+                info.setAvatar(null);
+            } else if (avatarPart != null && avatarPart.getSize() > 0) {
+                String uploadedUrl = processCloudinaryUpload(avatarPart, tempPath);
+
+                if (uploadedUrl != null) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("userNum", userNum);
+                    map.put("userProfile", uploadedUrl);
+
+                    service.updateProfile(map);
+                    info.setAvatar(uploadedUrl);
+                }
+            }
+
+            Part bannerPart = req.getPart("bannerFile");
+
+            if ("true".equals(isBannerDeleted)) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("userNum", userNum);
+                map.put("userBanner", null);
+
+                service.updateBanner(map);
+
+            } else if (bannerPart != null && bannerPart.getSize() > 0) {
+                String uploadedUrl = processCloudinaryUpload(bannerPart, tempPath);
+
+                if (uploadedUrl != null) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("userNum", userNum);
+                    map.put("userBanner", uploadedUrl);
+
+                    service.updateBanner(map);
+                }
+            }
+
+            model.put("status", "success");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("status", "error");
+        }
+
+        return model;
+    }
+
+    private String processCloudinaryUpload(Part part, String tempPath) throws IOException {
+        String originalFileName = part.getSubmittedFileName();
+        
+        if (originalFileName == null || originalFileName.trim().isEmpty()) {
+            return null;
+        }
+
+        File tempFile = new File(tempPath, originalFileName);
+        part.write(tempFile.getAbsolutePath());
+
+        String uploadedUrl = CloudinaryUtil.uploadFile(tempFile);
+
+        if (tempFile.exists()) {
+            tempFile.delete();
+        }
+
+        return uploadedUrl;
     }
 }

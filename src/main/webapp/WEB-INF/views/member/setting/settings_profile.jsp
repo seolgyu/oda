@@ -12,7 +12,7 @@
             
             <div id="banner-preview" class="banner-edit-wrapper rounded-4 shadow-lg position-relative">
                 <img id="banner-img-view" 
-                     src="${pageContext.request.contextPath}/uploads/banner/${user.banner_photo}" 
+                     src="${user.banner_photo}" 
                      class="w-100 h-100 object-fit-cover ${empty user.banner_photo ? 'd-none' : ''}">
                 
                 <input type="file" id="banner-input" class="d-none" accept="image/*">
@@ -37,7 +37,7 @@
                 <div class="position-relative">
                     <div id="avatar-preview-box" class="settings-avatar-wrapper shadow-lg" onclick="$('#avatar-input').click();">
                         <img id="avatar-img-view" 
-                             src="${pageContext.request.contextPath}/uploads/profile/${user.profile_photo}" 
+                             src="${user.profile_photo}" 
                              class="w-100 h-100 object-fit-cover ${empty user.profile_photo ? 'd-none' : ''}">
 
                         <div class="avatar-edit-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
@@ -161,7 +161,7 @@ $(function() {
         }
 
         $.ajax({
-            url: '${pageContext.request.contextPath}/member/settings/updateImages',
+            url: '${pageContext.request.contextPath}/member/settings/updateImagesCloud',
             type: 'POST',
             data: formData,
             processData: false,
