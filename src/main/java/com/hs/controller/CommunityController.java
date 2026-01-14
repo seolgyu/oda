@@ -191,9 +191,16 @@ public class CommunityController {
 	
 	@GetMapping("delete")
 	public ModelAndView delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String com_id = req.getParameter("community_id");
+		String community_id = req.getParameter("community_id");
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
 		try {
-			cservice.deleteCommunity(Long.parseLong(com_id));
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("community_id", Long.parseLong(community_id));
+	        map.put("user_num", info.getMemberIdx());
+	        
+			cservice.deleteCommunity(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -230,15 +237,39 @@ public class CommunityController {
 		return mav;
 	}
 	
+	@GetMapping("management_fav")
+	public ModelAndView favoritesList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    ModelAndView mav = new ModelAndView("community/management_fav");
+	    
+	    HttpSession session = req.getSession();
+	    SessionInfo info = (SessionInfo)session.getAttribute("member");
+	    
+	    try {
+	        Map<String, Object> favmap = new HashMap<String, Object>();
+	        favmap.put("user_num", info.getMemberIdx());
+	        favmap.put("mode", "favOnly");
+	        
+	        List<CommunityDTO> favList = cservice.managementList(favmap);
+	        mav.addObject("favList", favList);
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return mav;
+	}
+	
 	@GetMapping("list")
 	public ModelAndView communityList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		ModelAndView mav = new ModelAndView("community/list");
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
 		try {
 			List<CommunityDTO> popularTopics = cservice.getPopularCategoryList();
 			mav.addObject("categoryList", popularTopics);
 			
-			List<CommunityDTO> list = cservice.communityList(null, null);
+			List<CommunityDTO> list = cservice.communityList(null, null, info.getMemberIdx());
 			mav.addObject("list", list);
 			
 		} catch (Exception e) {
@@ -252,12 +283,14 @@ public class CommunityController {
 	@GetMapping("list_search")
 	public ModelAndView communityListAjax(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		ModelAndView mav = new ModelAndView("community/list_search");
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
 	    
 		try {
 			String keyword = req.getParameter("keyword");
 			String category_id = req.getParameter("category_id");
 			
-			List<CommunityDTO> list = cservice.communityList(keyword, category_id);
+			List<CommunityDTO> list = cservice.communityList(keyword, category_id, info.getMemberIdx());
 			
 			mav.addObject("list", list);
 			
@@ -288,6 +321,56 @@ public class CommunityController {
 		}
 		
 		return map;
+	}
+	
+	@GetMapping("join")
+	public ModelAndView joinCommunity(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		ModelAndView mav = new ModelAndView("redirect:/community/main");
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+	    
+		String community_id = req.getParameter("community_id");
+	    Long user_num = info.getMemberIdx();
+		
+		try {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("community_id", community_id);
+			map.put("user_num", user_num);
+			cservice.joinCommunity(map);
+			
+			mav.addObject("community_id", community_id);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			return new ModelAndView("redirect:/list");
+		}	    
+		return mav;
+	}
+	
+	@GetMapping("leave")
+	public ModelAndView leaveCommunity(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		ModelAndView mav = new ModelAndView("redirect:/community/management");
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+	    
+		String community_id = req.getParameter("community_id");
+	    Long user_num = info.getMemberIdx();
+		
+		try {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("community_id", community_id);
+			map.put("user_num", user_num);
+			
+			cservice.removeFavorite(map);
+			cservice.leaveCommunity(map);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	    
+		return mav;
 	}
 	
 }

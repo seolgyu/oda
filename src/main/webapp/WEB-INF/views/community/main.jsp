@@ -200,9 +200,12 @@
 						
 						        <button class="btn btn-primary w-100 rounded-pill fw-bold py-2 mb-3" style="background: #2563eb; border: none;">게시글 쓰기</button>
 						        
-						        <div class="text-center pt-2 border-top border-white border-opacity-10">
-						            <span class="text-primary text-xs fw-bold" style="cursor: pointer;" onclick="location.href='${pageContext.request.contextPath}/community/update?community_id=${dto.community_id}';">커뮤니티 설정</span>
-						        </div>
+						        <c:if test="${sessionScope.member.memberIdx == dto.user_num}">
+								    <div class="text-center pt-2 border-top border-white border-opacity-10">
+								        <span class="text-primary text-xs fw-bold" style="cursor: pointer;" onclick="location.href='${pageContext.request.contextPath}/community/update?community_id=${dto.community_id}';">커뮤니티 설정</span>
+								    </div>
+								</c:if>
+						        
 						    </div>
 						</aside>
 						

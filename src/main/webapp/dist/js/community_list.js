@@ -34,3 +34,26 @@ function loadCommunityList() {
         $('#community-list').html(data);
     });
 }
+
+let selectedCommunityId = null; 
+
+function joinCommunity(community_id) {
+    selectedCommunityId = community_id;
+    $('#join-modal').removeClass('hidden');
+}
+
+function closeJoinModal() {
+    $('#join-modal').addClass('hidden');
+    selectedCommunityId = null;
+}
+
+$(function() {
+    $('#confirm-join-btn').on('click', function() {
+        if (!selectedCommunityId) return;
+        location.href = "join?community_id=" + selectedCommunityId;
+    });
+    
+    $('#join-modal').on('click', function(e) {
+        if (e.target === this) closeJoinModal();
+    });
+});

@@ -69,12 +69,12 @@ public class CommunityServiceImpl implements CommunityService{
 	}
 
 	@Override
-	public void deleteCommunity(Long community_id) throws Exception {
+	public void deleteCommunity(Map<String, Object> map) throws Exception {
 		try {
-			mapper.deleteFavorites(community_id);
-			mapper.deleteFollow(community_id);
+			mapper.deleteFavorites(map);
+			mapper.deleteFollow(map);
 			
-			mapper.deleteCommunity(community_id);
+			mapper.deleteCommunity(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -88,13 +88,23 @@ public class CommunityServiceImpl implements CommunityService{
 
 	@Override
 	public void joinCommunity(Map<String, Object> map) throws Exception {
-		// TODO Auto-generated method stub
-		
+		try {
+			mapper.joinCommunity(map);
+			mapper.memberAddCount(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void leaveCommunity(Map<String, Object> map) throws Exception {
-		// TODO Auto-generated method stub
+		try {
+			mapper.deleteFavorites(map);
+			mapper.leaveCommunity(map);
+			mapper.memberRemoveCount(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -116,16 +126,14 @@ public class CommunityServiceImpl implements CommunityService{
 			return "error";
 		}
 	}
-
+	
 	@Override
-	public void addFavorite(Map<String, Object> map) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeFavorite(Map<String, Object> map) throws Exception {
-		// TODO Auto-generated method stub
+	public void removeFavorite(Map<String, Object> map) {
+		try {
+			mapper.removeFavorite(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 
@@ -141,12 +149,13 @@ public class CommunityServiceImpl implements CommunityService{
 	}
 
 	@Override
-	public List<CommunityDTO> communityList(String keyword, String category_id) {
+	public List<CommunityDTO> communityList(String keyword, String category_id, Long user_num) {
 		List<CommunityDTO> list = null;
 		try {
 			Map<String, Object> map = new HashMap<String, Object>(); 
 			map.put("keyword", keyword);
 			map.put("category_id", category_id);
+			map.put("user_num", user_num);
 			
 			list = mapper.selectCommunityList(map);
 		} catch (Exception e) {
@@ -165,6 +174,5 @@ public class CommunityServiceImpl implements CommunityService{
 		}
 		return list;
 	}
-	
 	
 }

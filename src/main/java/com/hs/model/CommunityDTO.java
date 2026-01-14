@@ -22,7 +22,7 @@ public class CommunityDTO {
 	private String favorites_date;
 	private int is_favorite;
 	private String follow_date;
-	private String is_follew;
+	private int is_follow;
 
 	// 조인용 필드 (화면 표시용)
 	private String creatorNickname;
@@ -187,12 +187,12 @@ public class CommunityDTO {
 		this.is_favorite = is_favorite;
 	}
 
-	public String getIs_follew() {
-		return is_follew;
+	public int getIs_follow() {
+		return is_follow;
 	}
 
-	public void setIs_follew(String is_follew) {
-		this.is_follew = is_follew;
+	public void setIs_follow(int is_follow) {
+		this.is_follow = is_follow;
 	}
 
 	

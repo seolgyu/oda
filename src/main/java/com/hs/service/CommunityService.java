@@ -12,17 +12,15 @@ public interface CommunityService {
 	public CommunityDTO findById(Map<String, Object> map);
 	public CommunityDTO isCommunityName(String com_name);
 	public void updateCommunity(CommunityDTO dto) throws Exception;
-	public void deleteCommunity(Long community_id) throws Exception;
+	public void deleteCommunity(Map<String, Object> map) throws Exception;
 	
+	public String checkFavorite(Map<String, Object> map);
+	public void removeFavorite(Map<String, Object> map);
 	public void checkJoinCommunity(Map<String, Object> map);
 	public void joinCommunity(Map<String, Object> map) throws Exception;
 	public void leaveCommunity(Map<String, Object> map) throws Exception;
 	
-	public String checkFavorite(Map<String, Object> map);
-	public void addFavorite(Map<String, Object> map) throws Exception;
-	public void removeFavorite(Map<String, Object> map) throws Exception;
-	
 	public List<CommunityDTO> managementList(Map<String, Object> map);
-	public List<CommunityDTO> communityList(String keyword, String category_id);
+	public List<CommunityDTO> communityList(String keyword, String category_id, Long user_num);
 	public List<CommunityDTO> getPopularCategoryList();
 }

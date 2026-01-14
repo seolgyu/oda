@@ -15,14 +15,14 @@
 		WHERE community_id = #{community_id}
 	</update>
 	
-	<delete id="deleteFavorites" parameterType="Long">
+	<delete id="deleteFavorites" parameterType="map">
 		DELETE FROM COMMUNITY_FAVORITES
-		WHERE community_id = #{community_id}
+		WHERE community_id = #{community_id} AND user_num = #{user_num}
 	</delete>
 	
-	<delete id="deleteFollow" parameterType="Long">
+	<delete id="deleteFollow" parameterType="map">
 		DELETE FROM COMMUNITY_FOLLOW
-		WHERE community_id = #{community_id}
+		WHERE community_id = #{community_id} AND user_num = #{user_num}
 	</delete>
 	
 	<delete id="deleteCommunity" parameterType="Long">
@@ -30,15 +30,30 @@
 		WHERE community_id = #{community_id}
 	</delete>
 	
+	<select id="checkJoinCommunity">
+		SELECT COUNT(*) from community_follow
+		WHERE community_id = #{community_id} AND user_num = #{user_num}
+	</select>
+	
 	<insert id="joinCommunity" parameterType="map">
 		INSERT INTO community_follow(community_id, user_num)
 		VALUES(#{community_id}, #{user_num})
 	</insert>
 	
+	<update id="memberAddCount">
+		UPDATE COMMUNITY SET member_count = member_count + 1 
+		WHERE community_id = #{community_id}
+	</update>
+	
 	<delete id="leaveCommunity" parameterType="map">
 		DELETE FROM community_follow 
 		WHERE community_id = #{community_id} AND user_num = #{user_num}
 	</delete>
+	
+	<update id="memberRemoveCount">
+		UPDATE COMMUNITY SET member_count = member_count - 1 
+		WHERE community_id = #{community_id}
+	</update>
 	
 	<select id="checkFavorite" parameterType="map" resultType="int">
 		SELECT COUNT(*) from community_favorites
@@ -71,7 +86,6 @@
 	            INNER JOIN community_favorites f ON c.community_id = f.community_id
 	            WHERE f.user_num = #{user_num}
 	        </when>
-	        
 			<otherwise>
 				WHERE c.user_num = #{user_num}
 					OR c.community_id IN (
@@ -99,11 +113,17 @@
 	</select>
 	
 	<select id="selectCommunityList" parameterType="map" resultType="com.hs.model.CommunityDTO">
-		SELECT community_id, com_name, com_description, icon_image, banner_image, is_private, member_count, post_count, created_date, today_visit, total_visit, user_num, category_id
-		FROM (
-			SELECT community_id, com_name, com_description, icon_image, banner_image, is_private, member_count, post_count, created_date, today_visit, total_visit, user_num, category_id
-			FROM COMMUNITY
-			<where>
+	    SELECT 
+	        c.*, 
+	        (SELECT COUNT(*) 
+	         FROM community_follow f 
+	         WHERE f.community_id = c.community_id AND f.user_num = #{user_num}) is_follow
+	    FROM (
+	        SELECT community_id, com_name, com_description, icon_image, banner_image, 
+	               is_private, member_count, post_count, created_date, today_visit, 
+	               total_visit, user_num, category_id
+	        FROM COMMUNITY
+	        <where>
 	            is_private = '0'
 	            <if test="keyword != null and keyword != ''">
 	                AND com_name LIKE '%' || #{keyword} || '%'
@@ -112,8 +132,9 @@
 	                AND category_id = #{category_id}
 	            </if>
 	        </where>
-			ORDER BY member_count DESC
-		) WHERE ROWNUM &lt;= 100
+	        ORDER BY member_count DESC
+	    ) c
+	    WHERE ROWNUM &lt;= 100
 	</select>
 	
 	<select id="findByName" parameterType="String" resultType="com.hs.model.CommunityDTO">

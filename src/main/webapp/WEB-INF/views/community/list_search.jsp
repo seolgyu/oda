@@ -20,9 +20,22 @@
                     </div>
                 </div>
                 
-                <button class="bg-[#a855f7] hover:bg-[#9333ea] px-8 py-3 rounded-xl font-bold text-white shadow-[0_5px_20px_rgba(168,85,247,0.3)] transition-all transform hover:-translate-y-1 active:scale-95 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm">rocket_launch</span> Join
-                </button>
+                <div class="flex items-center gap-2">
+				    <c:choose>
+				        <c:when test="${dto.is_follow == '1' || dto.user_num == sessionScope.member.memberIdx}">
+				            <button disabled class="bg-white/10 text-gray-500 px-8 py-3 rounded-xl font-bold flex items-center gap-2 cursor-default">
+				                <span class="material-symbols-outlined text-sm">check_circle</span> 가입됨
+				            </button>
+				        </c:when>
+				
+				        <c:otherwise>
+				            <button onclick="joinCommunity('${dto.community_id}')" 
+				                    class="bg-[#a855f7] hover:bg-[#9333ea] px-8 py-3 rounded-xl font-bold text-white transition-all flex items-center gap-2">
+				                <span class="material-symbols-outlined text-sm">rocket_launch</span> 가입하기
+				            </button>
+				        </c:otherwise>
+				    </c:choose>
+				</div>
             </div>
         </c:forEach>
     </c:when>

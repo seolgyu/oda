@@ -85,6 +85,17 @@
             </div>
         </main>
     </div>
+    
+    <div id="join-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+	    <div class="neon-card p-8 rounded-[2rem] w-80 text-center border border-white/10">
+	        <h3 class="text-xl font-bold text-white mb-4">커뮤니티 가입</h3>
+	        <p class="text-gray-400 mb-8">이 커뮤니티의 멤버가 되어<br>함께 소통하시겠습니까?</p>
+	        <div class="flex gap-3">
+	            <button onclick="closeJoinModal()" class="flex-1 py-3 rounded-xl bg-white/5 text-gray-400 hover:bg-white/10 transition-all">취소</button>
+	            <button id="confirm-join-btn" class="flex-1 py-3 rounded-xl bg-primary text-white font-bold shadow-[0_5px_15px_rgba(168,85,247,0.4)]">가입하기</button>
+	        </div>
+	    </div>
+	</div>
 
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

@@ -18,6 +18,10 @@ $(function() {
         e.preventDefault();
         submitCommunity($(this));
     });
+	
+	$('#confirm-modal').on('click', function(e) {
+		if (e.target === this) closeConfirmModal();
+	});
 });
 
 
@@ -92,7 +96,7 @@ function submitCommunity($form) {
     const mode = $form.attr('id') === 'updateForm' ? 'update' : 'create';
     const params = $form.serialize();
 	const fn = 	function(data) {
-		if (res.status === "success") {
+		if (data.status === "success") {
 	    	alert(mode === 'update' ? "수정되었습니다." : "생성되었습니다.");
 	            
 	        location.href = "main?community_id=" + (data.community_id || data.dto.community_id);
@@ -120,8 +124,9 @@ function toggleFavorite(button, communityId) {
 		} else {
 			alert("처리 중 오류가 발생했습니다.");
 		}
+		updateFavoriteUI();
 	};
-		ajaxRequest(url, "post", params, 'json', fn);
+	ajaxRequest(url, "post", params, 'json', fn);
 }
 
 function deleteCommunity(communityId){
@@ -130,4 +135,33 @@ function deleteCommunity(communityId){
 	const url = "delete?community_id=" + communityId;
 	
 	location.href = url;
+}
+
+function leaveCommunity(community_id) {
+    const $modal = $('#confirm-modal');
+    
+    // 모달 표시
+    $modal.removeClass('hidden');
+    
+    // 확인 버튼에 탈퇴 액션 바인딩
+    $('#modal-confirm-btn').off('click').on('click', function() {
+        location.href = "leave?community_id=" + community_id;
+    });
+}
+
+// 2. 모달 닫기
+function closeConfirmModal() {
+    $('#confirm-modal').addClass('hidden');
+}
+
+
+function updateFavoriteUI() {
+    // 서버에서 즐겨찾기 리스트 HTML 조각만 가져오기
+    ajaxRequest("favoritesList", 'GET', {}, 'text', function(html) {
+        // management.jsp 우측 컨테이너 업데이트
+        $('#right-fav-list').html(html);
+        
+        // 만약 사이드바도 같은 클래스나 ID를 쓴다면 함께 업데이트됨
+        $('.sidebar-fav-area').html(html);
+    });
 }

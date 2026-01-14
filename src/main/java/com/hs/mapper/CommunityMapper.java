@@ -10,9 +10,9 @@ public interface CommunityMapper {
 	
 	public void insertCommunity(CommunityDTO dto) throws SQLException;
 	public void updateCommunity(CommunityDTO dto) throws SQLException;
-	public void deleteCommunity(Long community_id) throws SQLException;
-	public void deleteFavorites(Long community_id) throws SQLException;
-	public void deleteFollow(Long community_id) throws SQLException;
+	public void deleteCommunity(Map<String, Object> map) throws SQLException;
+	public void deleteFavorites(Map<String, Object> map) throws SQLException;
+	public void deleteFollow(Map<String, Object> map) throws SQLException;
 	
 	public int checkJoinCommunity(Map<String, Object> map);
 	public void joinCommunity(Map<String, Object> map) throws SQLException;
@@ -29,4 +29,7 @@ public interface CommunityMapper {
 	
 	public List<CommunityDTO> selectManagementList(Map<String, Object> map);
 	public List<CommunityDTO> selectCommunityList(Map<String, Object> map);
+	
+	public void memberAddCount(Map<String, Object> map) throws SQLException;
+	public void memberRemoveCount(Map<String, Object> map) throws SQLException;
 }
