@@ -248,10 +248,27 @@ public class SettingController {
         	SessionInfo info = (SessionInfo) session.getAttribute("member");
         	Long userNum = info.getMemberIdx();
         	
+        	String isAvatarDeleted = req.getParameter("isAvatarDeleted");
+        	String isBannerDeleted = req.getParameter("isBannerDeleted");
+        	
         	MemberDTO dto = service.findByIdx(userNum);
 						
             Part avatarPart = req.getPart("avatarFile");
-            if (avatarPart != null && avatarPart.getSize() > 0) {
+            if ("true".equals(isAvatarDeleted)) {
+                Map<String, Object> map = new HashMap<>();
+                
+                map.put("userNum", userNum);
+                map.put("userProfile", null);
+                
+                service.updateProfile(map);
+                info.setAvatar(null);
+                
+                String oldProfile = dto.getProfile_photo();
+                if (oldProfile != null && !oldProfile.isEmpty()) {
+                    fm.doFiledelete(profilePath, oldProfile);
+                }
+                
+            } else if (avatarPart != null && avatarPart.getSize() > 0) {
                 MyMultipartFile mFile = fm.doFileUpload(avatarPart, profilePath);
                 if (mFile != null) {
                 	Map<String, Object> map = new HashMap<String, Object>();
@@ -271,7 +288,20 @@ public class SettingController {
             }
 
             Part bannerPart = req.getPart("bannerFile");
-            if (bannerPart != null && bannerPart.getSize() > 0) {
+            if ("true".equals(isBannerDeleted)) {
+                Map<String, Object> map = new HashMap<>();
+                
+                map.put("userNum", userNum);
+                map.put("userBanner", null);
+                
+                service.updateBanner(map);
+                
+                String oldBanner = dto.getBanner_photo();
+                if (oldBanner != null && !oldBanner.isEmpty()) {
+                    fm.doFiledelete(bannerPath, oldBanner);
+                }
+                
+            } else if (bannerPart != null && bannerPart.getSize() > 0) {
                 MyMultipartFile mFile = fm.doFileUpload(bannerPart, bannerPath);
                 if (mFile != null) {
                 	Map<String, Object> map = new HashMap<String, Object>();

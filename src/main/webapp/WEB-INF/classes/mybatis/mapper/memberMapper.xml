@@ -124,21 +124,13 @@
 
 	<update id="updateProfile" parameterType="map">
 		UPDATE member
-		<set>
-			<if test="userProfile != null">
-				user_profile = #{userProfile, jdbcType=VARCHAR}
-			</if>
-		</set>
+		SET user_profile = #{userProfile, jdbcType=VARCHAR}
 		WHERE user_num = #{userNum}
 	</update>
 
 	<update id="updateBanner" parameterType="map">
 		UPDATE member
-		<set>
-			<if test="userBanner != null">
-				user_banner = #{userBanner, jdbcType=VARCHAR}
-			</if>
-		</set>
+		SET user_banner = #{userBanner, jdbcType=VARCHAR}
 		WHERE user_num = #{userNum}
 	</update>
 

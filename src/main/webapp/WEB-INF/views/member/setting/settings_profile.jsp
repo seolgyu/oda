@@ -4,25 +4,33 @@
 <div class="glass-card p-4 shadow-lg mx-auto" style="width: 820px; min-width: 820px; max-width: 100%;">
     <div class="mb-4 border-bottom border-white border-opacity-10 pb-3">
         <h2 class="text-white fs-4 fw-bold mb-1">Profile Interface</h2>
-        <p class="text-secondary text-sm mb-0">Update your cosmic identity and preview the result.</p>
+        <p class="text-secondary text-sm mb-0">Your cosmic identity updates instantly when you select a file or reset.</p>
     </div>
 
     <div class="d-flex flex-column gap-4">
-		<div class="profile-preview-container w-100">
-            <div id="banner-preview" class="banner-edit-wrapper rounded-4 shadow-lg">
+        <div class="profile-preview-container w-100">
+            
+            <div id="banner-preview" class="banner-edit-wrapper rounded-4 shadow-lg position-relative">
                 <img id="banner-img-view" 
                      src="${pageContext.request.contextPath}/uploads/banner/${user.banner_photo}" 
                      class="w-100 h-100 object-fit-cover ${empty user.banner_photo ? 'd-none' : ''}">
                 
                 <input type="file" id="banner-input" class="d-none" accept="image/*">
+                
                 <div class="edit-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-                	style="cursor: pointer;"
-                	onclick="$('#banner-input').click();">
+                     style="cursor: pointer;" onclick="$('#banner-input').click();">
                     <div class="edit-btn-style">
                         <span class="material-symbols-outlined">photo_camera</span> 
                         <span>Change Banner</span>
                     </div>
                 </div>
+
+                <c:if test="${not empty user.banner_photo}">
+                    <button type="button" class="btn-reset-round shadow-sm" id="banner_reset" title="Reset Banner" 
+                            onclick="updateImageImmediate('banner', 'delete')">
+                        <span class="material-symbols-outlined">restart_alt</span>
+                    </button>
+                </c:if>
             </div>
 
             <div class="px-4 d-flex align-items-end gap-3" style="margin-top: -50px;">
@@ -37,6 +45,13 @@
                         </div>
                     </div>
                     <input type="file" id="avatar-input" class="d-none" accept="image/*">
+                    
+                    <c:if test="${not empty user.profile_photo}">
+                        <button type="button" class="btn-reset-round shadow-sm" id="profile_reset" title="Reset Profile"
+                                style="bottom: 5px; right: -5px;" onclick="updateImageImmediate('avatar', 'delete')">
+                            <span class="material-symbols-outlined">restart_alt</span>
+                        </button>
+                    </c:if>
                 </div>
 
                 <div class="pb-2">
@@ -51,11 +66,8 @@
         <div class="d-flex justify-content-between align-items-center pt-3 border-top border-white border-opacity-10 mt-2">
             <div class="text-xs text-gray-500">
                 <span class="material-symbols-outlined align-middle" style="font-size: 14px;">info</span> 
-                This is how your profile appears to other users.
+                Images are automatically saved upon selection.
             </div>
-            <button type="button" class="btn btn-primary rounded-pill px-5 fw-bold btn-save-changes" style="background: #2563eb; border: none;">
-                Save Changes
-            </button>
         </div>
     </div>
 </div>
@@ -66,7 +78,6 @@
     width: 100%; height: 200px;
     background: linear-gradient(to right, #1e1b4b, #4338ca, #1e1b4b);
     position: relative; border-radius: 1rem; overflow: hidden;
-    cursor: pointer;
 }
 
 /* 아바타 컨테이너 */
@@ -78,6 +89,27 @@
     display: flex; align-items: center; justify-content: center;
     position: relative; z-index: 10; cursor: pointer;
     overflow: hidden;
+}
+
+/* 리셋 버튼 (동그란 형태) */
+.btn-reset-round {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(15, 15, 15, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ff4d4d; /* 붉은색 포인트 */
+    display: flex; align-items: center; justify-content: center;
+    position: absolute; bottom: 15px; right: 15px;
+    z-index: 25; transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    cursor: pointer;
+}
+
+.btn-reset-round:hover {
+    background: #ff4d4d;
+    color: white;
+    transform: rotate(-45deg);
+    border-color: transparent;
 }
 
 /* 이미지 스타일 공통 */
@@ -101,6 +133,11 @@
     opacity: 1;
 }
 
+.banner-edit-wrapper:has(.btn-reset-round:hover) .edit-overlay {
+    opacity: 0 !important;
+    transition: opacity 0.2s ease-in-out;
+}
+
 .edit-btn-style {
     background: rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -111,41 +148,16 @@
 
 <script type="text/javascript">
 $(function() {
-    let bannerFile = null;
-    let avatarFile = null;
+    window.updateImageImmediate = function(type, action) {
+        const formData = new FormData();
+        const isDelete = (action === 'delete');
 
-    // --- <img> 태그용 미리보기 함수 ---
-    function readURL(input, imgElementId) {
-        if (input.files && input.files[0]) {
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                // src를 변경하고 d-none 클래스를 제거하여 이미지를 보이게 함
-                $(imgElementId).attr('src', e.target.result).removeClass('d-none');
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
-    // 파일 선택 이벤트
-    $('#banner-input').on('change', function() {
-        bannerFile = this.files[0];
-        readURL(this, '#banner-img-view');
-    });
-
-    $('#avatar-input').on('change', function() {
-        avatarFile = this.files[0];
-        readURL(this, '#avatar-img-view');
-    });
-
-    // 저장 버튼 클릭
-    $('.btn-save-changes').on('click', function() {
-        let formData = new FormData();
-        if (bannerFile) formData.append("bannerFile", bannerFile);
-        if (avatarFile) formData.append("avatarFile", avatarFile);
-
-        if (!bannerFile && !avatarFile) {
-            showToast("info", "변경사항이 없습니다.");
-            return;
+        if (type === 'banner') {
+            if (isDelete) formData.append("isBannerDeleted", "true");
+            else formData.append("bannerFile", action);
+        } else {
+            if (isDelete) formData.append("isAvatarDeleted", "true");
+            else formData.append("avatarFile", action);
         }
 
         $.ajax({
@@ -156,14 +168,39 @@ $(function() {
             contentType: false,
             dataType: 'json',
             success: function(data) {
-                if(data.status === "success") {
-                    showToast("success", "프로필 설정이 저장되었습니다.");
-                    setTimeout(function() {
-                    	location.href = "${pageContext.request.contextPath}/member/settings";
-                    }, 1000);
+                if (data.status === "success") {
+                    showToast("success", "프로필 사진 및 배너 사진이 성공적으로 수정되었습니다.");
+                	setTimeout(function() {
+                        loadSettings("${pageContext.request.contextPath}/member/settings/profile");
+                    }, 800);
+                } else {
+                    showToast("error", "수정 실패.");
                 }
+            },
+            error: function() {
+                showToast("error", "서버 통신 오류.");
             }
         });
+    };
+    
+    $('#banner-input').on('change', function() {
+        if (this.files && this.files[0]) {
+            updateImageImmediate('banner', this.files[0]);
+        }
+    });
+
+    $('#avatar-input').on('change', function() {
+        if (this.files && this.files[0]) {
+            updateImageImmediate('avatar', this.files[0]);
+        }
+    });
+
+    $('#banner_reset').on('click', function() {
+        updateImageImmediate('banner', 'delete');
+    });
+
+    $('#profile-reset').on('click', function() {
+        updateImageImmediate('avatar', 'delete');
     });
 });
 </script>
