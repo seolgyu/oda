@@ -20,6 +20,9 @@ public class EventDTO {
 	private int showEvent;
 	private String user_name;
 
+	private int replyCount;
+	private int boardLikeCount;
+	
 	private List<MyMultipartFile> listFile;
 	
 	// 첨부파일
@@ -144,6 +147,18 @@ public class EventDTO {
 	}
 	public void setEv_hitcount(int ev_hitcount) {
 		this.ev_hitcount = ev_hitcount;
+	}
+	public int getReplyCount() {
+		return replyCount;
+	}
+	public void setReplyCount(int replyCount) {
+		this.replyCount = replyCount;
+	}
+	public int getBoardLikeCount() {
+		return boardLikeCount;
+	}
+	public void setBoardLikeCount(int boardLikeCount) {
+		this.boardLikeCount = boardLikeCount;
 	}
 
 }

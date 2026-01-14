@@ -14,6 +14,7 @@ import com.hs.mvc.annotation.Controller;
 import com.hs.mvc.annotation.GetMapping;
 import com.hs.mvc.annotation.PostMapping;
 import com.hs.mvc.annotation.RequestMapping;
+import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
 import com.hs.service.admin.EventService;
 import com.hs.service.admin.EventServiceImpl;
@@ -285,11 +286,15 @@ public class eventManageController {
 		String pathname = root + "uploads" + File.separator + "events";
 		
 		String page = req.getParameter("page");
+		if(page == null || page.isEmpty()) page = "1"; 
+		
 		String size = req.getParameter("size");
+		if(size == null || size.isEmpty()) size = "10";
+		
 		
 		try {
 			EventDTO dto = new EventDTO();
-			
+
 			dto.setEvent_num(Long.parseLong(req.getParameter("event_num")));
 			if(req.getParameter("events") != null) {
 				dto.setEvents(Integer.parseInt(req.getParameter("events")));
@@ -299,6 +304,14 @@ public class eventManageController {
 			}
 			dto.setEvent_title(req.getParameter("event_title"));
 			dto.setEvent_content(req.getParameter("event_content"));
+			
+			dto.setStart_date(req.getParameter("start_date"));
+			dto.setEnd_date(req.getParameter("end_date"));
+			
+			
+			if(req.getParameter("is_active") != null) {
+			    dto.setIs_active(Integer.parseInt(req.getParameter("is_active")));
+			}
 			
 			List<MyMultipartFile> filelist = fileManager.doFileUpload(req.getParts(), pathname);
 			dto.setListFile(filelist);
@@ -342,45 +355,46 @@ public class eventManageController {
 		}
 	}
 	
-	@GetMapping("deleteFile")
-	public ModelAndView deleteFile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	
+	@ResponseBody
+	@PostMapping("deleteFile")
+	public Map<String, Object> deleteFile(HttpServletRequest req) throws ServletException, IOException {
 		// 수정에서 파일만 삭제
 		// 넘어온 파라미터 : 글번호, 파일번호, 페이지번호, size
+		
+		Map<String, Object> mav = new HashMap<>();
 		HttpSession session = req.getSession();
 		
 		// 파일 저장 경로
 		String root = session.getServletContext().getRealPath("/");
 		String pathname = root + "uploads" + File.separator + "events";
 
-		String page = req.getParameter("page");
-		String size = req.getParameter("size");
-
 		try {
-			long event_num = Long.parseLong(req.getParameter("event_num"));
-			long fileNum = Long.parseLong(req.getParameter("fileNum"));
-			EventDTO dto = service.findByFileId(fileNum);
+			// long event_num = Long.parseLong(req.getParameter("event_num"));
+			long file_at_id = Long.parseLong(req.getParameter("file_at_id"));
+			EventDTO dto = service.findByFileId(file_at_id);
 			if (dto != null) {
 				// 파일삭제
 				fileManager.doFiledelete(pathname, dto.getFile_path());
 				
-				// 테이블 파일 정보 삭제
-				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("field", "fileNum");
-				map.put("num", fileNum);
+				service.deleteEventFile(file_at_id);
 				
-				// service.deleteNoticeFile(map);
+				// 테이블 파일 정보 삭제
+				// mav.put("event_num", event_num);
+				mav.put("status", "success");
+				
 			}
 
-			// 다시 수정 화면으로
-			return new ModelAndView("redirect:/admin/events/update?event_num=" + event_num + "&page=" + page + "&size=" + size);
 		} catch (Exception e) {
 			e.printStackTrace();
+			mav.put("status", "error");
 		}
 
-		return new ModelAndView("redirect:/admin/events/list?page=" + page + "&size=" + size);
+		return mav;
 	}
 
 	
+	@PostMapping()
 	public ModelAndView delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 삭제
 		// 넘어온 파라미터 : 글번호, 페이지번호, size [, 검색컬럼, 검색값]

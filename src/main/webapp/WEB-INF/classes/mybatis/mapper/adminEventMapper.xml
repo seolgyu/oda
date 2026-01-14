@@ -209,7 +209,7 @@
 	<!-- 첨부파일 삭제 -->
 	<delete id="deleteEventFile" parameterType="Long">
 		DELETE FROM EVENT_FILEAT
-		WHERE event_num = #{event_num}
+		WHERE file_at_id = #{file_at_id}
 	</delete>
 	
 	<!-- 이벤트 첨부파일 리스트 출력 -->

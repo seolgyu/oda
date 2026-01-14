@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.hs.mapper.admin.EventMapper;
 import com.hs.model.admin.EventDTO;
+import com.hs.model.admin.EventReplyDTO;
 import com.hs.mybatis.support.MapperContainer;
 import com.hs.util.MyMultipartFile;
 
@@ -207,10 +208,10 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
-	public void deleteEventFile(long event_num) throws Exception {
-		// 첨부파일 삭제
+	public void deleteEventFile(Long file_at_id) throws Exception {
+		// 첨부파일
 		try {
-			mapper.deleteEventFile(event_num);
+			mapper.deleteEventFile(file_at_id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			
@@ -219,5 +220,193 @@ public class EventServiceImpl implements EventService {
 		
 	}
 
+	@Override
+	public boolean isUserBoardLiked(Map<String, Object> map) {
+		try {
+			EventDTO dto = mapper.hasUserBoardLiked(map);
+			
+			if(dto != null) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		
+		}
+		return false;
+	}
+
+	@Override
+	public void insertBoardLike(Map<String, Object> map) throws Exception {
+		// 종아요
+		try {
+			mapper.insertBoardLike(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
+		
+	}
+
+	@Override
+	public void deleteBoardLike(Map<String, Object> map) throws Exception {
+		// 좋아요 삭제
+		try {
+			mapper.deleteBoardLike(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
+	}
+
+	@Override
+	public int boardLikeCount(long num) {
+		// 종아요 수
+		try {
+			return mapper.boardLikeCount(num);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return 0;
+	}
+
+	@Override
+	public void insertReply(EventReplyDTO dto) throws Exception {
+		// 댓글 등록
+		try {
+			mapper.insertReply(dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
+		
+	}
+
+	@Override
+	public void deleteReply(Map<String, Object> map) throws Exception {
+		// 댓글 삭제
+		try {
+			mapper.deleteReply(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
+		
+	}
+
+	@Override
+	public int replyCount(Map<String, Object> map) {
+		// 댓글 수
+		try {
+			return mapper.replyCount(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return 0;
+	}
+
+	@Override
+	public List<EventReplyDTO> listReply(Map<String, Object> map) {
+		// 댓글 리스트
+		try {
+			return mapper.listReply(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+	@Override
+	public List<EventReplyDTO> listReplyAnswer(Map<String, Object> map) {
+		// 댓글 대댓글
+		List<EventReplyDTO> list = null;
+		
+		try {
+			list = mapper.listReplyAnswer(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+
+	@Override
+	public int replyAnswerCount(Map<String, Object> map) {
+		// 대댓글 수
+		int result = 0;
+		
+		try {
+			result = mapper.replyAnswerCount(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+
+	@Override
+	public void updateReplyShowHide(Map<String, Object> map) {
+		// 댓글 숨기기
+		try {
+			mapper.updateReplyShowHide(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
+	}
+
+	@Override
+	public void insertReplyLike(Map<String, Object> map) throws Exception {
+		// 댓글 좋아요
+		
+		try {
+			mapper.insertReplyLike(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
+		
+	}
+
+	@Override
+	public Map<String, Object> replyLikeCount(Map<String, Object> map) {
+		// 댓글 좋아요 수
+		Map<String, Object> countMap = null;
+		
+		try {
+			countMap = mapper.replyLikeCount(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return countMap;
+	}
+
+	@Override
+	public Integer hasUserReplyLiked(Map<String, Object> map) {
+		// 공감여부를 하지 않은 상태 0, 1-공감
+		Integer result = -1;
+		
+		try {
+			result = mapper.hasUserReplyLiked(map);
+			
+			if(result == null) {
+				result = -1;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
 
 }

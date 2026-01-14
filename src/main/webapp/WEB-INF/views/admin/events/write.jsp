@@ -223,16 +223,19 @@ select.glass-input-box {
 								<span class="material-icons-round fs-6">
 									check_circle<span>${mode=='update'?'수정완료':'등록완료'}</span></span>
 							</button>
-								<input type="hidden" name="size" value="${size}">
-									<c:if test="${mode=='update'}">
-										<input type="hidden" name="event_num" value="${dto.event_num}">
-										<input type="hidden" name="page" value="${page}">
-									</c:if>
+
 						</div>
 					</div>
 				</div>
 
 				<form name="eventForm" action="${pageContext.request.contextPath}/admin/events/write" method="post" enctype="multipart/form-data">
+					<input type="hidden" name="size" value="${size}">
+						<c:if test="${mode=='update'}">
+							<input type="hidden" name="event_num" value="${dto.event_num}">
+							<input type="hidden" name="page" value="${page}">
+
+						</c:if>
+					
 					<div class="card-dark p-4 p-md-5 shadow-lg">
 
 						<div class="mb-4">
@@ -271,28 +274,40 @@ select.glass-input-box {
 									</button>
 
 								</div>
-								<textarea class="editor-textarea" name="event_content"
-									placeholder="사용자들에게 안내할 이벤트 상세 내용을 작성하세요...">${dto.event_content}</textarea>
+								<textarea class="editor-textarea" name="event_content" placeholder="사용자들에게 안내할 이벤트 상세 내용을 작성하세요...">
+									${dto.event_content}	
+								</textarea>
 							</div>
 						</div>
 
-							<tr>
-								<td>
-									<input type="file" name="selectFile" class="file-form-control" multiple style="text-align: center" accept="image/png, image/jpeg">
-									<input type="hidden" name="size" value="10">
-								</td>
-							</tr>
+							<div class="mb-4">
+							    <label class="form-label"></label>
+							    <div class="glass-table-container p-3">
+							        <input type="file" name="selectFile" class="file-form-control" 
+							               multiple accept="image/png, image/jpeg" style="width: 100%;">
+							    </div>
+							</div>
+							
 							<c:if test="${mode=='update'}">
-								<c:forEach var="vo" items="${filelist}">
-									<tr>
-										<td> 
-											<p class="form-control-plaintext">
-												<a href="javascript:deleteFile('${vo.file_at_id}');"><i class="bi bi-trash"></i></a>
-												${vo.file_name}
-											</p>
-										</td>
-									</tr>
-								</c:forEach>
+							    <div class="mt-3 d-flex flex-wrap gap-3">
+							        <c:forEach var="vo" items="${filelist}">
+							            <div class="position-relative" id="file-${vo.file_at_id}" style="width: 150px;">
+							                <img src="${pageContext.request.contextPath}/uploads/events/${vo.file_path}" 
+											     class="img-thumbnail bg-dark border-secondary" 
+											     style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;" 
+											     onclick="deleteFile('${vo.file_at_id}');"
+											     title="클릭하면 삭제합니다">
+							                
+							                <p class="text-truncate small mt-1 mb-0">${vo.file_name}</p>
+							                
+							                <a href="javascript:deleteFile('${vo.file_at_id}');" 
+							                   class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 p-0 d-flex align-items-center justify-content-center"
+							                   style="width: 24px; height: 24px; border-radius: 50%;">
+							                    <i class="bi bi-x"></i>
+							                </a>
+							            </div>
+							        </c:forEach>
+							    </div>
 							</c:if>
 
 					</div>
@@ -300,38 +315,11 @@ select.glass-input-box {
 			</div>
 		</main>
 	</div>
+	
+
+
 <script type="text/javascript">
-// 함수가 정의되었는지 확인하기 위해 페이지 로드 시점에 선언
-var sendOk = function() {
-    console.log("버튼 클릭됨!");
-    
-    // form 객체를 가져오는 가장 확실한 방법 (이름이 eventForm이어야 함)
-    var f = document.eventForm;
-    
-    if(!f) {
-        alert("폼(eventForm)을 찾을 수 없습니다. <form name='eventForm'> 인지 확인하세요.");
-        return;
-    }
-
-    if(!f.event_title.value.trim()) {
-        alert("제목을 입력하세요.");
-        f.event_title.focus();
-        return;
-    }
-
-    // mode가 비어있을 경우를 대비한 안전장치
-    var mode = "${mode}";
-    if(!mode) mode = "write"; 
-
-    console.log("전송 경로: " + mode);
-    f.action = "${pageContext.request.contextPath}/admin/events/" + mode;
-    f.submit();
-};
-</script>
-
-<!--  
-<script type="text/javascript">
-function check() {
+function sendOk() {
 	const f = document.eventForm;
 	let str;
 	
@@ -350,21 +338,36 @@ function check() {
 
 	f.action = '${pageContext.request.contextPath}/admin/events/${mode}';
 	
-	return true;
+	f.submit();
 }
--->
-<!--
+
+
 <c:if test="${mode=='update'}">
-	function deleteFile(fileNum) {
-		if(! confirm('파일을 삭제 하시겠습니까 ? ')) {
-			return;
-		}
-		
-		let params = 'event_num=${dto.event_num}&fileNum=' + fileNum + '&page=${page}&size=${size}';
-		let url = '${pageContext.request.contextPath}/admin/events/deleteFile?' + params;
-		location.href = url;
-	}
-</c:if> -->
+function deleteFile(file_at_id) {
+    if(!confirm('사진을 삭제하시겠습니까?')) {
+        return;
+    }
+
+    // 페이지 이동 없이 서버에 조용히 요청만 보냄
+    const url = '${pageContext.request.contextPath}/admin/events/deleteFile?file_at_id=' + file_at_id;
+
+    fetch(url, { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                // 서버 삭제 성공 시, 화면에서 해당 이미지 박스만 제거
+                const element = document.getElementById("file-" + file_at_id);
+                if (element) {
+                    element.remove();
+                }
+            } else {
+                alert("파일 삭제 실패!");
+            }
+        })
+        .catch(err => alert("오류가 발생했습니다: " + err));
+}
+</c:if>
+
 </script>
 
 

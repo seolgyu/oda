@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hs.model.admin.EventDTO;
+import com.hs.model.admin.EventReplyDTO;
 
 public interface EventMapper {
 	public long event_num_seq();
@@ -45,4 +46,27 @@ public interface EventMapper {
 	public List<EventDTO> listEventFile(long num);
 	// 첨부파일 검색
 	public EventDTO findByFileId(long file_at_id);
+	
+	
+	// 좋아요
+	public EventDTO hasUserBoardLiked(Map<String, Object> map);
+	public void insertBoardLike(Map<String, Object> map) throws SQLException;
+	public void deleteBoardLike(Map<String, Object> map) throws SQLException;
+	public int boardLikeCount(long num);
+	
+	// 댓글
+	public void insertReply(EventReplyDTO dto) throws SQLException;
+	public void deleteReply(Map<String, Object> map) throws SQLException;
+	public int replyCount(Map<String, Object> map);
+	
+	public List<EventReplyDTO> listReply(Map<String, Object> map);
+	public List<EventReplyDTO> listReplyAnswer(Map<String, Object> map);
+	public int replyAnswerCount(Map<String, Object> map);
+	public void updateReplyShowHide(Map<String, Object> map);
+	
+	// 댓글 좋아요
+	public void insertReplyLike(Map<String, Object> map) throws SQLException;
+	public Map<String, Object> replyLikeCount(Map<String, Object> map);
+	public Integer hasUserReplyLiked(Map<String, Object> map);
+	
 }
