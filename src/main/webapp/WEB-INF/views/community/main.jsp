@@ -43,13 +43,37 @@
                                         <p class="text-secondary mb-0">• 가입자 수 ${dto.member_count} • 방문자 수 ${dto.today_visit}</p>
                                     </div>
                                     <div class="ms-auto pb-2 d-flex gap-2">
-                                        <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">가입하기</button>
+                                    
+                                        <c:choose>
+                                        	<c:when test="${sessionScope.member.memberIdx == dto.user_num}">
+										        <button class="btn btn-info rounded-pill px-4 fw-bold shadow-sm text-white">
+										            내 커뮤니티
+										        </button>
+										    </c:when>
+										    
+									        <c:when test="${dto.is_follow == 1}">
+									            <button class="btn btn-outline-light rounded-pill px-4 fw-bold shadow-sm btn-membership active" 
+									                    onclick="toggleJoin(this, '${dto.community_id}')"
+									                    onmouseover="this.innerText='탈퇴하기'; this.classList.add('btn-outline-danger'); this.classList.remove('btn-outline-light')"
+									                    onmouseout="this.innerText='가입됨'; this.classList.remove('btn-outline-danger'); this.classList.add('btn-outline-light')">
+									                가입됨
+									            </button>
+									        </c:when>
+									        
+									        <c:otherwise>
+									            <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm btn-membership" 
+									                    onclick="toggleJoin(this, '${dto.community_id}')">
+									                가입하기
+									            </button>
+									        </c:otherwise>
+									    </c:choose>
+									    
                                         <button class="btn-icon border border-white border-opacity-10 rounded-circle p-2">
                                             <span class="material-symbols-outlined text-white">notifications</span>
                                         </button>
                                         <button class="btn-icon btn-favorite border border-white border-opacity-10 rounded-circle p-2 ${dto.is_favorite == 1 ? 'active' : ''}"
 											onclick="toggleFavorite(this, '${dto.community_id}')">
-											<span class="material-symbols-outlined text-white" style="${dto.is_favorite == 1 ? 'color: #ffca28 !important; font-variation-settings: \'FILL\' 1, \'wght\' 700 !important;' : ''}">star</span>
+											<span class="material-symbols-outlined text-white" style="${dto.is_favorite == 1 ? 'color: #ffca28 !important; font-variation-settings: \'FILL\' 1, \'wght\' 700 !important;' : ''}">kid_star</span>
 										</button>
                                     </div>
                                 </div>

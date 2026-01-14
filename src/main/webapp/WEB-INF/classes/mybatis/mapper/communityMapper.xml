@@ -30,7 +30,7 @@
 		WHERE community_id = #{community_id}
 	</delete>
 	
-	<select id="checkJoinCommunity">
+	<select id="checkJoinCommunity" parameterType="map" resultType="int">
 		SELECT COUNT(*) from community_follow
 		WHERE community_id = #{community_id} AND user_num = #{user_num}
 	</select>
@@ -79,7 +79,9 @@
 	    SELECT 
 	        c.community_id, c.com_name, c.com_description, c.icon_image, c.banner_image, c.is_private, 
 	        c.member_count, c.post_count, TO_CHAR(c.created_date, 'YYYY-MM-DD') created_date, 
-	        c.today_visit, c.total_visit, c.user_num, c.category_id
+	        c.today_visit, c.total_visit, c.user_num, c.category_id,
+	        (SELECT COUNT(*) FROM community_favorites f 
+         		WHERE f.community_id = c.community_id AND f.user_num = #{user_num}) is_favorite
 	    FROM community c
 	    <choose>
 	        <when test="mode == 'favOnly'">

@@ -84,9 +84,13 @@ public class CommunityController {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("community_id", Long.parseLong(com_id));
 			map.put("user_num", info.getMemberIdx());
+			
 			CommunityDTO dto = cservice.findById(map);
-				
+			int is_follow = cservice.checkJoinCommunity(map);
+			
 			if(dto != null) {
+				dto.setIs_follow(is_follow);
+				
 				ModelAndView mav = new ModelAndView("community/main");
 				mav.addObject("dto", dto);
 				return mav;

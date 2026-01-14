@@ -11,7 +11,7 @@
                     </div>
                     <div>
                         <h3 class="text-xl font-bold text-white group-hover:text-primary transition-colors">
-                            <a href="${pageContext.request.contextPath}/community/main?community_id=${dto.community_id}">r/${dto.com_name}</a>
+                            <a href="${pageContext.request.contextPath}/community/main?community_id=${dto.community_id}">${dto.com_name}</a>
                         </h3>
                         <p class="text-gray-400 text-sm mt-1 line-clamp-1 font-light">${dto.com_description}</p>
                         <div class="flex items-center gap-3 mt-2">
@@ -23,14 +23,14 @@
                 <div class="flex items-center gap-2">
 				    <c:choose>
 				        <c:when test="${dto.is_follow == '1' || dto.user_num == sessionScope.member.memberIdx}">
-				            <button disabled class="bg-white/10 text-gray-500 px-8 py-3 rounded-xl font-bold flex items-center gap-2 cursor-default">
+				            <button disabled class="w-32 py-3 bg-white/10 text-gray-500 rounded-xl font-bold flex items-center justify-center gap-2 cursor-default border-none outline-none">
 				                <span class="material-symbols-outlined text-sm">check_circle</span> 가입됨
 				            </button>
 				        </c:when>
 				
 				        <c:otherwise>
 				            <button onclick="joinCommunity('${dto.community_id}')" 
-				                    class="bg-[#a855f7] hover:bg-[#9333ea] px-8 py-3 rounded-xl font-bold text-white transition-all flex items-center gap-2">
+                   					class="w-32 py-3 bg-[#a855f7] hover:bg-[#9333ea] rounded-xl font-bold text-white transition-all flex items-center justify-center gap-2 border-none outline-none">
 				                <span class="material-symbols-outlined text-sm">rocket_launch</span> 가입하기
 				            </button>
 				        </c:otherwise>

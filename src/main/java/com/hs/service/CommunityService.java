@@ -16,7 +16,7 @@ public interface CommunityService {
 	
 	public String checkFavorite(Map<String, Object> map);
 	public void removeFavorite(Map<String, Object> map);
-	public void checkJoinCommunity(Map<String, Object> map);
+	public int checkJoinCommunity(Map<String, Object> map);
 	public void joinCommunity(Map<String, Object> map) throws Exception;
 	public void leaveCommunity(Map<String, Object> map) throws Exception;
 	

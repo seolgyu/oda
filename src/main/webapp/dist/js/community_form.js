@@ -1,6 +1,6 @@
 $(function() {
     initFormState();
-    enableAppMode();
+    if (typeof enableAppMode === 'function') enableAppMode();
 
     $('input[name="com_name"]').on('input', function() {
         checkCommunityName();
@@ -47,7 +47,6 @@ function initFormState() {
         $('#category_id_input').val(dbTopicId);
     }
 }
-
 
 function checkCommunityName() {
     const $nameInput = $('input[name="com_name"]');
@@ -109,24 +108,100 @@ function submitCommunity($form) {
 }
 
 function toggleFavorite(button, communityId) {
-	const url = "checkFavorite";
-	const params = "community_id=" + communityId;
-	const $button = $(button);
-	const $icon = $button.find('.material-symbols-outlined');
+    const $button = $(button);
+    const $icon = $button.find('.material-symbols-outlined');
+    const url = "checkFavorite";
+    const params = { community_id: communityId };
 
-	const fn = function(data) {
-		if (data.status === "added") {
-			$button.addClass("active");
-			$icon.attr('style', 'color: #ffca28 !important; font-variation-settings: "FILL" 1, "wght" 700 !important;');
-		} else if (data.status === "removed") {
-			$button.removeClass("active");
-			$icon.attr('style', '');
-		} else {
-			alert("처리 중 오류가 발생했습니다.");
-		}
-		updateFavoriteUI();
-	};
-	ajaxRequest(url, "post", params, 'json', fn);
+    // ajaxRequest(url, method, requestParams, responseType, callback)
+    ajaxRequest(url, 'POST', params, 'json', function(data) {
+        if (data.status === "added") {
+            $icon.attr('style', 'color: #facc15 !important; font-variation-settings: "FILL" 1, "wght" 700 !important;');
+        } else if (data.status === "removed") {
+            $icon.attr('style', 'color: #4b5563 !important; font-variation-settings: "FILL" 0, "wght" 400 !important;');
+        }
+        
+        // 동기화 함수 호출
+        updateFavoriteUI();
+    });
+}
+
+function updateFavoriteUI() {
+    const url = "management_fav";
+    
+    // HTML 조각을 받아와야 하므로 responseType은 'html'
+    ajaxRequest(url, 'GET', {}, 'html', function(html) {
+        // 1. 오른쪽 리스트 갱신
+        const $rightList = $('#right-fav-list');
+        if ($rightList.length > 0) {
+            $rightList.html(html);
+        }
+
+        // 2. 사이드바 갱신
+        const $sidebarList = $('.sidebar-fav-area');
+        if ($sidebarList.length > 0) {
+            $sidebarList.html(html);
+        }
+
+        // 3. 왼쪽 별 아이콘 색상 동기화
+        const favoriteIds = [];
+        const $temp = $('<div>').append(html);
+        $temp.find('[onclick*="community_id="]').each(function() {
+            const match = $(this).attr('onclick').match(/community_id=(\d+)/);
+            if (match) favoriteIds.push(match[1]);
+        });
+
+        $('.btn-favorite').each(function() {
+            const $btn = $(this);
+            const onclickAttr = $btn.attr('onclick') || "";
+            const idMatch = onclickAttr.match(/'(\d+)'/);
+            
+            if (idMatch) {
+                const currentId = idMatch[1];
+                const $starIcon = $btn.find('.material-symbols-outlined');
+                
+                if (favoriteIds.includes(currentId)) {
+                    $starIcon.attr('style', 'color: #facc15 !important; font-variation-settings: "FILL" 1, "wght" 700 !important;');
+                    $starIcon.removeClass('text-gray-600').addClass('text-yellow-400');
+                } else {
+                    $starIcon.attr('style', 'color: #4b5563 !important; font-variation-settings: "FILL" 0, "wght" 400 !important;');
+                    $starIcon.removeClass('text-yellow-400').addClass('text-gray-600');
+                }
+            }
+        });
+    });
+}
+
+function toggleJoin(button, communityId) {
+    const $btn = $(button);
+    // 버튼에 active 클래스가 있으면 이미 가입된 상태
+    const isMember = $btn.hasClass('active');
+    
+    if (isMember) {
+        // 탈퇴 처리
+        if (!confirm("정말 커뮤니티를 탈퇴하시겠습니까?")) return;
+        
+        ajaxRequest('leave', 'POST', { community_id: communityId }, 'json', function(data) {
+            if (data.status === "success") {
+                alert("탈퇴 처리가 완료되었습니다.");
+                location.reload(); // 가입자 수 갱신을 위해 새로고침
+            } else {
+                alert(data.message || "탈퇴 처리 중 오류가 발생했습니다.");
+            }
+        });
+    } else {
+        // 가입 처리
+        if (!confirm("이 커뮤니티에 가입하시겠습니까?")) return;
+        
+        ajaxRequest('join', 'POST', { community_id: communityId }, 'json', function(data) {
+            if (data.status === "success") {
+                alert("성공적으로 가입되었습니다!");
+                location.reload(); // 가입자 수 갱신을 위해 새로고침
+            } else {
+                alert(data.message || "가입 처리 중 오류가 발생했습니다.");
+            }
+        });
+    }
 }
 
 function deleteCommunity(communityId){
@@ -152,16 +227,4 @@ function leaveCommunity(community_id) {
 // 2. 모달 닫기
 function closeConfirmModal() {
     $('#confirm-modal').addClass('hidden');
-}
-
-
-function updateFavoriteUI() {
-    // 서버에서 즐겨찾기 리스트 HTML 조각만 가져오기
-    ajaxRequest("favoritesList", 'GET', {}, 'text', function(html) {
-        // management.jsp 우측 컨테이너 업데이트
-        $('#right-fav-list').html(html);
-        
-        // 만약 사이드바도 같은 클래스나 ID를 쓴다면 함께 업데이트됨
-        $('.sidebar-fav-area').html(html);
-    });
 }

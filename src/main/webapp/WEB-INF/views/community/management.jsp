@@ -46,12 +46,13 @@
                                             <div class="p-6 flex items-center justify-between border-b border-white/5 hover:bg-white/[0.02] transition-all group">
                                                 <div class="flex items-center space-x-4">
                                                     <button class="btn-favorite p-2 transition-all active:scale-90" 
-                                                            onclick="toggleFavorite(this, '${dto.community_id}')">
-                                                        <span class="material-symbols-outlined text-2xl ${dto.is_favorite == 1 ? 'text-yellow-400' : 'text-gray-600'}"
-                                                              style="${dto.is_favorite == 1 ? 'font-variation-settings: \'FILL\' 1, \'wght\' 700;' : ''}">
-                                                            star
-                                                        </span>
-                                                    </button>
+													        onclick="toggleFavorite(this, '${dto.community_id}')">
+													    <span class="material-symbols-outlined text-2xl transition-all ${dto.is_favorite == 1 ? 'text-yellow-400' : 'text-gray-600'}"
+														      style="font-variation-settings: 'FILL' ${dto.is_favorite == 1 ? 1 : 0}, 'wght' 700 !important; 
+														             ${dto.is_favorite == 1 ? 'color: #facc15 !important;' : ''}">
+														    kid_star
+														</span>
+													</button>
 
                                                     <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg overflow-hidden shrink-0">
                                                         <c:choose>
@@ -73,17 +74,18 @@
                                                 <div class="shrink-0 ml-4">
                                                     <c:choose>
                                                         <c:when test="${dto.user_num == sessionScope.member.memberIdx}">
-                                                            <button onclick="location.href='update?community_id=${dto.community_id}'" 
-                                                                    class="px-6 py-2.5 font-bold text-sm rounded-full border-2 border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white transition-all">
-                                                                수정하기
-                                                            </button>
-                                                        </c:when>
+											                <button onclick="location.href='update?community_id=${dto.community_id}'" 
+											                        class="w-32 py-3 bg-[#a855f7] hover:bg-[#9333ea] rounded-xl font-bold text-white transition-all flex items-center justify-center gap-2 border-none outline-none">
+											                    <span class="material-symbols-outlined text-sm">edit</span> 수정하기
+											                </button>
+											            </c:when>
+											            
                                                         <c:otherwise>
-                                                            <button onclick="leaveCommunity('${dto.community_id}')" 
-                                                                    class="px-6 py-2.5 font-bold text-sm rounded-full border-2 border-primary text-primary hover:bg-primary hover:text-white transition-all">
-                                                                탈퇴하기
-                                                            </button>
-                                                        </c:otherwise>
+											                <button onclick="leaveCommunity('${dto.community_id}')" 
+											                        class="w-32 py-3 bg-white/10 hover:bg-white/20 text-gray-300 rounded-xl font-bold flex items-center justify-center gap-2 transition-all border-none outline-none">
+											                    <span class="material-symbols-outlined text-sm">logout</span> 탈퇴하기
+											                </button>
+											            </c:otherwise>
                                                     </c:choose>
                                                 </div>
                                             </div>
