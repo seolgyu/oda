@@ -9,38 +9,39 @@ import com.hs.model.admin.EventDTO;
 public interface EventMapper {
 	public long event_num_seq();
 	
-	// 이벤트 등록
+	// 이벤트 등록(ok)
 	public void insertEvent(EventDTO dto) throws SQLException;
-	// 이벤트 수정
+	// 이벤트 수정(ok)
 	public void updateEvent(EventDTO dto) throws SQLException;
-	// 이벤트 삭제(1개씩)
+	// 이벤트 삭제(1개씩)(ok)
 	public void deleteEvent(long event_num) throws SQLException;
-	// 이벤트 삭제(1개 이상)
+	// 이벤트 삭제(1개 이상)(ok)
 	public void deleteListEvent(List<Long> list) throws SQLException;
 	
-	// 데이터 개수(한페이지 출력시 사용)
+	// 데이터 개수(한페이지 출력시 사용)(ok)
 	public int dataCount(Map<String, Object> map);
 	
-	// 리스트 첫줄
+	// 리스트 첫줄(ok)
 	public List<EventDTO> listEventTop();
+	// (ok)
 	public List<EventDTO> listEvent(Map<String, Object> map);
 	
-	
+	// (ok)
 	public EventDTO findById(long event_num);
 	// 이전글
 	public EventDTO findByPrev(Map<String, Object> map);
 	// 다음글
 	public EventDTO findByNext(Map<String, Object> map);
-	// 조회수
+	// 조회수(ok)
 	public void updateHitCount(long num) throws SQLException;
 	
 	
 	// 첨부파일 등록
 	public void insertEventFile(EventDTO dto) throws SQLException;
 	// 첨부파일 삭제
-	public void deleteEventFile(List<Long> list) throws SQLException;
+	public void deleteEventFile(long event_num) throws SQLException;
 	
-	// 첨부파일 리스트
+	// 첨부파일 리스트(ok)
 	public List<EventDTO> listEventFile(long num);
 	// 첨부파일 검색
 	public EventDTO findByFileId(long file_at_id);

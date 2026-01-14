@@ -8,35 +8,61 @@
 	
 	<!-- 이벤트 등록  -->
 	<insert id="insertEvent" parameterType="map">
-		  INSERT INTO EVENT(event_num, event_title, event_content, start_date, 
+		  INSERT INTO EVENT(user_num, event_num, event_title, event_content, start_date, 
 			end_date, is_active, created_date, update_date, ev_hitcount)
-		VALUES(#{event_num}, #{event_title}, #{event_content}, TO_DATE(#{start_date}, 'yyyy-mm-dd'), TO_DATE(#{end_date}, 'yyyy-mm-dd'), 0, SYSDATE, SYSDATE, 0)
+		VALUES(#{user_num}, #{event_num}, #{event_title}, #{event_content}, TO_DATE(#{start_date}, 'yyyy-mm-dd'), TO_DATE(#{end_date}, 'yyyy-mm-dd'), 0, SYSDATE, SYSDATE, 0)
 	</insert>
 	
-	<!-- 이벤트 등록 파일 -->
-	<insert id="insertEventFile" parameterType="com.hs.model.admin.EventDTO">
-		INSERT INTO EVENT_FILEAT(file_at_id, event_num, file_name, file_path, file_size)
-			VALUES(ev_fileat_seq.NEXTVAL, #{event_num}, #{file_name}, #{file_path}, #{file_size})
-	</insert>
+	<!-- 이벤트 수정 -->
+	<update id="updateEvent" parameterType="com.hs.model.admin.EventDTO">
+		    UPDATE event SET event_title = #{event_title}, event_content = #{event_content}, 
+		    	start_date = #{start_date}, end_date = #{end_date}, is_active = #{is_active}, 
+		    	update_date = SYSDATE
+    		WHERE event_num = #{event_num}
+	</update>
 	
-	<!-- 검색 조건 -->
-	<sql id="search-list">
-		<if test="schType == 'all' ">
-			(INSTR(event_title, #{kwd}) &gt; 0 
-				OR DBMS_LOB.INSTR(event_content, #{kwd}) &gt; 0)
-		</if>
-		<if test="schType == 'event_title' ">
-			INSTR(event_title, #{kwd}) &gt; 0
-		</if>
-		<if test="schType == 'event_content' ">
-			DBMS_LOB.INSTR(event_content, #{kwd}) &gt; 0
-		</if>
-		<if test="schType == 'start_date' ">
-			(TO_CHAR(start_date, 'YYYY-MM-DD') = #{kwd}
-				OR TO_CHAR(start_date, 'YYYYMMDD') = #{kwd})
-		</if>
-
-	</sql>
+	<!-- 이벤트 삭제 -->
+	<delete id="deleteEvent" parameterType="Long">
+		DELETE FROM event
+		WHERE event_num = #{event_num}
+	</delete>
+	
+	<!-- 이벤트 여러개 삭제 -->
+	<delete id="deleteListEvent" parameterType="java.util.List">
+		DELETE FROM event
+		WHERE event_num IN 
+		<foreach collection="list" item="event_num" index="index"
+			open="(" separator="," close=")">
+			#{event_num}
+		</foreach>
+	</delete>
+	
+	<!-- 데이터 개수 -->
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+    	FROM EVENT e
+    	JOIN MEMBER m ON e.user_num = m.user_num
+		<where>
+			<if test="showEvent != null">
+				showEvent = #{showEvent}
+			</if>		
+			<if test="kwd != null and kwd != ''  ">
+				AND <include refid="search-list"/>
+			</if>
+			<if test="status == '진행'">
+			    AND SYSDATE &gt; start_date
+			    AND SYSDATE &lt;= end_date
+			</if>
+			
+			<if test="status == '종료'">
+			    AND (is_active = 2 OR SYSDATE &gt;= end_date)
+			</if>
+			
+			<if test="status == '진행예정'">
+			    AND SYSDATE &lt; start_date
+			</if>
+		</where>
+	</select>
 	
 	<!-- 이벤트 리스트 맨윗줄 출력(진행) -->
 		<select id="listEventTop" resultType="com.hs.model.admin.EventDTO">
@@ -59,34 +85,6 @@
 				ORDER BY start_date, event_num DESC
 	</select>
 	
-	<!-- 데이터 개수 -->
-	<select id="dataCount" parameterType="map" resultType="Integer">
-		SELECT NVL(COUNT(*), 0)
-    	FROM EVENT e
-    	JOIN MEMBER m ON e.user_num = m.user_num
-		<where>
-			<if test="is_active != null">
-				is_active = #{is_active}
-			</if>		
-			<if test="kwd != null and kwd != ''  ">
-				AND <include refid="search-list"/>
-			</if>
-			<if test="status == '진행'">
-			    AND SYSDATE &gt; start_date
-			    AND SYSDATE &lt;= end_date
-			</if>
-			
-			<if test="status == '종료'">
-			    AND (is_active = 2 OR SYSDATE &gt;= end_date)
-			</if>
-			
-			<if test="status == '진행예정'">
-			    AND SYSDATE &lt; start_date
-			</if>
-		</where>
-	</select>
-	
-	
 	<!-- 이벤트 리스트 출력 -->
 	<select id="listEvent" parameterType="map" resultType="com.hs.model.admin.EventDTO">
 	    SELECT e.user_num, e.event_num, event_title, event_content, 
@@ -106,8 +104,8 @@
     		GROUP BY event_num
     	) ef ON e.event_num = ef.event_num
     	<where>
-    		<if test="is_active != null">
-    			is_active = #{is_active}
+    		<if test="showEvent != null">
+    			showEvent = #{showEvent}
     		</if>
     		<if test="kwd != null and kwd != ''">
     			AND <include refid="search-list"/>
@@ -129,46 +127,103 @@
     	ORDER BY update_date DESC, event_num DESC
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
-	
-	<!-- 글보기 -->
+
 	<select id="findById" parameterType="Long" resultType="com.hs.model.admin.EventDTO">
 		SELECT event_num, e.user_num, event_title, event_content, 
 			TO_CHAR(start_date, 'YYYY-MM-DD') start_date, 
 			TO_CHAR(end_date, 'YYYY-MM-DD') end_date, 
-			TO_CHAR(created_date, 'YYYY-MM-DD') created_date, ev_hitcount
+			TO_CHAR(created_date, 'YYYY-MM-DD') created_date, 
+			TO_CHAR(update_date, 'YYYY-MM-DD') update_date,
+			ev_hitcount
 		FROM event e
 		JOIN member m ON e.user_num = m.user_num
 		WHERE event_num = #{event_num}
+	</select>
+	
+	<!-- 검색 조건 -->
+	<sql id="search-list">
+		<if test="schType == 'all' ">
+			(INSTR(event_title, #{kwd}) &gt; 0 
+				OR DBMS_LOB.INSTR(event_content, #{kwd}) &gt; 0)
+		</if>
+		<if test="schType == 'event_title' ">
+			INSTR(event_title, #{kwd}) &gt; 0
+		</if>
+		<if test="schType == 'event_content' ">
+			DBMS_LOB.INSTR(event_content, #{kwd}) &gt; 0
+		</if>
+		<if test="schType == 'start_date' ">
+			(TO_CHAR(start_date, 'YYYY-MM-DD') = #{kwd}
+				OR TO_CHAR(start_date, 'YYYYMMDD') = #{kwd})
+		</if>
+	</sql>
+
+	<!-- 이전글 -->
+	<select id="findByPrev" parameterType="map" resultType="com.hs.model.admin.EventDTO">
+		SELECT e.user_num, e.event_num, event_title
+		FROM event e
+		JOIN member m ON e.user_num = m.user_num
+		<where>
+			<if test="showEvent != null">
+				showEvent = #{showEvent}
+			</if>
+			<if test="kwd != null and kwd != '' ">
+				AND <include refid="search-list"/>
+			</if>
+			AND (update_date &gt; TO_DATE(#{update_date}, 'YYYY-MM-DD HH24:MI:SS'))
+		</where>
+		ORDER BY update_date ASC, event_num ASC
+		FETCH FIRST 1 ROWS ONLY
+	</select>
+	
+	<!-- 다음글 -->
+	<select id="findByNext" parameterType="map" resultType="com.hs.model.admin.EventDTO">
+		SELECT e.user_num, e.event_num, event_title
+		FROM event e
+		JOIN member m ON e.user_num = m.user_num
+		<where>
+			<if test="showEvent != null">
+				showEvent = #{showEvent}
+			</if>
+			<if test="kwd != null and kwd != '' ">
+				AND <include refid="search-list"/>
+			</if>
+			AND (update_date &lt; TO_DATE(#{update_date}, 'YYYY-MM-DD HH24:MI:SS'))
+		</where>
+		ORDER BY update_date DESC, event_num DESC
+		FETCH FIRST 1 ROWS ONLY
 	</select>
 	
 	<!-- 조회수 증가 -->
 	<update id="updateHitCount" parameterType="Long">
 		UPDATE EVENT SET ev_hitcount = ev_hitcount + 1
 		WHERE event_num = #{event_num}
-	</update>
+	</update>	
+
+	<!-- 이벤트 등록 파일 -->
+	<insert id="insertEventFile" parameterType="com.hs.model.admin.EventDTO">
+		INSERT INTO EVENT_FILEAT(file_at_id, event_num, file_name, file_path, file_size)
+			VALUES(ev_fileat_seq.NEXTVAL, #{event_num}, #{file_name}, #{file_path}, #{file_size})
+	</insert>
 	
-	<!-- 이벤트 삭제 -->
-	<delete id="deleteEvent" parameterType="Long">
-		DELETE FROM event
+	<!-- 첨부파일 삭제 -->
+	<delete id="deleteEventFile" parameterType="Long">
+		DELETE FROM EVENT_FILEAT
 		WHERE event_num = #{event_num}
 	</delete>
 	
-	<!-- 이벤트 여러개 삭제 -->
-	<delete id="deleteListEvent" parameterType="java.util.List">
-		DELETE FROM event
-		WHERE event_num IN 
-		<foreach collection="list" item="event_num" index="index"
-			open="(" separator="," close=")">
-			#{event_num}
-		</foreach>
-	</delete>
+	<!-- 이벤트 첨부파일 리스트 출력 -->
+	<select id="listEventFile" parameterType="Long" resultType="com.hs.model.admin.EventDTO">
+		SELECT file_at_id, event_num, file_name, file_path, file_size, file_type, file_order, uploaded_date
+		FROM event_fileat
+		WHERE event_num = #{event_num}
+	</select>
 	
-	<!-- 이벤트 수정 -->
-	<update id="updateEvent" parameterType="com.hs.model.admin.EventDTO">
-		    UPDATE event SET event_num = #{event_num}, event_title = #{event_title}, event_content = #{event_content}, 
-		    	start_date = #{start_date}, end_date = #{end_date}, is_active = #{is_active}, 
-		    	update_date = SYSDATE
-    		WHERE event_num = #{event_num}
-	</update>
-	
+	<!-- 첨부파일 검색 -->
+	<select id="findByFileId" parameterType="Long" resultType="com.hs.model.admin.EventDTO">
+		SELECT file_at_id, event_num, file_name, file_path, file_size
+		FROM event_fileat
+		WHERE file_at_id = #{file_at_id}
+	</select>
+
 </mapper>

@@ -16,8 +16,9 @@ public class EventDTO {
 	private String active_status; // 진행, 진행예정, 종료 담는 가성 컬럼
 	private String created_date;
 	private String update_date;
-	private int hitCount;
+	private int ev_hitcount;
 	private int showEvent;
+	private String user_name;
 
 	private List<MyMultipartFile> listFile;
 	
@@ -87,12 +88,7 @@ public class EventDTO {
 	public void setUpdate_date(String update_date) {
 		this.update_date = update_date;
 	}
-	public int getHitCount() {
-		return hitCount;
-	}
-	public void setHitCount(int hitCount) {
-		this.hitCount = hitCount;
-	}
+
 	public int getShowEvent() {
 		return showEvent;
 	}
@@ -136,6 +132,18 @@ public class EventDTO {
 	}
 	public void setFile_path(String file_path) {
 		this.file_path = file_path;
+	}
+	public String getUser_name() {
+		return user_name;
+	}
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
+	}
+	public int getEv_hitcount() {
+		return ev_hitcount;
+	}
+	public void setEv_hitcount(int ev_hitcount) {
+		this.ev_hitcount = ev_hitcount;
 	}
 
 }

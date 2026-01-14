@@ -120,6 +120,21 @@
             border-top: 1px solid #374151;
             border: none;
         }
+        
+        .view-content > div {
+		    max-width: 100%;
+		    overflow: hidden;
+		    text-align: center;
+		}
+		
+		.view-content img.preview-image {
+		    max-width: 70%;
+		    height: auto;
+		    display: block;
+		    justify-content: center;
+		    margin: 1.5rem auto;
+		}
+		
         .like-button-container {
             padding: 2rem 0 3rem 0;
             display: flex;
@@ -378,13 +393,13 @@
          <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin">홈</a></li>
          <li class="breadcrumb-item"><a href="#">서비스 관리</a></li>
          <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin/events/list">리스트</a></li>
-         <li aria-current="page" class="breadcrumb-item active">공지사항 상세</li>
+         <li aria-current="page" class="breadcrumb-item active">이벤트 상세</li>
       </ol>
    </nav>
    
    <div class="d-flex gap-2">
-      <button class="btn btn-action btn-outline-custom" onclick="location.href='${pageContext.request.contextPath}/admin/events/write';">수정</button>
-      <button class="btn btn-action btn-outline-custom">삭제</button>
+      <button class="btn btn-action btn-outline-custom" onclick="location.href='${pageContext.request.contextPath}/admin/events/update?event_num=${dto.event_num}&page=${page}&size=${size}';">수정</button>
+      <button class="btn btn-action btn-outline-custom" onclick="deleteOk()">삭제</button>
    </div>
 </div>
 
@@ -396,8 +411,8 @@
 			<div class="title-divider"></div>
 			
 			<div class="view-info-bar">
-				<div>작성자 : 관리자</div>
-				<div>작성일자 : ${dto.created_date} <span class="mx-2">|</span> 조회 : ${dto.hitCount}</div>
+				<div>작성일자 : ${dto.created_date}</div>
+				<div>조회 : ${dto.ev_hitcount}</div>
 			</div>
 			<div class="title-divider"></div>
 			
@@ -409,16 +424,13 @@
 		
 	<div class="view-content">
 		<p>${dto.event_content}</p>
- 
-			<c:if test="${listFile.size() != 0}">
-
-					<i class="bi bi-folder2-open"></i>
-						<c:forEach var="vo" items="${listFile}" varStatus="status">
-							<a href="${pageContext.request.contextPath}/events/download?fileNum=${vo.fileNum}" class="text-reset">${vo.originalFilename}</a>
-								<c:if test="${not status.last}">|</c:if>
-						</c:forEach>
-			</c:if>
-
+		<c:if test="${filelist.size() != 0}">
+			<c:forEach var="vo" items="${filelist}" varStatus="status">
+				<div>
+					<img class="preview-image" src="${pageContext.request.contextPath}/uploads/events/${vo.file_path}">
+				</div>
+			</c:forEach>
+		</c:if>
 	</div>
 	
 	<div class="like-button-container">
@@ -544,19 +556,30 @@
 	</div>
 	
 	<div class="action-footer">
-		<button class="btn btn-action btn-list" onclick="location.href='${pageContext.request.contextPath}/events/list?${query}';">리스트</button>
+		<button class="btn btn-action btn-list" onclick="location.href='${pageContext.request.contextPath}/admin/events/list';">리스트</button>
 	</div>
 
 			</div>
 			</div>
 		</main>
 	</div>
-	
+
+
+	<script type="text/javascript">
+		function deleteOk() {
+		    if(confirm('게시글을 삭제 하시 겠습니까 ? ')) {
+		    	let params = 'event_num=${dto.event_num}&${query}';
+			    let url = '${pageContext.request.contextPath}/events/delete?' + params;
+		    	location.href = url;
+		    }
+		}
+	</script>
+
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/admin_bbs_util.js"></script>
-    <script src="${pageContext.request.contextPath}/dist/js/admin_notice.js"></script>
+    <script src="${pageContext.request.contextPath}/dist/js/admin_events.js"></script>
 
 </body>
 </html>

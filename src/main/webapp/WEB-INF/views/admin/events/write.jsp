@@ -216,15 +216,16 @@ select.glass-input-box {
 						</div>
 						<div class="d-flex gap-2">
 							<button class="btn btn-outline-light px-4 py-2 border-opacity-25"
-								style="border-radius: 0.75rem;" onclick="location.href='${pageContext.request.contextPath}/admin/events/list';">${mode=='update'?'수정취소':'등록취소'}</button>
-							<button
-								class="btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2"
-								id="btnSubmit">
-								<span class="material-icons-round fs-6" onclick="sendOk();">check_circle<span>${mode=='update'?'수정완료':'등록완료'}</span></span>
+								style="border-radius: 0.75rem;" onclick="history.back();">${mode=='update'?'수정취소':'등록취소'}
+							</button>
+							
+							<button class="btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2" onclick="sendOk();">
+								<span class="material-icons-round fs-6">
+									check_circle<span>${mode=='update'?'수정완료':'등록완료'}</span></span>
 							</button>
 								<input type="hidden" name="size" value="${size}">
 									<c:if test="${mode=='update'}">
-										<input type="hidden" name="num" value="${dto.num}">
+										<input type="hidden" name="event_num" value="${dto.event_num}">
 										<input type="hidden" name="page" value="${page}">
 									</c:if>
 						</div>
@@ -235,19 +236,26 @@ select.glass-input-box {
 					<div class="card-dark p-4 p-md-5 shadow-lg">
 
 						<div class="mb-4">
-							<label class="form-label">이벤트 제목</label> <input type="text"
-								class="glass-input-box" name="event_title"
-								placeholder="이벤트 명칭을 입력하세요.">
+							<label class="form-label">이벤트 제목</label> 
+							<input type="text"
+								class="glass-input-box" 
+								name="event_title"
+								placeholder="이벤트 명칭을 입력하세요." value="${dto.event_title}">
 						</div>
 
 						<div class="row mb-4">
 							<div class="col-md-6 mb-4 mb-md-0">
-								<label class="form-label">시작 일시</label> <input type="date"
-									class="glass-input-box" name="start_date">
+								<label class="form-label">시작 일시</label> 
+								<input type="date"
+									class="glass-input-box" 
+									name="start_date" value="${dto.start_date}">
 							</div>
 							<div class="col-md-6">
-								<label class="form-label">종료 일시</label> <input type="date"
-									class="glass-input-box" name="end_date">
+								<label class="form-label">종료 일시</label> 
+								
+								<input type="date"
+									class="glass-input-box" 
+									name="end_date" value="${dto.end_date}">
 							</div>
 						</div>
 
@@ -259,40 +267,28 @@ select.glass-input-box {
 									class="editor-toolbar bg-white bg-opacity-5 p-2 d-flex gap-2 border-bottom border-white border-opacity-10">
 									<button type="button"
 										class="toolbar-btn btn btn-sm text-white-50">
-										<span class="material-icons-round fs-5">format_bold</span>
+										<span class="material-icons-round fs-5">cloud_upload</span>
 									</button>
-									<button type="button"
-										class="toolbar-btn btn btn-sm text-white-50">
-										<span class="material-icons-round fs-5">format_italic</span>
-									</button>
-									<button type="button"
-										class="toolbar-btn btn btn-sm text-white-50">
-										<span class="material-icons-round fs-5">format_list_bulleted</span>
-									</button>
-									<div class="mx-1 border-start border-white border-opacity-10"></div>
-									<button type="button"
-										class="toolbar-btn btn btn-sm text-white-50">
-										<span class="material-icons-round fs-5">link</span>
-									</button>
+
 								</div>
 								<textarea class="editor-textarea" name="event_content"
-									placeholder="사용자들에게 안내할 이벤트 상세 내용을 작성하세요..."></textarea>
+									placeholder="사용자들에게 안내할 이벤트 상세 내용을 작성하세요...">${dto.event_content}</textarea>
 							</div>
 						</div>
 
 							<tr>
 								<td>
-									<input type="file" name="selectFile" class="file-form-control" multiple style="text-align: center">
+									<input type="file" name="selectFile" class="file-form-control" multiple style="text-align: center" accept="image/png, image/jpeg">
 									<input type="hidden" name="size" value="10">
 								</td>
 							</tr>
 							<c:if test="${mode=='update'}">
-								<c:forEach var="vo" items="${listFile}">
+								<c:forEach var="vo" items="${filelist}">
 									<tr>
 										<td> 
 											<p class="form-control-plaintext">
-												<a href="javascript:deleteFile('${vo.fileNum}');"><i class="bi bi-trash"></i></a>
-												${vo.originalFilename}
+												<a href="javascript:deleteFile('${vo.file_at_id}');"><i class="bi bi-trash"></i></a>
+												${vo.file_name}
 											</p>
 										</td>
 									</tr>
@@ -304,9 +300,38 @@ select.glass-input-box {
 			</div>
 		</main>
 	</div>
-
 <script type="text/javascript">
-function sendOk() {
+// 함수가 정의되었는지 확인하기 위해 페이지 로드 시점에 선언
+var sendOk = function() {
+    console.log("버튼 클릭됨!");
+    
+    // form 객체를 가져오는 가장 확실한 방법 (이름이 eventForm이어야 함)
+    var f = document.eventForm;
+    
+    if(!f) {
+        alert("폼(eventForm)을 찾을 수 없습니다. <form name='eventForm'> 인지 확인하세요.");
+        return;
+    }
+
+    if(!f.event_title.value.trim()) {
+        alert("제목을 입력하세요.");
+        f.event_title.focus();
+        return;
+    }
+
+    // mode가 비어있을 경우를 대비한 안전장치
+    var mode = "${mode}";
+    if(!mode) mode = "write"; 
+
+    console.log("전송 경로: " + mode);
+    f.action = "${pageContext.request.contextPath}/admin/events/" + mode;
+    f.submit();
+};
+</script>
+
+<!--  
+<script type="text/javascript">
+function check() {
 	const f = document.eventForm;
 	let str;
 	
@@ -314,21 +339,32 @@ function sendOk() {
 	if( ! str ) {
 		alert('제목을 입력하세요. ');
 		f.event_title.focus();
-		return;
+		return false;
 	}
 
 	str = f.event_content.value.trim();
 	if( ! str || str === '<p><br></p>' ) {
 		alert('내용을 입력하세요. ');
-		return;
+		return false;
 	}
 
 	f.action = '${pageContext.request.contextPath}/admin/events/${mode}';
 	
-	f.submit();
+	return true;
 }
-
-
+-->
+<!--
+<c:if test="${mode=='update'}">
+	function deleteFile(fileNum) {
+		if(! confirm('파일을 삭제 하시겠습니까 ? ')) {
+			return;
+		}
+		
+		let params = 'event_num=${dto.event_num}&fileNum=' + fileNum + '&page=${page}&size=${size}';
+		let url = '${pageContext.request.contextPath}/admin/events/deleteFile?' + params;
+		location.href = url;
+	}
+</c:if> -->
 </script>
 
 

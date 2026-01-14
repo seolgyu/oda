@@ -143,7 +143,7 @@ public class EventServiceImpl implements EventService {
 		EventDTO dto = null;
 		
 		try {
-			dto = mapper.findByPrev(map);
+			// dto = mapper.findByPrev(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -157,7 +157,7 @@ public class EventServiceImpl implements EventService {
 		EventDTO dto = null;
 		
 		try {
-			dto = mapper.findByPrev(map);
+			// dto = mapper.findByPrev(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -175,12 +175,6 @@ public class EventServiceImpl implements EventService {
 			
 			throw e;
 		}
-	}
-
-	@Override
-	public void deleteEventFile(Map<String, Object> map) throws Exception {
-		// 첨부파일 삭제
-
 	}
 
 	@Override
@@ -210,6 +204,19 @@ public class EventServiceImpl implements EventService {
 		}
 		
 		return dto;
+	}
+
+	@Override
+	public void deleteEventFile(long event_num) throws Exception {
+		// 첨부파일 삭제
+		try {
+			mapper.deleteEventFile(event_num);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
+		
 	}
 
 

@@ -49,6 +49,7 @@ public class eventManageController {
 			
 			String schType = req.getParameter("schType");
 			String kwd = req.getParameter("kwd");
+			String state = req.getParameter("state");
 			if(schType == null) {
 				schType = "all";
 				kwd = "";
@@ -62,6 +63,7 @@ public class eventManageController {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("schType", schType);
 			map.put("kwd", kwd);
+			map.put("state", state);
 			
 			int dataCount = service.dataCount(map);
 			int total_page = util.pageCount(dataCount, size);
@@ -155,8 +157,8 @@ public class eventManageController {
 			dto.setEnd_date(req.getParameter("end_date"));
 			
 			
-			List<MyMultipartFile> listFile = fileManager.doFileUpload(req.getParts(), pathname);
-			dto.setListFile(listFile);
+			List<MyMultipartFile> filelist = fileManager.doFileUpload(req.getParts(), pathname);
+			dto.setListFile(filelist);
 			
 			service.insertEvent(dto);
 			
@@ -169,7 +171,7 @@ public class eventManageController {
 	@GetMapping("article")
 	public ModelAndView eventarticle(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 글보기
-		// 넘어오는 파라미터 : 글번호, 페이지번호, size[검색컬럼, 검색값]		
+		// 넘어오는 파라미터 : 글번호, 페이지번호, size[검색컬럼, 검색값]
 		String page = req.getParameter("page");
 		String size = req.getParameter("size");
 		String query = "page=" + page + "&size=" + size;
@@ -179,22 +181,17 @@ public class eventManageController {
 			
 			String schType = req.getParameter("schType");
 			String kwd = req.getParameter("kwd");
-			String active_status = req.getParameter("active_status");
+			
 			if(schType == null) {
 				schType = "all";
 				kwd = "";
-			} else if (active_status == null) {
-				active_status = "";
-			}
+			} 
 			kwd = util.decodeUrl(kwd);
 			
 			if(! kwd.isBlank()) {
 				query += "&schType=" + schType + "&kwd=" + util.encodeUrl(kwd);
 			}
-			if(active_status != null) {
-				query += "&active_status=" + util.encodeUrl(active_status);
-			}
-			
+						
 			// 조회수
 			service.updateHitCount(event_num);
 			
@@ -207,7 +204,6 @@ public class eventManageController {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("schType", schType);
 			map.put("kwd", kwd);
-			map.put("active_status", "active_status");
 			map.put("update_date", dto.getUpdate_date());
 				
 			// 이전, 다음 
@@ -249,6 +245,7 @@ public class eventManageController {
 			long event_num = Long.parseLong(req.getParameter("event_num"));
 			
 			EventDTO dto = service.findById(event_num);
+			
 			if(dto == null) {
 				return new ModelAndView("redirect:/admin/events/list?page=" + page + "&size=" + size);
 			}
@@ -262,7 +259,6 @@ public class eventManageController {
 			mav.addObject("filelist", filelist);
 			mav.addObject("page", page);
 			mav.addObject("size", size);
-			
 			mav.addObject("mode", "update");
 			
 			return mav;
@@ -346,6 +342,45 @@ public class eventManageController {
 		}
 	}
 	
+	@GetMapping("deleteFile")
+	public ModelAndView deleteFile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 수정에서 파일만 삭제
+		// 넘어온 파라미터 : 글번호, 파일번호, 페이지번호, size
+		HttpSession session = req.getSession();
+		
+		// 파일 저장 경로
+		String root = session.getServletContext().getRealPath("/");
+		String pathname = root + "uploads" + File.separator + "events";
+
+		String page = req.getParameter("page");
+		String size = req.getParameter("size");
+
+		try {
+			long event_num = Long.parseLong(req.getParameter("event_num"));
+			long fileNum = Long.parseLong(req.getParameter("fileNum"));
+			EventDTO dto = service.findByFileId(fileNum);
+			if (dto != null) {
+				// 파일삭제
+				fileManager.doFiledelete(pathname, dto.getFile_path());
+				
+				// 테이블 파일 정보 삭제
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("field", "fileNum");
+				map.put("num", fileNum);
+				
+				// service.deleteNoticeFile(map);
+			}
+
+			// 다시 수정 화면으로
+			return new ModelAndView("redirect:/admin/events/update?event_num=" + event_num + "&page=" + page + "&size=" + size);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ModelAndView("redirect:/admin/events/list?page=" + page + "&size=" + size);
+	}
+
+	
 	public ModelAndView delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 삭제
 		// 넘어온 파라미터 : 글번호, 페이지번호, size [, 검색컬럼, 검색값]
@@ -380,17 +415,17 @@ public class eventManageController {
 			}
 
 			// 실제 파일 삭제
-			List<EventDTO> listFile = service.listEventFile(event_num);
-			for (EventDTO vo : listFile) {
+			List<EventDTO> filelist = service.listEventFile(event_num);
+			for (EventDTO vo : filelist) {
 				fileManager.doFiledelete(pathname, vo.getFile_path());
 			}
 			
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("field", "event_num");
+			map.put("field", event_num);
 			map.put("event_num", event_num);
 			
 			// 파일이름 등의 정보 삭제
-			service.deleteEventFile(map);			
+			service.deleteEventFile(event_num);		
 
 			// 게시글 삭제
 			service.deleteEvent(event_num);
@@ -435,19 +470,20 @@ public class eventManageController {
 			}
 
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("field", "event_nums");
+			map.put("field", event_nums);
 			for (Long n : event_nums) {
-				List<EventDTO> listFile = service.listEventFile(n);
+				
+				List<EventDTO> filelist = service.listEventFile(n);
 				
 				// 실제 파일 삭제
-				for (EventDTO vo : listFile) {
+				for (EventDTO vo : filelist) {
 					fileManager.doFiledelete(pathname, vo.getFile_path());
 				}
 				
 				map.put("event_nums", n);
 				
 				// 파일이름 등의 정보 삭제
-				service.deleteEventFile(map);
+				// service.deleteEventFile(event_nums);
 			}
 
 			// 게시글 다중 삭제

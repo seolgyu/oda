@@ -339,7 +339,7 @@ input:-webkit-autofill:focus {
 									</td>
 									<td class="text-white-50 date-text">${dto.start_date}</td>
 									<td class="text-white-50 date-text">${dto.end_date}</td>
-									<td class="text-center text-white-50">${dto.hitCount}</td>
+									<td class="text-center text-white-50">${dto.ev_hitcount}</td>
 								</tr>
 								</c:forEach>
 								
@@ -366,7 +366,7 @@ input:-webkit-autofill:focus {
 									</td>
 									<td class="text-white-50 date-text">${dto.start_date}</td>
 									<td class="text-white-50 date-text">${dto.end_date}</td>
-									<td class="text-center text-white-50">${dto.hitCount}</td>
+									<td class="text-center text-white-50">${dto.ev_hitcount}</td>
 								</tr>
 								</c:forEach>
 							</tbody>
