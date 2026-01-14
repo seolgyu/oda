@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONObject;
 
@@ -540,5 +542,49 @@ public class PostController {
 		resp.setContentType("application/json; charset=UTF-8");
 		resp.getWriter().print(jobj.toString());
 	}
+	
+	// 무한 스크롤용 데이터 로드 (HTML 조각 리턴)
+    @GetMapping("listPostAjax")
+    public ModelAndView listPostAjax(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        SessionInfo info = (SessionInfo) session.getAttribute("member");
+        
+        long userNum = (info != null) ? info.getMemberIdx() : 0;
+        
+        // 파라미터 받기
+        String sort = req.getParameter("sort");
+        if (sort == null || sort.isEmpty()) sort = "latest";
+        
+        String view = req.getParameter("view");
+        if (view == null || view.isEmpty()) view = "card";
+        
+        int page = 1;
+        String pageStr = req.getParameter("page");
+        
+        if (pageStr != null && !pageStr.isEmpty()) {
+            try {
+                page = Integer.parseInt(pageStr);
+            } catch (NumberFormatException e) {
+                page = 1; 
+            }
+        }
 
+        int size = "compact".equals(view) ? 15 : 10;
+        int offset = (page - 1) * size;
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("sort", sort);
+        map.put("userNum", userNum);
+        map.put("offset", offset);
+        map.put("size", size);
+        
+        List<PostDTO> list = service.listPostMain(map);
+        
+        ModelAndView mav = new ModelAndView("post/listPostData"); 
+        mav.addObject("list", list);
+        mav.addObject("viewMode", view);
+        
+        return mav;
+    }
+	
 }

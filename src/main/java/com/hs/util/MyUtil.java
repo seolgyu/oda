@@ -118,7 +118,7 @@ public class MyUtil {
 			sb.append(createLinkClick(methodName, n, "&#x003C"));
 		}
 
-		// 페이지징
+		// 페이징
 		page = currentPageSetUp + 1;
 		while ((page <= total_page) && (page <= currentPageSetUp + numPerBlock)) {
 			if (page == current_page) {
