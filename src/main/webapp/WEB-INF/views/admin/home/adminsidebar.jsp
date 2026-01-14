@@ -21,9 +21,7 @@
       </button>
 		
 		<div class="nav-sub">
-        <a href="#" class="nav-sub-item">휴면계정 관리</a>
-        <a href="#" class="nav-sub-item">블랙리스트</a>
-        <a href="#" class="nav-sub-item">정지계정 관리</a>
+        <a href="${pageContext.request.contextPath}/admin/member/list" class="nav-sub-item">회원계정 관리</a>
       </div>
     </div>
 		
