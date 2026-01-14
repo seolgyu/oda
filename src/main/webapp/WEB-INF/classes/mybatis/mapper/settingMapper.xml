@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.SettingMapper">
+
+	<select id="listLikedPost" parameterType="map" resultType="com.hs.model.PostDTO">
+        SELECT
+        	l.post_id AS postId,
+        	l.user_num AS userNum,
+        	m.user_nickname AS authorNickname,
+        	p.title,
+        	p.content,
+        	p.created_date AS createdDate
+    	FROM likes l
+    	LEFT OUTER JOIN posts p ON l.post_id = p.post_id
+    	LEFT OUTER JOIN member m ON l.user_num = m.user_num
+    	WHERE l.user_num = #{userNum}
+    	AND p.is_deleted = '0'
+    	ORDER BY l.post_id DESC
+    	OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+    </select>
+    
+    <select id="totalCountLikedPost" parameterType="Long" resultType="Integer">
+        SELECT COUNT(*)
+    	FROM likes l
+    	LEFT OUTER JOIN posts p ON l.post_id = p.post_id
+    	WHERE l.user_num = #{userNum}
+    	AND p.is_deleted = '0'
+    </select>
+	
+</mapper>

@@ -1,6 +1,96 @@
 /**
  * 
  */
+let page = 1;
+let isLoading = false;
+
+const observerOptions = {
+    root: document.querySelector('.feed-scroll-container'),
+    rootMargin: '0px',
+    threshold: 1.0
+};
+
+const io = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting && !isLoading) {
+            loadNextPage();
+        }
+    });
+}, observerOptions);
+
+function startObserve() {
+    const sentinel = document.querySelector('#sentinel');
+    if (sentinel) {
+        io.observe(sentinel);
+    }
+}
+
+function loadNextPage() {
+    isLoading = true;
+    
+    const nextPage = page + 1; 
+
+    $.ajax({
+        url: '${pageContext.request.contextPath}/member/settings/myPostData',
+        type: 'GET',
+        data: { page: nextPage },
+        dataType: 'json',
+        success: function(dataList) {
+            if (dataList && dataList.length > 0) {
+                let htmlBuffer = "";
+                dataList.forEach(item => {
+                    htmlBuffer += renderLikedPost(item);
+                });
+                
+                $('#list-container').append(htmlBuffer);
+                
+                page = nextPage; 
+                
+                isLoading = false;
+            } else {
+                isLoading = false;
+                io.disconnect(); 
+            }
+        },
+        error: function() {
+            isLoading = false;
+        }
+    });
+}
+
+// 템플릿 렌더링 함수
+function renderLikedPost(item) {
+    const thumbnailHtml = item.thumbnail 
+        ? `<div class="record-thumbnail rounded-3" style="background-image: url('${item.thumbnail}');"></div>`
+        : `<div class="record-thumbnail rounded-3 d-flex align-items-center justify-content-center bg-white bg-opacity-5">
+               <span class="material-symbols-outlined text-white opacity-20" style="font-size: 20px;">article</span>
+           </div>`;
+
+    return `
+        <div class="record-item d-flex align-items-stretch overflow-hidden">
+            <div class="flex-grow-1 d-flex align-items-center gap-3 p-3 cursor-pointer item-content" 
+                 onclick="location.href='${pageContext.request.contextPath}/post/article/${item.postNum}';">
+                
+                ${thumbnailHtml}
+                
+                <div class="flex-grow-1 min-w-0">
+                    <div class="d-flex align-items-center gap-2 mb-1 opacity-75">
+                        <span class="text-white text-xs fw-bold">${item.userName}</span>
+                        <span class="text-secondary text-xs">· ${item.regDate}</span>
+                    </div>
+                    <h4 class="text-white fs-6 fw-bold mb-1 text-truncate">${item.title}</h4>
+                    <p class="text-secondary text-xs mb-0 text-truncate opacity-50">${item.content}</p>
+                </div>
+            </div>
+
+            <div class="action-section d-flex align-items-center justify-content-center border-start border-white border-opacity-10">
+                <button type="button" class="btn-like-toggle" onclick="toggleLike(this, '${item.postNum}')">
+                    <span class="material-symbols-outlined fill-icon text-danger">favorite</span>
+                </button>
+            </div>
+        </div>
+    `;
+}
 
 // setting.jsp script
 $(function() {
@@ -47,12 +137,24 @@ function loadSettings(url) {
 		dataType: "html",
 		success: function(data) {
 			$('#settings-content').html(data);
+			page = 1;
+			isLoading = false;
+			startObserve();
 		},
 		error: function() {
 			alert("설정 페이지를 불러오는 데 실패했습니다.");
 			$('#settings-content').show();
 		}
 	});
+}
+
+function startObserve() {
+    const sentinel = document.querySelector('#sentinel');
+    if (sentinel) {
+        io.observe(sentinel);
+    } else {
+        io.disconnect();
+    }
 }
 
 // input 태그 경고 알림 메서드
@@ -116,3 +218,4 @@ function showToast(type, msg) {
         $toast.removeClass('show'); 
     }, 2500);
 }
+

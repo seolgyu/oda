@@ -3,9 +3,11 @@ package com.hs.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.hs.model.MemberDTO;
+import com.hs.model.PostDTO;
 import com.hs.model.SessionInfo;
 import com.hs.mvc.annotation.Controller;
 import com.hs.mvc.annotation.PostMapping;
@@ -14,6 +16,8 @@ import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
 import com.hs.service.MemberService;
 import com.hs.service.MemberServiceImpl;
+import com.hs.service.SettingService;
+import com.hs.service.SettingServiceImpl;
 import com.hs.util.CloudinaryUtil;
 import com.hs.util.FileManager;
 import com.hs.util.MyMultipartFile;
@@ -28,6 +32,7 @@ import jakarta.servlet.http.Part;
 @RequestMapping("/member/settings")
 public class SettingController {
 	private MemberService service = new MemberServiceImpl();
+	private SettingService settingService = new SettingServiceImpl();
 	
 	@RequestMapping("")
 	public ModelAndView settings(HttpServletRequest req, HttpServletResponse resp)
@@ -104,6 +109,26 @@ public class SettingController {
     
     @RequestMapping("like")
     public String settingsLike(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	HttpSession session = req.getSession();
+    	
+    	try {
+	    	SessionInfo info = (SessionInfo) session.getAttribute("member");
+	    	Long userNum = (Long)info.getMemberIdx();
+	        
+	        // 1페이지 데이터 조회 (예: 1~10번)
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("userNum", userNum);
+	        map.put("offset", 0);
+	        map.put("size", 10);
+	        
+	        List<PostDTO> list = settingService.listLikedPost(map);
+	        
+	       req.setAttribute("list", list);
+	       req.setAttribute("totalCount", settingService.totalCountLikedPost(userNum));
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
         return "member/setting/settings_like";
     }
     

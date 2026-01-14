@@ -23,6 +23,7 @@ public class PostDTO {
 	private boolean likedByUser;
 
 	private String authorNickname;
+	private String authorId;
 	private String authorProfileImage;
 
 	public Long getPostId() {
@@ -193,6 +194,14 @@ public class PostDTO {
 		if (this.createdDate == null || this.createdDate.length() < 16)
 			return this.createdDate;
 		return this.createdDate.substring(0, 16);
+	}
+
+	public String getAuthorId() {
+		return authorId;
+	}
+
+	public void setAuthorId(String authorId) {
+		this.authorId = authorId;
 	}
 
 }
