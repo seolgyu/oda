@@ -7,9 +7,11 @@
 <head>
 <%@ include file="/WEB-INF/views/home/head.jsp"%>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+    const cp = '${pageContext.request.contextPath}';
+</script>
 <style type="text/css">
 
-/* 설정 메뉴 아이템 기본 스타일 */
 .setting-nav-item {
 	display: flex;
 	align-items: center;
