@@ -51,7 +51,7 @@
 						<c:choose>
 							<c:when test="${not empty sessionScope.member.avatar}">
 								<img
-									src="${pageContext.request.contextPath}/uploads/profile/${sessionScope.member.avatar}"
+									src="${sessionScope.member.avatar}"
 									class="w-100 h-100 object-fit-cover" alt="Profile">
 							</c:when>
 							<c:otherwise>
