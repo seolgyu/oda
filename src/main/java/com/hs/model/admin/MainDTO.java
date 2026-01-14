@@ -15,11 +15,19 @@ public class MainDTO {
 	private int reportpostcount; //신고 처리된 게시물
 	private int reportcount; //신고 처리 예정된 게시물
 	private int comPriCount; //비공개 커뮤니티 수
+	private int loginPercentage;//이용 중인 사용자 증가량
 
 	private String dayName;
 	private int noticeCount;
     private int loginCount;
     
+    public int getLoginPercentage() {
+		return loginPercentage;
+	}
+
+	public void setLoginPercentage(int loginPercentage) {
+		this.loginPercentage = loginPercentage;
+	}
     public int getComPriCount() {
 		return comPriCount;
 	}

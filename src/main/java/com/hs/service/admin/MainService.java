@@ -19,5 +19,6 @@ public interface MainService {
 	public MainDTO reportPosts();
 	public MainDTO reportpostcount();
 	public MainDTO comPriCount();
+	public MainDTO loginPercentage();
 }
 

@@ -163,5 +163,16 @@ public class MainServiceImpl implements MainService{
 		}
 		return comPriCount;
 	}
+
+	@Override
+	public MainDTO loginPercentage() {
+		MainDTO loginPercentage = null;
+		try {
+			loginPercentage = mapper.loginPercentage();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return loginPercentage;
+	}
 	
 }

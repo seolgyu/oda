@@ -84,7 +84,7 @@
 											class="stat-badge text-green d-flex align-items-center p-0">
 											<span class="material-icons-round"
 											style="font-size: 14px; margin-right: 2px;">trending_up</span>
-											5.2%
+											${logPerDto.loginPercentage }%
 										</span>
 									</div>
 								</div>

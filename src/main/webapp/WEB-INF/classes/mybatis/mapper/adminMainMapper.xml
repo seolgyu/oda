@@ -148,4 +148,30 @@
 	from community
 	where is_private = 1
 	</select>
+	
+	<select id="loginPercentage" resultType="com.hs.model.admin.MainDTO">
+		SELECT 
+	    total_members AS totalMembers,
+	    active_logins AS activeLogins,
+	    ROUND((active_logins / NULLIF(total_members, 0)) * 100, 2) AS loginPercentage
+	FROM (
+	    SELECT 
+	        (
+	            SELECT NVL(COUNT(*), 0)
+	            FROM member
+	            WHERE user_level &lt; 90
+	            AND user_status = 1
+	            AND user_id IS NOT NULL
+	            AND user_pwd IS NOT NULL
+	            AND user_name IS NOT NULL
+	            AND user_nickname IS NOT NULL
+	        ) AS total_members,
+	        (
+	            SELECT NVL(COUNT(*), 0)
+	            FROM log_login
+	            WHERE TO_CHAR(login_time, 'YYYYMMDDHH24MISS') &gt;= TO_CHAR((SYSDATE - INTERVAL '10' MINUTE), 'YYYYMMDDHH24MISS')
+	        ) AS active_logins
+	    FROM DUAL
+	)
+	</select>
 </mapper>

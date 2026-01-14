@@ -66,6 +66,9 @@ public class HomeManageController {
 			//비공개 커뮤니티 수
 			MainDTO priDto = service.comPriCount();
 			
+			//이용중인 사용자 증가량 
+			MainDTO logPerDto = service.loginPercentage();
+			
 			mav.addObject("list", list);
 			mav.addObject("dayDto", dayDto);
 			mav.addObject("inDto", inDto);
@@ -80,6 +83,7 @@ public class HomeManageController {
 			mav.addObject("reportcount", reportcount);
 			mav.addObject("reportpostcount", reportpostcount);
 			mav.addObject("priDto", priDto);
+			mav.addObject("logPerDto", logPerDto);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
