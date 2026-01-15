@@ -8,7 +8,7 @@
 <%@ include file="/WEB-INF/views/home/head.jsp"%>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-    const cp = '${pageContext.request.contextPath}';
+	window.cp = '${pageContext.request.contextPath}';
 </script>
 <style type="text/css">
 

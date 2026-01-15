@@ -11,6 +11,9 @@ public class ReplyDTO {
 	private Long parentUserNum;
 	private String parentCommentContent;
 	private String parentCommentCreatedDate;
+	private String parentThumbnail;
+	
+	private PostDTO item;
 	
 	public Long getPostId() {
 		return postId;
@@ -71,6 +74,18 @@ public class ReplyDTO {
 	}
 	public void setParentCommentCreatedDate(String parentCommentCreatedDate) {
 		this.parentCommentCreatedDate = parentCommentCreatedDate;
+	}
+	public PostDTO getItem() {
+		return item;
+	}
+	public void setItem(PostDTO item) {
+		this.item = item;
+	}
+	public String getParentThumbnail() {
+		return parentThumbnail;
+	}
+	public void setParentThumbnail(String parentThumbnail) {
+		this.parentThumbnail = parentThumbnail;
 	}
 	
 }

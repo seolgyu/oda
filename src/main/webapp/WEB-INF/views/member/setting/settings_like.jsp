@@ -14,7 +14,7 @@
 			class="text-white fw-bold">${totalCount}</span></span>
 	</div>
 
-	<div class="d-flex flex-column gap-2" id="list-container">
+	<div class="d-flex flex-column gap-2 list-container">
 		<c:choose>
 			<c:when test="${not empty list}">
 				<c:forEach var="item" items="${list}">
@@ -138,6 +138,60 @@
 </style>
 
 <script>
+
+/*
+$(function() {
+    if (window.io) {
+        window.io.disconnect();
+    }
+
+    window.page = 1; 
+    window.isLoading = false;
+    
+    window.io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !window.isLoading) {
+                loadNextPage('/member/settings/loadLikedPost', renderLikedPost);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    const sentinel = document.querySelector('#sentinel');
+    if (sentinel) {
+        window.io.observe(sentinel);
+    }
+    
+    window.page = 1;
+});
+*/
+
+$(function() {
+    console.log("--- 좋아요 페이지 무한스크롤 디버깅 ---");
+    
+    if (window.io) window.io.disconnect();
+    window.page = 1;
+    window.isLoading = false;
+
+    // 1. 요소가 실제로 존재하는지
+    const target = document.getElementById('sentinel');
+    console.log("1. sentinel 존재 여부:", target);
+
+    if (target) {
+        // 2. 관찰자 생성
+        window.io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                console.log("2. 감지 신호 발생! 교차 중인가?:", entry.isIntersecting);
+                if (entry.isIntersecting && !window.isLoading) {
+                    console.log("3. 조건 통과! loadNextPage 호출");
+                    loadNextPage('/member/settings/loadLikedPost', renderLikedPost);
+                }
+            });
+        }, { threshold: 0.1}); // root: null로 강제 설정
+
+        window.io.observe(target);
+    }
+});
+
 function toggleLike(btn, postId) {
     const icon = $(btn).find('.material-symbols-outlined');
     

@@ -3,6 +3,7 @@
  */
 let page = 1;
 let isLoading = false;
+let io;
 
 const observerOptions = {
 	root: document.querySelector('.feed-scroll-container'),
@@ -10,50 +11,43 @@ const observerOptions = {
 	threshold: 1.0
 };
 
-const io = new IntersectionObserver((entries, observer) => {
-	entries.forEach(entry => {
-		if (entry.isIntersecting && !isLoading) {
-			loadNextPage();
-		}
-	});
-}, observerOptions);
+function loadNextPage(url, renderFunc) {
+    if (window.isLoading) return;
+    window.isLoading = true;
 
-function loadNextPage() {
-	isLoading = true;
+    const nextPage = window.page + 1;
 
-	const nextPage = page + 1;
+    $.ajax({
+        url: cp + url,
+        type: 'GET',
+        data: { page: nextPage },
+        dataType: 'json',
+        success: function(data) {
+            if (data.status === 'success' && data.list && data.list.length > 0) {
+                let htmlBuffer = "";
+                data.list.forEach(item => {
+                    htmlBuffer += renderFunc(item);
+                });
 
-	$.ajax({
-		url: cp + '/member/settings/loadLikedPost',
-		type: 'GET',
-		data: { page: nextPage },
-		dataType: 'json',
-		success: function(data) {
-			if (data.status === 'success' && data.list && data.list.length > 0) {
-				let htmlBuffer = "";
-				data.list.forEach(item => {
-					htmlBuffer += renderLikedPost(item);
-				});
+                $('.list-container').append(htmlBuffer);
+                $('.list-container').after($('#sentinel'));
 
-				$('#list-container').append(htmlBuffer);
-				$('#list-container').after($('#sentinel'));
-
-				page = nextPage;
-				isLoading = false;
-			} else {
-				isLoading = false;
-				io.disconnect();
-			}
-		},
-		error: function() {
-			isLoading = false;
-		}
-	});
+                window.page = nextPage;
+                window.isLoading = false;
+            } else {
+                window.isLoading = false;
+                if(window.io) window.io.disconnect();
+            }
+        },
+        error: function() {
+            window.isLoading = false;
+        }
+    });
 }
 
-function renderLikedPost(item) {
-	const thumbnailHtml = item.thumbnail
-		? `<div class="record-thumbnail rounded-3" style="background-image: url('${item.thumbnail}');"></div>`
+function renderLikedPost(list) {
+	const thumbnailHtml = list.thumbnail
+		? `<div class="record-thumbnail rounded-3" style="background-image: url('${list.thumbnail}');"></div>`
 		: `<div class="record-thumbnail rounded-3 d-flex align-items-center justify-content-center" 
 		            style="background-color: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(255, 255, 255, 0.2);">
 		           <span class="material-symbols-outlined text-white opacity-20" style="font-size: 24px;">image</span>
@@ -62,20 +56,20 @@ function renderLikedPost(item) {
 	return `
 		       <div class="record-item d-flex align-items-stretch overflow-hidden">
 		           <div class="flex-grow-1 d-flex align-items-center gap-3 p-3 cursor-pointer item-content" 
-		                onclick="location.href='${cp}/post/article?postId=${item.postId}';"> ${thumbnailHtml}
+		                onclick="location.href='${window.cp}/post/article?postId=${list.postId}';"> ${thumbnailHtml}
 		               
 		               <div class="flex-grow-1 min-w-0">
 		                   <div class="d-flex align-items-center gap-2 mb-1 opacity-75">
-		                       <span class="text-white text-xs fw-bold">${item.authorNickname}</span>
-		                       <span class="text-secondary text-xs">· ${item.createdDate}</span>
+		                       <span class="text-white text-xs fw-bold">${list.authorNickname}</span>
+		                       <span class="text-secondary text-xs">· ${list.createdDate}</span>
 		                   </div>
-		                   <h4 class="text-white fs-6 fw-bold mb-1 text-truncate">${item.title}</h4>
-		                   <p class="text-secondary text-xs mb-0 text-truncate opacity-50">${item.content}</p>
+		                   <h4 class="text-white fs-6 fw-bold mb-1 text-truncate">${list.title}</h4>
+		                   <p class="text-secondary text-xs mb-0 text-truncate opacity-50">${list.content}</p>
 		               </div>
 		           </div>
 
 		           <div class="action-section d-flex align-items-center justify-content-center border-start border-white border-opacity-10">
-		               <button type="button" class="btn-like-toggle" onclick="toggleLike(this, '${item.postId}')">
+		               <button type="button" class="btn-like-toggle" onclick="toggleLike(this, '${list.postId}')">
 		                   <span class="material-symbols-outlined fill-icon text-danger">favorite</span>
 		               </button>
 		           </div>
@@ -83,13 +77,71 @@ function renderLikedPost(item) {
 		   `;
 }
 
-function startObserve() {
-	const sentinel = document.querySelector('#sentinel');
-	if (sentinel) {
-		io.observe(sentinel);
-	} else {
-		io.disconnect();
-	}
+function renderCommentList(list) {
+    const parentQuoteHtml = list.depth > 1 
+        ? `
+        <div class="parent-quote p-3 mb-3 rounded-2"
+            style="background: rgba(255, 255, 255, 0.06); border-left: 4px solid rgba(255, 255, 255, 0.2);">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="badge rounded-pill text-white"
+                    style="background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.65rem; padding: 0.3em 0.7em; letter-spacing: 0.5px;">
+                    REPLY TO 
+                </span> 
+                <span class="text-white fw-bold" style="font-size: 0.8rem;">@${list.parentUserNum}</span>
+            </div>
+            <div class="text-white-50 text-sm ps-1"
+                style="line-height: 1.5; border-left: 1px solid rgba(255, 255, 255, 0.1); padding-left: 10px;">
+                <span class="opacity-75">"${list.parentCommentContent}"</span>
+            </div>
+        </div>` 
+        : '';
+
+    const labelText = list.depth > 1 ? 'MY REPLY' : 'MY COMMENT';
+    const labelClass = list.depth > 1 ? 'text-info' : 'text-primary';
+
+    return `
+        <div class="record-item p-3 overflow-hidden mb-4"
+            style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px;">
+
+            <div class="d-flex align-items-center gap-3 mb-3 cursor-pointer pb-3 border-bottom border-white border-opacity-10"
+                onclick="location.href='${window.cp}/post/article?postId=${list.postId}';">
+
+                <div class="record-thumbnail rounded-3"
+                    style="width: 45px; height: 45px; background-image: url('${list.parentThumbnail}'); background-size: cover; background-position: center; flex-shrink: 0;">
+                </div>
+
+                <div class="flex-grow-1 min-w-0">
+                    <div class="d-flex align-items-center gap-2 mb-1 opacity-50">
+                        <span class="text-white text-xs fw-bold">${list.item.authorNickname}</span> 
+                        <span class="text-secondary text-xs">· Original Post</span>
+                    </div>
+                    <h4 class="text-white fs-6 fw-bold mb-0 text-truncate">${list.item.title}</h4>
+                </div>
+
+                <span class="material-symbols-outlined text-secondary opacity-30">chevron_right</span>
+            </div>
+
+            <div class="d-flex flex-column gap-3 ps-1">
+                <div class="comment-group-item d-flex gap-2">
+                    <span class="text-secondary opacity-25 mt-1"
+                        style="font-family: sans-serif; font-size: 1.2rem;">ㄴ</span>
+
+                    <div class="comment-content-box p-3 rounded-3 flex-grow-1"
+                        style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);">
+                        
+                        ${parentQuoteHtml}
+
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="${labelClass} text-xs fw-bold" style="letter-spacing: 0.5px;">${labelText}</span> 
+                            <span class="text-secondary text-xs opacity-75">${list.createdDate}</span>
+                        </div>
+                        <p class="text-white text-sm mb-0 fw-normal"
+                            style="line-height: 1.6; opacity: 0.9;">${list.content}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 // setting.jsp script
@@ -140,7 +192,6 @@ function loadSettings(url) {
 			$('#settings-content').html(data);
 			page = 1;
 			isLoading = false;
-			startObserve();
 		},
 		error: function() {
 			alert("설정 페이지를 불러오는 데 실패했습니다.");

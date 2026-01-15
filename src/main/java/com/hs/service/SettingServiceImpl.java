@@ -6,11 +6,13 @@ import java.util.Map;
 
 import com.hs.mapper.SettingMapper;
 import com.hs.model.PostDTO;
+import com.hs.model.ReplyDTO;
 import com.hs.mybatis.support.MapperContainer;
 
 public class SettingServiceImpl implements SettingService {
 
 	private SettingMapper mapper = MapperContainer.get(SettingMapper.class);
+	private PostService postService = new PostServiceImpl();
 
 	@Override
 	public List<PostDTO> listLikedPost(Map<String, Object> map) throws SQLException {
@@ -34,6 +36,16 @@ public class SettingServiceImpl implements SettingService {
 		}
 		return 0;
 	}
+	
+	@Override
+	public int totalCountMyComment(Long userNum) throws SQLException {
+		try {
+			return mapper.totalCountMyComment(userNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 
 	@Override
 	public String getFilePath(Long postId) throws SQLException {
@@ -46,6 +58,25 @@ public class SettingServiceImpl implements SettingService {
 		}
 		
 		return filePath;
+	}
+
+	@Override
+	public List<ReplyDTO> getMyReply(Map<String, Object> map) throws SQLException {
+		List<ReplyDTO> list = null;
+		
+		try {
+			list = mapper.getMyReply(map);
+			
+			for(ReplyDTO dto : list) {
+				dto.setItem(postService.findById(dto.getPostId()));
+				dto.setParentThumbnail(getFilePath(dto.getPostId()));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
 	}
 
 

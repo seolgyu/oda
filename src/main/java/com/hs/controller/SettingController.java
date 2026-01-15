@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.hs.model.MemberDTO;
 import com.hs.model.PostDTO;
+import com.hs.model.ReplyDTO;
 import com.hs.model.SessionInfo;
 import com.hs.mvc.annotation.Controller;
 import com.hs.mvc.annotation.GetMapping;
@@ -145,6 +146,25 @@ public class SettingController {
     
     @RequestMapping("comments")
     public String settingsComments(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	HttpSession session = req.getSession();
+    	
+    	try {
+	    	SessionInfo info = (SessionInfo) session.getAttribute("member");
+	    	Long userNum = (Long)info.getMemberIdx();
+	        
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("userNum", userNum);
+	        map.put("offset", 0);
+	        map.put("size", 10);
+	        
+	        List<ReplyDTO> list = settingService.getMyReply(map);
+	        
+	       req.setAttribute("list", list);
+	       req.setAttribute("totalCount", settingService.totalCountMyComment(userNum));
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
         return "member/setting/settings_comments";
     }
 
@@ -468,6 +488,38 @@ public class SettingController {
 	        map.put("size", 10);
 	        
 	        List<PostDTO> list = settingService.listLikedPost(map);
+	        
+	       model.put("list", list);
+	       model.put("status", "success");
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    		model.put("status", "error");
+    	}
+    	
+        return model;
+    }
+    
+    @GetMapping("loadMyReply")
+    @ResponseBody
+    public Map<String, Object> loadMyReply(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	HttpSession session = req.getSession();
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	
+    	try {
+	    	SessionInfo info = (SessionInfo) session.getAttribute("member");
+	    	if (info == null) {
+	    		model.put("status", "error");
+	    		return model;
+	    	}
+	    	Long userNum = (Long)info.getMemberIdx();
+	    	int pageNo = Integer.parseInt(req.getParameter("page"));	
+	    	
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("userNum", userNum);
+	        map.put("offset", (pageNo - 1) * 10);
+	        map.put("size", 10);
+	        
+	        List<ReplyDTO> list = settingService.getMyReply(map);
 	        
 	       model.put("list", list);
 	       model.put("status", "success");

@@ -35,5 +35,45 @@
 		FROM fileat
 		WHERE post_id = #{postId} AND file_order = 0 
     </select>
+
+	<select id="getMyReply" parameterType="map" resultType="com.hs.model.ReplyDTO">
+		SELECT
+			c.post_id AS postId,
+			c.comment_id AS commentId,
+			c.user_num AS userNum,
+			c.content AS content,
+			c.created_date AS createdDate,
+			c.depth AS depth,
+			c.parent_comment_id AS parentCommentId,
+			pc.user_num AS parentUserNum,
+			pc.content AS parentCommentContent,
+			pc.created_date AS parentCommentCreatedDate
+		FROM (
+			SELECT
+				post_id,
+				comment_id,
+				user_num,
+				content,
+				parent_comment_ID,
+				created_date,
+				is_deleted,
+				LEVEL AS depth
+			FROM comments
+			START WITH parent_comment_id IS NULL
+			CONNECT BY PRIOR comment_id = parent_comment_id
+			ORDER SIBLINGS BY created_date DESC
+		) c 
+		LEFT OUTER JOIN comments pc ON c.parent_comment_id = pc.comment_id
+		WHERE c.user_num = #{userNum} AND c.is_deleted = '0'
+		ORDER BY c.created_date DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	<select id="totalCountMyComment" parameterType="Long" resultType="Integer">
+        SELECT COUNT(*)
+    	FROM comments
+    	WHERE user_num = #{userNum}
+    	AND is_deleted = '0'
+    </select>
 	
 </mapper>
