@@ -27,7 +27,7 @@ public class PostDTO {
 	private String authorProfileImage;
 	
 	private List<ReplyDTO> replyList;
-
+	
 	public Long getPostId() {
 		return postId;
 	}
@@ -204,6 +204,14 @@ public class PostDTO {
 
 	public void setAuthorId(String authorId) {
 		this.authorId = authorId;
+	}
+
+	public List<ReplyDTO> getReplyList() {
+		return replyList;
+	}
+
+	public void setReplyList(List<ReplyDTO> replyList) {
+		this.replyList = replyList;
 	}
 
 }
