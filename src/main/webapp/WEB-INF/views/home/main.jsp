@@ -434,12 +434,17 @@ opacity
 
 	<c:if test="${not empty sessionScope.toastMsg}">
 		<script>
-			$(document).ready(
-					function() {
-						showToast("${sessionScope.toastMsg}",
-								"${sessionScope.toastType}");
-					});
+		$(document).ready(function() {
+		    // 세션에 저장된 메시지가 있다면 출력 (JSTL 사용)
+		    const toastType = "${sessionScope.toastType}";
+		    const toastMsg = "${sessionScope.toastMsg}";
+		    
+		    if(toastMsg) {
+		        showToast(toastType, toastMsg);
+		    }
+		});
 		</script>
+		
 		<c:remove var="toastMsg" scope="session" />
 		<c:remove var="toastType" scope="session" />
 	</c:if>
@@ -477,13 +482,16 @@ opacity
 						if (data.liked) {
 							$icon.text("favorite");
 							$btn.addClass("text-pink");
+							showToast("info", "이 게시글을 좋아합니다.");
 						} else {
 							$icon.text("favorite_border");
 							$btn.removeClass("text-pink");
+							showToast("info", "좋아요를 취소했습니다.");
 						}
 					} else if (data.state === "login_required") {
 						location.href = contextPath + '/member/login?redirect='
 								+ encodeURIComponent(location.href);
+						showToast("error", "로그인이 필요합니다.");
 					}
 				},
 				error : function(e) {
@@ -492,7 +500,7 @@ opacity
 			});
 		}
 
-		function showToast(msg, type) {
+		function showToast(type, msg) {
 			const $toast = $('#sessionToast');
 			const $title = $('#toastTitle');
 			const $icon = $('#toastIcon');
@@ -729,15 +737,12 @@ opacity
 		}
 		// URL 복사 함수
 		function copyUrl(postId) {
-		    // 1. 복사할 상세 페이지 전체 주소 생성
-		    // window.location.origin : http://localhost:9090 같은 도메인
-		    // contextPath : /oda
+		    
 		    const url = window.location.origin + '${pageContext.request.contextPath}/post/article?postId=' + postId;
 
-		    // 2. 클립보드 복사 시도 (최신 브라우저)
 		    if (navigator.clipboard && navigator.clipboard.writeText) {
 		        navigator.clipboard.writeText(url).then(() => {
-		            alert("게시글 주소가 클립보드에 복사되었습니다.\n(Ctrl+V로 붙여넣기 가능)");
+		        	showToast("success", "클립보드에 주소가 복사되었습니다.");
 		        }).catch(err => {
 		            // 실패 시 구형 방식 시도
 		            fallbackCopyTextToClipboard(url);
@@ -763,12 +768,12 @@ opacity
 		    try {
 		        const successful = document.execCommand('copy');
 		        if (successful) {
-		            alert("게시글 주소가 클립보드에 복사되었습니다.\n(Ctrl+V로 붙여넣기 가능)");
+		        	showToast("success", "클립보드에 주소가 복사되었습니다.");
 		        } else {
-		            alert("주소 복사에 실패했습니다.");
+		        	showToast("error", "주소 복사에 실패했습니다.");
 		        }
 		    } catch (err) {
-		        alert("주소 복사에 실패했습니다.");
+		    	showToast("error", "주소 복사에 실패했습니다.");
 		    }
 		    document.body.removeChild(textArea);
 		}

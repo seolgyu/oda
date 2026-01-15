@@ -143,6 +143,9 @@ public class PostController {
 
 			// [3] 서비스 호출
 			service.insertPost(dto);
+			
+		    session.setAttribute("toastMsg", "새로운 게시글이 등록되었습니다.");
+		    session.setAttribute("toastType", "success");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -261,6 +264,10 @@ public class PostController {
 			dto.setFileList(fileList);
 
 			service.updatePost(dto); // Service 내부에서 파일 저장 처리
+			
+			
+		    session.setAttribute("toastMsg", "게시글이 성공적으로 수정되었습니다.");
+		    session.setAttribute("toastType", "success");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -340,6 +347,9 @@ public class PostController {
 			PostDTO dto = service.findById(postId);
 			if (dto != null && dto.getUserNum() == info.getMemberIdx()) {
 				service.deletePost(postId); // 서비스 호출
+				
+		        session.setAttribute("toastMsg", "게시글이 삭제되었습니다.");
+		        session.setAttribute("toastType", "success");
 			}
 
 		} catch (Exception e) {

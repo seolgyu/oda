@@ -459,10 +459,11 @@
 					if (data.trim() === "success") {
 						$("#replyContent").val("");
 						listReply(); // 리스트 갱신 (개수도 같이 갱신됨)
+						showToast("success", "댓글이 등록되었습니다.");
 					} else if (data.trim() === "login_required") {
 						location.href = contextPath + '/member/login';
 					} else {
-						alert("댓글 등록 실패");
+						showToast("error", "댓글 등록에 실패했습니다.");
 					}
 				},
 				error : function(e) {
@@ -507,8 +508,9 @@
 				success : function(data) {
 					if (data.trim() === "success") {
 						listReply();
+						showToast("success", "답글이 등록되었습니다.");
 					} else {
-						alert("답글 등록 실패");
+						showToast("error", "답글 등록 실패.");
 					}
 				}
 			});
@@ -552,10 +554,11 @@
 				success : function(data) {
 					if (data.trim() === "success") {
 						listReply(); // 성공 시 리스트 다시 불러옴
+						showToast("success", "댓글이 수정되었습니다.");
 					} else if (data.trim() === "login_required") {
-						alert("로그인이 필요합니다.");
+						showToast("error", "로그인이 필요합니다.");
 					} else {
-						alert("수정 실패 (본인 글만 수정 가능합니다).");
+						showToast("error", "수정 권한이 없거나 실패했습니다.");
 					}
 				},
 				error : function(e) {
@@ -578,8 +581,10 @@
 				success : function(data) {
 					if (data.trim() === "success") {
 						listReply(); // 리스트 및 개수 갱신
+						showToast("success", "댓글이 삭제되었습니다.");
 					} else {
 						alert("삭제 실패했습니다.");
+						showToast("error", "삭제 실패했습니다.");
 					}
 				}
 			});
@@ -618,10 +623,12 @@
 							$icon.text("favorite");
 							$btn.addClass("text-pink");
 							$btn.removeClass("text-white-50");
+							showToast("info", "이 게시글을 좋아합니다.");
 						} else {
 							$icon.text("favorite_border");
 							$btn.removeClass("text-pink");
 							$btn.addClass("text-white-50");
+							showToast("info", "좋아요를 취소했습니다.");
 						}
 					} else if (data.state === "login_required") {
 						location.href = contextPath + '/member/login?redirect='
@@ -682,6 +689,28 @@
 		function updatePost(postId) {
 			location.href = contextPath + '/post/update?postId=' + postId;
 		}
+		
+		function showToast(type, msg) {
+			const $toast = $('#sessionToast');
+			const $title = $('#toastTitle');
+			const $icon = $('#toastIcon');
+			$('#toastMessage').text(msg);
+			if (type === "success") {
+				$title.text('SUCCESS').css('color', '#4ade80');
+				$icon.text('check_circle');
+			} else if (type === "info") {
+				$title.text('INFO').css('color', '#8B5CF6');
+				$icon.text('info');
+			} else if (type === "error") {
+				$title.text('ERROR').css('color', '#f87171');
+				$icon.text('error');
+			}
+			$toast.addClass('show');
+			setTimeout(function() {
+				$toast.removeClass('show');
+			}, 2500);
+		}
+		
 	</script>
 </body>
 </html>
