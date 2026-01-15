@@ -9,6 +9,7 @@ public class ReplyDTO {
 	private int depth;
 	private Long parentCommentId;
 	private Long parentUserNum;
+	private String parentUserNickname;
 	private String parentCommentContent;
 	private String parentCommentCreatedDate;
 	private String parentThumbnail;
@@ -86,6 +87,12 @@ public class ReplyDTO {
 	}
 	public void setParentThumbnail(String parentThumbnail) {
 		this.parentThumbnail = parentThumbnail;
+	}
+	public String getParentUserNickname() {
+		return parentUserNickname;
+	}
+	public void setParentUserNickname(String parentUserNickname) {
+		this.parentUserNickname = parentUserNickname;
 	}
 	
 }

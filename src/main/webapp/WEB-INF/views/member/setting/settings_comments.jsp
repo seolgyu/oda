@@ -40,7 +40,7 @@
 									<div class="d-flex align-items-center gap-2 mb-2">
 										<span class="badge rounded-pill text-white"
 											style="background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.65rem; padding: 0.3em 0.7em; letter-spacing: 0.5px;">REPLY TO</span> 
-										<span class="text-white fw-bold" style="font-size: 0.8rem;">@${dto.parentUserNum}</span>
+										<span class="text-white fw-bold" style="font-size: 0.8rem;">@${dto.parentUserNickname}</span>
 									</div>
 									<div class="text-white-50 text-sm ps-1"
 										style="line-height: 1.5; border-left: 1px solid rgba(255, 255, 255, 0.1); padding-left: 10px;">

@@ -46,6 +46,7 @@
 			c.depth AS depth,
 			c.parent_comment_id AS parentCommentId,
 			pc.user_num AS parentUserNum,
+			m.user_nickname AS parentUserNickname,
 			pc.content AS parentCommentContent,
 			pc.created_date AS parentCommentCreatedDate
 		FROM (
@@ -64,6 +65,7 @@
 			ORDER SIBLINGS BY created_date DESC
 		) c 
 		LEFT OUTER JOIN comments pc ON c.parent_comment_id = pc.comment_id
+		LEFT OUTER JOIN member m ON pc.user_num = m.user_num
 		WHERE c.user_num = #{userNum} AND c.is_deleted = '0'
 		ORDER BY c.created_date DESC
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY

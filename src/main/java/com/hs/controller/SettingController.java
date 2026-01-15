@@ -18,6 +18,8 @@ import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
 import com.hs.service.MemberService;
 import com.hs.service.MemberServiceImpl;
+import com.hs.service.PostService;
+import com.hs.service.PostServiceImpl;
 import com.hs.service.SettingService;
 import com.hs.service.SettingServiceImpl;
 import com.hs.util.CloudinaryUtil;
@@ -35,6 +37,7 @@ import jakarta.servlet.http.Part;
 public class SettingController {
 	private MemberService service = new MemberServiceImpl();
 	private SettingService settingService = new SettingServiceImpl();
+	private PostService postService = new PostServiceImpl();
 	
 	@RequestMapping("")
 	public ModelAndView settings(HttpServletRequest req, HttpServletResponse resp)
@@ -497,6 +500,35 @@ public class SettingController {
     	}
     	
         return model;
+    }
+    
+    @PostMapping("toggleLike")
+    @ResponseBody
+    public Map<String, Object> toggleLike(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	HttpSession session = req.getSession();
+
+		try {
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			
+			if (info == null) {
+				model.put("status", "error");
+	            return model;
+	        }
+			
+			Long userNum = (Long)info.getMemberIdx();
+	        Long postId = Long.parseLong(req.getParameter("postId"));
+	        
+			postService.insertPostLike(postId, userNum);
+			
+			model.put("status", "success");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("status", "error");
+		}
+		
+    	return model;
     }
     
     @GetMapping("loadMyReply")

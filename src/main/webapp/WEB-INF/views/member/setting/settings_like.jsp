@@ -41,7 +41,8 @@
 							<div class="flex-grow-1 min-w-0">
 								<div class="d-flex align-items-center gap-2 mb-1 opacity-75">
 									<span class="text-white text-xs fw-bold">${item.authorNickname}</span>
-									<span class="text-secondary text-xs">· ${item.createdDate}</span>
+									<span class="text-secondary text-xs">·
+										${item.createdDate}</span>
 								</div>
 								<h4 class="text-white fs-6 fw-bold mb-1 text-truncate">${item.title}</h4>
 								<p class="text-secondary text-xs mb-0 text-truncate opacity-50">${item.content}</p>
@@ -52,7 +53,9 @@
 							class="action-section d-flex align-items-center justify-content-center border-start border-white border-opacity-10">
 							<button type="button" class="btn-like-toggle"
 								onclick="toggleLike(this, '${item.postId}')">
-								<span class="material-symbols-outlined fill-icon text-danger">favorite</span>
+								<span class="material-symbols-outlined text-danger"
+									style="font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;">
+									favorite </span>
 							</button>
 						</div>
 					</div>
@@ -139,73 +142,63 @@
 
 <script>
 
-/*
 $(function() {
-    if (window.io) {
-        window.io.disconnect();
-    }
-
-    window.page = 1; 
-    window.isLoading = false;
-    
-    window.io = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !window.isLoading) {
-                loadNextPage('/member/settings/loadLikedPost', renderLikedPost);
-            }
-        });
-    }, { threshold: 0.1 });
-
-    const sentinel = document.querySelector('#sentinel');
-    if (sentinel) {
-        window.io.observe(sentinel);
-    }
-    
-    window.page = 1;
-});
-*/
-
-$(function() {
-    console.log("--- 좋아요 페이지 무한스크롤 디버깅 ---");
-    
     if (window.io) window.io.disconnect();
     window.page = 1;
     window.isLoading = false;
 
-    // 1. 요소가 실제로 존재하는지
     const target = document.getElementById('sentinel');
-    console.log("1. sentinel 존재 여부:", target);
 
     if (target) {
-        // 2. 관찰자 생성
         window.io = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                console.log("2. 감지 신호 발생! 교차 중인가?:", entry.isIntersecting);
                 if (entry.isIntersecting && !window.isLoading) {
-                    console.log("3. 조건 통과! loadNextPage 호출");
                     loadNextPage('/member/settings/loadLikedPost', renderLikedPost);
                 }
             });
-        }, { threshold: 0.1}); // root: null로 강제 설정
+        }, { threshold: 0.1});
 
         window.io.observe(target);
     }
 });
 
 function toggleLike(btn, postId) {
-    const icon = $(btn).find('.material-symbols-outlined');
+	
+	if ($(btn).data('loading')) return;
+    $(btn).data('loading', true);
     
-    // 이 부분은 추후 AJAX 서버 연동 로직이 들어갑니다.
-    if (icon.css('font-variation-settings').includes("'FILL' 1")) {
-        // 취소 처리
-        icon.css('font-variation-settings', "'FILL' 0");
-        icon.removeClass('text-danger').addClass('text-secondary');
-        $(btn).closest('.record-item').css('opacity', '0.5'); // 시각적 피드백
-    } else {
-        // 복구 처리
-        icon.css('font-variation-settings', "'FILL' 1");
-        icon.addClass('text-danger').removeClass('text-secondary');
-        $(btn).closest('.record-item').css('opacity', '1');
-    }
+	const $icon = $(btn).find('.material-symbols-outlined');
+    const $item = $(btn).closest('.record-item');
+    const isLiked = $icon.hasClass('text-danger');
+    
+    $.ajax({
+		type: "POST",
+		url: '${pageContext.request.contextPath}/member/settings/toggleLike',
+		data: {postId: postId},
+		dataType: "json",
+		success: function(data) {
+			if (data.status === 'success') {
+				if(isLiked) {
+			        $icon.css('font-variation-settings', "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24");
+			        $icon.removeClass('text-danger').addClass('text-secondary');
+			        $item.css('opacity', '0.5');
+			        showToast("success", "해당 게시글에 좋아요를 취소했습니다");
+			    } else {
+			        $icon.css('font-variation-settings', "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24");
+			        $icon.removeClass('text-secondary').addClass('text-danger');
+			        $item.css('opacity', '1');
+			        showToast("success", "해당 게시글에 좋아요를 눌렀습니다.");
+			    }
+			} else {
+				showToast("error", "좋아요 처리에 실패했습니다.");
+			}
+		},
+		error: function() {
+			showToast("error", "서버 통신 에러.");
+		},
+		complete: function() {
+			$(btn).data('loading', false);
+		}
+	});
 }
 </script>

@@ -69,9 +69,12 @@ function renderLikedPost(list) {
 		           </div>
 
 		           <div class="action-section d-flex align-items-center justify-content-center border-start border-white border-opacity-10">
-		               <button type="button" class="btn-like-toggle" onclick="toggleLike(this, '${list.postId}')">
-		                   <span class="material-symbols-outlined fill-icon text-danger">favorite</span>
-		               </button>
+				   <button type="button" class="btn-like-toggle" onclick="toggleLike(this, '${list.postId}')">
+				                   <span class="material-symbols-outlined text-danger" 
+				                         style="font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;">
+				                       favorite
+				                   </span>
+				               </button>
 		           </div>
 		       </div>
 		   `;
@@ -87,7 +90,7 @@ function renderCommentList(list) {
                     style="background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.65rem; padding: 0.3em 0.7em; letter-spacing: 0.5px;">
                     REPLY TO 
                 </span> 
-                <span class="text-white fw-bold" style="font-size: 0.8rem;">@${list.parentUserNum}</span>
+                <span class="text-white fw-bold" style="font-size: 0.8rem;">@${list.parentUserNickname}</span>
             </div>
             <div class="text-white-50 text-sm ps-1"
                 style="line-height: 1.5; border-left: 1px solid rgba(255, 255, 255, 0.1); padding-left: 10px;">
