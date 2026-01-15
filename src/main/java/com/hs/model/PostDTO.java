@@ -25,6 +25,8 @@ public class PostDTO {
 	private String authorNickname;
 	private String authorId;
 	private String authorProfileImage;
+	
+	private List<ReplyDTO> replyList;
 
 	public Long getPostId() {
 		return postId;
