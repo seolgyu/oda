@@ -20,4 +20,5 @@ public interface MainMapper {
 	public MainDTO reportpostcount();
 	public MainDTO comPriCount();
 	public MainDTO loginPercentage();
+	public MainDTO stopmembercount();
 }

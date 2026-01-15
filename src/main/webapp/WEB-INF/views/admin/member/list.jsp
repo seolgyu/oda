@@ -449,6 +449,11 @@ body {
     color: #9CA3AF;
 }
 
+.status-badge.banned {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #c62828;
+}
+
 .status-dot {
     width: 6px;
     height: 6px;
@@ -736,7 +741,7 @@ body {
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">전체 회원</div>
-                            <div class="stat-value">1,234</div>
+                            <div class="stat-value">${mblist[0].memberCountList} </div>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -744,8 +749,8 @@ body {
                             <span class="material-symbols-outlined">check_circle</span>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">활성 회원</div>
-                            <div class="stat-value">1,150</div>
+                            <div class="stat-label">정상 회원</div>
+                            <div class="stat-value">${inDto.inmembercount} </div>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -754,7 +759,7 @@ body {
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">정지 회원</div>
-                            <div class="stat-value">42</div>
+                            <div class="stat-value">${stopDto.stopmembercount} </div>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -763,7 +768,7 @@ body {
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">휴면 회원</div>
-                            <div class="stat-value">42</div>
+                            <div class="stat-value">${dorDto.dormembercount} </div>
                         </div>
                     </div>
                 </div>
@@ -771,30 +776,23 @@ body {
                 <!-- 검색 및 필터 -->
                 <div class="search-filter-card">
                     <form name="searchForm" method="get">
+                    <input type="hidden" name="size" value="${size}">
+                    <input type="hidden" name="state" value="${state}">
                         <div class="filter-row">
-                            <!-- <div class="filter-group">
-                                <label class="filter-label">상태</label>
-                                <select name="status" class="filter-select">
-                                    <option value="">전체</option>
-                                    <option value="active">활성</option>
-                                    <option value="suspended">정지</option>
-                                    <option value="dormant">휴면</option>
-                                </select>
-                            </div> -->
                             <div class="filter-group">
                                 <label class="filter-label">검색 조건</label>
                                 <select name="schType" class="filter-select">
-                                    <option value="all">전체</option>
-                                    <option value="userId">아이디</option>
-                                    <option value="userName">이름</option>
-                                    <option value="email">이메일</option>
+                                    <option value="user_id" ${schType == 'user_id' ? 'selected' : ''}>아이디</option>
+                                    <option value="user_nickname" ${schType == 'user_nickname' ? 'selected' : ''}>이름</option>
+                                    <option value="user_email" ${schType == 'user_email' ? 'selected' : ''}>이메일</option>
+                                    <option value="user_created_date" ${schType == 'user_created_date' ? 'selected' : ''}>가입일</option>
                                 </select>
                             </div>
                             <div class="filter-group" style="flex: 2;">
                                 <label class="filter-label">검색어</label>
-                                <input type="text" name="kwd" class="filter-input" placeholder="검색어를 입력하세요">
+                                <input type="text" name="kwd" class="filter-input" value="${kwd}" placeholder="검색어를 입력하세요">
                             </div>
-                            <button type="submit" class="btn-search">
+                            <button type="button" class="btn-search" onclick="searchList();">
                                 <span class="material-symbols-outlined">search</span>
                                 검색
                             </button>
@@ -809,16 +807,17 @@ body {
                 <div class="member-table-card">
                     <div class="table-header">
                         <div class="table-title">
-                            회원 목록 <span style="color: var(--text-muted); font-size: 0.875rem;">(총 1,234명)</span>
+                            회원 목록 <span style="color: var(--text-muted); font-size: 0.875rem;">(총 ${countDto}명)</span>
                         </div>
                         <div class="col-12 col-lg-6">
-							<div class="btn-group glass-btn-group">
-						        <button type="button" class="btn btn-outline-light btn-sm px-3" value="">전체</button>
-						        <button type="button" class="btn btn-outline-light btn-sm px-3" value="">활성</button>
-						        <button type="button" class="btn btn-outline-light btn-sm px-3" value="">정지</button>
-						        <button type="button" class="btn btn-outline-light  btn-sm px-3" value="">휴면</button>
-						        <button type="button" class="btn btn-outline-light btn-sm px-3" value="">휴면 대상자</button>
-						        <button type="button" class="btn btn-outline-light btn-sm px-3" value="">신고 대상자</button>
+						    <div class="btn-group glass-btn-group">
+						        <button type="button" class="btn btn-outline-light ${empty state ? 'active' : ''} btn-sm px-3" value="">전체</button>
+						        <button type="button" class="btn btn-outline-light ${state == '정상' ? 'active' : ''} btn-sm px-3" value="정상">정상</button>
+						        <button type="button" class="btn btn-outline-light ${state == '정지' ? 'active' : ''} btn-sm px-3" value="정지">정지</button>
+						        <button type="button" class="btn btn-outline-light ${state == '휴면' ? 'active' : ''} btn-sm px-3" value="휴면">휴면</button>
+						        
+						        <button type="button" class="btn btn-outline-light ${state == '휴면대상자' ? 'active' : ''} btn-sm px-3" value="휴면대상자">휴면 대상자</button>
+						        <button type="button" class="btn btn-outline-light ${state == '신고대상자' ? 'active' : ''} btn-sm px-3" value="신고대상자">신고 대상자</button>
 						    </div>
 						</div>
                         <div class="table-actions">
@@ -849,28 +848,57 @@ body {
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- 예시 데이터 1 - 활성 회원 -->
+                                <c:forEach var="dto" items="${memberList }" varStatus="status">
                                 <tr>
                                     <td>
                                         <input type="checkbox" class="custom-checkbox chk" value="1">
                                     </td>
                                     <td>
                                         <div class="member-info">
-                                            <div class="member-avatar">김</div>
+                                        	<div class="member-avatar">
+											    <c:choose>
+											        <c:when test="${not empty dto.user_profile}">
+											            <img src="${dto.user_profile}" style="width: 100%; height: 100%; object-fit: cover;">
+											        </c:when>
+											        <c:otherwise>
+											            ${fn:substring(dto.user_nickname, 0, 1)}
+											        </c:otherwise>
+											    </c:choose>
+											</div>
                                             <div class="member-details">
-                                                <div class="member-name">김철수</div>
-                                                <div class="member-id">user001</div>
+                                                <div class="member-name">${dto.user_nickname }</div>
+                                                <div class="member-id">${dto.user_id }</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>user001@example.com</td>
-                                    <td>2024-01-15</td>
-                                    <td>2025-01-14</td>
+                                    <td>${dto.user_email }</td>
+                                    <td>${dto.user_created_date }</td>
+                                    <td>${dto.user_updated_date }</td>
                                     <td>
-                                        <span class="status-badge active">
-                                            <span class="status-dot"></span>
-                                            활성
-                                        </span>
+	                                    <c:if test="${dto.user_status == '정상'}">
+	                                        <span class="status-badge active">
+	                                            <span class="status-dot"></span>
+	                                            정상
+	                                        </span>
+	                                    </c:if>
+	                                    <c:if test="${dto.user_status == '신고'}">
+	                                        <span class="status-badge suspended">
+	                                            <span class="status-dot"></span>
+	                                            신고
+	                                        </span>
+	                                    </c:if>
+	                                    <c:if test="${dto.user_status == '휴면'}">
+	                                        <span class="status-badge dormant">
+	                                            <span class="status-dot"></span>
+	                                            휴면
+	                                        </span>
+	                                    </c:if>
+	                                    <c:if test="${dto.user_status == '정지'}">
+	                                        <span class="status-badge banned">
+	                                            <span class="status-dot"></span>
+	                                            정지
+	                                        </span>
+	                                    </c:if>
                                     </td>
                                     <td>
                                         <div class="action-buttons">
@@ -880,12 +908,13 @@ body {
                                             <button type="button" class="btn-action btn-action-detail" onclick="location.href='${pageContext.request.contextPath}/admin/member/detailmember'">
 											    상세
 											</button>
-                                            <button type="button" class="btn-action btn-action-suspend" onclick="suspendMember(1)">
+                                            <!-- <button type="button" class="btn-action btn-action-suspend" onclick="suspendMember(1)">
                                                 정지
-                                            </button>
+                                            </button> -->
                                         </div>
                                     </td>
                                 </tr>
+                                </c:forEach>
                                 
                                 <!-- 예시 데이터 2 - 정지 회원 -->
                                 <tr>
@@ -1000,11 +1029,7 @@ body {
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
-    <script src="${pageContext.request.contextPath}/dist/js/util-jquery.js"></script>
-
-    <script>
+    <script type="text/javascript">
     // 전체 선택 체크박스
     $(document).ready(function() {
         $('#chkAll').change(function() {
@@ -1017,150 +1042,14 @@ body {
             $('#chkAll').prop('checked', total === checked);
         });
     });
-
-    // 모달 열기/닫기
-    function openModal(modalId) {
-        $('#' + modalId).addClass('show');
-    }
-
-    function closeModal(modalId) {
-        $('#' + modalId).removeClass('show');
-    }
-
-    // 회원 정지
-    function suspendMember(memberId) {
-        openModal('suspendModal');
-        // memberId 저장
-        $('#suspendModal').data('memberId', memberId);
-    }
-
-    // 정지 확인
-    function confirmSuspend() {
-        let memberId = $('#suspendModal').data('memberId');
-        let period = $('#suspendPeriod').val();
-        let reason = $('#suspendReason').val();
-        
-        if(!reason.trim()) {
-            alert('정지 사유를 입력해주세요.');
-            return;
-        }
-        
-        // AJAX 요청
-        let url = '${pageContext.request.contextPath}/admin/member/suspend';
-        let params = {
-            memberId: memberId,
-            period: period,
-            reason: reason
-        };
-        
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: params,
-            dataType: 'json',
-            success: function(data) {
-                if(data.state === 'true') {
-                    alert('회원 정지가 완료되었습니다.');
-                    closeModal('suspendModal');
-                    location.reload();
-                } else {
-                    alert('회원 정지에 실패했습니다.');
-                }
-            },
-            error: function() {
-                alert('오류가 발생했습니다.');
-            }
-        });
-    }
-
-    // 회원 활성화
-    function activateMember(memberId) {
-        if(!confirm('회원을 활성화하시겠습니까?')) {
-            return;
-        }
-        
-        let url = '${pageContext.request.contextPath}/admin/member/activate';
-        let params = { memberId: memberId };
-        
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: params,
-            dataType: 'json',
-            success: function(data) {
-                if(data.state === 'true') {
-                    alert('회원이 활성화되었습니다.');
-                    location.reload();
-                } else {
-                    alert('활성화에 실패했습니다.');
-                }
-            },
-            error: function() {
-                alert('오류가 발생했습니다.');
-            }
-        });
-    }
-
-    // 일괄 정지
-    function bulkSuspend() {
-        let checked = $('.chk:checked');
-        
-        if(checked.length === 0) {
-            alert('정지할 회원을 선택해주세요.');
-            return;
-        }
-        
-        openModal('suspendModal');
-        $('#suspendModal').data('memberIds', checked.map(function() {
-            return $(this).val();
-        }).get());
-    }
-
-    // 일괄 휴면
-    function bulkDormant() {
-        let checked = $('.chk:checked');
-        
-        if(checked.length === 0) {
-            alert('휴면 처리할 회원을 선택해주세요.');
-            return;
-        }
-        
-        if(!confirm(`선택한 ${checked.length}명을 휴면 처리하시겠습니까?`)) {
-            return;
-        }
-        
-        let memberIds = checked.map(function() {
-            return $(this).val();
-        }).get();
-        
-        let url = '${pageContext.request.contextPath}/admin/member/dormant';
-        let params = { memberIds: memberIds };
-        
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: JSON.stringify(params),
-            contentType: 'application/json',
-            dataType: 'json',
-            success: function(data) {
-                if(data.state === 'true') {
-                    alert('휴면 처리가 완료되었습니다.');
-                    location.reload();
-                } else {
-                    alert('휴면 처리에 실패했습니다.');
-                }
-            },
-            error: function() {
-                alert('오류가 발생했습니다.');
-            }
-        });
-    }
-
     // 상세 보기
     function viewDetail(memberId) {
         location.href = '${pageContext.request.contextPath}/admin/member/detail?memberId=' + memberId;
     }
     </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
+    <script src="${pageContext.request.contextPath}/dist/js/util-jquery.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/admin_member_util.js"></script>
 </body>
 </html>

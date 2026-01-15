@@ -174,5 +174,16 @@ public class MainServiceImpl implements MainService{
 		}
 		return loginPercentage;
 	}
+
+	@Override
+	public MainDTO stopMemberCount() {
+		MainDTO stopmembercount = null;
+		try {
+			stopmembercount = mapper.stopmembercount();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return stopmembercount;
+	}
 	
 }

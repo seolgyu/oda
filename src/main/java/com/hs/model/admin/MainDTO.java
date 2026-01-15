@@ -16,10 +16,19 @@ public class MainDTO {
 	private int reportcount; //신고 처리 예정된 게시물
 	private int comPriCount; //비공개 커뮤니티 수
 	private int loginPercentage;//이용 중인 사용자 증가량
+	private int stopmembercount; //정지 회원 수
 
 	private String dayName;
 	private int noticeCount;
     private int loginCount;
+    
+    public int getStopmembercount() {
+		return stopmembercount;
+	}
+
+	public void setStopmembercount(int stopmembercount) {
+		this.stopmembercount = stopmembercount;
+	}
     
     public int getLoginPercentage() {
 		return loginPercentage;

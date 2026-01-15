@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.admin.MemberMapper">
+	<!-- 검색 키워드  -->
+	<sql id="where-list">
+		<if test="schType == 'user_id' ">
+			INSTR(user_id, #{kwd}) &gt; 0
+		</if>
+		<if test="schType == 'user_nickname' ">
+			DBMS_LOB.INSTR(user_nickname, #{kwd}) &gt; 0 
+		</if>
+		<if test="schType == 'user_email' ">
+			INSTR(user_email, #{kwd}) &gt; 0
+		</if>
+		<if test="schType == 'user_created_date' ">
+			(( TO_CHAR(user_created_date, 'YYYY-MM-DD') = #{kwd}
+				OR TO_CHAR(user_created_date, 'YYYYMMDD') = #{kwd} ) OR
+			( TO_CHAR(user_created_date, 'YYYY-MM-DD') = #{kwd}
+				OR TO_CHAR(user_created_date, 'YYYYMMDD') = #{kwd} ))
+		</if>
+	</sql>
+	<select id="memberList" resultType="com.hs.model.admin.MemberDTO">
+		select user_nickname,
+            user_id,
+            user_profile, 
+            user_email,
+            user_created_date,
+            user_updated_date,
+            CASE 
+            WHEN user_status = 0 THEN '에러' 
+            WHEN user_status = 1 THEN '정상'
+            WHEN user_status = 2 THEN '신고'
+            WHEN user_status = 3 THEN '휴면'
+            WHEN user_status = 4 THEN '정지'
+            ELSE '관리자에게 문의하세요.'
+        END AS user_status
+	    FROM member
+	    <where>
+	    	<if test="kwd != null and kwd != ''">
+				AND <include refid="where-list"/>
+			</if>
+			<if test="state != null and state != '' and state != 'null'">
+				AND user_status = #{state}
+			</if>	
+	    	AND user_level &lt; 90
+	    </where>
+	    ORDER BY 
+	    CASE 
+	        WHEN REGEXP_LIKE(user_nickname, '^[가-힣]') THEN 1
+	        WHEN REGEXP_LIKE(user_nickname, '^[A-Za-z]') THEN 2
+	        ELSE 3
+	    END DESC,
+	    user_nickname DESC
+	    OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	<select id="userCount" parameterType="map" resultType="Integer">
+		select NVL(COUNT(*), 0) user_Count
+	    FROM member
+	    <where>
+	    	<if test="kwd != null and kwd != ''">
+				AND <include refid="where-list"/>
+			</if>
+			<if test="state != null and state != '' and state != 'null'">
+				AND user_status = #{state}
+			</if>	
+	    	AND user_level &lt; 90
+	    </where>
+	</select>
+</mapper>

@@ -6,7 +6,6 @@
 		select NVL(count(*), 0) as memberCountList
 		from member
 		where user_level &lt; 90
-		AND user_status = 1
 		AND user_id is not null
 		AND user_pwd is not null
 		AND user_name is not null
@@ -49,7 +48,7 @@
 		SELECT NVL(COUNT(*), 0) dormembercount
 		FROM member
 		WHERE user_level &lt; 90
-		AND user_status = 7
+		AND user_status = 3
 		AND user_id IS NOT NULL
 		AND user_pwd IS NOT NULL
 		AND user_name IS NOT NULL
@@ -173,5 +172,15 @@
 	        ) AS active_logins
 	    FROM DUAL
 	)
+	</select>
+	
+	<select id="stopmembercount" resultType="com.hs.model.admin.MainDTO">
+	SELECT NVL(COUNT(*), 0) stopmembercount
+    FROM member
+    WHERE user_status = 4
+    AND user_id IS NOT NULL
+    AND user_pwd IS NOT NULL
+    AND user_name IS NOT NULL
+    AND user_nickname IS NOT NULL
 	</select>
 </mapper>
