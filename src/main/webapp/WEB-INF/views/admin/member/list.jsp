@@ -647,6 +647,17 @@ body {
     background-color: var(--primary-hover);
 }
 
+.btn-bulk-activate {
+    background-color: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--success-color);
+}
+
+.btn-bulk-activate:hover {
+    background-color: rgba(16, 185, 129, 0.2);
+    border-color: var(--success-color);
+}
+
 /* ==========================================
    Material Symbols 아이콘
    ========================================== */
@@ -778,6 +789,8 @@ body {
                     <form name="searchForm" method="get">
                     <input type="hidden" name="size" value="${size}">
                     <input type="hidden" name="state" value="${state}">
+                    <input type="hidden" name="page" value="${page}">
+                    <input type="hidden" name="contextPath" value="${pageContext.request.contextPath}">
                         <div class="filter-row">
                             <div class="filter-group">
                                 <label class="filter-label">검색 조건</label>
@@ -821,6 +834,10 @@ body {
 						    </div>
 						</div>
                         <div class="table-actions">
+                         	<button type="button" class="btn-bulk btn-bulk-activate" onclick="bulkActivate()">
+						        <span class="material-symbols-outlined">check_circle</span>
+						        선택 정상
+						    </button>
                             <button type="button" class="btn-bulk btn-bulk-suspend" onclick="bulkSuspend()">
                                 <span class="material-symbols-outlined">block</span>
                                 선택 정지
@@ -851,7 +868,7 @@ body {
                                 <c:forEach var="dto" items="${memberList }" varStatus="status">
                                 <tr>
                                     <td>
-                                        <input type="checkbox" class="custom-checkbox chk" value="1">
+                                        <input type="checkbox" class="custom-checkbox chk" value="${dto.user_id}">
                                     </td>
                                     <td>
                                         <div class="member-info">
@@ -901,100 +918,21 @@ body {
 	                                    </c:if>
                                     </td>
                                     <td>
-                                        <div class="action-buttons">
-                                            <!-- <button type="button" class="btn-action btn-action-detail" onclick="viewDetail(1)">
-												상세
-                                            </button> -->
-                                            <button type="button" class="btn-action btn-action-detail" onclick="location.href='${pageContext.request.contextPath}/admin/member/detailmember'">
-											    상세
-											</button>
-                                            <!-- <button type="button" class="btn-action btn-action-suspend" onclick="suspendMember(1)">
-                                                정지
-                                            </button> -->
-                                        </div>
-                                    </td>
+									    <div class="action-buttons">
+									        <button type="button" class="btn-action btn-action-detail" onclick="viewDetail('${dto.user_id}')">
+									            상세
+									        </button>
+									    </div>
+									</td>
                                 </tr>
                                 </c:forEach>
-                                
-                                <!-- 예시 데이터 2 - 정지 회원 -->
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" class="custom-checkbox chk" value="2">
-                                    </td>
-                                    <td>
-                                        <div class="member-info">
-                                            <div class="member-avatar">이</div>
-                                            <div class="member-details">
-                                                <div class="member-name">이영희</div>
-                                                <div class="member-id">user002</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>user002@example.com</td>
-                                    <td>2024-02-20</td>
-                                    <td>2025-01-10</td>
-                                    <td>
-                                        <span class="status-badge suspended">
-                                            <span class="status-dot"></span>
-                                            정지
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button type="button" class="btn-action btn-action-detail" onclick="viewDetail(2)">
-                                                상세
-                                            </button>
-                                            <button type="button" class="btn-action btn-action-activate" onclick="activateMember(2)">
-                                                해제
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                
-                                <!-- 예시 데이터 3 - 휴면 회원 -->
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" class="custom-checkbox chk" value="3">
-                                    </td>
-                                    <td>
-                                        <div class="member-info">
-                                            <div class="member-avatar">박</div>
-                                            <div class="member-details">
-                                                <div class="member-name">박민수</div>
-                                                <div class="member-id">user003</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>user003@example.com</td>
-                                    <td>2023-05-10</td>
-                                    <td>2024-05-15</td>
-                                    <td>
-                                        <span class="status-badge dormant">
-                                            <span class="status-dot"></span>
-                                            휴면
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button type="button" class="btn-action btn-action-detail" onclick="viewDetail(3)">
-                                                상세
-                                            </button>
-                                            <button type="button" class="btn-action btn-action-activate" onclick="activateMember(3)">
-                                                활성화
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
-                    
                     <div class="table-footer">
-                        <div class="page-navigation">
-                            <!-- 페이징이 들어갈 위치 -->
-                        </div>
+                        <div class="page-navigation">${dataCount == 0 ? "등록된 게시물이 없습니다." : paging}</div>
                     </div>
-                </div>
+                </div>	
 
             </div>
         </main>
@@ -1029,24 +967,11 @@ body {
         </div>
     </div>
 
-    <script type="text/javascript">
-    // 전체 선택 체크박스
-    $(document).ready(function() {
-        $('#chkAll').change(function() {
-            $('.chk').prop('checked', $(this).prop('checked'));
-        });
-        
-        $('.chk').change(function() {
-            let total = $('.chk').length;
-            let checked = $('.chk:checked').length;
-            $('#chkAll').prop('checked', total === checked);
-        });
-    });
-    // 상세 보기
-    function viewDetail(memberId) {
-        location.href = '${pageContext.request.contextPath}/admin/member/detail?memberId=' + memberId;
-    }
-    </script>
+    
+    
+    <%-- function viewDetail(memberId) {
+        location.href = '${pageContext.request.contextPath}/admin/member/detail?memberId=' + memberId; --%>
+  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/util-jquery.js"></script>

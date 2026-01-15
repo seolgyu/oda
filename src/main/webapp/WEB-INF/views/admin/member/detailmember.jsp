@@ -634,6 +634,10 @@ body {
                         <li class="breadcrumb-item active" aria-current="page">회원 상세</li>
                     </ol>
                 </nav>
+                <button type="button" class="btn btn-secondary" 
+				    onclick="location.href='${pageContext.request.contextPath}/admin/member/list?page=${page}&size=${size}&schType=${schType}&kwd=${kwd}&state=${state}'">
+				    목록으로
+				</button>
 
                 <!-- 회원 프로필 -->
                 <div class="glass-card">
@@ -725,7 +729,7 @@ body {
                                     </tr>
                                     <tr>
                                         <th>이메일</th>
-                                        <td>user001@example.com</td>
+                                        <td>${memberDto.user_email }</td>
                                     </tr>
                                     <tr>
                                         <th>전화번호</th>

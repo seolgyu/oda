@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hs.mapper.admin.MemberMapper;
+import com.hs.model.admin.MainDTO;
 import com.hs.model.admin.MemberDTO;
 import com.hs.mybatis.support.MapperContainer;
 
@@ -31,6 +32,31 @@ public class MemberServiceImpl implements MemberService{
 			e.printStackTrace();
 		}
 		return countDto;
+	}
+	
+	@Override
+	public int updateMemberStatus(Map<String, Object> map) throws Exception {
+	    int result = 0;
+	    
+	    try {
+	        result = mapper.updateMemberStatus(map);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw e;
+	    }
+	    
+	    return result;
+	}
+
+	@Override
+	public MemberDTO memberInfo(Map<String, Object> map) {
+		MemberDTO memberDto = null;
+		try {
+			memberDto = mapper.memberInfo(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return memberDto;
 	}
 
 }

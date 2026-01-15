@@ -8,4 +8,6 @@ import com.hs.model.admin.MemberDTO;
 public interface MemberMapper {
 	public List<MemberDTO> memberList(Map<String, Object> map);
 	public int userCount(Map<String, Object> map);
+	public int updateMemberStatus(Map<String, Object> map);
+	public MemberDTO memberInfo(Map<String, Object> map);
 }

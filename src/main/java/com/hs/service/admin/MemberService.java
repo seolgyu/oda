@@ -8,4 +8,6 @@ import com.hs.model.admin.MemberDTO;
 public interface MemberService {
 	public List<MemberDTO> memberList(Map<String, Object> map);
 	public int  userCount(Map<String, Object> map);
+	public int updateMemberStatus(Map<String, Object> map) throws Exception;
+	public MemberDTO memberInfo(Map<String, Object> map);
 }
