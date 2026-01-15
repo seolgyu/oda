@@ -9,6 +9,9 @@
         <div class="glass-card shadow-lg feed-card rounded-4" onclick="goArticle('${dto.postId}')" style="background: rgba(30, 30, 30, 0.6);">
             <div class="p-2 d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center gap-2">
+                
+                
+                
                     <div class="avatar-md text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden shadow-sm" style="background: linear-gradient(45deg, #a855f7, #6366f1); border-radius: 50%; width: 24px; height: 24px;">
                         <c:choose>
                             <c:when test="${not empty dto.authorProfileImage}">

@@ -191,23 +191,37 @@
 								<div
 									class="p-4 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
 									<div class="d-flex align-items-center gap-3">
+
 										<div
 											class="avatar-md text-white fw-bold d-flex align-items-center justify-content-center"
 											style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(45deg, #a855f7, #6366f1); overflow: hidden;">
 											<c:choose>
 												<c:when test="${not empty memberdto.profile_photo}">
-													<img
-														src="${pageContext.request.contextPath}/uploads/profile/${memberdto.profile_photo}"
-														style="width: 100%; height: 100%; object-fit: cover;">
+													<c:choose>
+														<%-- 1. http로 시작하면(클라우드/소셜) 그대로 출력 --%>
+														<c:when
+															test="${fn:startsWith(memberdto.profile_photo, 'http')}">
+															<img src="${memberdto.profile_photo}"
+																style="width: 100%; height: 100%; object-fit: cover;">
+														</c:when>
+														<%-- 2. 아니면 로컬 업로드 경로 붙여서 출력 --%>
+														<c:otherwise>
+															<img
+																src="${pageContext.request.contextPath}/uploads/profile/${memberdto.profile_photo}"
+																style="width: 100%; height: 100%; object-fit: cover;">
+														</c:otherwise>
+													</c:choose>
 												</c:when>
+												<%-- 3. 프로필 사진 없으면 기본 아이콘 --%>
 												<c:otherwise>
 													<span class="material-symbols-outlined fs-3">person</span>
 												</c:otherwise>
 											</c:choose>
 										</div>
+
 										<div>
 											<h3 class="text-sm fw-medium text-white mb-0">${not empty memberdto.userNickname ? memberdto.userNickname : memberdto.userId}</h3>
-											<p class="text-xs text-gray-500 mb-0">${dto.detailDate}
+											<p class="text-xs text-gray-500 mb-0">${dto.timeAgo}
 												&bull; 조회 ${dto.viewCount}</p>
 										</div>
 									</div>
@@ -325,9 +339,37 @@
 									<h5 class="text-white text-sm fw-bold mb-3">Comments</h5>
 
 									<div class="d-flex gap-2 mb-4 align-items-start">
+
 										<div
-											class="avatar-sm flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle fw-bold text-white"
-											style="width: 32px; height: 32px; background: #333; font-size: 0.8rem;">ME</div>
+											class="avatar-sm flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle fw-bold text-white overflow-hidden"
+											style="width: 32px; height: 32px; background: linear-gradient(45deg, #a855f7, #6366f1); font-size: 0.8rem;">
+
+											<c:choose>
+												<%-- 1. 세션에 프로필 사진(avatar)이 있는 경우 --%>
+												<c:when test="${not empty sessionScope.member.avatar}">
+													<c:choose>
+														<%-- 외부 링크(http)인 경우 --%>
+														<c:when
+															test="${fn:startsWith(sessionScope.member.avatar, 'http')}">
+															<img src="${sessionScope.member.avatar}"
+																style="width: 100%; height: 100%; object-fit: cover;">
+														</c:when>
+														<%-- 내부 파일인 경우 --%>
+														<c:otherwise>
+															<img
+																src="${pageContext.request.contextPath}/uploads/profile/${sessionScope.member.avatar}"
+																style="width: 100%; height: 100%; object-fit: cover;">
+														</c:otherwise>
+													</c:choose>
+												</c:when>
+												<%-- 2. 프로필 사진이 없으면 기본 사람 아이콘 표시 --%>
+												<c:otherwise>
+													<span class="material-symbols-outlined"
+														style="font-size: 1.2rem;">person</span>
+												</c:otherwise>
+											</c:choose>
+										</div>
+
 
 										<div class="flex-grow-1 position-relative">
 											<input type="text" id="replyContent"

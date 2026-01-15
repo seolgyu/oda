@@ -160,8 +160,7 @@
 		(SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND
 		IS_DELETED =
 		'0') AS commentCount,
-		TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD
-		HH24:MI:SS') AS createdDate,
+		TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD HH24:MI:SS') AS createdDate,
 
 		NVL(u.USER_NICKNAME, 'Unknown') AS
 		authorNickname,
@@ -272,8 +271,7 @@
 		c.POST_ID AS postId,
 		c.USER_NUM AS userNum,
 		c.CONTENT AS content,
-		TO_CHAR(c.CREATED_DATE,
-		'YYYY-MM-DD HH24:MI') AS createdDate,
+		TO_CHAR(c.CREATED_DATE, 'YYYY-MM-DD HH24:MI') AS createdDate,
 		c.PARENT_COMMENT_ID AS
 		parentCommentId,
 		c.IS_DELETED AS isDeleted,
