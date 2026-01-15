@@ -35,5 +35,18 @@ public class SettingServiceImpl implements SettingService {
 		return 0;
 	}
 
+	@Override
+	public String getFilePath(Long postId) throws SQLException {
+		String filePath = null;
+		
+		try {
+			filePath = mapper.getFilePath(postId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return filePath;
+	}
+
 
 }

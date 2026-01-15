@@ -10,10 +10,12 @@
         	m.user_nickname AS authorNickname,
         	p.title,
         	p.content,
-        	p.created_date AS createdDate
+        	p.created_date AS createdDate,
+        	f.file_path AS thumbnail
     	FROM likes l
     	LEFT OUTER JOIN posts p ON l.post_id = p.post_id
     	LEFT OUTER JOIN member m ON l.user_num = m.user_num
+    	LEFT OUTER JOIN fileat f ON p.post_id = f.post_id
     	WHERE l.user_num = #{userNum}
     	AND p.is_deleted = '0'
     	ORDER BY l.post_id DESC
@@ -26,6 +28,12 @@
     	LEFT OUTER JOIN posts p ON l.post_id = p.post_id
     	WHERE l.user_num = #{userNum}
     	AND p.is_deleted = '0'
+    </select>
+    
+    <select id="getFilePath" parameterType="Long" resultType="String">
+	    SELECT file_path
+		FROM fileat
+		WHERE post_id = #{postId} AND file_order = 0 
     </select>
 	
 </mapper>

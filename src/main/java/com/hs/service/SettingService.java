@@ -10,4 +10,5 @@ public interface SettingService {
 	
 	public List<PostDTO> listLikedPost(Map<String, Object> map) throws SQLException;
 	public int totalCountLikedPost(Long userNum) throws SQLException;
+	public String getFilePath(Long postId) throws SQLException;
 }

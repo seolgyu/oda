@@ -21,7 +21,7 @@
 					<div class="record-item d-flex align-items-stretch overflow-hidden">
 						<div
 							class="flex-grow-1 d-flex align-items-center gap-3 p-3 cursor-pointer item-content"
-							onclick="location.href='${pageContext.request.contextPath}/post/article/${item.postId}';">
+							onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
 
 							<c:choose>
 								<c:when test="${not empty item.thumbnail}">
@@ -30,9 +30,10 @@
 								</c:when>
 								<c:otherwise>
 									<div
-										class="record-thumbnail rounded-3 d-flex align-items-center justify-content-center bg-white bg-opacity-5">
+										class="record-thumbnail rounded-3 d-flex align-items-center justify-content-center"
+										style="background-color: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(255, 255, 255, 0.2);">
 										<span class="material-symbols-outlined text-white opacity-20"
-											style="font-size: 20px;">article</span>
+											style="font-size: 24px;">image</span>
 									</div>
 								</c:otherwise>
 							</c:choose>
