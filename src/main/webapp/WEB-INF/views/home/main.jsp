@@ -727,6 +727,55 @@ opacity
 						});
 			});
 		}
+		// URL 복사 함수
+		function copyUrl(postId) {
+		    // 1. 복사할 상세 페이지 전체 주소 생성
+		    // window.location.origin : http://localhost:9090 같은 도메인
+		    // contextPath : /oda
+		    const url = window.location.origin + '${pageContext.request.contextPath}/post/article?postId=' + postId;
+
+		    // 2. 클립보드 복사 시도 (최신 브라우저)
+		    if (navigator.clipboard && navigator.clipboard.writeText) {
+		        navigator.clipboard.writeText(url).then(() => {
+		            alert("게시글 주소가 클립보드에 복사되었습니다.\n(Ctrl+V로 붙여넣기 가능)");
+		        }).catch(err => {
+		            // 실패 시 구형 방식 시도
+		            fallbackCopyTextToClipboard(url);
+		        });
+		    } else {
+		        // 구형 브라우저(또는 HTTP 환경) 대응
+		        fallbackCopyTextToClipboard(url);
+		    }
+		}
+
+		// 구형 브라우저용 복사 함수 (임시 textarea 생성 방식)
+		function fallbackCopyTextToClipboard(text) {
+		    const textArea = document.createElement("textarea");
+		    textArea.value = text;
+		    
+		    // 화면 밖으로 숨김
+		    textArea.style.position = "fixed";
+		    textArea.style.left = "-9999px";
+		    document.body.appendChild(textArea);
+		    textArea.focus();
+		    textArea.select();
+
+		    try {
+		        const successful = document.execCommand('copy');
+		        if (successful) {
+		            alert("게시글 주소가 클립보드에 복사되었습니다.\n(Ctrl+V로 붙여넣기 가능)");
+		        } else {
+		            alert("주소 복사에 실패했습니다.");
+		        }
+		    } catch (err) {
+		        alert("주소 복사에 실패했습니다.");
+		    }
+		    document.body.removeChild(textArea);
+		}
+		
 	</script>
+	
+	
+	
 </body>
 </html>
