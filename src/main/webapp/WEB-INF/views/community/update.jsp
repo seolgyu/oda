@@ -73,24 +73,43 @@
                                 </div>
 
                                 <div class="space-y-3">
-                                    <label class="text-sm font-medium text-gray-400 ml-1">커뮤니티 배너 이미지</label>
-                                    <div class="relative h-40 w-full rounded-2xl border-2 border-dashed border-white/10 bg-black/30 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-all group overflow-hidden">
-                                        <div class="z-10 flex flex-col items-center text-center">
-                                            <span class="material-symbols-outlined text-4xl text-gray-500 group-hover:text-primary mb-2 transition-colors">cloud_upload</span>
-                                            <span class="text-sm text-gray-400 font-medium group-hover:text-gray-200">배너를 교체하려면 클릭하세요.</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="flex flex-col md:flex-row gap-8">
-                                    <div class="flex-shrink-0">
-                                        <label class="text-sm font-medium text-gray-400 ml-1 block mb-3">아이콘</label>
-                                        <div class="w-28 h-28 rounded-3xl border-2 border-dashed border-white/10 bg-black/30 flex items-center justify-center cursor-pointer hover:border-primary transition-all relative group overflow-hidden">
-                                            <div class="absolute inset-0 bg-gradient-to-br from-primary to-blue-600 opacity-80"></div>
-                                            <span class="material-symbols-outlined text-white text-3xl z-10 group-hover:scale-110 transition-transform">edit</span>
-                                        </div>
-                                    </div>
-
+								    <label class="text-sm font-medium text-gray-400 ml-1">커뮤니티 배너 이미지</label>
+								    <div class="relative h-48 w-full rounded-2xl border-2 border-dashed border-white/10 bg-black/30 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-all group overflow-hidden"
+								         onclick="$('#banner-input').click();">
+								        
+								        <img id="banner-img-view" 
+								             src="${dto.banner_image}" 
+								             class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${empty dto.banner_image ? 'hidden' : ''}">
+								        
+								        <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+								            <span class="material-symbols-outlined text-white text-4xl mb-2">photo_camera</span>
+								            <span class="text-sm text-white font-medium">배너 교체하기</span>
+								        </div>
+								
+								        <div id="banner-placeholder" class="flex flex-col items-center gap-2 text-gray-500 ${not empty dto.banner_image ? 'hidden' : ''}">
+								            <span class="material-symbols-outlined text-4xl">add_a_photo</span>
+								            <span class="text-xs">배너 이미지를 등록하세요</span>
+								        </div>
+								    </div>
+								    <input type="file" id="banner-input" name="bannerFile" class="hidden" accept="image/*">
+								</div>
+								
+								<div class="flex flex-col md:flex-row gap-8">
+								    <div class="flex-shrink-0">
+								        <label class="text-sm font-medium text-gray-400 ml-1 block mb-3">아이콘</label>
+									    <div class="w-28 h-28 rounded-3xl border-2 border-dashed border-white/10 bg-black/30 flex items-center justify-center cursor-pointer hover:border-primary transition-all relative group overflow-hidden" 
+									         onclick="$('#avatar-input').click();">
+									        
+									        <img id="avatar-img-view" 
+									             src="${dto.icon_image}" 
+									             class="absolute inset-0 w-full h-full object-cover z-0 ${empty dto.icon_image ? 'hidden' : ''}">
+									    
+									        <div id="avatar-gradient" class="absolute inset-0 bg-gradient-to-br from-primary to-blue-600 opacity-80 z-10 group-hover:opacity-60 transition-opacity ${not empty dto.icon_image ? 'hidden' : ''}"></div>
+									        <span class="material-symbols-outlined text-white text-3xl z-20 group-hover:scale-110 transition-transform">edit</span>
+									    </div>
+									    <input type="file" id="avatar-input" name="iconFile" class="hidden" accept="image/*">
+									</div>
+                                    
                                     <div class="flex-1 space-y-6">
                                         <div class="space-y-2">
                                             <label class="text-sm font-medium text-gray-400 ml-1">커뮤니티 이름</label>
@@ -170,6 +189,15 @@
             </div>
         </main>
     </div>
+    
+    <div id="sessionToast" class="glass-toast flex items-center gap-4">
+	    <div class="toast-icon-circle flex-none">
+	        <span id="toastIcon" class="material-symbols-outlined text-[20px]">check_circle</span>
+	    </div>
+	    <div class="flex-1">
+	        <p id="toastMessage" class="toast-msg text-sm font-medium text-white/90 mb-0"></p>
+	    </div>
+	</div>
 
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

@@ -19,8 +19,32 @@ $(function() {
         submitCommunity($(this));
     });
 	
+	$(document).on('mouseenter', '.btn-join-toggle', function() {
+		const isJoined = $(this).attr('data-joined') === "true";
+	    if (isJoined) {
+			$(this).text('탈퇴하기').css('background-color', '#a855f7');
+		} else {
+			$(this).css('background-color', '#9333ea');
+		}
+	}).on('mouseleave', '.btn-join-toggle', function() {
+		const isJoined = $(this).attr('data-joined') === "true";
+	    if (isJoined) {
+			$(this).text('가입됨').css('background-color', '#9333ea');
+		} else {
+			$(this).css('background-color', '#a855f7');
+		}
+	});
+	
 	$('#confirm-modal').on('click', function(e) {
 		if (e.target === this) closeConfirmModal();
+	});
+	
+	$('#banner-input').on('change', function(e) {
+		handleImagePreview(e, '#banner-img-view');
+	});
+
+	$('#avatar-input').on('change', function(e) {
+		handleImagePreview(e, '#avatar-img-view');
 	});
 });
 
@@ -28,7 +52,6 @@ $(function() {
 function initFormState() {
     const dbIsPrivate = $('#db_is_private').val();
     const dbTopicId = $('#db_category_id').val();
-
 
     if (dbIsPrivate !== undefined && dbIsPrivate !== "") {
         $('.privacy-card').each(function() {
@@ -39,7 +62,6 @@ function initFormState() {
             }
         });
     }
-
 
     if (dbTopicId) {
         const selector = ".topic-btn[data-id='" + dbTopicId + "']";
@@ -68,7 +90,7 @@ function checkCommunityName() {
 		}
 	};
 
-    ajaxRequest('checkName', 'GET', { com_name: name, community_id: communityId }, 'json', fn);
+    ajaxRequest('checkName', 'GET', { com_name: com_name, community_id: community_Id }, 'json', fn);
 }
 
 
@@ -83,28 +105,92 @@ function selectPrivacyCard($selectedCard) {
     $selectedCard.find('input[type="radio"]').prop('checked', true);
 }
 
-
 function selectTopic($btn) {
     $('.topic-btn').removeClass('selected');
     $btn.addClass('selected');
     $('#category_id_input, #selectedTopic').val($btn.attr('data-id'));
 }
 
+function handleImagePreview(event, previewId) {
+    const file = event.target.files[0];
+    if (file) {
+        if (!file.type.startsWith('image/')) {
+            showToast("error", "이미지 파일만 업로드 가능합니다.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            $(previewId).attr('src', e.target.result).removeClass('hidden').show();
+            
+            if (previewId === '#banner-img-view') {
+                $('#banner-placeholder').addClass('hidden');
+                $('.edit-btn-style').addClass('opacity-20');
+            }
+            
+            if (previewId === '#avatar-img-view') {
+                $('#avatar-gradient').addClass('hidden');
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function updateImageImmediate(type, action) {
+    if (action === 'delete') {
+        if (!confirm('이미지를 초기화하시겠습니까?')) return;
+        
+        if (type === 'banner') {
+            $('#banner-img-view').addClass('hidden').attr('src', '');
+            $('#banner-placeholder').removeClass('hidden');
+            $('#banner-input').val('');
+            $('input[name="banner_image"]').val(''); 
+        } else if (type === 'avatar') {
+            $('#avatar-img-view').addClass('hidden').attr('src', '');
+            $('#avatar-gradient').removeClass('hidden');
+            $('#avatar-input').val('');
+            $('input[name="icon_image"]').val('');
+        }
+        showToast("info", "이미지가 초기화되었습니다. 저장 버튼을 눌러야 반영됩니다.");
+    }
+}
 
 function submitCommunity($form) {
     const mode = $form.attr('id') === 'updateForm' ? 'update' : 'create';
-    const params = $form.serialize();
-	const fn = 	function(data) {
-		if (data.status === "success") {
-	    	alert(mode === 'update' ? "수정되었습니다." : "생성되었습니다.");
-	            
-	        location.href = "main?community_id=" + (data.community_id || data.dto.community_id);
-		} else {
-	    	alert("처리 실패: " + (data.message || "데이터 확인 후 다시 시도해주세요."));
-		}
-	};
+    let params;
+    let isFile = false;
 
-    ajaxRequest(mode, 'POST', params, 'json', fn);
+    if (mode === 'update') {
+        params = new FormData($form[0]);
+        isFile = true;
+		
+		if ($('#avatar-img-view').hasClass('d-none')) {
+			params.append("isIconDeleted", "true");
+		}
+		if ($('#banner-img-view').hasClass('d-none')) {
+			params.append("isBannerDeleted", "true");
+		}
+		
+    } else {
+        params = $form.serialize();
+        isFile = false;
+    }
+	
+    const fn = function(data) {
+        if (data.status === "success") {
+            const msg = mode === 'update' ? "설정이 성공적으로 저장되었습니다." : "새로운 커뮤니티가 생성되었습니다.";
+            
+            showToast("success", msg);
+            
+            setTimeout(function() {
+                location.href = "main?community_id=" + (data.community_id || data.dto.community_id);
+            }, 1200);
+        } else {
+            showToast("error", data.message || "요청 처리에 실패했습니다.");
+        }
+    };
+
+    ajaxRequest(mode, 'POST', params, 'json', fn, isFile);
 }
 
 function toggleFavorite(button, communityId) {
@@ -113,7 +199,6 @@ function toggleFavorite(button, communityId) {
     const url = "checkFavorite";
     const params = { community_id: communityId };
 
-    // ajaxRequest(url, method, requestParams, responseType, callback)
     ajaxRequest(url, 'POST', params, 'json', function(data) {
         if (data.status === "added") {
             $icon.attr('style', 'color: #facc15 !important; font-variation-settings: "FILL" 1, "wght" 700 !important;');
@@ -121,7 +206,6 @@ function toggleFavorite(button, communityId) {
             $icon.attr('style', 'color: #4b5563 !important; font-variation-settings: "FILL" 0, "wght" 400 !important;');
         }
         
-        // 동기화 함수 호출
         updateFavoriteUI();
     });
 }
@@ -129,21 +213,17 @@ function toggleFavorite(button, communityId) {
 function updateFavoriteUI() {
     const url = "management_fav";
     
-    // HTML 조각을 받아와야 하므로 responseType은 'html'
     ajaxRequest(url, 'GET', {}, 'html', function(html) {
-        // 1. 오른쪽 리스트 갱신
         const $rightList = $('#right-fav-list');
         if ($rightList.length > 0) {
             $rightList.html(html);
         }
 
-        // 2. 사이드바 갱신
         const $sidebarList = $('.sidebar-fav-area');
         if ($sidebarList.length > 0) {
             $sidebarList.html(html);
         }
 
-        // 3. 왼쪽 별 아이콘 색상 동기화
         const favoriteIds = [];
         const $temp = $('<div>').append(html);
         $temp.find('[onclick*="community_id="]').each(function() {
@@ -172,59 +252,103 @@ function updateFavoriteUI() {
     });
 }
 
-function toggleJoin(button, communityId) {
-    const $btn = $(button);
-    // 버튼에 active 클래스가 있으면 이미 가입된 상태
-    const isMember = $btn.hasClass('active');
-    
-    if (isMember) {
-        // 탈퇴 처리
-        if (!confirm("정말 커뮤니티를 탈퇴하시겠습니까?")) return;
-        
-        ajaxRequest('leave', 'POST', { community_id: communityId }, 'json', function(data) {
-            if (data.status === "success") {
-                alert("탈퇴 처리가 완료되었습니다.");
-                location.reload(); // 가입자 수 갱신을 위해 새로고침
-            } else {
-                alert(data.message || "탈퇴 처리 중 오류가 발생했습니다.");
-            }
-        });
-    } else {
-        // 가입 처리
-        if (!confirm("이 커뮤니티에 가입하시겠습니까?")) return;
-        
-        ajaxRequest('join', 'POST', { community_id: communityId }, 'json', function(data) {
-            if (data.status === "success") {
-                alert("성공적으로 가입되었습니다!");
-                location.reload(); // 가입자 수 갱신을 위해 새로고침
-            } else {
-                alert(data.message || "가입 처리 중 오류가 발생했습니다.");
-            }
-        });
-    }
-}
-
-function deleteCommunity(communityId){
-	if (!confirm("정말 이 커뮤니티를 삭제하시겠습니까?")) return;
-	
-	const url = "delete?community_id=" + communityId;
-	
-	location.href = url;
-}
-
-function leaveCommunity(community_id) {
+function openConfirmModal(title, description, confirmText, confirmColor, confirmAction) {
     const $modal = $('#confirm-modal');
+    $modal.find('h3').text(title);
+    $modal.find('p').text(description);
     
-    // 모달 표시
-    $modal.removeClass('hidden');
-    
-    // 확인 버튼에 탈퇴 액션 바인딩
-    $('#modal-confirm-btn').off('click').on('click', function() {
-        location.href = "leave?community_id=" + community_id;
+    const $confirmBtn = $('#modal-confirm-btn');
+    $confirmBtn.text(confirmText).css('background-color', confirmColor);
+
+    $modal.removeClass('hidden').fadeIn(200);
+
+    $confirmBtn.off('click').on('click', function() {
+        confirmAction();
     });
 }
 
-// 2. 모달 닫기
+function toggleJoin(button, communityId) {
+    const $btn = $(button);
+    const isMember = $btn.attr('data-joined') === "true";
+    
+    const title = isMember ? '커뮤니티 탈퇴' : '커뮤니티 가입';
+    const desc = isMember ? '정말로 이 커뮤니티를 탈퇴하시겠습니까?' : '이 커뮤니티에 가입하시겠습니까?';
+    const btnText = isMember ? '탈퇴하기' : '가입하기';
+    
+    const btnColor = '#a855f7'; 
+
+    openConfirmModal(title, desc, btnText, btnColor, function() {
+        const action = isMember ? 'leave' : 'join';
+        $btn.prop('disabled', true);
+
+        ajaxRequest(action, 'POST', { community_id: communityId }, 'json', function(data) {
+            closeConfirmModal();
+            if (data.status === "success") {
+                showToast("success", isMember ? "탈퇴 처리가 완료되었습니다." : "가입을 환영합니다!");
+                
+                $btn.attr('data-joined', isMember ? "false" : "true");
+                
+                setTimeout(() => location.reload(), 1200);
+            } else {
+                $btn.prop('disabled', false);
+                showToast("error", data.message || "처리 중 오류가 발생했습니다.");
+            }
+        });
+    });
+}
+
+function deleteCommunity(communityId) {
+    openConfirmModal(
+        '커뮤니티 삭제', 
+        '삭제된 커뮤니티는 복구할 수 없습니다. 정말 삭제하시겠습니까?', 
+        '삭제하기', 
+        '#ef4444', 
+        function() {
+            location.href = "delete?community_id=" + communityId;
+        }
+    );
+}
+
+function leaveCommunity(communityId) {
+    openConfirmModal(
+        '커뮤니티 탈퇴', 
+        '정말로 이 커뮤니티를 탈퇴하시겠습니까?', 
+        '탈퇴하기', 
+        '#ef4444', 
+        function() {
+            location.href = "leave?community_id=" + communityId;
+        }
+    );
+}
+
 function closeConfirmModal() {
-    $('#confirm-modal').addClass('hidden');
+    $('#confirm-modal').fadeOut(200, function() {
+        $(this).addClass('hidden');
+    });
+}
+
+function showToast(type, msg) {
+    const $toast = $('#sessionToast').length ? $('#sessionToast') : $('.glass-toast');
+    const $msg = $('#toastMessage').length ? $('#toastMessage') : $toast.find('.toast-msg'); 
+    const $icon = $toast.find('.material-symbols-outlined');
+    const $iconCircle = $toast.find('.toast-icon-circle');
+
+    $msg.text(msg);
+
+    if (type === "success") {
+        $icon.text('check_circle');
+        $iconCircle.css('background', 'linear-gradient(to top right, #22c55e, #10b981)');
+    } else if (type === "error") {
+        $icon.text('error');
+        $iconCircle.css('background', 'linear-gradient(to top right, #ef4444, #f43f5e)');
+    } else if (type === "info") {
+        $icon.text('info');
+        $iconCircle.css('background', 'linear-gradient(to top right, #a855f7, #6366f1)');
+    }
+
+    $toast.addClass('show');
+
+    setTimeout(function() {
+        $toast.removeClass('show');
+    }, 2500);
 }

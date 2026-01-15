@@ -1,5 +1,6 @@
 package com.hs.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -15,11 +16,13 @@ import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
 import com.hs.service.CommunityService;
 import com.hs.service.CommunityServiceImpl;
+import com.hs.util.CloudinaryUtil;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
 
 @Controller
 @RequestMapping("/community/*")
@@ -155,19 +158,37 @@ public class CommunityController {
 	public Map<String, Object> updateSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
 		Map<String, Object> map = new HashMap<String, Object>();
 		
+		String root = req.getServletContext().getRealPath("/");
+	    String tempPath = root + "temp" + File.separator + "community";
+	    
+	    File tempDir = new File(tempPath);
+	    if (!tempDir.exists()) tempDir.mkdirs();
+		
 		try {
 			String com_id = req.getParameter("community_id");
 	        String com_name = req.getParameter("com_name");
 	        String description = req.getParameter("com_description");
 	        String is_private = req.getParameter("is_private");
 	        String topic_id = req.getParameter("category_id");
-	        String icon = req.getParameter("icon_image");
-	        String banner = req.getParameter("banner_image");
 	        
-	        if(com_name == null || com_name.trim().isEmpty() || description == null || description.trim().isEmpty()) {
-	            map.put("status", "fail");
-	            map.put("message", "모든 필드를 입력해주세요.");
-	            return map;
+	        String isIconDeleted = req.getParameter("isIconDeleted");
+	        String isBannerDeleted = req.getParameter("isBannerDeleted");
+	        
+	        String iconUrl = req.getParameter("icon_image");
+	        String bannerUrl = req.getParameter("banner_image");
+	        
+	        Part iconPart = req.getPart("iconFile");
+	        if ("true".equals(isIconDeleted)) {
+	            iconUrl = null;
+	        } else if (iconPart != null && iconPart.getSize() > 0) {
+	            iconUrl = processCloudinaryUpload(iconPart, tempPath);
+	        }
+
+	        Part bannerPart = req.getPart("bannerFile");
+	        if ("true".equals(isBannerDeleted)) {
+	            bannerUrl = null;
+	        } else if (bannerPart != null && bannerPart.getSize() > 0) {
+	            bannerUrl = processCloudinaryUpload(bannerPart, tempPath);
 	        }
 
 	        CommunityDTO dto = new CommunityDTO();
@@ -176,8 +197,8 @@ public class CommunityController {
 	        dto.setCom_description(description);
 	        dto.setIs_private("private".equals(is_private) ? "1" : "0");
 	        dto.setCategory_id(Long.parseLong(topic_id));
-	        dto.setIcon_image(icon); 
-	        dto.setBanner_image(banner);
+	        dto.setIcon_image(iconUrl); 
+	        dto.setBanner_image(bannerUrl);
 	        
 	        cservice.updateCommunity(dto);
 
@@ -192,6 +213,25 @@ public class CommunityController {
 		
 		return map;
 	}
+	
+    private String processCloudinaryUpload(Part part, String tempPath) throws IOException {
+        String originalFileName = part.getSubmittedFileName();
+        
+        if (originalFileName == null || originalFileName.trim().isEmpty()) {
+            return null;
+        }
+
+        File tempFile = new File(tempPath, originalFileName);
+        part.write(tempFile.getAbsolutePath());
+
+        String uploadedUrl = CloudinaryUtil.uploadFile(tempFile);
+
+        if (tempFile.exists()) {
+            tempFile.delete();
+        }
+
+        return uploadedUrl;
+    }
 	
 	@GetMapping("delete")
 	public ModelAndView delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

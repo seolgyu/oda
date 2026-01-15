@@ -10,8 +10,7 @@
 	
 	<update id="updateCommunity" parameterType="com.hs.model.CommunityDTO">
 		UPDATE community SET com_name = #{com_name}, com_description = #{com_description}, is_private = #{is_private}, 
-			<if test="icon_image != null">icon_image = #{icon_image, jdbcType=VARCHAR},</if> 
-			<if test="banner_image != null">banner_image = #{banner_image, jdbcType=VARCHAR},</if> category_id = #{category_id} 
+			icon_image = #{icon_image, jdbcType=VARCHAR}, banner_image = #{banner_image, jdbcType=VARCHAR}, category_id = #{category_id} 
 		WHERE community_id = #{community_id}
 	</update>
 	

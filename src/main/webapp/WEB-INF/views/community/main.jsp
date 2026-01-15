@@ -29,14 +29,40 @@
                     
                     <div class="w-100 mb-4" style="max-width: 1100px;">
                         <div class="glass-card overflow-hidden shadow-lg border-0" style="border-radius: 1rem !important;">
-                            <div style="height: 220px; background: linear-gradient(to right, #1e1b4b, #4338ca, #1e1b4b); position: relative;">
-                                <div class="position-absolute w-100 h-100" style="background: url('https://www.transparenttextures.com/patterns/stardust.png'); opacity: 0.3;"></div>
-                            </div>
+                        	<div class="position-relative overflow-hidden"
+								style="height: 220px;">
+								<c:choose>
+									<c:when test="${not empty dto.banner_image}">
+										<img
+											src="${dto.banner_image}"
+											class="w-100 h-100 object-fit-cover" alt="Banner">
+									</c:when>
+									<c:otherwise>
+										<div class="w-100 h-100"
+											style="background: linear-gradient(to right, #1e1b4b, #4338ca, #1e1b4b); position: relative;">
+											<div class="position-absolute w-100 h-100"
+												style="background: url('https://www.transparenttextures.com/patterns/stardust.png'); opacity: 0.3;"></div>
+										</div>
+									</c:otherwise>
+								</c:choose>
+								<div class="position-absolute bottom-0 start-0 w-100"
+									style="height: 40%; background: linear-gradient(to top, rgba(13, 14, 18, 0.3), transparent); pointer-events: none;">
+								</div>
+							</div>
                             <div class="px-4 pb-4 pt-4 position-relative" style="background: rgba(13, 14, 18, 0.85); backdrop-filter: blur(10px);">
                                 <div class="d-flex align-items-end gap-3">
                                     <div class="rounded-4 border border-4 border-dark shadow-lg d-flex align-items-center justify-content-center text-white fw-bold fs-1" 
-                                         style="width: 120px; height: 120px; background: linear-gradient(135deg, #6366f1, #a855f7); margin-top: -60px; position: relative; z-index: 2;">
-                                        S
+                                         style="width: 120px; height: 120px; background: linear-gradient(135deg, #6366f1, #a855f7); margin-top: -60px; position: relative; z-index: 2; overflow: hidden;">
+                                        <c:choose>
+											<c:when test="${not empty dto.icon_image}">
+												<img
+													src="${dto.icon_image}"
+													class="w-100 h-100 object-fit-cover" alt="Profile">
+											</c:when>
+											<c:otherwise>
+            									${fn:substring(dto.com_name, 0, 1)}
+        									</c:otherwise>
+										</c:choose>
                                     </div>
                                     <div class="pb-2">
                                         <h1 class="text-white fs-2 fw-bold mb-1">${dto.com_name}</h1>
@@ -45,28 +71,32 @@
                                     <div class="ms-auto pb-2 d-flex gap-2">
                                     
                                         <c:choose>
-                                        	<c:when test="${sessionScope.member.memberIdx == dto.user_num}">
-										        <button class="btn btn-info rounded-pill px-4 fw-bold shadow-sm text-white">
+										    <c:when test="${sessionScope.member.memberIdx == dto.user_num}">
+										        <button class="btn rounded-pill px-4 fw-bold shadow-sm text-white"
+										                style="background-color: #9333ea; border: none; transition: all 0.2s;"
+										                onclick="location.href='${pageContext.request.contextPath}/community/management'">
 										            내 커뮤니티
 										        </button>
 										    </c:when>
 										    
-									        <c:when test="${dto.is_follow == 1}">
-									            <button class="btn btn-outline-light rounded-pill px-4 fw-bold shadow-sm btn-membership active" 
-									                    onclick="toggleJoin(this, '${dto.community_id}')"
-									                    onmouseover="this.innerText='탈퇴하기'; this.classList.add('btn-outline-danger'); this.classList.remove('btn-outline-light')"
-									                    onmouseout="this.innerText='가입됨'; this.classList.remove('btn-outline-danger'); this.classList.add('btn-outline-light')">
-									                가입됨
-									            </button>
-									        </c:when>
-									        
-									        <c:otherwise>
-									            <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm btn-membership" 
-									                    onclick="toggleJoin(this, '${dto.community_id}')">
-									                가입하기
-									            </button>
-									        </c:otherwise>
-									    </c:choose>
+										    <c:when test="${dto.is_follow == 1}">
+										        <button type="button" class="btn btn-join-toggle rounded-pill px-4 fw-bold shadow-sm text-white" 
+										                onclick="toggleJoin(this, '${dto.community_id}')"
+										                data-joined="true"
+										                style="width: 110px; background-color: #9333ea; border: none; transition: all 0.2s;">
+										            가입됨
+										        </button>
+										    </c:when>
+										    
+										    <c:otherwise>
+										        <button type="button" class="btn btn-join-toggle rounded-pill px-4 fw-bold shadow-sm text-white" 
+										                onclick="toggleJoin(this, '${dto.community_id}')"
+										                data-joined="false"
+										                style="width: 110px; background-color: #a855f7; border: none; transition: all 0.2s;">
+										            가입하기
+										        </button>
+										    </c:otherwise>
+										</c:choose>
 									    
                                         <button class="btn-icon border border-white border-opacity-10 rounded-circle p-2">
                                             <span class="material-symbols-outlined text-white">notifications</span>
@@ -222,11 +252,23 @@
 								    </div>
 								</div>
 						
-						        <button class="btn btn-primary w-100 rounded-pill fw-bold py-2 mb-3" style="background: #2563eb; border: none;">게시글 쓰기</button>
+						        <button class="btn w-100 rounded-pill fw-bold py-2 mb-3 text-white" 
+								        style="background: linear-gradient(135deg, #a855f7, #9333ea); border: none; transition: transform 0.2s, box-shadow 0.2s;"
+								        onclick=""
+								        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(168, 85, 247, 0.4)';"
+								        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+								    게시글 쓰기
+								</button>
 						        
 						        <c:if test="${sessionScope.member.memberIdx == dto.user_num}">
 								    <div class="text-center pt-2 border-top border-white border-opacity-10">
-								        <span class="text-primary text-xs fw-bold" style="cursor: pointer;" onclick="location.href='${pageContext.request.contextPath}/community/update?community_id=${dto.community_id}';">커뮤니티 설정</span>
+								        <span class="text-xs fw-bold" 
+								              style="cursor: pointer; color: #a855f7; transition: color 0.2s;" 
+								              onclick="location.href='${pageContext.request.contextPath}/community/update?community_id=${dto.community_id}';"
+								              onmouseover="this.style.color='#c084fc'; this.style.textDecoration='underline';"
+								              onmouseout="this.style.color='#a855f7'; this.style.textDecoration='none';">
+								            커뮤니티 설정
+								        </span>
 								    </div>
 								</c:if>
 						        

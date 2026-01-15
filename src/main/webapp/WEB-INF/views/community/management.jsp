@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -44,8 +45,8 @@
                                     <c:when test="${not empty allList}">
                                         <c:forEach var="dto" items="${allList}">
                                             <div class="p-6 flex items-center justify-between border-b border-white/5 hover:bg-white/[0.02] transition-all group">
-                                                <div class="flex items-center space-x-4">
-                                                    <button class="btn-favorite p-2 transition-all active:scale-90" 
+                                                <div class="flex items-center space-x-4 flex-1 min-w-0">
+                                                    <button class="btn-favorite p-2 transition-all active:scale-90 shrink-0" 
 													        onclick="toggleFavorite(this, '${dto.community_id}')">
 													    <span class="material-symbols-outlined text-2xl transition-all ${dto.is_favorite == 1 ? 'text-yellow-400' : 'text-gray-600'}"
 														      style="font-variation-settings: 'FILL' ${dto.is_favorite == 1 ? 1 : 0}, 'wght' 700 !important; 
@@ -59,14 +60,18 @@
                                                             <c:when test="${not empty dto.icon_image}">
                                                                 <img src="${dto.icon_image}" class="w-full h-full object-cover">
                                                             </c:when>
-                                                            <c:otherwise><span class="font-bold text-xl">r/</span></c:otherwise>
+                                                            <c:otherwise>
+                                                            	<span class="font-bold text-xl">
+                                                            		${fn:substring(dto.com_name, 0, 1)}
+                                                            	</span>
+                                                            </c:otherwise>
                                                         </c:choose>
                                                     </div>
-                                                    <div>
-                                                        <h3 class="text-lg font-bold text-gray-100 group-hover:text-primary transition-colors cursor-pointer" 
-                                                            onclick="location.href='main?community_id=${dto.community_id}';">
-                                                            ${dto.com_name}
-                                                        </h3>
+                                                    <div class="min-w-0 flex-1"> 
+													    <h3 class="text-lg font-bold text-gray-100 group-hover:text-primary transition-colors cursor-pointer truncate" 
+													        onclick="location.href='main?community_id=${dto.community_id}';">
+													        ${dto.com_name}
+													    </h3>
                                                         <p class="text-sm text-gray-400 mt-1 truncate max-w-[180px] md:max-w-[250px]">${dto.com_description}</p>
                                                     </div>
                                                 </div>
@@ -100,7 +105,7 @@
 
                         <div class="w-full lg:w-80 space-y-6">
                             <div class="neon-card rounded-[2rem] p-8">
-                                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6 border-b border-white/5 pb-3">즐겨찾기</h3>
+                                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6 border-b border-white/5 pb-3">즐겨찾기 한 커뮤니티</h3>
                                 <div id="right-fav-list" class="space-y-5">
                                     <jsp:include page="/WEB-INF/views/community/management_fav.jsp" />
                                 </div>
