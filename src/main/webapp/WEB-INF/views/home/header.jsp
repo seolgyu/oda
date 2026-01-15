@@ -6,8 +6,16 @@
 <header class="app-header">
 	<a href="${pageContext.request.contextPath}/" class="brand-logo">ODA</a>
 
-	<div class="flex-grow-1 d-flex justify-content-center px-4">
-		<input type="text" class="search-bar" placeholder="Search ODA...">
+	<div
+		class="flex-grow-1 d-flex justify-content-center px-4 position-relative">
+		<input type="text" id="totalSearchInput" class="search-bar"
+			placeholder="Search ODA..."
+			onkeyup="if(window.event.keyCode==13){searchOda()}">
+
+		<button type="button" onclick="searchOda()"
+			class="btn btn-link p-0 position-absolute end-0 top-50 translate-middle-y me-5 text-white-50 text-decoration-none">
+			<span class="material-symbols-outlined">search</span>
+		</button>
 	</div>
 
 	<div class="d-flex align-items-center gap-2">
@@ -50,8 +58,7 @@
 						style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; position: relative; background: #6366f1; border: 1px solid rgba(255, 255, 255, 0.2);">
 						<c:choose>
 							<c:when test="${not empty sessionScope.member.avatar}">
-								<img
-									src="${sessionScope.member.avatar}"
+								<img src="${sessionScope.member.avatar}"
 									class="w-100 h-100 object-fit-cover" alt="Profile">
 							</c:when>
 							<c:otherwise>
@@ -81,4 +88,24 @@
 			</div>
 		</c:if>
 	</div>
+
+	<script>
+		function searchOda() {
+			// 1. 입력값 가져오기
+			const input = document.getElementById("totalSearchInput");
+			const keyword = input.value.trim(); // 공백 제거
+
+			// 2. 유효성 검사 (공백이면 알림)
+			if (!keyword) {
+				alert("검색어를 입력해주세요.");
+				input.focus();
+				return;
+			}
+
+			// 3. 메인 페이지로 키워드와 함께 이동
+			// (PostController와 main.jsp가 이 'keyword' 파라미터를 받아서 처리합니다)
+			location.href = "${pageContext.request.contextPath}/main?keyword="
+					+ encodeURIComponent(keyword);
+		}
+	</script>
 </header>

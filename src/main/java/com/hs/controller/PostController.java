@@ -558,6 +558,9 @@ public class PostController {
         String view = req.getParameter("view");
         if (view == null || view.isEmpty()) view = "card";
         
+        String keyword = req.getParameter("keyword");
+        if (keyword == null) keyword = "";
+        
         int page = 1;
         String pageStr = req.getParameter("page");
         
@@ -577,6 +580,7 @@ public class PostController {
         map.put("userNum", userNum);
         map.put("offset", offset);
         map.put("size", size);
+        map.put("keyword", keyword);
         
         List<PostDTO> list = service.listPostMain(map);
         

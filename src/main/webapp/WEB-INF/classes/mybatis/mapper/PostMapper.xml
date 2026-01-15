@@ -147,70 +147,74 @@
 		</collection>
 	</resultMap>
 
-	<select id="listPostMain" parameterType="map"
-		resultMap="postMap">
-		SELECT
-		p.POST_ID AS postId,
-		p.USER_NUM AS userNum,
-		p.TITLE AS title,
-		p.CONTENT AS content,
-		p.VIEW_COUNT AS viewCount,
-		p.LIKE_COUNT AS
-		likeCount,
-		(SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND
-		IS_DELETED =
-		'0') AS commentCount,
-		TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD HH24:MI:SS') AS createdDate,
+	<select id="listPostMain" parameterType="map" resultMap="postMap">
+        SELECT
+            p.POST_ID AS postId,
+            p.USER_NUM AS userNum,
+            p.TITLE AS title,
+            p.CONTENT AS content,
+            p.VIEW_COUNT AS viewCount,
+            p.LIKE_COUNT AS likeCount,
+            (SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED = '0') AS commentCount,
+            TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD HH24:MI:SS') AS createdDate,
 
-		NVL(u.USER_NICKNAME, 'Unknown') AS
-		authorNickname,
-		u.USER_PROFILE AS authorProfileImage,
+            NVL(u.USER_NICKNAME, 'Unknown') AS authorNickname,
+            u.USER_PROFILE AS authorProfileImage,
 
-		NVL((SELECT
-		COUNT(*) FROM LIKES WHERE POST_ID = p.POST_ID AND USER_NUM =
-		#{userNum}), 0) AS likedByUser,
+            NVL((SELECT COUNT(*) FROM LIKES WHERE POST_ID = p.POST_ID AND USER_NUM = #{userNum}), 0) AS likedByUser,
 
-		f.FILE_AT_ID AS fileAtId,
-		f.FILE_PATH AS
-		filePath,
-		f.FILE_ORDER AS fileOrder
+            f.FILE_AT_ID AS fileAtId,
+            f.FILE_PATH AS filePath,
+            f.FILE_ORDER AS fileOrder
 
-		FROM (
-		SELECT P_SUB.* FROM POSTS
-		P_SUB
-		WHERE P_SUB.IS_DELETED = '0'
-		<choose>
-			<when test="sort == 'likes'">
-				ORDER BY P_SUB.LIKE_COUNT DESC, P_SUB.POST_ID DESC
-			</when>
-			<when test="sort == 'views'">
-				ORDER BY P_SUB.VIEW_COUNT DESC, P_SUB.POST_ID DESC
-			</when>
-			<otherwise>
-				ORDER BY P_SUB.POST_ID DESC
-			</otherwise>
-		</choose>
-		OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
-		) p
-		LEFT JOIN MEMBER
-		u ON p.USER_NUM = u.USER_NUM
-		LEFT JOIN FILEAT f ON p.POST_ID =
-		f.POST_ID
+        FROM (
+            SELECT P_SUB.* FROM POSTS P_SUB
+            WHERE P_SUB.IS_DELETED = '0'
+            
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    INSTR(P_SUB.TITLE, #{keyword}) &gt; 0 
+                    OR 
+                    INSTR(P_SUB.CONTENT, #{keyword}) &gt; 0
+                    OR
+                    EXISTS (
+                        SELECT 1 FROM COMMENTS c 
+                        WHERE c.POST_ID = P_SUB.POST_ID 
+                          AND c.IS_DELETED = '0' 
+                          AND INSTR(c.CONTENT, #{keyword}) &gt; 0
+                    )
+                )
+            </if>
 
-		<choose>
-			<when test="sort == 'likes'">
-				ORDER BY p.LIKE_COUNT DESC, p.POST_ID DESC,
-				NVL(f.FILE_ORDER, 0) ASC
-			</when>
-			<when test="sort == 'views'">
-				ORDER BY p.VIEW_COUNT DESC, p.POST_ID DESC,
-				NVL(f.FILE_ORDER, 0) ASC
-			</when>
-			<otherwise>
-				ORDER BY p.POST_ID DESC, NVL(f.FILE_ORDER, 0) ASC
-			</otherwise>
-		</choose>
-	</select>
+            <choose>
+                <when test="sort == 'likes'">
+                    ORDER BY P_SUB.LIKE_COUNT DESC, P_SUB.POST_ID DESC
+                </when>
+                <when test="sort == 'views'">
+                    ORDER BY P_SUB.VIEW_COUNT DESC, P_SUB.POST_ID DESC
+                </when>
+                <otherwise>
+                    ORDER BY P_SUB.POST_ID DESC
+                </otherwise>
+            </choose>
+            
+            OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+        ) p
+        LEFT JOIN MEMBER u ON p.USER_NUM = u.USER_NUM
+        LEFT JOIN FILEAT f ON p.POST_ID = f.POST_ID
+
+        <choose>
+            <when test="sort == 'likes'">
+                ORDER BY p.LIKE_COUNT DESC, p.POST_ID DESC, NVL(f.FILE_ORDER, 0) ASC
+            </when>
+            <when test="sort == 'views'">
+                ORDER BY p.VIEW_COUNT DESC, p.POST_ID DESC, NVL(f.FILE_ORDER, 0) ASC
+            </when>
+            <otherwise>
+                ORDER BY p.POST_ID DESC, NVL(f.FILE_ORDER, 0) ASC
+            </otherwise>
+        </choose>
+    </select>
 
 	<insert id="insertPostLike" parameterType="map">
 		INSERT INTO LIKES

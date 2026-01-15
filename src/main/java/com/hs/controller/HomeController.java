@@ -28,16 +28,15 @@ public class HomeController {
 		
 		ModelAndView mav = new ModelAndView("home/main");
 		
-		// 1. 요청 파라미터 받기
-		String sort = req.getParameter("sort");
-		if (sort == null || sort.isEmpty()) {
-			sort = "latest"; 
-		}
+		// 1. 기존 파라미터 받기 (sort, view 등)
+	    String sort = req.getParameter("sort");
+	    if (sort == null || sort.isEmpty()) sort = "latest";
+	    
+	    String view = req.getParameter("view");
+	    if (view == null || view.isEmpty()) view = "card";
 		
-		String view = req.getParameter("view");
-		if (view == null || view.isEmpty()) {
-			view = "card"; 
-		}
+		String keyword = req.getParameter("keyword");
+	    if (keyword == null) keyword = ""; 
 
 		// PostController와 동일하게 카드형은 10개, 축약형은 15개로 설정
 		int size = "compact".equals(view) ? 15 : 10;
@@ -48,6 +47,7 @@ public class HomeController {
 		map.put("sort", sort);
 		map.put("offset", offset);
 		map.put("size", size);   
+		map.put("keyword", keyword);
 		
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo) session.getAttribute("member");
@@ -65,6 +65,7 @@ public class HomeController {
 		mav.addObject("list", list);         
 		mav.addObject("sort", sort);         
 		mav.addObject("viewMode", view);     
+		mav.addObject("keyword", keyword);
 		
 		return mav;
 	}

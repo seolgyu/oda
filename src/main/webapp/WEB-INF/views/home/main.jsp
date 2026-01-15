@@ -591,7 +591,17 @@ opacity
 		const urlParams = new URLSearchParams(window.location.search);
 		const currentSort = urlParams.get('sort') || 'latest';
 		const currentView = urlParams.get('view') || 'card';
-
+		const currentKeyword = urlParams.get('keyword') || '';
+		
+		$(document).ready(function() {
+	        if(currentKeyword) {
+	            $("#totalSearchInput").val(currentKeyword);
+	        }
+	        
+	        // 캐러셀 버튼 초기화
+	        initCarouselButtons();
+	    });
+		
 		const observerOptions = {
 			root : null, 
 			rootMargin : '0px',
@@ -617,8 +627,7 @@ opacity
 
 		
 		function loadMorePosts() {
-			if (isFinished)
-				return; 
+			if (isFinished) return; 
 
 			console.log("무한 스크롤 요청 시작: Page " + (currentPage + 1));
 
@@ -630,9 +639,10 @@ opacity
 			$.ajax({ 	url : '${pageContext.request.contextPath}/post/listPostAjax',
 					 	type : 'GET',
 						data : {
-						page : currentPage,
-						sort : currentSort,
-						view : currentView
+							page : currentPage,
+							sort : currentSort,
+							view : currentView,
+							keyword : currentKeyword
 						},
 
 						success : function(data) {
