@@ -85,6 +85,40 @@
 		WHERE p.is_deleted = '0'
 		ORDER BY p.post_id DESC
 	</select>
+	
+	<select id="listUserPost" parameterType="map"
+		resultType="com.hs.model.PostDTO">
+		SELECT
+		p.post_id AS postId,
+		p.user_num AS userNum,
+		p.community_id AS communityId,
+		p.title,
+		p.content,
+		p.post_type AS
+		postType,
+		p.view_count AS viewCount,
+		p.like_count AS likeCount,
+		(SELECT
+		COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED =
+		'0')
+		AS commentCount,
+		p.created_date AS createdDate,
+		p.updated_date AS
+		updatedDate,
+		p.state,
+		p.reply_enabled AS replyEnabled,
+		p.show_counts AS
+		showCounts,
+		u.user_nickname AS authorNickname,
+		u.user_profile AS
+		authorProfileImage
+		FROM posts p
+		JOIN member u ON p.user_num = u.user_num
+		WHERE p.user_num = #{userNum}
+		AND p.is_deleted = '0'
+		ORDER BY p.post_id DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
 
 	<insert id="insertFileAt" parameterType="com.hs.model.FileAtDTO">
 		INSERT INTO FILEAT (

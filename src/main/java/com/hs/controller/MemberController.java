@@ -2,11 +2,13 @@ package com.hs.controller;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.hs.mail.Mail;
 import com.hs.mail.MailSender;
 import com.hs.model.MemberDTO;
+import com.hs.model.PostDTO;
 import com.hs.model.SessionInfo;
 import com.hs.mvc.annotation.Controller;
 import com.hs.mvc.annotation.GetMapping;
@@ -16,6 +18,8 @@ import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
 import com.hs.service.MemberService;
 import com.hs.service.MemberServiceImpl;
+import com.hs.service.PostService;
+import com.hs.service.PostServiceImpl;
 import com.hs.util.MyUtil;
 
 import jakarta.servlet.ServletException;
@@ -27,6 +31,7 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/member/*")
 public class MemberController {
 	private MemberService service = new MemberServiceImpl();
+	private PostService postService = new PostServiceImpl();
 
 	// @RequestMapping(value = "login", method = RequestMethod.GET)
 	@GetMapping("login")
@@ -488,22 +493,35 @@ public class MemberController {
 
 	@GetMapping("page")
 	public ModelAndView page(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-	    String userId = req.getParameter("id");
-	    
-	    if (userId == null || userId.trim().isEmpty()) {
-	        return new ModelAndView("redirect:/");
-	    }
+		HttpSession session = req.getSession();
 
 	    try {
+	    	SessionInfo info = (SessionInfo)session.getAttribute("member");
+	    	Long loginUserNum = (info != null) ? info.getMemberIdx() : 0L;
+	    	String userId = req.getParameter("id");
+	    	
+	    	if (userId == null || userId.trim().isEmpty()) {
+	    		return new ModelAndView("redirect:/");
+	    	}
+	    	
 	        MemberDTO dto = service.findById(userId);
 
 	        if (dto == null) {
 	            return new ModelAndView("redirect:/");
 	            // return new ModelAndView("redirect:/member/noAuthorized");
 	        }
+	        
+	        Map<String, Object> map = new HashMap<String, Object>();
+	        map.put("loginUserNum", loginUserNum);
+	        map.put("userNum", dto.getUserIdx());
+	        map.put("offset", 0);
+	        map.put("size", 5);
 
+	        List<PostDTO> list = postService.listUserPost(map);
+	        
 	        ModelAndView mav = new ModelAndView("member/page"); // userPage.jsp로 이동
 	        mav.addObject("user", dto);
+	        mav.addObject("post", list);
 	        return mav;
 
 	    } catch (Exception e) {

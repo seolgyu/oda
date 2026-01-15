@@ -1,5 +1,6 @@
 package com.hs.service;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -284,5 +285,21 @@ public class PostServiceImpl implements PostService {
             throw e;
         }
     }
+
+	@Override
+	public List<PostDTO> listUserPost(Map<String, Object> map) throws SQLException {
+		List<PostDTO> list = null;
+		try {
+			list = mapper.listUserPost(map);
+			for(PostDTO item : list) {
+				item.setLikedByUser(isLiked(item.getPostId(), (Long)map.get("loginUserNum")));
+				List<FileAtDTO> files = mapper.listFileAt(item.getPostId());
+				item.setFileList(files);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
 }

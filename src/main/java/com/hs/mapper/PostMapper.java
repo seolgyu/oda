@@ -1,5 +1,6 @@
 package com.hs.mapper;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ public interface PostMapper {
 	public void deletePost(long postId) throws Exception;
 	public PostDTO findById(long postId);
 	public List<PostDTO> listPost();
+	public List<PostDTO> listUserPost(Map<String, Object> map) throws SQLException;
 	public void insertFileAt(FileAtDTO fileDto) throws Exception;
 	public void updateHitCount(long postId) throws Exception;
 	public List<FileAtDTO> listFileAt(long postId);
