@@ -86,7 +86,7 @@ function renderMyPost(item) {
                             ${images.map((path, idx) => `
                                 <div class="carousel-item ${idx === 0 ? 'active' : ''}">
                                     <div class="ratio ratio-16x9">
-                                        <img src="${window.cp}${path}" class="d-block w-100 object-fit-cover" alt="Post Image">
+                                        <img src="${path}" class="d-block w-100 object-fit-cover" alt="Post Image">
                                     </div>
                                 </div>
                             `).join('')}
@@ -104,7 +104,7 @@ function renderMyPost(item) {
                 <div class="p-3 pt-0">
                     <div class="post-carousel">
                         <div class="ratio ratio-16x9">
-                            <img src="${window.cp}${images[0]}" class="d-block w-100 object-fit-cover" alt="Post Image">
+                            <img src="${images[0]}" class="d-block w-100 object-fit-cover" alt="Post Image">
                         </div>
                     </div>
                 </div>`;
@@ -118,7 +118,7 @@ function renderMyPost(item) {
                     <div class="avatar-md bg-info text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden" 
                          style="width:40px; height:40px; border-radius:10px; background: linear-gradient(135deg, #6366f1, #a855f7);">
                         ${item.authorProfileImage 
-                            ? `<img src="${window.cp}${item.authorProfileImage}" class="w-100 h-100 object-fit-cover">` 
+                            ? `<img src="${item.authorProfileImage}" class="w-100 h-100 object-fit-cover">` 
                             : (item.authorNickname ? item.authorNickname.substring(0, 1) : 'U')}
                     </div>
                     <div>
@@ -136,16 +136,18 @@ function renderMyPost(item) {
 
             ${mediaHtml}
 
-            <div class="px-3 py-2 d-flex align-items-center justify-content-between border-top border-white border-opacity-10" 
+            <div class="px-3 py-2 d-flex align-items-center justify-content-between border-top border-white border-opacity-10"
                  style="background: rgba(255, 255, 255, 0.05);">
-                
+
                 <div class="d-flex gap-4">
-                    <button class="btn-icon d-flex align-items-center gap-1">
-                        <span class="material-symbols-outlined fs-5 ${item.likedByUser ? 'text-danger' : ''}" 
-                              style="font-variation-settings: 'FILL' ${item.likedByUser ? 1 : 0};">favorite</span>
-                        <span class="text-xs opacity-75">${item.likeCount || 0}</span>
-                    </button>
-                    <button class="btn-icon d-flex align-items-center gap-1">
+					<button class="btn-icon d-flex align-items-center gap-1"
+						onclick="toggleLike(this, '${item.postId}')">
+							<span
+								class="material-symbols-outlined fs-5 ${item.likedByUser ? 'text-danger' : ''}"
+								style="font-variation-settings: 'FILL' ${item.likedByUser ? 1 : 0};">
+								favorite </span> <span class="text-xs opacity-75 like-count">${item.likeCount}</span>
+					</button>
+                    <button class="btn-icon d-flex align-items-center gap-1" onclick="location.href='${window.cp}/post/article?postId=${item.postId}';">
                         <span class="material-symbols-outlined fs-5">chat_bubble</span>
                         <span class="text-xs opacity-75">${item.commentCount || 0}</span>
                     </button>
@@ -160,4 +162,31 @@ function renderMyPost(item) {
             </div>
         </div>
     `;
+}
+
+function showToast(type, msg) {
+	const $toast = $('#sessionToast');
+	const $title = $('#toastTitle');
+	const $icon = $('#toastIcon');
+
+	$('#toastMessage').text(msg);
+
+	if (type === "success") {
+		$title.text('SUCCESS').css('color', '#4ade80');
+		$icon.text('check_circle');
+	}
+	else if (type === "info") {
+		$title.text('INFO').css('color', '#8B5CF6');
+		$icon.text('info');
+	}
+	else if (type === "error") {
+		$title.text('ERROR').css('color', '#f87171');
+		$icon.text('error');
+	}
+
+	$toast.addClass('show');
+
+	setTimeout(function() {
+		$toast.removeClass('show');
+	}, 2500);
 }

@@ -521,6 +521,9 @@ public class SettingController {
 	        
 			postService.insertPostLike(postId, userNum);
 			
+			int likeCount = postService.countPostLike(postId);
+			
+			model.put("likeCount", likeCount);
 			model.put("status", "success");
 			
 		} catch (Exception e) {
@@ -562,4 +565,44 @@ public class SettingController {
     	
         return model;
     }
+    
+    @PostMapping("loadMyPosts")
+    @ResponseBody
+    public Map<String, Object> loadMyPosts(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	HttpSession session = req.getSession();
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	
+    	try {
+	    	SessionInfo info = (SessionInfo) session.getAttribute("member");
+	    	Long loginUserNum = (info != null) ? info.getMemberIdx() : 0L;
+	    	
+	    	if (info == null) {
+	    		model.put("status", "error");
+	    		return model;
+	    	}
+	    	
+	    	int pageNo = Integer.parseInt(req.getParameter("page"));
+	    	String userId = req.getParameter("userId");
+	    	
+	    	MemberDTO dto = service.findById(userId);
+	    	
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("loginUserNum", loginUserNum);
+	        map.put("userNum", dto.getUserIdx());
+	        map.put("offset", (pageNo - 1) * 5);
+	        map.put("size", 5);
+	        
+	        List<PostDTO> list = postService.listUserPost(map);
+	        
+	       model.put("user", dto);
+	       model.put("list", list);
+	       model.put("status", "success");
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    		model.put("status", "error");
+    	}
+    	
+        return model;
+    }
+    
 }

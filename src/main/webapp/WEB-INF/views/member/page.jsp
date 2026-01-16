@@ -124,6 +124,19 @@
 				<div class="planet planet-1"></div>
 				<div class="planet planet-2"></div>
 			</div>
+			
+			<div id="sessionToast" class="glass-toast shadow-lg">
+				<div class="d-flex align-items-center gap-3">
+					<div class="toast-icon-circle">
+						<span id="toastIcon" class="material-symbols-outlined fs-5">info</span>
+					</div>
+					<div class="toast-content">
+						<h4 id="toastTitle"
+							class="text-xs fw-bold text-uppercase tracking-widest mb-1">System</h4>
+						<p id="toastMessage" class="text-sm text-gray-300 mb-0">메시지</p>
+					</div>
+				</div>
+			</div>
 
 			<div class="feed-scroll-container custom-scrollbar">
 				<div class="d-flex flex-column align-items-center py-4 px-3">
@@ -236,8 +249,7 @@
 													style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #a855f7);">
 													<c:choose>
 														<c:when test="${not empty item.authorProfileImage}">
-															<img
-																src="${item.authorProfileImage}"
+															<img src="${item.authorProfileImage}"
 																class="w-100 h-100 object-fit-cover">
 														</c:when>
 														<c:otherwise>
@@ -285,8 +297,7 @@
 																	<div
 																		class="carousel-item ${status.first ? 'active' : ''}">
 																		<div class="ratio ratio-16x9">
-																			<img
-																				src="${file.filePath}"
+																			<img src="${file.filePath}"
 																				class="d-block w-100 object-fit-cover">
 																		</div>
 																	</div>
@@ -308,8 +319,7 @@
 													<c:otherwise>
 														<div class="post-carousel">
 															<div class="ratio ratio-16x9">
-																<img
-																	src="${item.fileList[0].filePath}"
+																<img src="${item.fileList[0].filePath}"
 																	class="d-block w-100 object-fit-cover">
 															</div>
 														</div>
@@ -322,13 +332,15 @@
 											class="px-3 py-2 d-flex align-items-center justify-content-between border-top border-white border-opacity-10"
 											style="background: rgba(255, 255, 255, 0.05);">
 											<div class="d-flex gap-4">
-												<button class="btn-icon d-flex align-items-center gap-1">
+												<button class="btn-icon d-flex align-items-center gap-1"
+													onclick="toggleLike(this, '${item.postId}')">
 													<span
 														class="material-symbols-outlined fs-5 ${item.likedByUser ? 'text-danger' : ''}"
-														style="font-variation-settings: 'FILL' ${item.likedByUser ? 1 : 0};">favorite</span>
-													<span class="text-xs opacity-75">${item.likeCount}</span>
+														style="font-variation-settings: 'FILL' ${item.likedByUser ? 1 : 0};">
+														favorite </span> <span class="text-xs opacity-75 like-count">${item.likeCount}</span>
 												</button>
-												<button class="btn-icon d-flex align-items-center gap-1">
+												<button class="btn-icon d-flex align-items-center gap-1"
+													onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
 													<span class="material-symbols-outlined fs-5">chat_bubble</span>
 													<span class="text-xs opacity-75">${item.commentCount}</span>
 												</button>
@@ -462,6 +474,50 @@
 							});
 
 				});
+		
+		function toggleLike(btn, postId) {
+		    if ($(btn).data('loading')) return;
+		    $(btn).data('loading', true);
+		    
+		    const $btn = $(btn);
+		    const $icon = $btn.find('.material-symbols-outlined');
+		    const $countSpan = $btn.find('.like-count');
+		    
+		    const isLiked = $icon.hasClass('text-danger');
+		    
+		    $.ajax({
+		        type: "POST",
+		        url: '${pageContext.request.contextPath}/member/settings/toggleLike',
+		        data: { postId: postId },
+		        dataType: "json",
+		        success: function(data) {
+		            if (data.status === 'success') {
+		                if (isLiked) {
+		                    $icon.css('font-variation-settings', "'FILL' 0");
+		                    $icon.removeClass('text-danger');
+		                    showToast("success", "좋아요를 취소했습니다.");
+		                } else {
+		                    $icon.css('font-variation-settings', "'FILL' 1");
+		                    $icon.addClass('text-danger');
+		                    showToast("success", "좋아요를 눌렀습니다.");
+		                }
+
+		                if (data.likeCount !== undefined) {
+		                    $countSpan.text(data.likeCount);
+		                }
+		            } else {
+		                showToast("error", "좋아요 처리에 실패했습니다.");
+		            }
+		        },
+		        error: function(xhr) {
+		            showToast("error", "서버 통신 에러.");
+		            console.error(xhr.responseText);
+		        },
+		        complete: function() {
+		            $btn.data('loading', false);
+		        }
+		    });
+		}
 	</script>
 </body>
 </html>
