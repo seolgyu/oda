@@ -239,7 +239,6 @@ public class memberManageController {
 		
 		try {
 			String user_id = req.getParameter("user_id");
-			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
