@@ -121,18 +121,20 @@
 }
 
 #post-list-container.list-mode .card-view-item {
-    display: none !important;
+	display: none !important;
 }
+
 #post-list-container.list-mode .list-view-item {
-    display: flex !important;
+	display: flex !important;
 }
 
 /* (추가) 카드 모드일 때 신규 생성된 리스트형 제어 */
 #post-list-container:not(.list-mode) .list-view-item {
-    display: none !important;
+	display: none !important;
 }
+
 #post-list-container:not(.list-mode) .card-view-item {
-    display: block !important;
+	display: block !important;
 }
 
 /* (수정) 리스트 모드일 때 개별 카드 스타일 */
@@ -404,9 +406,7 @@
 																<img src="${item.authorProfileImage}"
 																	class="w-100 h-100 object-fit-cover">
 															</c:when>
-															<c:otherwise>
-                                    ${fn:substring(item.authorNickname, 0, 1)}
-                                </c:otherwise>
+															<c:otherwise>${fn:substring(item.authorNickname, 0, 1)}</c:otherwise>
 														</c:choose>
 													</div>
 													<div>
@@ -430,11 +430,45 @@
 											<c:if test="${not empty item.fileList}">
 												<div class="p-3 pt-0">
 													<c:choose>
+														<%-- 이미지가 여러 장인 경우: 캐러셀 --%>
 														<c:when test="${item.fileList.size() > 1}">
 															<div id="carousel-${item.postId}"
 																class="carousel slide post-carousel"
-																data-bs-ride="false"></div>
+																data-bs-ride="false">
+																<div class="carousel-indicators">
+																	<c:forEach var="file" items="${item.fileList}"
+																		varStatus="status">
+																		<button type="button"
+																			data-bs-target="#carousel-${item.postId}"
+																			data-bs-slide-to="${status.index}"
+																			class="${status.first ? 'active' : ''}"></button>
+																	</c:forEach>
+																</div>
+																<div class="carousel-inner">
+																	<c:forEach var="file" items="${item.fileList}"
+																		varStatus="status">
+																		<div
+																			class="carousel-item ${status.first ? 'active' : ''}">
+																			<div class="ratio ratio-16x9">
+																				<img src="${file.filePath}"
+																					class="d-block w-100 object-fit-cover">
+																			</div>
+																		</div>
+																	</c:forEach>
+																</div>
+																<button class="carousel-control-prev" type="button"
+																	data-bs-target="#carousel-${item.postId}"
+																	data-bs-slide="prev">
+																	<span class="material-symbols-outlined fs-4">chevron_left</span>
+																</button>
+																<button class="carousel-control-next" type="button"
+																	data-bs-target="#carousel-${item.postId}"
+																	data-bs-slide="next">
+																	<span class="material-symbols-outlined fs-4">chevron_right</span>
+																</button>
+															</div>
 														</c:when>
+														<%-- 이미지가 한 장인 경우 --%>
 														<c:otherwise>
 															<div class="post-carousel">
 																<div class="ratio ratio-16x9">
@@ -462,6 +496,20 @@
 														onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
 														<span class="material-symbols-outlined fs-5">chat_bubble</span>
 														<span class="text-xs opacity-75">${item.commentCount}</span>
+													</button>
+													<button class="btn-icon">
+														<span class="material-symbols-outlined fs-5">repeat</span>
+													</button>
+												</div>
+												<div class="d-flex gap-3 text-white-50">
+													<button class="btn-icon" title="공유하기">
+														<span class="material-symbols-outlined fs-5">share</span>
+													</button>
+													<button class="btn-icon" title="저장하기">
+														<span class="material-symbols-outlined fs-5">bookmark</span>
+													</button>
+													<button class="btn-icon" title="신고하기">
+														<span class="material-symbols-outlined fs-5">report</span>
 													</button>
 												</div>
 											</div>

@@ -110,6 +110,7 @@
 		p.show_counts AS
 		showCounts,
 		u.user_nickname AS authorNickname,
+		u.user_id AS authorId,
 		u.user_profile AS
 		authorProfileImage
 		FROM posts p
