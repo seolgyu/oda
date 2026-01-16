@@ -17,7 +17,8 @@ public class PostDTO {
 	private String updatedDate;
 	private String state;
 	private String replyEnabled;
-	private String showCounts;
+	private String showLikes;
+	private String showViews;
 	private List<FileAtDTO> fileList;
 	private String thumbnail;
 	private boolean likedByUser;
@@ -25,9 +26,9 @@ public class PostDTO {
 	private String authorNickname;
 	private String authorId;
 	private String authorProfileImage;
-	
+
 	private List<ReplyDTO> replyList;
-	
+
 	public Long getPostId() {
 		return postId;
 	}
@@ -156,14 +157,6 @@ public class PostDTO {
 		this.replyEnabled = replyEnabled;
 	}
 
-	public String getShowCounts() {
-		return showCounts;
-	}
-
-	public void setShowCounts(String showCounts) {
-		this.showCounts = showCounts;
-	}
-
 	public List<FileAtDTO> getFileList() {
 		return fileList;
 	}
@@ -212,6 +205,22 @@ public class PostDTO {
 
 	public void setReplyList(List<ReplyDTO> replyList) {
 		this.replyList = replyList;
+	}
+	
+	public String getShowLikes() {
+		return showLikes;
+	}
+
+	public void setShowLikes(String showLikes) {
+		this.showLikes = showLikes;
+	}
+
+	public String getShowViews() {
+		return showViews;
+	}
+
+	public void setShowViews(String showViews) {
+		this.showViews = showViews;
 	}
 
 }

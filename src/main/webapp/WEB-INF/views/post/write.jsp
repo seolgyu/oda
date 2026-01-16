@@ -108,18 +108,32 @@
                                               placeholder="내용을 입력하세요">${dto.content}</textarea>
                                 </div>
 
-                                <div class="mb-3 d-flex gap-4 p-2 rounded-3" style="background: rgba(0,0,0,0.2);">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="chkReply" id="chkReply" value="0"
-                                               ${mode == 'update' && dto.replyEnabled == '0' ? 'checked' : ''}>
-                                        <label class="form-check-label" for="chkReply">댓글 비허용</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="chkCounts" id="chkCounts" value="0"
-                                               ${mode == 'update' && dto.showCounts == '0' ? 'checked' : ''}>
-                                        <label class="form-check-label" for="chkCounts">카운트 숨김</label>
-                                    </div>
-                                </div>
+                                <div class="mb-3 d-flex flex-wrap gap-4 p-3 rounded-3" style="background: rgba(0,0,0,0.2);">
+    
+								    <div class="form-check">
+								        <input class="form-check-input" type="checkbox" name="chkReply" id="chkReply" value="0"
+								               ${mode == 'update' && dto.replyEnabled == '0' ? 'checked' : ''}>
+								        <label class="form-check-label" for="chkReply">댓글 비허용</label>
+								    </div>
+								
+								    <div class="form-check">
+								        <input class="form-check-input" type="checkbox" name="chkLikes" id="chkLikes" value="0"
+								               ${mode == 'update' && dto.showLikes == '0' ? 'checked' : ''}>
+								        <label class="form-check-label" for="chkLikes">좋아요 숨김</label>
+								    </div>
+								
+								    <div class="form-check">
+								        <input class="form-check-input" type="checkbox" name="chkViews" id="chkViews" value="0"
+								               ${mode == 'update' && dto.showViews == '0' ? 'checked' : ''}>
+								        <label class="form-check-label" for="chkViews">조회수 숨김</label>
+								    </div>
+								
+								    <div class="form-check ms-auto">
+								        <input class="form-check-input" type="checkbox" name="chkPrivate" id="chkPrivate" value="true"
+								               ${mode == 'update' && dto.state == '나만보기' ? 'checked' : ''}>
+								        <label class="form-check-label text-warning fw-bold" for="chkPrivate">🔒 나만 보기</label>
+								    </div>
+								</div>
 
                                 <div class="mb-3">
                                     <label class="form-label text-white-50 small text-uppercase fw-bold mb-1">Images</label>

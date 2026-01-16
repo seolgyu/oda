@@ -6,7 +6,7 @@
 		INSERT INTO posts (
 		post_id, user_num, community_id, title, content,
 		post_type, is_deleted, created_date, state,
-		reply_enabled, show_counts
+		reply_enabled, show_likes, show_views
 		)
 		VALUES (
 		posts_seq.NEXTVAL, #{userNum}, #{communityId,
@@ -14,7 +14,7 @@
 		#{title}, #{content}, #{postType},
 		'0', SYSTIMESTAMP,
 		#{state},
-		#{replyEnabled}, #{showCounts} )
+		#{replyEnabled}, #{showLikes}, #{showViews} )
 		<selectKey keyProperty="postId" resultType="long"
 			order="AFTER">
 			SELECT posts_seq.CURRVAL FROM DUAL
@@ -27,7 +27,7 @@
 		#{title}, content = #{content},
 		updated_date = SYSTIMESTAMP, state =
 		#{state},
-		reply_enabled = #{replyEnabled}, show_counts = #{showCounts}
+		reply_enabled = #{replyEnabled}, show_likes = #{showLikes}, show_views = #{showViews}
 		WHERE post_id = #{postId} AND user_num = #{userNum}
 	</update>
 
@@ -57,8 +57,8 @@
 		updatedDate,
 		p.state,
 		p.reply_enabled AS replyEnabled,
-		p.show_counts AS
-		showCounts,
+		p.show_likes AS showLikes,
+		p.show_views AS showViews,
 		u.user_nickname AS authorNickname,
 		u.user_profile AS
 		authorProfileImage
@@ -107,8 +107,8 @@
 		updatedDate,
 		p.state,
 		p.reply_enabled AS replyEnabled,
-		p.show_counts AS
-		showCounts,
+		p.show_likes AS showLikes,
+		p.show_views AS showViews,
 		u.user_nickname AS authorNickname,
 		u.user_id AS authorId,
 		u.user_profile AS
@@ -171,11 +171,13 @@
 		<result property="commentCount" column="commentCount" />
 		<result property="createdDate" column="createdDate" />
 		<result property="authorNickname" column="authorNickname" />
-		<result property="authorProfileImage"
-			column="authorProfileImage" />
+		<result property="authorProfileImage" column="authorProfileImage" />
 		<result property="likedByUser" column="likedByUser" />
-		<collection property="fileList"
-			ofType="com.hs.model.FileAtDTO">
+		<result property="showLikes" column="showLikes" />
+    	<result property="showViews" column="showViews" />
+   		<result property="state" column="state" />
+		
+		<collection property="fileList" ofType="com.hs.model.FileAtDTO">
 			<id property="fileAtId" column="fileAtId" />
 			<result property="filePath" column="filePath" />
 			<result property="fileOrder" column="fileOrder" />
@@ -192,6 +194,9 @@
             p.LIKE_COUNT AS likeCount,
             (SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED = '0') AS commentCount,
             TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD HH24:MI:SS') AS createdDate,
+            p.SHOW_LIKES AS showLikes,
+            p.SHOW_VIEWS AS showViews,
+            p.STATE AS state,
 
             NVL(u.USER_NICKNAME, 'Unknown') AS authorNickname,
             u.USER_PROFILE AS authorProfileImage,
@@ -206,6 +211,12 @@
             SELECT P_SUB.* FROM POSTS P_SUB
             WHERE P_SUB.IS_DELETED = '0'
             
+            AND (
+                P_SUB.STATE = '정상' 
+                OR 
+                (P_SUB.STATE = '나만보기' AND P_SUB.USER_NUM = #{userNum})
+            )
+
             <if test="keyword != null and keyword != ''">
                 AND (
                     INSTR(P_SUB.TITLE, #{keyword}) &gt; 0 
