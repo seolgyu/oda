@@ -290,8 +290,8 @@
 
 					<div class="d-flex gap-4 w-100" style="max-width: 1100px;">
 
-						<div class="flex-grow-1 d-flex flex-column gap-4"
-							style="min-width: 0;">
+						<div class="flex-column gap-4"
+							style="width: 730px; min-width: 730px; flex-shrink: 0; display: flex;">
 
 							<div
 								class="glass-panel px-3 py-2 d-flex align-items-center justify-content-between shadow-sm">
@@ -520,75 +520,167 @@
 
 							<div id="sentinel" style="height: 50px;"></div>
 						</div>
-						<aside class="d-none d-xl-flex flex-column gap-4"
-							style="width: 320px; flex-shrink: 0;">
+						<aside class="d-none d-xl-flex flex-column gap-2"
+							style="width: 320px; flex-shrink: 0; position: sticky; top: 100px;">
+
 							<div class="glass-card p-4 shadow-lg">
 								<h3
-									class="text-white text-xs fw-bold text-uppercase tracking-widest mb-3 opacity-75">About
-									Community</h3>
+									class="text-white text-xs fw-bold text-uppercase tracking-widest mb-3 opacity-75">User
+									Activity</h3>
 
-								<div class="d-flex align-items-center gap-3 mb-3">
-									<div
-										class="rounded-circle overflow-hidden border border-white border-opacity-10 shadow-sm"
-										style="width: 50px; height: 50px; background: linear-gradient(135deg, #e11d48, #4c1d95);">
+								<div class="p-3 rounded-4 mb-4"
+									style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(139, 92, 246, 0.2);">
+									<div class="text-center mb-3">
+										<p class="text-secondary mb-1"
+											style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">Total
+											Contributions</p>
 										<div
-											class="w-100 h-100 d-flex align-items-center justify-content-center text-white">
-											<span class="material-symbols-outlined">flare</span>
+											class="d-flex align-items-center justify-content-center gap-2">
+											<h2 id="contribution-count" class="text-white fw-bold mb-0"
+												style="font-size: 2.5rem; letter-spacing: -1px;">0</h2>
+											<span class="material-symbols-outlined text-primary"
+												style="font-size: 28px; filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.5));">
+												rocket_launch </span>
 										</div>
 									</div>
-									<h4 class="text-white text-sm fw-bold mb-0">r/Stargazers</h4>
-								</div>
-
-								<p class="text-secondary text-xs lh-relaxed mb-4">A
-									community for amateur astronomers, astrophotographers, and
-									space enthusiasts.</p>
-
-								<div
-									class="d-flex gap-4 mb-4 pt-3 border-top border-white border-opacity-10">
-									<div class="d-flex flex-column">
-										<span class="text-white text-sm fw-bold">14.2k</span> <span
-											class="text-secondary" style="font-size: 10px;">Members</span>
-									</div>
-									<div class="d-flex flex-column">
-										<div class="d-flex align-items-center gap-1">
-											<span class="material-symbols-outlined text-info"
-												style="font-size: 12px;">visibility</span> <span
-												class="text-white text-sm fw-bold">8.5k</span>
+									<div
+										class="d-flex border-top border-white border-opacity-10 pt-3">
+										<div
+											class="flex-fill text-center border-end border-white border-opacity-10">
+											<span class="text-secondary" style="font-size: 11px;">Posts</span>
+											<span class="text-white fw-bold ms-1"
+												style="font-size: 12px;">12</span>
 										</div>
-										<span class="text-secondary" style="font-size: 10px;">Visitors</span>
+										<div class="flex-fill text-center">
+											<span class="text-secondary" style="font-size: 11px;">Comments</span>
+											<span class="text-white fw-bold ms-1"
+												style="font-size: 12px;">48</span>
+										</div>
 									</div>
 								</div>
 
-								<div class="d-flex flex-column gap-2 mb-4">
-									<div class="d-flex align-items-center gap-2 text-secondary">
-										<span class="material-symbols-outlined"
-											style="font-size: 18px;">cake</span> <span
-											style="font-size: 0.85rem;">Created Sep 20, 2021</span>
+								<div class="d-flex flex-column gap-3 pt-2">
+									<div class="d-flex align-items-center gap-3">
+										<div
+											class="d-flex align-items-center justify-content-center rounded-3 bg-white bg-opacity-10"
+											style="width: 36px; height: 36px;">
+											<span class="material-symbols-outlined text-info fs-5">mail</span>
+										</div>
+										<div class="overflow-hidden">
+											<p class="text-secondary mb-0" style="font-size: 10px;">Email
+												Address</p>
+											<p class="text-white text-sm mb-0 text-truncate">stargazer@oda.com</p>
+										</div>
 									</div>
-									<div class="d-flex align-items-center gap-2 text-secondary">
-										<span class="material-symbols-outlined"
-											style="font-size: 18px;">public</span> <span
-											style="font-size: 0.85rem;">Public Access</span>
+									<div class="d-flex align-items-center gap-3">
+										<div
+											class="d-flex align-items-center justify-content-center rounded-3 bg-white bg-opacity-10"
+											style="width: 36px; height: 36px;">
+											<span class="material-symbols-outlined text-success fs-5">calendar_today</span>
+										</div>
+										<div>
+											<p class="text-secondary mb-0" style="font-size: 10px;">Mission
+												Start</p>
+											<p class="text-white text-sm mb-0">Joined Jan 20, 2024</p>
+										</div>
 									</div>
-								</div>
-
-								<button
-									class="btn btn-primary w-100 rounded-pill fw-bold py-2 mb-3"
-									style="background: #2563eb; border: none;">Create Post</button>
-
-								<div
-									class="text-center pt-2 border-top border-white border-opacity-10">
-									<span class="text-primary text-xs fw-bold"
-										style="cursor: pointer;"
-										onclick="location.href='${pageContext.request.contextPath}/community/update';">COMMUNITY
-										OPTIONS</span>
 								</div>
 							</div>
+
+							<div class="glass-card p-4 shadow-lg">
+								<h3
+									class="text-white text-xs fw-bold text-uppercase tracking-widest mb-3 opacity-75">Honor
+									Badges</h3>
+								<div class="d-flex flex-wrap gap-3">
+									<div
+										class="rounded-circle d-flex align-items-center justify-content-center shadow-lg"
+										style="width: 52px; height: 52px; background: radial-gradient(circle, #4338ca, #1e1b4b); border: 2px solid #6366f1; transition: transform 0.2s; cursor: pointer;"
+										onmouseover="this.style.transform='scale(1.1)'; showBadgePreview(event, '정예 탐사대원', '10개 이상의 행성(게시글)을 탐사한 개척자에게 수여됩니다.')"
+										onmousemove="moveBadgePreview(event)"
+										onmouseout="this.style.transform='scale(1)'; hideBadgePreview()">
+										<span class="material-symbols-outlined text-white"
+											style="font-size: 24px;">flare</span>
+									</div>
+
+									<div
+										class="rounded-circle d-flex align-items-center justify-content-center shadow-lg"
+										style="width: 52px; height: 52px; background: radial-gradient(circle, #b45309, #451a03); border: 2px solid #f59e0b; transition: transform 0.2s; cursor: pointer;"
+										onmouseover="this.style.transform='scale(1.1)'; showBadgePreview(event, '데이터 분석가', '심오한 우주의 지식(댓글)을 50회 이상 공유한 분석가입니다.')"
+										onmousemove="moveBadgePreview(event)"
+										onmouseout="this.style.transform='scale(1)'; hideBadgePreview()">
+										<span class="material-symbols-outlined text-white"
+											style="font-size: 24px;">visibility</span>
+									</div>
+
+									<div
+										class="rounded-circle d-flex align-items-center justify-content-center shadow-lg"
+										style="width: 52px; height: 52px; background: radial-gradient(circle, #be185d, #500724); border: 2px solid #ec4899; transition: transform 0.2s; cursor: pointer;"
+										onmouseover="this.style.transform='scale(1.1)'; showBadgePreview(event, '일류 통신가', '다양한 함대(커뮤니티)와 활발히 교신중인 통신 전문가입니다.')"
+										onmousemove="moveBadgePreview(event)"
+										onmouseout="this.style.transform='scale(1)'; hideBadgePreview()">
+										<span class="material-symbols-outlined text-white"
+											style="font-size: 24px;">forum</span>
+									</div>
+
+									<div
+										class="rounded-circle d-flex align-items-center justify-content-center opacity-25"
+										style="width: 52px; height: 52px; background: #27272a; border: 2px dashed #52525b;">
+										<span class="material-symbols-outlined text-white"
+											style="font-size: 20px;">lock</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="glass-card p-4 shadow-lg">
+								<div
+									class="d-flex align-items-center justify-content-between mb-4">
+									<h3
+										class="text-white text-xs fw-bold text-uppercase tracking-widest mb-0 opacity-75">Joined
+										Fleets</h3>
+									<span class="text-secondary" style="font-size: 10px;">3
+										Active</span>
+								</div>
+
+								<div class="d-flex flex-column gap-4">
+									<div
+										class="d-flex align-items-center justify-content-between cursor-pointer"
+										style="cursor: pointer;">
+										<div class="d-flex align-items-center gap-3">
+											<div class="rounded-circle shadow-sm"
+												style="width: 42px; height: 42px; background: linear-gradient(135deg, #e11d48, #4c1d95); border: 2px solid rgba(255, 255, 255, 0.1);"></div>
+											<div>
+												<p class="text-white fw-bold mb-0"
+													style="font-size: 0.9rem;">r/Stargazers</p>
+												<p class="text-secondary mb-0" style="font-size: 10px;">14.2k
+													explorers</p>
+											</div>
+										</div>
+										<span class="material-symbols-outlined text-white-50 fs-5">arrow_forward</span>
+									</div>
+								</div>
+
+								<div
+									class="text-center pt-4 border-top border-white border-opacity-10 mt-4">
+									<a href="#"
+										class="text-primary text-xs fw-bold text-decoration-none opacity-75">EXPLORE
+										ALL FLEETS</a>
+								</div>
+							</div>
+
 						</aside>
 					</div>
 				</div>
 			</div>
 		</main>
+	</div>
+
+	<div id="badge-preview-card"
+		class="glass-card p-3 shadow-lg position-absolute d-none"
+		style="z-index: 9999; width: 220px; border: 1px solid rgba(255, 255, 255, 0.2); pointer-events: none; transition: opacity 0.2s ease;">
+		<h5 id="preview-title" class="text-white text-sm fw-bold mb-1"
+			style="color: #a855f7 !important;"></h5>
+		<p id="preview-desc" class="text-secondary mb-0"
+			style="font-size: 11px; line-height: 1.5;"></p>
 	</div>
 
 	<script type="text/javascript">
@@ -603,6 +695,32 @@
 	<script src="${pageContext.request.contextPath}/dist/js/mypage.js"></script>
 
 	<script type="text/javascript">
+	
+	function animateValue(obj, start, end, duration) {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            
+            // ⭐ 핵심: Ease-Out 곡선 적용 (점점 느려지게 함)
+            // progress가 1에 가까워질수록 증가폭이 줄어듭니다.
+            const easeOutProgress = 1 - Math.pow(1 - progress, 3);
+            
+            obj.innerHTML = Math.floor(easeOutProgress * (end - start) + start);
+            
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const counterEl = document.getElementById('contribution-count');
+        // 더미 데이터 60을 목표값으로 전달
+        animateValue(counterEl, 0, 60, 2000); // 2초(2000ms) 동안 작동
+    });
+	
 		function toggleLike(btn, postId) {
 			if ($(btn).data('loading'))
 				return;
@@ -696,6 +814,56 @@
 								// 여기에 포스트 필터링(Ajax 등) 로직을 추가하시면 됩니다.
 							});
 				});
+		
+		function showBadgePreview(e, title, desc) {
+		    const card = document.getElementById('badge-preview-card');
+		    if(!card) return; // 요소 확인
+
+		    const titleEl = document.getElementById('preview-title');
+		    const descEl = document.getElementById('preview-desc');
+
+		    titleEl.innerText = title;
+		    descEl.innerText = desc;
+		    
+		    card.classList.remove('d-none');
+		    
+		    // 즉시 위치 이동을 위해 한번 실행
+		    moveBadgePreview(e);
+		    
+		    // 페이드 인 효과
+		    setTimeout(() => { card.style.opacity = '1'; }, 10);
+		}
+
+		function moveBadgePreview(e) {
+		    const card = document.getElementById('badge-preview-card');
+		    if(!card) return;
+
+		    // fixed 포지션이므로 clientX, clientY를 사용합니다.
+		    const mouseX = e.clientX;
+		    const mouseY = e.clientY;
+
+		    // 툴팁이 화면 오른쪽 끝에서 잘리지 않도록 검사하는 로직 추가
+		    let left = mouseX + 20;
+		    let top = mouseY + 20;
+
+		    // 툴팁 너비(220px)를 고려하여 화면 우측 끝을 넘어가면 왼쪽으로 표시
+		    if (left + 220 > window.innerWidth) {
+		        left = mouseX - 230;
+		    }
+
+		    card.style.left = left + 'px';
+		    card.style.top = top + 'px';
+		}
+
+		function hideBadgePreview() {
+		    const card = document.getElementById('badge-preview-card');
+		    if(!card) return;
+		    
+		    card.style.opacity = '0';
+		    setTimeout(() => { 
+		        if(card.style.opacity === '0') card.classList.add('d-none'); 
+		    }, 200);
+		}
 	</script>
 </body>
 </html>
