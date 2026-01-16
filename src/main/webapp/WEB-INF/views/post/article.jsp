@@ -341,8 +341,8 @@
 											<span class="material-symbols-outlined fs-5">bookmark_border</span>
 										</button>
 										<button
-											class="btn btn-link text-decoration-none text-white-50 p-0 hover-purple">
-											<span class="material-symbols-outlined fs-5">share</span>
+   											class="btn btn-link text-decoration-none text-white-50 p-0 hover-purple"
+    										onclick="copyUrl('${dto.postId}');"> <span class="material-symbols-outlined fs-5">share</span>
 										</button>
 									</div>
 								</div>
@@ -537,7 +537,7 @@
 			const content = contentObj.val().trim();
 
 			if (!content) {
-				alert("답글 내용을 입력하세요.");
+				alert("댓글 내용을 입력하세요.");
 				contentObj.focus();
 				return;
 			}
@@ -553,9 +553,9 @@
 				success : function(data) {
 					if (data.trim() === "success") {
 						listReply();
-						showToast("success", "답글이 등록되었습니다.");
+						showToast("success", "댓글이 등록되었습니다.");
 					} else {
-						showToast("error", "답글 등록 실패.");
+						showToast("error", "댓글 등록 실패.");
 					}
 				}
 			});
