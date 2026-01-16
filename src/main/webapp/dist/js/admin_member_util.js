@@ -83,7 +83,7 @@ function viewDetail(userId) {
     }
     
     location.href = url;
-}
+};
 
 // ==========================================
 // 일괄 처리 함수들 (전역 스코프)

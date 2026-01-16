@@ -605,6 +605,16 @@ body {
         width: 120px;
     }
 }
+
+.btn-action-success {
+    background-color: transparent;
+    border-color: var(--success-color);
+    color: var(--success-color);
+}
+
+.btn-action-success:hover {
+    background-color: rgba(16, 185, 129, 0.1);
+}
 </style>
 </head>
 <body class="bg-background-dark text-white">
@@ -634,25 +644,55 @@ body {
                         <li class="breadcrumb-item active" aria-current="page">회원 상세</li>
                     </ol>
                 </nav>
-                <button type="button" class="btn btn-secondary" 
-				    onclick="location.href='${pageContext.request.contextPath}/admin/member/list?page=${page}&size=${size}&schType=${schType}&kwd=${kwd}&state=${state}'">
-				    목록으로
-				</button>
-
                 <!-- 회원 프로필 -->
                 <div class="glass-card">
                     <div class="member-profile">
-                        <div class="member-avatar-large">김</div>
+                        <div class="member-avatar-large">
+						    <c:choose>
+						        <c:when test="${not empty memberDto.user_profile}">
+						            <img src="${memberDto.user_profile}" style="width: 100%; height: 100%; object-fit: cover;">
+						        </c:when>
+						        <c:otherwise>
+						            ${fn:substring(memberDto.user_nickname, 0, 1)}
+						        </c:otherwise>
+						    </c:choose>
+						</div>
                         <div class="member-profile-info">
-                            <div class="member-profile-name">김철수</div>
-                            <div class="member-profile-id">@user001</div>
+                            <div class="member-profile-name">${memberDto.user_nickname}</div>
+                            <div class="member-profile-id">${memberDto.user_email }</div>
                             <div class="member-profile-badges">
+                            <c:if test="${memberDto.user_status == '에러'}">
+                                <span class="status-badge suspended">
+                                    <span class="status-dot"></span>
+                                    ${memberDto.user_status}
+                                </span>
+                            </c:if>
+                            <c:if test="${memberDto.user_status == '정상'}">
                                 <span class="status-badge active">
                                     <span class="status-dot"></span>
-                                    활성
+                                    ${memberDto.user_status}
                                 </span>
+                            </c:if>
+                            <c:if test="${memberDto.user_status == '신고'}">
+                                <span class="status-badge suspended">
+                                    <span class="status-dot"></span>
+                                    ${memberDto.user_status}
+                                </span>
+                            </c:if>
+                            <c:if test="${memberDto.user_status == '휴면'}">
+                                <span class="status-badge dormant">
+                                    <span class="status-dot"></span>
+                                    ${memberDto.user_status}
+                                </span>
+                            </c:if>
+                            <c:if test="${memberDto.user_status == '정지'}">
+                                <span class="status-badge suspended">
+                                    <span class="status-dot"></span>
+                                    ${memberDto.user_status}
+                                </span>
+                            </c:if>
                                 <span class="status-badge" style="background-color: rgba(139, 92, 246, 0.2); color: #A78BFA; border: 1px solid rgba(139, 92, 246, 0.3);">
-                                    일반 회원
+                                    ${memberDto.user_level}
                                 </span>
                             </div>
                         </div>
@@ -673,28 +713,28 @@ body {
                                 <span class="material-symbols-outlined">article</span>
                             </div>
                             <div class="stat-item-label">작성한 게시글</div>
-                            <div class="stat-item-value">42</div>
+                            <div class="stat-item-value">${memberDto.posts_count}</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-item-icon success">
                                 <span class="material-symbols-outlined">comment</span>
                             </div>
                             <div class="stat-item-label">작성한 댓글</div>
-                            <div class="stat-item-value">156</div>
+                            <div class="stat-item-value">${memberDto.replycount}</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-item-icon warning">
                                 <span class="material-symbols-outlined">login</span>
                             </div>
                             <div class="stat-item-label">로그인 횟수</div>
-                            <div class="stat-item-value">324</div>
+                            <div class="stat-item-value">${memberDto.login_count }</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-item-icon primary">
                                 <span class="material-symbols-outlined">favorite</span>
                             </div>
-                            <div class="stat-item-label">받은 좋아요</div>
-                            <div class="stat-item-value">89</div>
+                            <div class="stat-item-label">좋아요 횟수</div>
+                            <div class="stat-item-value">${memberDto.total_like_count }</div>
                         </div>
                     </div>
                 </div>
@@ -713,19 +753,19 @@ body {
                                 <table class="info-table">
                                     <tr>
                                         <th>회원번호</th>
-                                        <td>M00001</td>
+                                        <td>${memberDto.user_num} </td>
                                     </tr>
                                     <tr>
                                         <th>아이디</th>
-                                        <td>user001</td>
+                                        <td>${memberDto.user_id}</td>
                                     </tr>
                                     <tr>
                                         <th>이름</th>
-                                        <td>김철수</td>
+                                        <td>${memberDto.user_name}</td>
                                     </tr>
                                     <tr>
                                         <th>닉네임</th>
-                                        <td>코딩왕</td>
+                                        <td>${memberDto.user_nickname}</td>
                                     </tr>
                                     <tr>
                                         <th>이메일</th>
@@ -733,15 +773,15 @@ body {
                                     </tr>
                                     <tr>
                                         <th>전화번호</th>
-                                        <td>010-1234-5678</td>
+                                        <td>${memberDto.user_tel}</td>
                                     </tr>
                                     <tr>
                                         <th>생년월일</th>
-                                        <td>1990-05-15</td>
+                                        <td>${memberDto.user_birth}</td>
                                     </tr>
                                     <tr>
                                         <th>가입일</th>
-                                        <td>2024-01-15 14:23:45</td>
+                                        <td>${memberDto.user_created_date}</td>
                                     </tr>
                                 </table>
                             </div>
@@ -762,23 +802,49 @@ body {
                                     <tr>
                                         <th>계정 상태</th>
                                         <td>
-                                            <span class="status-badge active">
-                                                <span class="status-dot"></span>
-                                                활성
-                                            </span>
+                                            <c:if test="${memberDto.user_status == '에러'}">
+			                                <span class="status-badge suspended">
+			                                    <span class="status-dot"></span>
+			                                    ${memberDto.user_status}
+			                                	</span>
+			                            	</c:if>
+			                            	<c:if test="${memberDto.user_status == '정상'}">
+			                                <span class="status-badge active">
+			                                    <span class="status-dot"></span>
+			                                    ${memberDto.user_status}
+			                                </span>
+			                            	</c:if>
+			                            	<c:if test="${memberDto.user_status == '신고'}">
+			                                <span class="status-badge suspended">
+			                                    <span class="status-dot"></span>
+			                                    ${memberDto.user_status}
+			                                </span>
+				                            </c:if>
+				                            <c:if test="${memberDto.user_status == '휴면'}">
+			                                <span class="status-badge dormant">
+			                                    <span class="status-dot"></span>
+			                                    ${memberDto.user_status}
+			                                </span>
+				                            </c:if>
+				                            <c:if test="${memberDto.user_status == '정지'}">
+			                                <span class="status-badge suspended">
+			                                    <span class="status-dot"></span>
+			                                    ${memberDto.user_status}
+			                                </span>
+			                            </c:if>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>최근 로그인</th>
-                                        <td>2025-01-14 16:42:31</td>
+                                        <td>${memberDto.last_login_date }</td>
                                     </tr>
                                     <tr>
                                         <th>로그인 횟수</th>
-                                        <td>324회</td>
+                                        <td>${memberDto.login_count}회</td>
                                     </tr>
                                     <tr>
-                                        <th>비밀번호 변경일</th>
-                                        <td>2024-12-20 09:15:22</td>
+                                        <th>개인정보 변경일</th>
+                                        <td>${memberDto.user_updated_date }</td>
                                     </tr>
                                     <tr>
                                         <th>이메일 인증</th>
@@ -786,121 +852,42 @@ body {
                                             <span style="color: var(--success-color);">✓ 인증완료</span>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <th>휴대폰 인증</th>
-                                        <td>
-                                            <span style="color: var(--success-color);">✓ 인증완료</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>정지 사유</th>
-                                        <td>-</td>
-                                    </tr>
-                                    <tr>
-                                        <th>정지 종료일</th>
-                                        <td>-</td>
-                                    </tr>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- 최근 활동 내역 -->
-                <div class="glass-card">
-                    <div class="glass-card-header">
-                        <h2 class="glass-card-title">
-                            <span class="material-symbols-outlined">history</span>
-                            최근 활동 내역
-                        </h2>
-                    </div>
-                    <div class="glass-card-body">
-                        <div class="activity-list">
-                            <div class="activity-item">
-                                <div class="activity-icon post">
-                                    <span class="material-symbols-outlined">article</span>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">게시글 작성</div>
-                                    <div class="activity-description">"Java Spring Boot 튜토리얼" 게시글을 작성했습니다</div>
-                                </div>
-                                <div class="activity-time">2시간 전</div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="activity-icon comment">
-                                    <span class="material-symbols-outlined">comment</span>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">댓글 작성</div>
-                                    <div class="activity-description">"React 기초 강좌" 게시글에 댓글을 작성했습니다</div>
-                                </div>
-                                <div class="activity-time">5시간 전</div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="activity-icon login">
-                                    <span class="material-symbols-outlined">login</span>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">로그인</div>
-                                    <div class="activity-description">시스템에 로그인했습니다</div>
-                                </div>
-                                <div class="activity-time">1일 전</div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="activity-icon post">
-                                    <span class="material-symbols-outlined">article</span>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">게시글 수정</div>
-                                    <div class="activity-description">"Python 데이터 분석" 게시글을 수정했습니다</div>
-                                </div>
-                                <div class="activity-time">2일 전</div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="activity-icon comment">
-                                    <span class="material-symbols-outlined">comment</span>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">댓글 작성</div>
-                                    <div class="activity-description">"Docker 컨테이너 관리" 게시글에 댓글을 작성했습니다</div>
-                                </div>
-                                <div class="activity-time">3일 전</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- 주간 활동 차트 -->
-                <div class="glass-card">
-                    <div class="glass-card-header">
-                        <h2 class="glass-card-title">
-                            <span class="material-symbols-outlined">trending_up</span>
-                            주간 활동 추이
-                        </h2>
-                    </div>
-                    <div class="glass-card-body">
-                        <div class="chart-container">
-                            <canvas id="activityChart"></canvas>
-                        </div>
-                    </div>
-                </div>
+				<div class="glass-card">
+				    <div class="glass-card-header">
+				        <h2 class="glass-card-title">
+				            <span class="material-symbols-outlined">trending_up</span>
+				            주간 활동 추이
+				        </h2>
+				    </div>
+				    <div class="glass-card-body">
+				        <div class="chart-container">
+				            <canvas id="activityChart"></canvas>
+				        </div>
+				    </div>
+				</div>
 
                 <!-- 액션 버튼 -->
                 <div class="glass-card">
                     <div class="action-buttons">
-                        <button type="button" class="btn-action btn-action-secondary" onclick="location.href='${pageContext.request.contextPath}/admin/member/list';">
-                            <span class="material-symbols-outlined">arrow_back</span>
-                            목록으로
+                        <button type="button" class="btn btn-secondary" 
+						    onclick="location.href='${pageContext.request.contextPath}/admin/member/list?page=${page}&size=${size}&schType=${schType}&kwd=${kwd}&state=${state}'">
+						    목록으로
+						</button>
+						<button type="button" class="btn-action btn-action-success" onclick="openSuspendModal()">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            회원 활성
                         </button>
                         <button type="button" class="btn-action btn-action-warning" onclick="openSuspendModal()">
                             <span class="material-symbols-outlined">block</span>
                             회원 정지
                         </button>
-                        <button type="button" class="btn-action btn-action-warning" onclick="setDormant()">
+                        <button type="button" class="btn-action btn-action-secondary" onclick="setDormant()">
                             <span class="material-symbols-outlined">bedtime</span>
                             휴면 전환
                         </button>
@@ -947,66 +934,29 @@ body {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 
-    <script>
-    // 차트 초기화
-    $(document).ready(function() {
-        initActivityChart();
-    });
-
-    function initActivityChart() {
-        const ctx = document.getElementById('activityChart');
-        if (!ctx) return;
-
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['월', '화', '수', '목', '금', '토', '일'],
-                datasets: [{
-                    label: '게시글',
-                    data: [3, 5, 2, 8, 4, 6, 7],
-                    borderColor: '#2563EB',
-                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                    tension: 0.4
-                }, {
-                    label: '댓글',
-                    data: [5, 8, 6, 10, 7, 9, 11],
-                    borderColor: '#10B981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: '#E2E8F0'
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            color: '#94A3B8'
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.05)'
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            color: '#94A3B8'
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.05)'
-                        }
-                    }
-                }
-            }
-        });
-    }
+    <!-- 서버 데이터를 JavaScript 전역 변수로 전달 -->
+    <script type="text/javascript">
+    // 서버에서 전달받은 데이터를 전역 변수로 설정
+    window.memberData = {
+        userId: '${memberDto.user_id}',
+        weeklyActivity: [
+            <c:forEach var="item" items="${weeklyActivity}" varStatus="status">
+            {
+                dayName: '${item.dayName}',
+                noticeCount: ${item.noticeCount},
+                commentCount: ${item.commentCount}
+            }<c:if test="${!status.last}">,</c:if>
+            </c:forEach>
+        ],
+        contextPath: '${pageContext.request.contextPath}',
+        pageInfo: {
+            page: '${page}',
+            size: '${size}',
+            schType: '${schType}',
+            kwd: '${kwd}',
+            state: '${state}'
+        }
+    };
 
     // 모달 열기/닫기
     function openModal(modalId) {
@@ -1142,6 +1092,6 @@ body {
         });
     }
     </script>
-
+	<script src="${pageContext.request.contextPath}/dist/js/admin_member_chart.js"></script>
 </body>
 </html>

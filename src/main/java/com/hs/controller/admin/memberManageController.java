@@ -207,9 +207,13 @@ public class memberManageController {
 	        	mav = new ModelAndView("redirect:/admin/member/list");
 	            return mav;
 	        }
+	        
+	        //사용자 별 게시물 및 댓글 활동 내역 차트
+			List<MemberDTO> weeklyActivity = mbService.selectWeeklyUser(map);
 
 	        // 회원 정보
 	        mav.addObject("memberDto", memberDto);
+	        
 	        
 	        // 목록으로 돌아가기 위한 파라미터들
 	        mav.addObject("page", page != null ? page : "1");
@@ -217,6 +221,8 @@ public class memberManageController {
 	        mav.addObject("schType", schType != null ? schType : "");
 	        mav.addObject("kwd", kwd != null ? kwd : "");
 	        mav.addObject("state", state != null ? state : "");
+	        
+	        mav.addObject("weeklyActivity", weeklyActivity);
 	        
 	    } catch (Exception e) {
 	        e.printStackTrace();

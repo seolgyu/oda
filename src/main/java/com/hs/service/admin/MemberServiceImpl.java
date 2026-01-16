@@ -59,4 +59,16 @@ public class MemberServiceImpl implements MemberService{
 		return memberDto;
 	}
 
+	@Override
+	public List<MemberDTO> selectWeeklyUser(Map<String, Object> map) {
+		List<MemberDTO> selectWeeklyUser = null;
+		
+		try {
+			selectWeeklyUser = mapper.selectWeeklyUser(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return selectWeeklyUser;
+	}
+
 }

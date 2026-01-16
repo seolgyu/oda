@@ -106,9 +106,106 @@
 	</update>
 	
 	<select id="memberInfo" resultType="com.hs.model.admin.MemberDTO">
-		select
-            user_email
-	    FROM member
-	    WHERE user_id = #{user_id}
+		SELECT
+	    memb.user_nickname,
+	    memb.user_email,
+	    CASE WHEN memb.user_status = '0' THEN '에러'
+	         WHEN memb.user_status = '1' THEN '정상'
+	         WHEN memb.user_status = '2' THEN '신고'
+	         WHEN memb.user_status = '3' THEN '휴면'
+	         WHEN memb.user_status = '4' THEN '정지'
+	         ELSE '관리자에게 문의하세요.'
+	    END AS user_status, 
+	    CASE WHEN memb.user_level &lt;= 90 THEN '일반회원'
+	         ELSE '관리자'
+	    END AS user_level,
+	    memb.user_profile,
+	    memb.user_num,
+	    memb.user_id,
+	    memb.user_tel,
+	    memb.user_name,
+	    TO_CHAR(memb.user_birth, 'YYYY-MM-DD') AS user_birth,
+	    TO_CHAR(memb.user_created_date, 'YYYY-MM-DD HH24:MI:SS') AS user_created_date,
+	    TO_CHAR(memb.last_login_date, 'YYYY-MM-DD HH24:MI:SS') AS last_login_date,
+	    TO_CHAR(memb.user_updated_date, 'YYYY-MM-DD') AS user_updated_date,
+	    logininfo.login_count AS login_count,
+	    postsinfo.posts_count AS posts_count,
+	    replyinfo.replycount AS replycount,
+	    likecount.total_like_count
+	    FROM member memb,
+	    (
+	        SELECT memb2.user_id, NVL(COUNT(*), 0) AS login_count
+	        FROM log_login login, member memb2
+	        WHERE login.login_usernum = memb2.user_num
+	        GROUP BY memb2.user_id
+	    ) logininfo,
+	    (
+	        SELECT memb3.user_id, NVL(COUNT(*), 0) AS posts_count
+	        FROM POSTS pos, member memb3
+	        WHERE memb3.user_num = pos.user_num
+	        GROUP BY memb3.user_id
+	    ) postsinfo,
+	    (
+	        SELECT memb4.user_id, NVL(COUNT(*), 0) AS replycount
+	        FROM comments com, member memb4
+	        WHERE memb4.user_num = com.user_num
+	        GROUP BY memb4.user_id
+	    ) replyinfo,
+	    (
+	        SELECT 
+	        user_num,
+	        COUNT(*) AS total_like_count
+	        FROM (
+	            SELECT comment_id AS content_id, user_num 
+	            FROM comments_likes
+	            UNION ALL
+	            SELECT post_id AS content_id, user_num 
+	            FROM likes
+	            )
+	        GROUP BY user_num
+	    ) likecount
+	    WHERE memb.user_id = logininfo.user_id(+)
+	    AND memb.user_id = postsinfo.user_id(+)
+	    AND memb.user_id = replyinfo.user_id(+)
+	    AND memb.user_num = likecount.user_num(+)
+	    AND memb.user_id = #{user_id}
+	</select>
+	
+	<select id="selectWeeklyUser"  resultType="com.hs.model.admin.MemberDTO">
+		SELECT 
+        days.dayOfWeek,
+        days.dayName,
+        NVL(n.noticeCount, 0) AS noticeCount,
+        NVL(l.commentCount, 0) AS commentCount
+    FROM (
+        SELECT '2' AS dayOfWeek, '월' AS dayName, 1 AS sortOrder FROM DUAL UNION ALL
+        SELECT '3' AS dayOfWeek, '화' AS dayName, 2 AS sortOrder FROM DUAL UNION ALL
+        SELECT '4' AS dayOfWeek, '수' AS dayName, 3 AS sortOrder FROM DUAL UNION ALL
+        SELECT '5' AS dayOfWeek, '목' AS dayName, 4 AS sortOrder FROM DUAL UNION ALL
+        SELECT '6' AS dayOfWeek, '금' AS dayName, 5 AS sortOrder FROM DUAL UNION ALL
+        SELECT '7' AS dayOfWeek, '토' AS dayName, 6 AS sortOrder FROM DUAL UNION ALL
+        SELECT '1' AS dayOfWeek, '일' AS dayName, 7 AS sortOrder FROM DUAL
+    ) days
+    LEFT JOIN (
+        SELECT 
+            TO_CHAR(created_date, 'D') AS dayOfWeek,
+            COUNT(*) AS noticeCount
+        FROM posts pos, member memb
+        WHERE pos.user_num = memb.user_num 
+        AND created_date &gt;= TRUNC(SYSDATE, 'IW')
+        AND memb.user_id = #{user_id}
+        GROUP BY TO_CHAR(created_date, 'D')
+    ) n ON days.dayOfWeek = n.dayOfWeek
+    LEFT JOIN (
+        SELECT 
+            TO_CHAR(created_date, 'D') AS dayOfWeek,
+            COUNT(*) AS commentCount
+        FROM comments
+        WHERE created_date &gt;= TRUNC(SYSDATE, 'IW')
+        AND user_id = #{user_id}
+        GROUP BY TO_CHAR(created_date, 'D')
+    ) l ON days.dayOfWeek = l.dayOfWeek
+    
+    ORDER BY days.sortOrder
 	</select>
 </mapper>
