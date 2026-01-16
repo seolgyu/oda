@@ -267,36 +267,6 @@ function openConfirmModal(title, description, confirmText, confirmColor, confirm
     });
 }
 
-function toggleJoin(button, communityId) {
-    const $btn = $(button);
-    const isMember = $btn.attr('data-joined') === "true";
-    
-    const title = isMember ? '커뮤니티 탈퇴' : '커뮤니티 가입';
-    const desc = isMember ? '정말로 이 커뮤니티를 탈퇴하시겠습니까?' : '이 커뮤니티에 가입하시겠습니까?';
-    const btnText = isMember ? '탈퇴하기' : '가입하기';
-    
-    const btnColor = '#a855f7'; 
-
-    openConfirmModal(title, desc, btnText, btnColor, function() {
-        const action = isMember ? 'leave' : 'join';
-        $btn.prop('disabled', true);
-
-        ajaxRequest(action, 'POST', { community_id: communityId }, 'json', function(data) {
-            closeConfirmModal();
-            if (data.status === "success") {
-                showToast("success", isMember ? "탈퇴 처리가 완료되었습니다." : "가입을 환영합니다!");
-                
-                $btn.attr('data-joined', isMember ? "false" : "true");
-                
-                setTimeout(() => location.reload(), 1200);
-            } else {
-                $btn.prop('disabled', false);
-                showToast("error", data.message || "처리 중 오류가 발생했습니다.");
-            }
-        });
-    });
-}
-
 function deleteCommunity(communityId) {
     openConfirmModal(
         '커뮤니티 삭제', 
@@ -309,6 +279,28 @@ function deleteCommunity(communityId) {
     );
 }
 
+function toggleJoin(btn, community_id) {
+    const $btn = $(btn);
+    const isJoined = $btn.attr('data-joined') === "true";
+    const url = isJoined ? "leave" : "join"; 
+	const fn = function(data) {
+		if(data.status === 'success') {
+			if (!isJoined) {
+				$btn.attr('data-joined', 'true').text('가입됨');
+		        $btn.css('background-color', '#9333ea'); 
+		        showToast("success", "커뮤니티에 가입되었습니다.");
+		    } else {
+				$btn.attr('data-joined', 'false').text('가입하기');
+		        $btn.css('background-color', '#a855f7');
+		        showToast("success", "탈퇴 처리가 완료되었습니다.");
+		    }
+		} else {
+			showToast("error", "요청 처리에 실패했습니다.");
+		}
+	};
+    ajaxRequest(url, 'GET', { community_id: community_id }, 'json', fn);
+}
+
 function leaveCommunity(communityId) {
     openConfirmModal(
         '커뮤니티 탈퇴', 
@@ -316,7 +308,17 @@ function leaveCommunity(communityId) {
         '탈퇴하기', 
         '#ef4444', 
         function() {
-            location.href = "leave?community_id=" + communityId;
+            ajaxRequest("leave", 'GET', { community_id: communityId }, 'json', function(res) {
+                if(res.status === 'success') {
+                    if(location.pathname.includes('management')) {
+                        location.reload(); 
+                    } else {
+                        $('.btn-join-toggle').attr('data-joined', 'false').text('가입하기');
+                        closeConfirmModal();
+                        showToast("success", "탈퇴 처리가 완료되었습니다.");
+                    }
+                }
+            });
         }
     );
 }

@@ -367,54 +367,54 @@ public class CommunityController {
 		return map;
 	}
 	
+	@ResponseBody
 	@GetMapping("join")
-	public ModelAndView joinCommunity(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		ModelAndView mav = new ModelAndView("redirect:/community/main");
-		
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo)session.getAttribute("member");
+	public Map<String, Object> joinCommunity(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    Map<String, Object> map = new HashMap<String, Object>();
 	    
-		String community_id = req.getParameter("community_id");
-	    Long user_num = info.getMemberIdx();
-		
-		try {
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("community_id", community_id);
-			map.put("user_num", user_num);
-			cservice.joinCommunity(map);
-			
-			mav.addObject("community_id", community_id);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			
-			return new ModelAndView("redirect:/list");
-		}	    
-		return mav;
+	    HttpSession session = req.getSession();
+	    SessionInfo info = (SessionInfo)session.getAttribute("member");
+	    String community_id = req.getParameter("community_id");
+	    
+	    try {
+	        Map<String, Object> paramMap = new HashMap<String, Object>();
+	        paramMap.put("community_id", community_id);
+	        paramMap.put("user_num", info.getMemberIdx());
+	        
+	        cservice.joinCommunity(paramMap);
+	        
+	        map.put("status", "success");
+	        map.put("community_id", community_id); // JS에서 페이지 이동 시 사용
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        map.put("status", "error");
+	    }
+	    return map;
 	}
-	
+
+	@ResponseBody
 	@GetMapping("leave")
-	public ModelAndView leaveCommunity(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		ModelAndView mav = new ModelAndView("redirect:/community/management");
-		
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo)session.getAttribute("member");
+	public Map<String, Object> leaveCommunity(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    Map<String, Object> map = new HashMap<String, Object>();
 	    
-		String community_id = req.getParameter("community_id");
-	    Long user_num = info.getMemberIdx();
-		
-		try {
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("community_id", community_id);
-			map.put("user_num", user_num);
-			
-			cservice.removeFavorite(map);
-			cservice.leaveCommunity(map);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	    
-		return mav;
+	    HttpSession session = req.getSession();
+	    SessionInfo info = (SessionInfo)session.getAttribute("member");
+	    String community_id = req.getParameter("community_id");
+	    
+	    try {
+	        Map<String, Object> paramMap = new HashMap<String, Object>();
+	        paramMap.put("community_id", community_id);
+	        paramMap.put("user_num", info.getMemberIdx());
+	        
+	        cservice.removeFavorite(paramMap);
+	        cservice.leaveCommunity(paramMap);
+	        
+	        map.put("status", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        map.put("status", "error");
+	    }
+	    return map;
 	}
 	
 }
