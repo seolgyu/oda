@@ -67,7 +67,7 @@
 				<div class="text-center py-5">
 					<span class="material-symbols-outlined text-secondary opacity-20"
 						style="font-size: 64px;"> folder_open </span>
-					<p class="text-secondary mt-3">저장된 게시글이 없습니다.</p>
+					<p class="text-secondary mt-3">좋아요 한 게시글이 없습니다.</p>
 				</div>
 			</c:otherwise>
 		</c:choose>

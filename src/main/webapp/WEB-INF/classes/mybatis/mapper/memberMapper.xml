@@ -180,5 +180,17 @@
 		VALUES (member_seq.NEXTVAL, #{userId}, #{userPwd}, #{userName}, 
 			1, 1, SYSDATE, SYSDATE) 
     </insert>
+    
+    <select id="getPostCount" parameterType="Long">
+    	SELECT COUNT(*)
+    	FROM posts
+    	WHERE user_num = #{userNum} AND is_deleted = '0'
+    </select>
+    
+    <select id="getReplyCount" parameterType="Long">
+    	SELECT COUNT(*)
+    	FROM comments
+    	WHERE user_num = #{userNum} AND is_deleted = '0'
+    </select>
 	
 </mapper>

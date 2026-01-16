@@ -7,10 +7,12 @@
 			<h2 class="text-white fs-4 fw-bold mb-1">My Comments</h2>
 			<p class="text-secondary text-sm mb-0">Review your cosmic conversations and thoughts.</p>
 		</div>
-		<span class="text-secondary text-xs pb-1">Total <span class="text-white fw-bold">${dataCount}</span> Comments</span>
+		<span class="text-secondary text-xs pb-1">Total <span class="text-white fw-bold">${totalCount}</span></span>
 	</div>
 
 	<div class="d-flex flex-column gap-4 list-container">
+	<c:choose>
+			<c:when test="${not empty list}">
 		<c:forEach var="dto" items="${list}">
 			<div class="record-item p-3 overflow-hidden mb-4"
 				style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px;">
@@ -61,6 +63,15 @@
 				</div>
 			</div>
 		</c:forEach>
+		</c:when>
+		<c:otherwise>
+				<div class="text-center py-5">
+					<span class="material-symbols-outlined text-secondary opacity-20"
+						style="font-size: 64px;"> folder_open </span>
+					<p class="text-secondary mt-3">댓글이 없습니다.</p>
+				</div>
+			</c:otherwise>
+		</c:choose>
 	</div>
 	
 	<div id="sentinel" style="height: 20px;"></div>

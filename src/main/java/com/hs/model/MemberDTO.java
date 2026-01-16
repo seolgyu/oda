@@ -20,6 +20,22 @@ public class MemberDTO {
    private int status;
    private String zip;
    
+   private int postCount;
+   private int replyCount;
+   private int totalContribution;
+   
+   public int getPostCount() {
+	return postCount;
+}
+   public void setPostCount(int postCount) {
+	this.postCount = postCount;
+   }
+   public int getReplyCount() {
+	return replyCount;
+   }
+   public void setReplyCount(int replyCount) {
+	this.replyCount = replyCount;
+   }
    public Long getUserIdx() {
       return userIdx;
    }
@@ -127,6 +143,12 @@ public class MemberDTO {
    }
    public void setZip(String zip) {
 	this.zip = zip;
+   }
+   public int getTotalContribution() {
+	return totalContribution;
+   }
+   public void setTotalContribution(int totalContribution) {
+	this.totalContribution = totalContribution;
    }
    
 }

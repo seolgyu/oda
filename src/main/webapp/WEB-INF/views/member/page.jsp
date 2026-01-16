@@ -316,210 +316,236 @@
 							</div>
 
 							<div id="post-list-container" class="d-flex flex-column gap-4">
-								<c:forEach var="item" items="${post}">
-									<div class="glass-card shadow-lg group mb-4 post-item-card">
+								<c:choose>
+									<c:when test="${not empty post}">
+										<c:forEach var="item" items="${post}">
+											<div class="glass-card shadow-lg group mb-4 post-item-card">
 
-										<div class="list-view-item p-3" style="display: none;">
-											<div class="d-flex align-items-start gap-3 w-100">
-												<div class="flex-shrink-0 thumbnail-box"
-													style="width: 90px; height: 90px;">
-													<c:choose>
-														<c:when test="${not empty item.fileList}">
-															<img src="${item.fileList[0].filePath}"
-																class="w-100 h-100 object-fit-cover rounded-3 border border-white border-opacity-10">
-														</c:when>
-														<c:otherwise>
-															<div
-																class="w-100 h-100 rounded-3 d-flex align-items-center justify-content-center border border-white border-opacity-10"
-																style="background: rgba(255, 255, 255, 0.05);">
-																<span class="material-symbols-outlined opacity-20">image</span>
-															</div>
-														</c:otherwise>
-													</c:choose>
-												</div>
-
-												<div
-													class="flex-grow-1 overflow-hidden d-flex flex-column justify-content-between"
-													style="min-height: 90px;">
-													<div>
-														<div class="d-flex align-items-center gap-2 mb-1">
-															<span class="text-white fw-bold text-sm">${item.authorNickname}</span>
-															<span class="text-secondary text-xs opacity-75">c/${item.authorId}</span>
-															<span class="ms-auto text-xs text-gray-500">${item.createdDate}</span>
+												<div class="list-view-item p-3" style="display: none;">
+													<div class="d-flex align-items-start gap-3 w-100">
+														<div class="flex-shrink-0 thumbnail-box"
+															style="width: 90px; height: 90px;">
+															<c:choose>
+																<c:when test="${not empty item.fileList}">
+																	<img src="${item.fileList[0].filePath}"
+																		class="w-100 h-100 object-fit-cover rounded-3 border border-white border-opacity-10">
+																</c:when>
+																<c:otherwise>
+																	<div
+																		class="w-100 h-100 rounded-3 d-flex align-items-center justify-content-center border border-white border-opacity-10"
+																		style="background: rgba(255, 255, 255, 0.05);">
+																		<span class="material-symbols-outlined opacity-20">image</span>
+																	</div>
+																</c:otherwise>
+															</c:choose>
 														</div>
 
-														<c:if test="${not empty item.title}">
-															<h4 class="text-white text-sm fw-bold mb-0 text-truncate">${item.title}</h4>
-														</c:if>
+														<div
+															class="flex-grow-1 overflow-hidden d-flex flex-column justify-content-between"
+															style="min-height: 90px;">
+															<div>
+																<div class="d-flex align-items-center gap-2 mb-1">
+																	<span class="text-white fw-bold text-sm">${item.authorNickname}</span>
+																	<span class="text-secondary text-xs opacity-75">c/${item.authorId}</span>
+																	<span class="ms-auto text-xs text-gray-500">${item.createdDate}</span>
+																</div>
 
-														<p
-															class="text-light opacity-50 text-xs mb-2 text-truncate">
-															${item.content}</p>
+																<c:if test="${not empty item.title}">
+																	<h4
+																		class="text-white text-sm fw-bold mb-0 text-truncate">${item.title}</h4>
+																</c:if>
+
+																<p
+																	class="text-light opacity-50 text-xs mb-2 text-truncate">
+																	${item.content}</p>
+															</div>
+
+															<div
+																class="d-flex align-items-center justify-content-between mt-auto">
+																<div class="d-flex gap-3">
+																	<button
+																		class="btn-icon d-flex align-items-center gap-1 p-0"
+																		onclick="toggleLike(this, '${item.postId}')">
+																		<span
+																			class="material-symbols-outlined fs-6 ${item.likedByUser ? 'text-danger' : ''}"
+																			style="font-variation-settings: 'FILL' ${item.likedByUser ? 1 : 0};">favorite</span>
+																		<span class="text-xs opacity-75 like-count">${item.likeCount}</span>
+																	</button>
+																	<button
+																		class="btn-icon d-flex align-items-center gap-1 p-0"
+																		onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
+																		<span class="material-symbols-outlined fs-6">chat_bubble</span>
+																		<span class="text-xs opacity-75">${item.commentCount}</span>
+																	</button>
+																	<button class="btn-icon p-0">
+																		<span class="material-symbols-outlined fs-6">repeat</span>
+																	</button>
+																</div>
+																<div class="d-flex gap-3 text-white-50">
+																	<button class="btn-icon p-0" title="공유하기">
+																		<span class="material-symbols-outlined fs-6">share</span>
+																	</button>
+																	<button class="btn-icon p-0" title="저장하기">
+																		<span class="material-symbols-outlined fs-6">bookmark</span>
+																	</button>
+																	<button class="btn-icon p-0" title="신고하기">
+																		<span class="material-symbols-outlined fs-6">report</span>
+																	</button>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+
+												<div class="card-view-item">
+													<div
+														class="p-3 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
+														<div class="d-flex align-items-center gap-3">
+															<div
+																class="avatar-md bg-info text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden"
+																style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #a855f7);">
+																<c:choose>
+																	<c:when test="${not empty item.authorProfileImage}">
+																		<img src="${item.authorProfileImage}"
+																			class="w-100 h-100 object-fit-cover">
+																	</c:when>
+																	<c:otherwise>${fn:substring(item.authorNickname, 0, 1)}</c:otherwise>
+																</c:choose>
+															</div>
+															<div>
+																<h3 class="text-sm fw-medium text-white mb-0">${item.authorNickname}</h3>
+																<p class="text-xs text-gray-500 mb-0">${item.createdDate}</p>
+															</div>
+														</div>
+														<button class="btn-icon text-white-50">
+															<span class="material-symbols-outlined">more_horiz</span>
+														</button>
 													</div>
 
+													<div class="p-3 pb-2">
+														<c:if test="${not empty item.title}">
+															<h4 class="text-white fs-6 fw-bold mb-1">${item.title}</h4>
+														</c:if>
+														<p class="text-light text-sm mb-0 lh-base"
+															style="white-space: pre-wrap;">${item.content}</p>
+													</div>
+
+													<c:if test="${not empty item.fileList}">
+														<div class="p-3 pt-0">
+															<c:choose>
+																<c:when test="${item.fileList.size() > 1}">
+																	<div id="carousel-${item.postId}"
+																		class="carousel slide post-carousel"
+																		data-bs-ride="false">
+																		<div class="carousel-indicators">
+																			<c:forEach var="file" items="${item.fileList}"
+																				varStatus="status">
+																				<button type="button"
+																					data-bs-target="#carousel-${item.postId}"
+																					data-bs-slide-to="${status.index}"
+																					class="${status.first ? 'active' : ''}"></button>
+																			</c:forEach>
+																		</div>
+																		<div class="carousel-inner">
+																			<c:forEach var="file" items="${item.fileList}"
+																				varStatus="status">
+																				<div
+																					class="carousel-item ${status.first ? 'active' : ''}">
+																					<div class="ratio ratio-16x9">
+																						<img src="${file.filePath}"
+																							class="d-block w-100 object-fit-cover">
+																					</div>
+																				</div>
+																			</c:forEach>
+																		</div>
+																		<button class="carousel-control-prev" type="button"
+																			data-bs-target="#carousel-${item.postId}"
+																			data-bs-slide="prev">
+																			<span class="material-symbols-outlined fs-4">chevron_left</span>
+																		</button>
+																		<button class="carousel-control-next" type="button"
+																			data-bs-target="#carousel-${item.postId}"
+																			data-bs-slide="next">
+																			<span class="material-symbols-outlined fs-4">chevron_right</span>
+																		</button>
+																	</div>
+																</c:when>
+																<c:otherwise>
+																	<div class="post-carousel">
+																		<div class="ratio ratio-16x9">
+																			<img src="${item.fileList[0].filePath}"
+																				class="d-block w-100 object-fit-cover">
+																		</div>
+																	</div>
+																</c:otherwise>
+															</c:choose>
+														</div>
+													</c:if>
+
 													<div
-														class="d-flex align-items-center justify-content-between mt-auto">
-														<div class="d-flex gap-3">
-															<button
-																class="btn-icon d-flex align-items-center gap-1 p-0"
+														class="px-3 py-2 d-flex align-items-center justify-content-between border-top border-white border-opacity-10"
+														style="background: rgba(255, 255, 255, 0.05);">
+														<div class="d-flex gap-4">
+															<button class="btn-icon d-flex align-items-center gap-1"
 																onclick="toggleLike(this, '${item.postId}')">
 																<span
-																	class="material-symbols-outlined fs-6 ${item.likedByUser ? 'text-danger' : ''}"
+																	class="material-symbols-outlined fs-5 ${item.likedByUser ? 'text-danger' : ''}"
 																	style="font-variation-settings: 'FILL' ${item.likedByUser ? 1 : 0};">favorite</span>
 																<span class="text-xs opacity-75 like-count">${item.likeCount}</span>
 															</button>
-															<button
-																class="btn-icon d-flex align-items-center gap-1 p-0"
+															<button class="btn-icon d-flex align-items-center gap-1"
 																onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
-																<span class="material-symbols-outlined fs-6">chat_bubble</span>
+																<span class="material-symbols-outlined fs-5">chat_bubble</span>
 																<span class="text-xs opacity-75">${item.commentCount}</span>
 															</button>
-															<button class="btn-icon p-0">
-																<span class="material-symbols-outlined fs-6">repeat</span>
+															<button class="btn-icon">
+																<span class="material-symbols-outlined fs-5">repeat</span>
 															</button>
 														</div>
 														<div class="d-flex gap-3 text-white-50">
-															<button class="btn-icon p-0" title="공유하기">
-																<span class="material-symbols-outlined fs-6">share</span>
+															<button class="btn-icon" title="공유하기">
+																<span class="material-symbols-outlined fs-5">share</span>
 															</button>
-															<button class="btn-icon p-0" title="저장하기">
-																<span class="material-symbols-outlined fs-6">bookmark</span>
+															<button class="btn-icon" title="저장하기">
+																<span class="material-symbols-outlined fs-5">bookmark</span>
 															</button>
-															<button class="btn-icon p-0" title="신고하기">
-																<span class="material-symbols-outlined fs-6">report</span>
+															<button class="btn-icon" title="신고하기">
+																<span class="material-symbols-outlined fs-5">report</span>
 															</button>
 														</div>
 													</div>
 												</div>
 											</div>
-										</div>
+										</c:forEach>
+									</c:when>
 
-										<div class="card-view-item">
-											<div
-												class="p-3 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
-												<div class="d-flex align-items-center gap-3">
-													<div
-														class="avatar-md bg-info text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden"
-														style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #a855f7);">
-														<c:choose>
-															<c:when test="${not empty item.authorProfileImage}">
-																<img src="${item.authorProfileImage}"
-																	class="w-100 h-100 object-fit-cover">
-															</c:when>
-															<c:otherwise>${fn:substring(item.authorNickname, 0, 1)}</c:otherwise>
-														</c:choose>
-													</div>
-													<div>
-														<h3 class="text-sm fw-medium text-white mb-0">${item.authorNickname}</h3>
-														<p class="text-xs text-gray-500 mb-0">${item.createdDate}</p>
-													</div>
-												</div>
-												<button class="btn-icon text-white-50">
-													<span class="material-symbols-outlined">more_horiz</span>
-												</button>
-											</div>
-
-											<div class="p-3 pb-2">
-												<c:if test="${not empty item.title}">
-													<h4 class="text-white fs-6 fw-bold mb-1">${item.title}</h4>
+									<c:otherwise>
+										<div class="glass-card py-5 text-center shadow-lg border-0"
+											style="background: rgba(255, 255, 255, 0.02); border-radius: 1rem !important;">
+											<div class="py-4">
+												<span
+													class="material-symbols-outlined text-secondary opacity-20"
+													style="font-size: 80px;">rocket_launch</span>
+												<h4 class="text-white mt-3 fw-bold opacity-75">등록된 게시글이 없습니다</h4>
+												<c:if
+													test="${not empty sessionScope.member and sessionScope.member.userId eq user.userId}">
+													<button
+														onclick="location.href='${pageContext.request.contextPath}/post/write';"
+														class="btn btn-outline-primary rounded-pill px-4 btn-sm mt-3 fw-bold">
+														게시글 작성하기</button>
 												</c:if>
-												<p class="text-light text-sm mb-0 lh-base"
-													style="white-space: pre-wrap;">${item.content}</p>
-											</div>
-
-											<c:if test="${not empty item.fileList}">
-												<div class="p-3 pt-0">
-													<c:choose>
-														<%-- 이미지가 여러 장인 경우: 캐러셀 --%>
-														<c:when test="${item.fileList.size() > 1}">
-															<div id="carousel-${item.postId}"
-																class="carousel slide post-carousel"
-																data-bs-ride="false">
-																<div class="carousel-indicators">
-																	<c:forEach var="file" items="${item.fileList}"
-																		varStatus="status">
-																		<button type="button"
-																			data-bs-target="#carousel-${item.postId}"
-																			data-bs-slide-to="${status.index}"
-																			class="${status.first ? 'active' : ''}"></button>
-																	</c:forEach>
-																</div>
-																<div class="carousel-inner">
-																	<c:forEach var="file" items="${item.fileList}"
-																		varStatus="status">
-																		<div
-																			class="carousel-item ${status.first ? 'active' : ''}">
-																			<div class="ratio ratio-16x9">
-																				<img src="${file.filePath}"
-																					class="d-block w-100 object-fit-cover">
-																			</div>
-																		</div>
-																	</c:forEach>
-																</div>
-																<button class="carousel-control-prev" type="button"
-																	data-bs-target="#carousel-${item.postId}"
-																	data-bs-slide="prev">
-																	<span class="material-symbols-outlined fs-4">chevron_left</span>
-																</button>
-																<button class="carousel-control-next" type="button"
-																	data-bs-target="#carousel-${item.postId}"
-																	data-bs-slide="next">
-																	<span class="material-symbols-outlined fs-4">chevron_right</span>
-																</button>
-															</div>
-														</c:when>
-														<%-- 이미지가 한 장인 경우 --%>
-														<c:otherwise>
-															<div class="post-carousel">
-																<div class="ratio ratio-16x9">
-																	<img src="${item.fileList[0].filePath}"
-																		class="d-block w-100 object-fit-cover">
-																</div>
-															</div>
-														</c:otherwise>
-													</c:choose>
-												</div>
-											</c:if>
-
-											<div
-												class="px-3 py-2 d-flex align-items-center justify-content-between border-top border-white border-opacity-10"
-												style="background: rgba(255, 255, 255, 0.05);">
-												<div class="d-flex gap-4">
-													<button class="btn-icon d-flex align-items-center gap-1"
-														onclick="toggleLike(this, '${item.postId}')">
-														<span
-															class="material-symbols-outlined fs-5 ${item.likedByUser ? 'text-danger' : ''}"
-															style="font-variation-settings: 'FILL' ${item.likedByUser ? 1 : 0};">favorite</span>
-														<span class="text-xs opacity-75 like-count">${item.likeCount}</span>
-													</button>
-													<button class="btn-icon d-flex align-items-center gap-1"
-														onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
-														<span class="material-symbols-outlined fs-5">chat_bubble</span>
-														<span class="text-xs opacity-75">${item.commentCount}</span>
-													</button>
-													<button class="btn-icon">
-														<span class="material-symbols-outlined fs-5">repeat</span>
-													</button>
-												</div>
-												<div class="d-flex gap-3 text-white-50">
-													<button class="btn-icon" title="공유하기">
-														<span class="material-symbols-outlined fs-5">share</span>
-													</button>
-													<button class="btn-icon" title="저장하기">
-														<span class="material-symbols-outlined fs-5">bookmark</span>
-													</button>
-													<button class="btn-icon" title="신고하기">
-														<span class="material-symbols-outlined fs-5">report</span>
-													</button>
-												</div>
 											</div>
 										</div>
-									</div>
-								</c:forEach>
+									</c:otherwise>
+								</c:choose>
 							</div>
 
 							<div id="sentinel" style="height: 50px;"></div>
 						</div>
+
+						<fmt:setLocale value="ko_KR" />
+						<fmt:parseDate value="${user.createdDate}" var="parsedDate" pattern="yyyy-MM-dd" />
+						
 						<aside class="d-none d-xl-flex flex-column gap-2"
 							style="width: 320px; flex-shrink: 0; position: sticky; top: 100px;">
 
@@ -547,14 +573,14 @@
 										class="d-flex border-top border-white border-opacity-10 pt-3">
 										<div
 											class="flex-fill text-center border-end border-white border-opacity-10">
-											<span class="text-secondary" style="font-size: 11px;">Posts</span>
+											<span class="text-secondary" style="font-size: 12px;">Posts</span>
 											<span class="text-white fw-bold ms-1"
-												style="font-size: 12px;">12</span>
+												style="font-size: 13px;">${user.postCount}</span>
 										</div>
 										<div class="flex-fill text-center">
-											<span class="text-secondary" style="font-size: 11px;">Comments</span>
+											<span class="text-secondary" style="font-size: 12px;">Comments</span>
 											<span class="text-white fw-bold ms-1"
-												style="font-size: 12px;">48</span>
+												style="font-size: 13px;">${user.replyCount}</span>
 										</div>
 									</div>
 								</div>
@@ -569,7 +595,7 @@
 										<div class="overflow-hidden">
 											<p class="text-secondary mb-0" style="font-size: 10px;">Email
 												Address</p>
-											<p class="text-white text-sm mb-0 text-truncate">stargazer@oda.com</p>
+											<p class="text-white text-sm mb-0 text-truncate">${user.email}</p>
 										</div>
 									</div>
 									<div class="d-flex align-items-center gap-3">
@@ -581,7 +607,10 @@
 										<div>
 											<p class="text-secondary mb-0" style="font-size: 10px;">Mission
 												Start</p>
-											<p class="text-white text-sm mb-0">Joined Jan 20, 2024</p>
+											<p class="text-white text-sm mb-0">
+												<fmt:formatDate value="${parsedDate}"
+													pattern="yyyy년 MM월 dd일" />
+											</p>
 										</div>
 									</div>
 								</div>
@@ -716,9 +745,15 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const counterEl = document.getElementById('contribution-count');
-        // 더미 데이터 60을 목표값으로 전달
-        animateValue(counterEl, 0, 60, 2000); // 2초(2000ms) 동안 작동
+    	const counterEl = document.getElementById('contribution-count');
+        
+        const targetCount = ${not empty user.totalContribution ? user.totalContribution : 0};
+        
+        if (counterEl && targetCount > 0) {
+            animateValue(counterEl, 0, targetCount, 2000); 
+        } else if (counterEl) {
+            counterEl.innerText = "0";
+        }
     });
 	
 		function toggleLike(btn, postId) {

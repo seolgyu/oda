@@ -195,4 +195,26 @@ public class MemberServiceImpl implements MemberService {
 		}
 	}
 
+	@Override
+	public int getPostCount(Long userNum) throws SQLException {
+		try {
+			return mapper.getPostCount(userNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return 0;
+	}
+
+	@Override
+	public int getReplyCount(Long userNum) throws SQLException {
+		try {
+			return mapper.getReplyCount(userNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return 0;
+	}
+
 }

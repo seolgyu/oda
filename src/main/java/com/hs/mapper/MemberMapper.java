@@ -42,6 +42,9 @@ public interface MemberMapper {
 	public int checkId(String userId) throws SQLException;
 	public int checkNickname(String userId) throws SQLException;
 	
+	public int getPostCount(Long userNum) throws SQLException;
+	public int getReplyCount(Long userNum) throws SQLException;
+	
 	public String findId(Map<String, Object> map) throws SQLException;
 	public Long findUserNum(Map<String, Object> map) throws SQLException;
 	
