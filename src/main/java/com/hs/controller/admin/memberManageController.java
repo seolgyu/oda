@@ -231,4 +231,19 @@ public class memberManageController {
 	    
 	    return mav;
 	}
+	
+	@ResponseBody
+	@PostMapping("updateDetailStatus")
+	public Map<String, Object> updateDetailStatus(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Map<String, Object> result = new HashMap<>();
+		
+		try {
+			String user_id = req.getParameter("user_id");
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
 }
