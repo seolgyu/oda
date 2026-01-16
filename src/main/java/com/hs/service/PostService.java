@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.hs.model.CommentDTO;
 import com.hs.model.PostDTO;
+import com.hs.model.ReportDTO;
 
 public interface PostService {
 	
@@ -26,4 +27,5 @@ public interface PostService {
     int countCommentLike(long commentId) throws Exception;
     boolean isLiked(long postId, long userNum);
     void deleteFileAt(long fileAtId) throws Exception;
+	void insertReport(ReportDTO dto) throws Exception;
 }

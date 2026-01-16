@@ -7,6 +7,7 @@ import java.util.Map;
 import com.hs.model.CommentDTO;
 import com.hs.model.FileAtDTO;
 import com.hs.model.PostDTO;
+import com.hs.model.ReportDTO;
 
 public interface PostMapper {
 
@@ -36,5 +37,8 @@ public interface PostMapper {
 	void deleteFileAt(long fileAtId) throws Exception;
 	public void updatePostCommentCount(long postId) throws Exception;
 	public long getPostIdByCommentId(long commentId);
+	public void insertReport(ReportDTO dto) throws Exception;
+    public void updatePostReportCount(long postId) throws Exception;
+    public int checkReportHistory(Map<String, Object> map);
 	
 }

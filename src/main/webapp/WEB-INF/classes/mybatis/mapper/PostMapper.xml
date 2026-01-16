@@ -372,4 +372,26 @@
 		SELECT POST_ID FROM COMMENTS WHERE COMMENT_ID = #{commentId}
 	</select>
 
+	<insert id="insertReport" parameterType="com.hs.model.ReportDTO">
+    INSERT INTO Report (
+        report_num, report_user_num, report_reason, 
+        report_type, report_content, report_date
+    ) VALUES (
+        SEQ_REPORT.NEXTVAL, #{reportUserNum}, #{reportReason},
+        #{reportType}, #{reportContent}, SYSDATE
+    )
+	</insert>
+
+	<update id="updatePostReportCount" parameterType="long">
+	    UPDATE POSTS 
+	    SET REPORT_COUNT = NVL(REPORT_COUNT, 0) + 1
+	    WHERE POST_ID = #{postId}
+	</update>
+	
+	<select id="checkReportHistory" parameterType="map" resultType="int">
+	    SELECT COUNT(*) FROM Report
+	    WHERE report_user_num = #{userNum} 
+	      AND report_content = TO_CHAR(#{postId})
+	      AND report_type = 'POST'
+	</select>
 </mapper>

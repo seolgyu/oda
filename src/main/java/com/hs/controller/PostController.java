@@ -14,6 +14,7 @@ import com.hs.model.CommentDTO;
 import com.hs.model.FileAtDTO;
 import com.hs.model.MemberDTO;
 import com.hs.model.PostDTO;
+import com.hs.model.ReportDTO;
 import com.hs.model.SessionInfo;
 import com.hs.util.CloudinaryUtil;
 import com.hs.mvc.annotation.Controller;
@@ -599,6 +600,45 @@ public class PostController {
         mav.addObject("viewMode", view);
         
         return mav;
+    }
+    
+    @PostMapping("report")
+    public void reportSubmit(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession session = req.getSession();
+        SessionInfo info = (SessionInfo) session.getAttribute("member");
+        
+        JSONObject jobj = new JSONObject();
+
+        if (info == null) {
+            jobj.put("state", "login_required");
+            resp.setContentType("application/json; charset=UTF-8");
+            resp.getWriter().print(jobj.toString());
+            return;
+        }
+
+        try {
+            long postId = Long.parseLong(req.getParameter("postId"));
+            String reason = req.getParameter("reason");
+
+            // (선택) 중복 신고 체크 로직은 여기에 추가 가능
+
+            ReportDTO dto = new ReportDTO();
+            dto.setReportUserNum(info.getMemberIdx());
+            dto.setReportReason(reason);
+            dto.setReportType("POST");
+            dto.setReportContent(String.valueOf(postId));
+
+            service.insertReport(dto); // DB 저장 및 카운트 증가
+
+            jobj.put("state", "success");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            jobj.put("state", "error");
+        }
+
+        resp.setContentType("application/json; charset=UTF-8");
+        resp.getWriter().print(jobj.toString());
     }
 	
 }

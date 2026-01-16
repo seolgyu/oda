@@ -8,6 +8,7 @@ import com.hs.mapper.PostMapper;
 import com.hs.model.CommentDTO;
 import com.hs.model.FileAtDTO;
 import com.hs.model.PostDTO;
+import com.hs.model.ReportDTO;
 import com.hs.mybatis.support.MapperContainer;
 
 public class PostServiceImpl implements PostService {
@@ -301,5 +302,21 @@ public class PostServiceImpl implements PostService {
 		}
 		return list;
 	}
+	
+	@Override
+	public void insertReport(ReportDTO dto) throws Exception {
+	    try {
+	        // 1. 신고 내역 기록
+	        mapper.insertReport(dto);
+	        
+	        // 2. 해당 게시글의 신고 횟수 +1
+	        long postId = Long.parseLong(dto.getReportContent());
+	        mapper.updatePostReportCount(postId);
+	        
+	    } catch (Exception e) {
+	        throw e;
+	    }
+	}
+	
 
 }

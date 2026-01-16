@@ -98,8 +98,9 @@
 						<button class="card-action-btn action-btn-hover btn-save">
 							<span class="material-symbols-outlined">bookmark</span> <span>저장</span>
 						</button>
-						<button class="card-action-btn action-btn-hover btn-report">
-							<span class="material-symbols-outlined">campaign</span> <span>신고</span>
+						<button class="card-action-btn action-btn-hover btn-report" 
+     						onclick="openReportModal('${dto.postId}'); event.stopPropagation();">
+    						<span class="material-symbols-outlined">campaign</span> <span>신고</span>
 						</button>
 					</div>
 				</div>
@@ -184,7 +185,8 @@
 							<span class="material-symbols-outlined">bookmark</span> <span>저장</span>
 						</button>
 						<button
-							class="compact-action-btn action-btn-hover btn-report p-0 border-0">
+							class="compact-action-btn action-btn-hover btn-report p-0 border-0"
+							onclick="openReportModal('${dto.postId}'); event.stopPropagation();">
 							<span class="material-symbols-outlined">campaign</span> <span>신고</span>
 						</button>
 					</div>
