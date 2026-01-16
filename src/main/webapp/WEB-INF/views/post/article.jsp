@@ -800,7 +800,7 @@
 		    document.body.removeChild(textArea);
 		}
 		
-		function openReportModal(postId) {\
+		function openReportModal(postId) {
 			if (isLogin === "false") {
 		        if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
 		            location.href = contextPath + "/member/login";
