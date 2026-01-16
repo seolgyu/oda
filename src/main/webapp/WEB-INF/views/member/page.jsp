@@ -268,12 +268,16 @@
 										</p>
 									</div>
 									<div class="ms-auto pb-2 d-flex gap-2">
-										<button
-											class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Follow</button>
+										<c:if test="${sessionScope.member.userId ne user.userId}">
+											<button
+												class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Follow</button>
+										</c:if>
+
 										<button
 											class="btn-icon border border-white border-opacity-10 rounded-circle p-2">
 											<span class="material-symbols-outlined text-white">notifications</span>
 										</button>
+
 										<c:if
 											test="${not empty sessionScope.member and sessionScope.member.userId eq user.userId}">
 											<button
