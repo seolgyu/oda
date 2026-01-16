@@ -190,6 +190,23 @@
         </main>
     </div>
     
+    <div id="confirm-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+	    <div class="neon-card p-10 rounded-[2.5rem] w-full max-w-[340px] text-center border border-white/10 bg-[#0a0a0a] shadow-2xl">
+	        <h3 class="text-2xl font-bold text-white mb-4 tracking-tight">제목</h3>
+	        <p class="text-gray-400 mb-10 leading-relaxed font-medium">설명 문구</p>
+	        <div class="flex gap-3">
+	            <button onclick="closeConfirmModal()" 
+	                    class="flex-1 py-3.5 rounded-2xl bg-white/5 text-gray-400 font-semibold hover:bg-white/10 hover:text-white transition-all">
+	                취소
+	            </button>
+	            <button id="modal-confirm-btn" 
+	                    class="flex-1 py-3.5 rounded-2xl text-white font-bold shadow-lg transform active:scale-95 transition-all">
+	                확인
+	            </button>
+	        </div>
+	    </div>
+	</div>
+    
     <div id="sessionToast" class="glass-toast flex items-center gap-4">
 	    <div class="toast-icon-circle flex-none">
 	        <span id="toastIcon" class="material-symbols-outlined text-[20px]">check_circle</span>

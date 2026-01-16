@@ -48,10 +48,17 @@ function closeJoinModal() {
 }
 
 $(function() {
-    $('#confirm-join-btn').on('click', function() {
-        if (!selectedCommunityId) return;
-        location.href = "join?community_id=" + selectedCommunityId;
-    });
+	$('#confirm-join-btn').on('click', function() {
+	    if (!selectedCommunityId) return;
+		const fn = function(data){
+			if(data.status === 'success') {
+				location.href = "main?community_id=" + data.community_id;
+			} else {
+				alert("가입 처리에 실패했습니다.");
+			}
+		};
+	    ajaxRequest("join", 'GET', { community_id: selectedCommunityId }, 'json', fn);
+	});
     
     $('#join-modal').on('click', function(e) {
         if (e.target === this) closeJoinModal();
