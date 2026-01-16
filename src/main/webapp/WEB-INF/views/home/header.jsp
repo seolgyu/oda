@@ -6,15 +6,14 @@
 <header class="app-header">
 	<a href="${pageContext.request.contextPath}/" class="brand-logo">ODA</a>
 
-	<div
-		class="flex-grow-1 d-flex justify-content-center px-4 position-relative">
+	<div class="search-container-center">
 		<input type="text" id="totalSearchInput" class="search-bar"
 			placeholder="Search ODA..."
 			onkeyup="if(window.event.keyCode==13){searchOda()}">
 
 		<button type="button" onclick="searchOda()"
-			class="btn btn-link p-0 position-absolute end-0 top-50 translate-middle-y me-5 text-white-50 text-decoration-none">
-			<span class="material-symbols-outlined">search</span>
+			class="btn btn-link p-0 position-absolute end-0 top-50 translate-middle-y pe-3 text-white-50 text-decoration-none">
+			<span class="material-symbols-outlined" style="font-size: 20px;">search</span>
 		</button>
 	</div>
 

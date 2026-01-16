@@ -1,44 +1,105 @@
 @charset "UTF-8";
 
-/* 헤더 컨테이너 */
+/* 1. 헤더 컨테이너 */
 .app-header {
-	height: var(--header-height);
-	background-color: rgba(5, 5, 5, 0.8);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-	border-bottom: 1px solid var(--border-color);
-	padding: 0 1.5rem;
-	z-index: 1000;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	position: relative;
+    height: var(--header-height);
+    background-color: rgba(5, 5, 5, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 1.5rem;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative; /* 중앙 검색창 배치의 기준점 */
 }
 
-/* 로고 */
+/* 2. 로고 영역 (왼쪽 고정) */
 .brand-logo {
-	font-weight: 700;
-	font-size: 1.5rem;
-	color: #fff;
-	text-decoration: none;
-	letter-spacing: -0.5px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #fff;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+    z-index: 1001; /* 검색창보다 위에 위치 */
 }
 
-/* 검색바 */
+/* 3. 검색창 중앙 배치 컨테이너 (핵심 수정) */
+.search-container-center {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 100%;
+    max-width: 400px;
+    z-index: 10;
+    pointer-events: none; /* 빈 공간 클릭이 뒤쪽 버튼을 방해하지 않도록 설정 */
+    display: flex;
+    align-items: center;
+}
+
+/* 4. 실제 검색 입력창 */
 .search-bar {
-	width: 100%;
-	max-width: 400px;
-	background-color: rgba(255, 255, 255, 0.07);
-	border: 1px solid var(--border-color);
-	color: #fff;
-	border-radius: 20px;
-	padding: 0.5rem 1rem;
-	transition: all 0.2s;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--border-color);
+    color: #fff;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    padding-right: 45px !important; /* 돋보기 버튼 공간 확보 */
+    transition: all 0.2s;
+    pointer-events: auto; /* 입력창은 클릭 가능하게 복구 */
 }
 
 .search-bar:focus {
-	background-color: rgba(255, 255, 255, 0.12);
-	border-color: var(--primary-color);
-	outline: none;
-	box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+}
+
+/* 5. 검색창 내부 돋보기 버튼 */
+.search-container-center button {
+    position: absolute !important;
+    right: 12px !important; /* 검색창 우측 끝에 밀착 */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    pointer-events: auto; /* 버튼 클릭 가능하게 복구 */
+    border: none;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+    transition: color 0.2s;
+}
+
+.search-container-center button:hover {
+    color: #fff;
+}
+
+/* 6. 우측 버튼 그룹 (오른쪽 고정) */
+.header-actions { /* HTML 우측 버튼들을 감싸는 div가 있다면 */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 1001;
+}
+
+/* 7. 반응형 대응 (화면이 좁을 때 겹침 방지) */
+@media (max-width: 992px) {
+    .search-container-center {
+        position: static !important;
+        transform: none !important;
+        width: auto;
+        flex-grow: 1;
+        margin: 0 1rem;
+        max-width: none;
+    }
+    
+    /* 모바일에서는 로고와 버튼 사이의 유연한 배치 */
+    .app-header {
+        justify-content: space-between;
+    }
 }
