@@ -67,97 +67,111 @@ function loadNextPage(url, renderFunc) {
 }
 
 function renderMyPost(item) {
-    const images = item.fileList ? item.fileList.map(file => file.filePath) : [];
+    const cp = window.cp; // contextPath
+    const isListMode = $('#post-list-container').hasClass('list-mode');
+
+    // [1] 축약형과 카드형의 display 상태 결정
+    const listViewDisplay = isListMode ? 'flex' : 'none';
+    const cardViewDisplay = isListMode ? 'none' : 'block';
+
+    // [2] 좋아요 상태 및 파일 체크 로직
+    const likedClass = item.likedByUser ? 'text-danger' : '';
+    const likedFill = item.likedByUser ? 1 : 0;
     
-    let mediaHtml = "";
-    if (images.length > 0) {
-        const carouselId = `carousel-${item.postId}`;
-        if (images.length > 1) {
-            mediaHtml = `
-                <div class="p-3 pt-0">
-                    <div id="${carouselId}" class="carousel slide post-carousel" data-bs-ride="false">
-                        <div class="carousel-indicators">
-                            ${images.map((_, idx) => `
-                                <button type="button" data-bs-target="#${carouselId}" data-bs-slide-to="${idx}" 
-                                        class="${idx === 0 ? 'active' : ''}"></button>
-                            `).join('')}
-                        </div>
-                        <div class="carousel-inner">
-                            ${images.map((path, idx) => `
-                                <div class="carousel-item ${idx === 0 ? 'active' : ''}">
-                                    <div class="ratio ratio-16x9">
-                                        <img src="${path}" class="d-block w-100 object-fit-cover" alt="Post Image">
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev">
-                            <span class="material-symbols-outlined fs-4">chevron_left</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next">
-                            <span class="material-symbols-outlined fs-4">chevron_right</span>
-                        </button>
-                    </div>
-                </div>`;
-        } else {
-            mediaHtml = `
-                <div class="p-3 pt-0">
-                    <div class="post-carousel">
-                        <div class="ratio ratio-16x9">
-                            <img src="${images[0]}" class="d-block w-100 object-fit-cover" alt="Post Image">
-                        </div>
-                    </div>
-                </div>`;
-        }
-    }
+    // 첫 번째 이미지 경로 가져오기
+    const firstImg = (item.fileList && item.fileList.length > 0) ? item.fileList[0].filePath : null;
 
     return `
-        <div class="glass-card shadow-lg group mb-4">
-            <div class="p-3 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="avatar-md bg-info text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden" 
-                         style="width:40px; height:40px; border-radius:10px; background: linear-gradient(135deg, #6366f1, #a855f7);">
-                        ${item.authorProfileImage 
-                            ? `<img src="${item.authorProfileImage}" class="w-100 h-100 object-fit-cover">` 
-                            : (item.authorNickname ? item.authorNickname.substring(0, 1) : 'U')}
+        <div class="glass-card shadow-lg group mb-4 post-item-card">
+            <div class="list-view-item p-3" style="display: ${listViewDisplay};">
+                <div class="d-flex align-items-start gap-3 w-100">
+                    <div class="flex-shrink-0 thumbnail-box" style="width: 90px; height: 90px;">
+                        ${firstImg 
+                            ? `<img src="${firstImg}" class="w-100 h-100 object-fit-cover rounded-3 border border-white border-opacity-10">`
+                            : `<div class="w-100 h-100 rounded-3 d-flex align-items-center justify-content-center border border-white border-opacity-10" style="background: rgba(255, 255, 255, 0.05);">
+                                 <span class="material-symbols-outlined opacity-20">image</span>
+                               </div>`
+                        }
                     </div>
-                    <div>
-                        <h3 class="text-sm fw-medium text-white mb-0">${item.authorNickname || '익명'}</h3>
-                        <p class="text-xs text-gray-500 mb-0">${item.createdDate}</p>
+
+                    <div class="flex-grow-1 overflow-hidden d-flex flex-column justify-content-between" style="min-height: 90px;">
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <span class="text-white fw-bold text-sm">${item.authorNickname}</span>
+                                <span class="text-secondary text-xs opacity-75">c/${item.authorId}</span>
+                                <span class="ms-auto text-xs text-gray-500">${item.createdDate}</span>
+                            </div>
+                            ${item.title ? `<h4 class="text-white text-sm fw-bold mb-0 text-truncate">${item.title}</h4>` : ''}
+                            <p class="text-light opacity-50 text-xs mb-2 text-truncate">${item.content}</p>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between mt-auto">
+                            <div class="d-flex gap-3">
+                                <button class="btn-icon d-flex align-items-center gap-1 p-0" onclick="toggleLike(this, '${item.postId}')">
+                                    <span class="material-symbols-outlined fs-6 ${likedClass}" style="font-variation-settings: 'FILL' ${likedFill};">favorite</span>
+                                    <span class="text-xs opacity-75 like-count">${item.likeCount}</span>
+                                </button>
+                                <button class="btn-icon d-flex align-items-center gap-1 p-0" onclick="location.href='${cp}/post/article?postId=${item.postId}';">
+                                    <span class="material-symbols-outlined fs-6">chat_bubble</span>
+                                    <span class="text-xs opacity-75">${item.commentCount}</span>
+                                </button>
+                                <button class="btn-icon p-0"><span class="material-symbols-outlined fs-6">repeat</span></button>
+                            </div>
+                            <div class="d-flex gap-3 text-white-50">
+                                <button class="btn-icon p-0" title="공유하기"><span class="material-symbols-outlined fs-6">share</span></button>
+                                <button class="btn-icon p-0" title="저장하기"><span class="material-symbols-outlined fs-6">bookmark</span></button>
+                                <button class="btn-icon p-0" title="신고하기"><span class="material-symbols-outlined fs-6">report</span></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <button class="btn-icon text-white-50"><span class="material-symbols-outlined">more_horiz</span></button>
             </div>
 
-            <div class="p-3 pb-2">
-                ${item.title ? `<h4 class="text-white fs-6 fw-bold mb-1">${item.title}</h4>` : ''}
-                <p class="text-light text-sm mb-0 lh-base" style="white-space: pre-wrap;">${item.content}</p>
-            </div>
-
-            ${mediaHtml}
-
-            <div class="px-3 py-2 d-flex align-items-center justify-content-between border-top border-white border-opacity-10"
-                 style="background: rgba(255, 255, 255, 0.05);">
-
-                <div class="d-flex gap-4">
-					<button class="btn-icon d-flex align-items-center gap-1"
-						onclick="toggleLike(this, '${item.postId}')">
-							<span
-								class="material-symbols-outlined fs-5 ${item.likedByUser ? 'text-danger' : ''}"
-								style="font-variation-settings: 'FILL' ${item.likedByUser ? 1 : 0};">
-								favorite </span> <span class="text-xs opacity-75 like-count">${item.likeCount}</span>
-					</button>
-                    <button class="btn-icon d-flex align-items-center gap-1" onclick="location.href='${window.cp}/post/article?postId=${item.postId}';">
-                        <span class="material-symbols-outlined fs-5">chat_bubble</span>
-                        <span class="text-xs opacity-75">${item.commentCount || 0}</span>
-                    </button>
-                    <button class="btn-icon"><span class="material-symbols-outlined fs-5">repeat</span></button>
+            <div class="card-view-item" style="display: ${cardViewDisplay};">
+                <div class="p-3 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="avatar-md bg-info text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden" 
+                             style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #a855f7);">
+                            ${item.authorProfileImage 
+                                ? `<img src="${item.authorProfileImage}" class="w-100 h-100 object-fit-cover">`
+                                : `<span>${item.authorNickname.substring(0, 1)}</span>`
+                            }
+                        </div>
+                        <div>
+                            <h3 class="text-sm fw-medium text-white mb-0">${item.authorNickname}</h3>
+                            <p class="text-xs text-gray-500 mb-0">${item.createdDate}</p>
+                        </div>
+                    </div>
+                    <button class="btn-icon text-white-50"><span class="material-symbols-outlined">more_horiz</span></button>
                 </div>
 
-                <div class="d-flex gap-3 text-white-50">
-                    <button class="btn-icon" title="공유하기"><span class="material-symbols-outlined fs-5">share</span></button>
-                    <button class="btn-icon" title="저장하기"><span class="material-symbols-outlined fs-5">bookmark</span></button>
-                    <button class="btn-icon" title="신고하기"><span class="material-symbols-outlined fs-5">report</span></button>
+                <div class="p-3 pb-2">
+                    ${item.title ? `<h4 class="text-white fs-6 fw-bold mb-1">${item.title}</h4>` : ''}
+                    <p class="text-light text-sm mb-0 lh-base" style="white-space: pre-wrap;">${item.content}</p>
+                </div>
+
+                ${item.fileList && item.fileList.length > 0 ? `
+                    <div class="p-3 pt-0">
+                        <div class="post-carousel">
+                            <div class="ratio ratio-16x9">
+                                <img src="${firstImg}" class="d-block w-100 object-fit-cover">
+                            </div>
+                        </div>
+                    </div>
+                ` : ''}
+
+                <div class="px-3 py-2 d-flex align-items-center justify-content-between border-top border-white border-opacity-10" 
+                     style="background: rgba(255, 255, 255, 0.05);">
+                    <div class="d-flex gap-4">
+                        <button class="btn-icon d-flex align-items-center gap-1" onclick="toggleLike(this, '${item.postId}')">
+                            <span class="material-symbols-outlined fs-5 ${likedClass}" style="font-variation-settings: 'FILL' ${likedFill};">favorite</span>
+                            <span class="text-xs opacity-75 like-count">${item.likeCount}</span>
+                        </button>
+                        <button class="btn-icon d-flex align-items-center gap-1" onclick="location.href='${cp}/post/article?postId=${item.postId}';">
+                            <span class="material-symbols-outlined fs-5">chat_bubble</span>
+                            <span class="text-xs opacity-75">${item.commentCount}</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

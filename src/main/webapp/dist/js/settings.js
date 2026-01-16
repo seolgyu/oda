@@ -12,77 +12,81 @@ const observerOptions = {
 };
 
 function loadNextPage(url, renderFunc) {
-    if (window.isLoading) return;
-    window.isLoading = true;
+	if (window.isLoading) return;
+	window.isLoading = true;
 
-    const nextPage = window.page + 1;
+	const nextPage = window.page + 1;
 
-    $.ajax({
-        url: cp + url,
-        type: 'GET',
-        data: { page: nextPage },
-        dataType: 'json',
-        success: function(data) {
-            if (data.status === 'success' && data.list && data.list.length > 0) {
-                let htmlBuffer = "";
-                data.list.forEach(item => {
-                    htmlBuffer += renderFunc(item);
-                });
+	$.ajax({
+		url: cp + url,
+		type: 'GET',
+		data: { page: nextPage },
+		dataType: 'json',
+		success: function(data) {
+			if (data.status === 'success' && data.list && data.list.length > 0) {
+				let htmlBuffer = "";
+				data.list.forEach(item => {
+					htmlBuffer += renderFunc(item);
+				});
 
-                $('.list-container').append(htmlBuffer);
-                $('.list-container').after($('#sentinel'));
+				$('.list-container').append(htmlBuffer);
+				$('.list-container').after($('#sentinel'));
 
-                window.page = nextPage;
-                window.isLoading = false;
-            } else {
-                window.isLoading = false;
-                if(window.io) window.io.disconnect();
-            }
-        },
-        error: function() {
-            window.isLoading = false;
-        }
-    });
+				window.page = nextPage;
+				window.isLoading = false;
+			} else {
+				window.isLoading = false;
+				if (window.io) window.io.disconnect();
+			}
+		},
+		error: function() {
+			window.isLoading = false;
+		}
+	});
 }
 
 function renderLikedPost(list) {
 	const thumbnailHtml = list.thumbnail
-		? `<div class="record-thumbnail rounded-3" style="background-image: url('${list.thumbnail}');"></div>`
-		: `<div class="record-thumbnail rounded-3 d-flex align-items-center justify-content-center" 
-		            style="background-color: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(255, 255, 255, 0.2);">
-		           <span class="material-symbols-outlined text-white opacity-20" style="font-size: 24px;">image</span>
-		       </div>`;
+		? `<div class="record-thumbnail rounded-3 flex-shrink-0" style="background-image: url('${list.thumbnail}');"></div>`
+		: `<div class="record-thumbnail rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" 
+                    style="background-color: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(255, 255, 255, 0.2);">
+                   <span class="material-symbols-outlined text-white opacity-20" style="font-size: 24px;">image</span>
+               </div>`;
 
 	return `
-		       <div class="record-item d-flex align-items-stretch overflow-hidden">
-		           <div class="flex-grow-1 d-flex align-items-center gap-3 p-3 cursor-pointer item-content" 
-		                onclick="location.href='${window.cp}/post/article?postId=${list.postId}';"> ${thumbnailHtml}
-		               
-		               <div class="flex-grow-1 min-w-0">
-		                   <div class="d-flex align-items-center gap-2 mb-1 opacity-75">
-		                       <span class="text-white text-xs fw-bold">${list.authorNickname}</span>
-		                       <span class="text-secondary text-xs">· ${list.createdDate}</span>
-		                   </div>
-		                   <h4 class="text-white fs-6 fw-bold mb-1 text-truncate">${list.title}</h4>
-		                   <p class="text-secondary text-xs mb-0 text-truncate opacity-50">${list.content}</p>
-		               </div>
-		           </div>
+        <div class="record-item d-flex align-items-stretch overflow-hidden">
+            <div class="flex-grow-1 d-flex align-items-center gap-3 p-3 cursor-pointer item-content" 
+                 style="min-width: 0;"
+                 onclick="location.href='${window.cp}/post/article?postId=${list.postId}';"> 
+                
+                ${thumbnailHtml}
+                
+                <div class="flex-grow-1" style="min-width: 0;">
+                    <div class="d-flex align-items-center gap-2 mb-1 opacity-75">
+                        <span class="text-white text-xs fw-bold text-truncate">${list.authorNickname}</span>
+                        <span class="text-secondary text-xs flex-shrink-0">· ${list.createdDate}</span>
+                    </div>
+                    <h4 class="text-white fs-6 fw-bold mb-1 text-truncate">${list.title || ''}</h4>
+                    <p class="text-secondary text-xs mb-0 text-truncate opacity-50">${list.content || ''}</p>
+                </div>
+            </div>
 
-		           <div class="action-section d-flex align-items-center justify-content-center border-start border-white border-opacity-10">
-				   <button type="button" class="btn-like-toggle" onclick="toggleLike(this, '${list.postId}')">
-				                   <span class="material-symbols-outlined text-danger" 
-				                         style="font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;">
-				                       favorite
-				                   </span>
-				               </button>
-		           </div>
-		       </div>
-		   `;
+            <div class="action-section d-flex align-items-center justify-content-center border-start border-white border-opacity-10 flex-shrink-0"
+                 style="width: 70px;">
+                <button type="button" class="btn-like-toggle" onclick="toggleLike(this, '${list.postId}')">
+                    <span class="material-symbols-outlined text-danger" 
+                          style="font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;">
+                        favorite
+                    </span>
+                </button>
+            </div>
+        </div>
+    `;
 }
 
 function renderCommentList(list) {
-    const parentQuoteHtml = list.depth > 1 
-        ? `
+	const parentQuoteHtml = list.depth > 1
+		? `
         <div class="parent-quote p-3 mb-3 rounded-2"
             style="background: rgba(255, 255, 255, 0.06); border-left: 4px solid rgba(255, 255, 255, 0.2);">
             <div class="d-flex align-items-center gap-2 mb-2">
@@ -96,13 +100,13 @@ function renderCommentList(list) {
                 style="line-height: 1.5; border-left: 1px solid rgba(255, 255, 255, 0.1); padding-left: 10px;">
                 <span class="opacity-75">"${list.parentCommentContent}"</span>
             </div>
-        </div>` 
-        : '';
+        </div>`
+		: '';
 
-    const labelText = list.depth > 1 ? 'MY REPLY' : 'MY COMMENT';
-    const labelClass = list.depth > 1 ? 'text-info' : 'text-primary';
+	const labelText = list.depth > 1 ? 'MY REPLY' : 'MY COMMENT';
+	const labelClass = list.depth > 1 ? 'text-info' : 'text-primary';
 
-    return `
+	return `
         <div class="record-item p-3 overflow-hidden mb-4"
             style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px;">
 

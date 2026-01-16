@@ -20,17 +20,18 @@
 				<c:forEach var="item" items="${list}">
 					<div class="record-item d-flex align-items-stretch overflow-hidden">
 						<div
-							class="flex-grow-1 d-flex align-items-center gap-3 p-3 cursor-pointer item-content"
+							class="flex-grow-1 flex-shrink-1 d-flex align-items-center gap-3 p-3 cursor-pointer item-content"
+							style="min-width: 0;"
 							onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
 
 							<c:choose>
 								<c:when test="${not empty item.thumbnail}">
-									<div class="record-thumbnail rounded-3"
+									<div class="record-thumbnail rounded-3 flex-shrink-0"
 										style="background-image: url('${item.thumbnail}');"></div>
 								</c:when>
 								<c:otherwise>
 									<div
-										class="record-thumbnail rounded-3 d-flex align-items-center justify-content-center"
+										class="record-thumbnail rounded-3 flex-shrink-0 d-flex align-items-center justify-content-center"
 										style="background-color: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(255, 255, 255, 0.2);">
 										<span class="material-symbols-outlined text-white opacity-20"
 											style="font-size: 24px;">image</span>
@@ -38,10 +39,10 @@
 								</c:otherwise>
 							</c:choose>
 
-							<div class="flex-grow-1 min-w-0">
+							<div class="flex-grow-1 min-w-0" style="min-width: 0;">
 								<div class="d-flex align-items-center gap-2 mb-1 opacity-75">
-									<span class="text-white text-xs fw-bold">${item.authorNickname}</span>
-									<span class="text-secondary text-xs">·
+									<span class="text-white text-xs fw-bold text-truncate">${item.authorNickname}</span>
+									<span class="text-secondary text-xs flex-shrink-0">·
 										${item.createdDate}</span>
 								</div>
 								<h4 class="text-white fs-6 fw-bold mb-1 text-truncate">${item.title}</h4>
@@ -50,7 +51,8 @@
 						</div>
 
 						<div
-							class="action-section d-flex align-items-center justify-content-center border-start border-white border-opacity-10">
+							class="action-section d-flex align-items-center justify-content-center border-start border-white border-opacity-10 flex-shrink-0"
+							style="width: 70px;">
 							<button type="button" class="btn-like-toggle"
 								onclick="toggleLike(this, '${item.postId}')">
 								<span class="material-symbols-outlined text-danger"
