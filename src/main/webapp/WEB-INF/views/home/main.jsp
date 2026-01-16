@@ -482,11 +482,11 @@ opacity
 						if (data.liked) {
 							$icon.text("favorite");
 							$btn.addClass("text-pink");
-							showToast("info", "이 게시글을 좋아합니다.");
+							showToast("success", "이 게시글을 좋아합니다.");
 						} else {
 							$icon.text("favorite_border");
 							$btn.removeClass("text-pink");
-							showToast("info", "좋아요를 취소했습니다.");
+							showToast("success", "좋아요를 취소했습니다.");
 						}
 					} else if (data.state === "login_required") {
 						location.href = contextPath + '/member/login?redirect='

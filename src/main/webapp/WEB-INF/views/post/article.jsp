@@ -164,6 +164,21 @@
 		<%@ include file="../home/sidebar.jsp"%>
 
 		<main class="app-main">
+		
+			<div id="sessionToast" class="glass-toast shadow-lg">
+	            <div class="d-flex align-items-center gap-3">
+	               <div class="toast-icon-circle">
+	                  <span id="toastIcon" class="material-symbols-outlined fs-5">info</span>
+	               </div>
+	               <div class="toast-content">
+	                  <h4 id="toastTitle"
+	                     class="text-xs fw-bold text-uppercase tracking-widest mb-1">System
+	                  </h4>
+	                  <p id="toastMessage" class="text-sm text-gray-300 mb-0">메시지</p>
+	               </div>
+	            </div>
+         	</div>
+         
 			<div class="space-background">
 				<div class="stars"></div>
 				<div class="stars2"></div>
@@ -623,16 +638,17 @@
 							$icon.text("favorite");
 							$btn.addClass("text-pink");
 							$btn.removeClass("text-white-50");
-							showToast("info", "이 게시글을 좋아합니다.");
+							showToast("success", "이 게시글을 좋아합니다.");
 						} else {
 							$icon.text("favorite_border");
 							$btn.removeClass("text-pink");
 							$btn.addClass("text-white-50");
-							showToast("info", "좋아요를 취소했습니다.");
+							showToast("success", "좋아요를 취소했습니다.");
 						}
 					} else if (data.state === "login_required") {
 						location.href = contextPath + '/member/login?redirect='
 								+ encodeURIComponent(location.href);
+						showToast("error", "로그인이 필요합니다.");
 					}
 				}
 			});
@@ -709,6 +725,49 @@
 			setTimeout(function() {
 				$toast.removeClass('show');
 			}, 2500);
+		}
+		
+		// URL 복사 함수
+		function copyUrl(postId) {
+		    
+		    const url = window.location.origin + '${pageContext.request.contextPath}/post/article?postId=' + postId;
+
+		    if (navigator.clipboard && navigator.clipboard.writeText) {
+		        navigator.clipboard.writeText(url).then(() => {
+		        	showToast("success", "클립보드에 주소가 복사되었습니다.");
+		        }).catch(err => {
+		            // 실패 시 구형 방식 시도
+		            fallbackCopyTextToClipboard(url);
+		        });
+		    } else {
+		        // 구형 브라우저(또는 HTTP 환경) 대응
+		        fallbackCopyTextToClipboard(url);
+		    }
+		}
+
+		// 구형 브라우저용 복사 함수 (임시 textarea 생성 방식)
+		function fallbackCopyTextToClipboard(text) {
+		    const textArea = document.createElement("textarea");
+		    textArea.value = text;
+		    
+		    // 화면 밖으로 숨김
+		    textArea.style.position = "fixed";
+		    textArea.style.left = "-9999px";
+		    document.body.appendChild(textArea);
+		    textArea.focus();
+		    textArea.select();
+
+		    try {
+		        const successful = document.execCommand('copy');
+		        if (successful) {
+		        	showToast("success", "클립보드에 주소가 복사되었습니다.");
+		        } else {
+		        	showToast("error", "주소 복사에 실패했습니다.");
+		        }
+		    } catch (err) {
+		    	showToast("error", "주소 복사에 실패했습니다.");
+		    }
+		    document.body.removeChild(textArea);
 		}
 		
 	</script>
