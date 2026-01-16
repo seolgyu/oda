@@ -6,7 +6,6 @@
 <head>
 <%@ include file="../home/head.jsp"%>
 <style>
-    /* [스타일] 미리보기 이미지 아이템 */
     .img-item {
         position: relative;
         display: inline-block;
@@ -24,7 +23,7 @@
         object-fit: cover;
     }
     
-    /* [추가] 삭제 버튼 (이미지 위 X 표시) */
+   
     .btn-delete-img {
         position: absolute;
         top: 5px;
@@ -43,11 +42,10 @@
         transition: all 0.2s;
     }
     .btn-delete-img:hover {
-        background: #ef4444; /* 빨간색 */
+        background: #ef4444; 
         transform: scale(1.1);
     }
 
-    /* 입력 폼 스타일 */
     .write-input {
         background: rgba(255, 255, 255, 0.05) !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -72,6 +70,19 @@
         <%@ include file="../home/sidebar.jsp"%>
 
         <main class="app-main">
+        
+        	<div id="sessionToast" class="glass-toast shadow-lg">
+                <div class="d-flex align-items-center gap-3">
+                   <div class="toast-icon-circle">
+                      <span id="toastIcon" class="material-symbols-outlined fs-5">info</span>
+                   </div>
+                   <div class="toast-content">
+                      <h4 id="toastTitle" class="text-xs fw-bold text-uppercase tracking-widest mb-1">System</h4>
+                      <p id="toastMessage" class="text-sm text-gray-300 mb-0">메시지</p>
+                   </div>
+                </div>
+            </div>
+            
             <div class="space-background">
                 <div class="stars"></div><div class="stars2"></div><div class="stars3"></div>
                 <div class="planet planet-1"></div><div class="planet planet-2"></div>
@@ -145,13 +156,20 @@
                                     <div id="deletedFileContainer"></div>
                                 </div>
 
-                                <div class="d-flex justify-content-end gap-2 pt-2 border-top border-secondary border-opacity-25">
-                                    <button type="button" class="btn btn-sm btn-secondary" onclick="location.href='${pageContext.request.contextPath}/main'">Cancel</button>
-                                    <button type="button" class="btn btn-sm btn-primary px-4 fw-bold" 
-                                            style="background: #a855f7; border: none;" onclick="sendOk();">
-                                        ${mode == 'update' ? 'Update' : 'Post'}
-                                    </button>
-                                </div>
+                                <div class="d-flex justify-content-between pt-2 border-top border-secondary border-opacity-25">
+								    <div class="d-flex gap-2">
+								        <button type="button" class="btn btn-sm btn-outline-light" onclick="tempSave();">임시저장</button>
+								        <button type="button" class="btn btn-sm btn-outline-light" onclick="loadTemp();">불러오기</button>
+								    </div>
+								
+								    <div class="d-flex gap-2">
+								       	<button type="button" class="btn btn-sm btn-secondary" onclick="location.href='${pageContext.request.contextPath}/main'">Cancel</button>
+								       	<button type="button" class="btn btn-sm btn-primary px-4 fw-bold" 
+								       			style="background: #a855f7; border: none;" onclick="sendOk();">
+								            	${mode == 'update' ? 'Update' : 'Post'}
+								        </button>
+								    </div>
+								</div>
                             </form>
                         </div>
                     </div>
@@ -167,12 +185,10 @@
     <script>
         const contextPath = "${pageContext.request.contextPath}";
         const mode = "${mode}";
-        
-        // [새 파일 관리용 DataTransfer 객체]
+
         const dataTransfer = new DataTransfer();
 
         $(function() {
-            // [수정 모드] 기존 이미지 표시
             if (mode === "update") {
                 const $viewer = $(".viewer");
                 <c:if test="${not empty dto.fileList}">
@@ -182,8 +198,7 @@
                             if (!imgPath.startsWith("http")) {
                                 imgPath = contextPath + "/uploads/photo/" + imgPath;
                             }
-                            
-                            // 기존 파일은 deleteOldFile 함수 호출
+
                             let html = `
                                 <div class="img-item" id="old-img-${file.fileAtId}">
                                     <img src="\${imgPath}">
@@ -197,41 +212,34 @@
             }
         });
 
-        // [기존 파일 삭제] - 화면에서 숨기고 hidden input 추가
+
         function deleteOldFile(fileId) {
             if(!confirm("기존 이미지를 삭제하시겠습니까? (수정 완료 시 반영됩니다)")) return;
             
-            $("#old-img-" + fileId).remove(); // 화면 제거
-            
-            // 삭제할 파일 ID를 form에 추가 (name="delfile")
+            $("#old-img-" + fileId).remove(); 
+
             let input = `<input type="hidden" name="delfile" value="\${fileId}">`;
             $("#deletedFileContainer").append(input);
         }
 
-        // [새 파일 선택 핸들러]
+
         function handleFileSelect(input) {
             if (input.files) {
                 const filesArr = Array.from(input.files);
                 filesArr.forEach(file => {
                     if (!file.type.match("image.*")) return;
-                    
-                    // DataTransfer에 담기
-                    dataTransfer.items.add(file);
-                    
-                    // 미리보기 생성 (새 파일은 deleteNewFile 호출)
-                    // file 객체를 식별하기 위해 lastModified 등을 활용하거나 인덱스 사용
-                    // 여기선 간단히 렌더링 시점에 매핑
+                 
+                    dataTransfer.items.add(file);  
+                  
                     renderNewFiles();
                 });
-                
-                // input 파일 리스트 업데이트
+
                 input.files = dataTransfer.files;
             }
         }
 
-        // [새 파일 렌더링 및 삭제 기능]
         function renderNewFiles() {
-            // 기존에 렌더링된 '새 파일' 미리보기만 제거 (기존 DB파일은 건드리지 않음)
+
             $(".new-img-item").remove();
             
             const $viewer = $(".viewer");
@@ -253,9 +261,8 @@
             }
         }
 
-        // [새 파일 삭제]
         function deleteNewFile(index) {
-            // DataTransfer에서 해당 인덱스 파일 제거
+ 
             const newDataTransfer = new DataTransfer();
             const files = dataTransfer.files;
             
@@ -264,14 +271,12 @@
                     newDataTransfer.items.add(files[i]);
                 }
             }
-            
-            // 전역 dataTransfer 업데이트
+     
             dataTransfer.items.clear();
             for(let i=0; i<newDataTransfer.files.length; i++){
                 dataTransfer.items.add(newDataTransfer.files[i]);
             }
-            
-            // input 업데이트 및 다시 그리기
+  
             document.getElementById("selectFile").files = dataTransfer.files;
             renderNewFiles();
         }
@@ -283,6 +288,93 @@
             
             f.action = contextPath + "/post/" + mode;
             f.submit();
+        }
+        
+        function tempSave() {
+            const f = document.postForm;
+            const title = f.title.value;
+            const content = f.content.value; 
+    
+            if (!title.trim() && !content.trim()) {
+                showToast('error', '작성된 글이 없습니다.');
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: contextPath + "/post/tempSave",
+                data: {
+                    title: title,
+                    content: content
+                },
+                dataType: "json",
+                success: function(data) {
+                    if (data.state === "success") {
+                        showToast('success', '게시글이 임시저장 되었습니다.');
+                    } else if (data.state === "login_required") {
+                        location.href = contextPath + "/member/login";
+                    } else {
+                        showToast('error', '임시저장에 실패했습니다.');
+                    }
+                },
+                error: function(e) {
+                    console.log(e);
+                    showToast('error', '시스템 오류가 발생했습니다.');
+                }
+            });
+        }
+
+        function loadTemp() {
+       
+            const f = document.postForm;
+            if(f.title.value.trim() || f.content.value.trim()) {
+                if(!confirm("작성 중인 내용이 사라집니다. 임시저장된 글을 불러오시겠습니까?")) {
+                    return;
+                }
+            }
+
+            $.ajax({
+                type: "POST",
+                url: contextPath + "/post/loadTemp",
+                dataType: "json",
+                success: function(data) {
+                    if (data.state === "success") {
+                        f.title.value = data.title;
+                        f.content.value = data.content;
+                        
+                        showToast('success', '임시저장된 글을 불러왔습니다.');
+                    } else if (data.state === "not_found") {
+                        showToast('error', '저장된 게시글이 없습니다.');
+                    } else if (data.state === "login_required") {
+                        location.href = contextPath + "/member/login";
+                    }
+                },
+                error: function(e) {
+                    console.log(e);
+                    showToast('error', '불러오기 중 오류가 발생했습니다.');
+                }
+            });
+        }
+        
+        function showToast(type, msg) {
+            const $toast = $('#sessionToast');
+            const $title = $('#toastTitle');
+            const $icon = $('#toastIcon');
+            $('#toastMessage').text(msg);
+            if (type === "success") {
+                $title.text('SUCCESS').css('color', '#4ade80');
+                $icon.text('check_circle');
+            } else if (type === "info") {
+                $title.text('INFO').css('color', '#8B5CF6');
+                $icon.text('info');
+            } else if (type === "error") {
+                $title.text('ERROR').css('color', '#f87171');
+                $icon.text('error');
+            }
+            $toast.addClass('show');
+            setTimeout(function() {
+                $toast.removeClass('show');
+            }, 2500);
         }
     </script>
 </body>

@@ -306,10 +306,8 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void insertReport(ReportDTO dto) throws Exception {
 	    try {
-	        // 1. 신고 내역 기록
 	        mapper.insertReport(dto);
 	        
-	        // 2. 해당 게시글의 신고 횟수 +1
 	        long postId = Long.parseLong(dto.getReportContent());
 	        mapper.updatePostReportCount(postId);
 	        
@@ -318,5 +316,34 @@ public class PostServiceImpl implements PostService {
 	    }
 	}
 	
+	@Override
+	public PostDTO findTempPost(long userNum) {
+	    PostDTO dto = null;
+	    try {
+	        dto = mapper.findTempPost(userNum);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return dto;
+	}
+
+	@Override
+	public void saveTempPost(PostDTO dto) throws Exception {
+	    try {
+	        PostDTO tempDto = mapper.findTempPost(dto.getUserNum());
+
+	        if (tempDto != null) {
+	          
+	            dto.setPostId(tempDto.getPostId()); 
+	            mapper.updatePost(dto); 
+	        } else {
+	           
+	            mapper.insertPost(dto);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw e;
+	    }
+	}
 
 }

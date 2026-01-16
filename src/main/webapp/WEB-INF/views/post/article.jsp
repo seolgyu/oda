@@ -620,6 +620,7 @@
                 error: function() { showToast("error", "서버 에러"); }
             });
         }
+        
     </script>
 </body>
 </html>

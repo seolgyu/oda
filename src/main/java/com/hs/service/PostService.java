@@ -28,4 +28,6 @@ public interface PostService {
     boolean isLiked(long postId, long userNum);
     void deleteFileAt(long fileAtId) throws Exception;
 	void insertReport(ReportDTO dto) throws Exception;
+	public PostDTO findTempPost(long userNum);
+	public void saveTempPost(PostDTO dto) throws Exception;
 }

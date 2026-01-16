@@ -633,5 +633,77 @@ public class PostController {
         resp.setContentType("application/json; charset=UTF-8");
         resp.getWriter().print(jobj.toString());
     }
+    
+ 
+    @PostMapping("tempSave")
+    public void tempSave(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession session = req.getSession();
+        SessionInfo info = (SessionInfo) session.getAttribute("member");
+        JSONObject jobj = new JSONObject();
+
+        if (info == null) {
+            jobj.put("state", "login_required");
+            resp.setContentType("application/json; charset=UTF-8");
+            resp.getWriter().print(jobj.toString());
+            return;
+        }
+
+        try {
+            PostDTO dto = new PostDTO();
+            dto.setUserNum(info.getMemberIdx());
+            dto.setTitle(req.getParameter("title"));
+            dto.setContent(req.getParameter("content"));
+            dto.setPostType("COMMUNITY"); 
+            dto.setState("임시저장"); 
+            
+            dto.setReplyEnabled("1");
+            dto.setShowLikes("1");
+            dto.setShowViews("1");
+
+            service.saveTempPost(dto); 
+
+            jobj.put("state", "success");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            jobj.put("state", "error");
+        }
+
+        resp.setContentType("application/json; charset=UTF-8");
+        resp.getWriter().print(jobj.toString());
+    }
+
+   
+    @PostMapping("loadTemp")
+    public void loadTemp(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession session = req.getSession();
+        SessionInfo info = (SessionInfo) session.getAttribute("member");
+        JSONObject jobj = new JSONObject();
+
+        if (info == null) {
+            jobj.put("state", "login_required");
+            resp.getWriter().print(jobj.toString());
+            return;
+        }
+
+        try {
+            PostDTO dto = service.findTempPost(info.getMemberIdx());
+
+            if (dto != null) {
+                jobj.put("state", "success");
+                jobj.put("title", dto.getTitle());
+                jobj.put("content", dto.getContent());
+            } else {
+                jobj.put("state", "not_found"); 
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            jobj.put("state", "error");
+        }
+
+        resp.setContentType("application/json; charset=UTF-8");
+        resp.getWriter().print(jobj.toString());
+    }
 	
 }

@@ -1,190 +1,185 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hs.mapper.PostMapper">
 
-	<insert id="insertPost" parameterType="com.hs.model.PostDTO">
-		INSERT INTO posts (
-		post_id, user_num, community_id, title, content,
-		post_type, is_deleted, created_date, state,
-		reply_enabled, show_likes, show_views
-		)
-		VALUES (
-		posts_seq.NEXTVAL, #{userNum}, #{communityId,
-		jdbcType=INTEGER},
-		#{title}, #{content}, #{postType},
-		'0', SYSTIMESTAMP,
-		#{state},
-		#{replyEnabled}, #{showLikes}, #{showViews} )
-		<selectKey keyProperty="postId" resultType="long"
-			order="AFTER">
-			SELECT posts_seq.CURRVAL FROM DUAL
-		</selectKey>
-	</insert>
+    <insert id="insertPost" parameterType="com.hs.model.PostDTO">
+        INSERT INTO POSTS (
+            POST_ID, USER_NUM, COMMUNITY_ID, TITLE, CONTENT,
+            POST_TYPE, IS_DELETED, CREATED_DATE, STATE,
+            REPLY_ENABLED, SHOW_LIKES, SHOW_VIEWS
+        ) VALUES (
+            POSTS_SEQ.NEXTVAL, 
+            #{userNum}, 
+            #{communityId, jdbcType=INTEGER},
+            #{title}, 
+            #{content}, 
+            #{postType},
+            '0', 
+            SYSTIMESTAMP,
+            #{state},
+            #{replyEnabled}, 
+            #{showLikes}, 
+            #{showViews} 
+        )
+        <selectKey keyProperty="postId" resultType="long" order="AFTER">
+            SELECT POSTS_SEQ.CURRVAL FROM DUAL
+        </selectKey>
+    </insert>
 
-	<update id="updatePost" parameterType="com.hs.model.PostDTO">
-		UPDATE posts
-		SET title =
-		#{title}, content = #{content},
-		updated_date = SYSTIMESTAMP, state =
-		#{state},
-		reply_enabled = #{replyEnabled}, show_likes = #{showLikes}, show_views = #{showViews}
-		WHERE post_id = #{postId} AND user_num = #{userNum}
-	</update>
+    <update id="updatePost" parameterType="com.hs.model.PostDTO">
+        UPDATE POSTS
+        SET TITLE = #{title},
+            CONTENT = #{content},
+            UPDATED_DATE = SYSTIMESTAMP,
+            STATE = #{state},
+            REPLY_ENABLED = #{replyEnabled},
+            SHOW_LIKES = #{showLikes},
+            SHOW_VIEWS = #{showViews}
+        WHERE POST_ID = #{postId} 
+          AND USER_NUM = #{userNum}
+    </update>
 
-	<update id="deletePost" parameterType="long">
-		UPDATE POSTS SET
-		IS_DELETED = '1' WHERE POST_ID = #{postId}
-	</update>
+    <update id="deletePost" parameterType="long">
+        UPDATE POSTS 
+        SET IS_DELETED = '1' 
+        WHERE POST_ID = #{postId}
+    </update>
 
-	<select id="findById" parameterType="long"
-		resultType="com.hs.model.PostDTO">
-		SELECT
-		p.post_id AS postId,
-		p.user_num AS userNum,
-		p.community_id AS communityId,
-		p.title,
-		p.content,
-		p.post_type AS
-		postType,
-		p.view_count AS viewCount,
-		p.like_count AS likeCount,
-		(SELECT
-		COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED =
-		'0')
-		AS commentCount,
-		p.created_date AS createdDate,
-		p.updated_date AS
-		updatedDate,
-		p.state,
-		p.reply_enabled AS replyEnabled,
-		p.show_likes AS showLikes,
-		p.show_views AS showViews,
-		u.user_nickname AS authorNickname,
-		u.user_profile AS
-		authorProfileImage
-		FROM posts p
-		JOIN member u ON p.user_num = u.user_num
-		WHERE p.post_id = #{postId}
-	</select>
+    <select id="findById" parameterType="long" resultType="com.hs.model.PostDTO">
+        SELECT
+            p.POST_ID AS postId,
+            p.USER_NUM AS userNum,
+            p.COMMUNITY_ID AS communityId,
+            p.TITLE,
+            p.CONTENT,
+            p.POST_TYPE AS postType,
+            p.VIEW_COUNT AS viewCount,
+            p.LIKE_COUNT AS likeCount,
+            (SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED = '0') AS commentCount,
+            p.CREATED_DATE AS createdDate,
+            p.UPDATED_DATE AS updatedDate,
+            p.STATE,
+            p.REPLY_ENABLED AS replyEnabled,
+            p.SHOW_LIKES AS showLikes,
+            p.SHOW_VIEWS AS showViews,
+            u.USER_NICKNAME AS authorNickname,
+            u.USER_PROFILE AS authorProfileImage
+        FROM POSTS p
+        JOIN MEMBER u ON p.USER_NUM = u.USER_NUM
+        WHERE p.POST_ID = #{postId}
+    </select>
 
-	<select id="listPost" resultType="com.hs.model.PostDTO">
-		SELECT
-		p.post_id AS postId,
-		p.user_num AS userNum,
-		p.title,
-		p.view_count AS viewCount,
-		p.like_count
-		AS likeCount,
-		p.created_date AS createdDate,
-		u.user_nickname AS
-		authorNickname,
-		NULL AS authorProfileImage
-		FROM posts p
-		JOIN member u ON
-		p.user_num = u.user_num
-		WHERE p.is_deleted = '0'
-		ORDER BY p.post_id DESC
-	</select>
-	
-	<select id="listUserPost" parameterType="map"
-		resultType="com.hs.model.PostDTO">
-		SELECT
-		p.post_id AS postId,
-		p.user_num AS userNum,
-		p.community_id AS communityId,
-		p.title,
-		p.content,
-		p.post_type AS
-		postType,
-		p.view_count AS viewCount,
-		p.like_count AS likeCount,
-		(SELECT
-		COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED =
-		'0')
-		AS commentCount,
-		p.created_date AS createdDate,
-		p.updated_date AS
-		updatedDate,
-		p.state,
-		p.reply_enabled AS replyEnabled,
-		p.show_likes AS showLikes,
-		p.show_views AS showViews,
-		u.user_nickname AS authorNickname,
-		u.user_id AS authorId,
-		u.user_profile AS
-		authorProfileImage
-		FROM posts p
-		JOIN member u ON p.user_num = u.user_num
-		WHERE p.user_num = #{userNum}
-		AND p.is_deleted = '0'
-		ORDER BY p.post_id DESC
-		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
-	</select>
+    <select id="listPost" resultType="com.hs.model.PostDTO">
+        SELECT
+            p.POST_ID AS postId,
+            p.USER_NUM AS userNum,
+            p.TITLE,
+            p.VIEW_COUNT AS viewCount,
+            p.LIKE_COUNT AS likeCount,
+            p.CREATED_DATE AS createdDate,
+            u.USER_NICKNAME AS authorNickname,
+            NULL AS authorProfileImage
+        FROM POSTS p
+        JOIN MEMBER u ON p.USER_NUM = u.USER_NUM
+        WHERE p.IS_DELETED = '0'
+        ORDER BY p.POST_ID DESC
+    </select>
+    
+    <select id="listUserPost" parameterType="map" resultType="com.hs.model.PostDTO">
+        SELECT
+            p.POST_ID AS postId,
+            p.USER_NUM AS userNum,
+            p.COMMUNITY_ID AS communityId,
+            p.TITLE,
+            p.CONTENT,
+            p.POST_TYPE AS postType,
+            p.VIEW_COUNT AS viewCount,
+            p.LIKE_COUNT AS likeCount,
+            (SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED = '0') AS commentCount,
+            p.CREATED_DATE AS createdDate,
+            p.UPDATED_DATE AS updatedDate,
+            p.STATE,
+            p.REPLY_ENABLED AS replyEnabled,
+            p.SHOW_LIKES AS showLikes,
+            p.SHOW_VIEWS AS showViews,
+            u.USER_NICKNAME AS authorNickname,
+            u.USER_ID AS authorId,
+            u.USER_PROFILE AS authorProfileImage
+        FROM POSTS p
+        JOIN MEMBER u ON p.USER_NUM = u.USER_NUM
+        WHERE p.USER_NUM = #{userNum}
+          AND p.IS_DELETED = '0'
+        ORDER BY p.POST_ID DESC
+        OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+    </select>
 
-	<insert id="insertFileAt" parameterType="com.hs.model.FileAtDTO">
-		INSERT INTO FILEAT (
-		file_at_id, file_name, file_path, file_size,
-		file_type, file_order,
-		uploaded_date, post_id
-		) VALUES (
-		fileat_seq.NEXTVAL, #{fileName},
-		#{filePath}, #{fileSize},
-		#{fileType}, #{fileOrder}, SYSTIMESTAMP,
-		#{postId}
-		)
-	</insert>
+    <insert id="insertFileAt" parameterType="com.hs.model.FileAtDTO">
+        INSERT INTO FILEAT (
+            FILE_AT_ID, FILE_NAME, FILE_PATH, FILE_SIZE,
+            FILE_TYPE, FILE_ORDER, UPLOADED_DATE, POST_ID
+        ) VALUES (
+            FILEAT_SEQ.NEXTVAL, 
+            #{fileName},
+            #{filePath}, 
+            #{fileSize},
+            #{fileType}, 
+            #{fileOrder}, 
+            SYSTIMESTAMP,
+            #{postId}
+        )
+    </insert>
 
-	<update id="updateHitCount" parameterType="long">
-		UPDATE posts SET
-		view_count = view_count + 1 WHERE post_id = #{postId}
-	</update>
+    <update id="updateHitCount" parameterType="long">
+        UPDATE POSTS 
+        SET VIEW_COUNT = VIEW_COUNT + 1 
+        WHERE POST_ID = #{postId}
+    </update>
 
-	<select id="listFileAt" parameterType="long"
-		resultType="com.hs.model.FileAtDTO">
-		SELECT
-		file_at_id AS fileAtId,
-		file_name AS fileName,
-		file_path AS filePath,
-		file_size AS fileSize,
-		file_type AS fileType,
-		file_order AS fileOrder,
-		uploaded_date AS uploadedDate,
-		post_id AS
-		postId
-		FROM FILEAT
-		WHERE post_id = #{postId}
-		ORDER BY file_order ASC
-	</select>
+    <select id="listFileAt" parameterType="long" resultType="com.hs.model.FileAtDTO">
+        SELECT
+            FILE_AT_ID AS fileAtId,
+            FILE_NAME AS fileName,
+            FILE_PATH AS filePath,
+            FILE_SIZE AS fileSize,
+            FILE_TYPE AS fileType,
+            FILE_ORDER AS fileOrder,
+            UPLOADED_DATE AS uploadedDate,
+            POST_ID AS postId
+        FROM FILEAT
+        WHERE POST_ID = #{postId}
+        ORDER BY FILE_ORDER ASC
+    </select>
 
-	<delete id="deleteFileAt" parameterType="long">
-		DELETE FROM FILEAT WHERE
-		FILE_AT_ID = #{fileAtId}
-	</delete>
+    <delete id="deleteFileAt" parameterType="long">
+        DELETE FROM FILEAT 
+        WHERE FILE_AT_ID = #{fileAtId}
+    </delete>
 
-	<resultMap id="postMap" type="com.hs.model.PostDTO">
-		<id property="postId" column="postId" />
-		<result property="userNum" column="userNum" />
-		<result property="title" column="title" />
-		<result property="content" column="content" />
-		<result property="viewCount" column="viewCount" />
-		<result property="likeCount" column="likeCount" />
-		<result property="commentCount" column="commentCount" />
-		<result property="createdDate" column="createdDate" />
-		<result property="authorNickname" column="authorNickname" />
-		<result property="authorProfileImage" column="authorProfileImage" />
-		<result property="likedByUser" column="likedByUser" />
-		<result property="showLikes" column="showLikes" />
-    	<result property="showViews" column="showViews" />
-   		<result property="state" column="state" />
-		
-		<collection property="fileList" ofType="com.hs.model.FileAtDTO">
-			<id property="fileAtId" column="fileAtId" />
-			<result property="filePath" column="filePath" />
-			<result property="fileOrder" column="fileOrder" />
-		</collection>
-	</resultMap>
+    <resultMap id="postMap" type="com.hs.model.PostDTO">
+        <id property="postId" column="postId" />
+        <result property="userNum" column="userNum" />
+        <result property="title" column="title" />
+        <result property="content" column="content" />
+        <result property="viewCount" column="viewCount" />
+        <result property="likeCount" column="likeCount" />
+        <result property="commentCount" column="commentCount" />
+        <result property="createdDate" column="createdDate" />
+        <result property="authorNickname" column="authorNickname" />
+        <result property="authorProfileImage" column="authorProfileImage" />
+        <result property="likedByUser" column="likedByUser" />
+        <result property="showLikes" column="showLikes" />
+        <result property="showViews" column="showViews" />
+        <result property="state" column="state" />
+        
+        <collection property="fileList" ofType="com.hs.model.FileAtDTO">
+            <id property="fileAtId" column="fileAtId" />
+            <result property="filePath" column="filePath" />
+            <result property="fileOrder" column="fileOrder" />
+        </collection>
+    </resultMap>
 
-	<select id="listPostMain" parameterType="map" resultMap="postMap">
+    <select id="listPostMain" parameterType="map" resultMap="postMap">
         SELECT
             p.POST_ID AS postId,
             p.USER_NUM AS userNum,
@@ -262,147 +257,144 @@
         </choose>
     </select>
 
-	<insert id="insertPostLike" parameterType="map">
-		INSERT INTO LIKES
-		(POST_ID, USER_NUM, CREATED_DATE) VALUES (#{postId},
-		#{userNum},
-		SYSDATE)
-	</insert>
-	<delete id="deletePostLike" parameterType="map">
-		DELETE FROM LIKES
-		WHERE POST_ID = #{postId} AND USER_NUM = #{userNum}
-	</delete>
-	<select id="countPostLike" parameterType="Long"
-		resultType="Integer">
-		SELECT COUNT(*) FROM LIKES WHERE POST_ID = #{postId}
-	</select>
-	<update id="updatePostLikeCount" parameterType="Long">
-		UPDATE POSTS SET
-		LIKE_COUNT = (SELECT COUNT(*) FROM LIKES WHERE POST_ID =
-		#{postId})
-		WHERE POST_ID = #{postId}
-	</update>
-	<select id="checkPostLiked" parameterType="map"
-		resultType="Integer">
-		SELECT COUNT(*) FROM LIKES WHERE POST_ID = #{postId} AND
-		USER_NUM =
-		#{userNum}
-	</select>
+    <insert id="insertPostLike" parameterType="map">
+        INSERT INTO LIKES (POST_ID, USER_NUM, CREATED_DATE) 
+        VALUES (#{postId}, #{userNum}, SYSDATE)
+    </insert>
 
-	<insert id="insertComment"
-		parameterType="com.hs.model.CommentDTO">
-		INSERT INTO COMMENTS (
-		COMMENT_ID, POST_ID, USER_NUM,
-		USER_ID, CONTENT,
-		PARENT_COMMENT_ID, CREATED_DATE, IS_DELETED
-		) VALUES (
-		SEQ_COMMENTS.NEXTVAL, #{postId}, #{userNum}, #{userId}, #{content},
-		NULLIF(#{parentCommentId}, 0), SYSDATE, '0'
-		)
-	</insert>
+    <delete id="deletePostLike" parameterType="map">
+        DELETE FROM LIKES
+        WHERE POST_ID = #{postId} AND USER_NUM = #{userNum}
+    </delete>
 
-	<update id="updateComment"
-		parameterType="com.hs.model.CommentDTO">
-		UPDATE COMMENTS
-		SET CONTENT = #{content}, UPDATED_DATE =
-		SYSDATE
-		WHERE COMMENT_ID = #{commentId} AND USER_NUM = #{userNum}
-	</update>
+    <select id="countPostLike" parameterType="Long" resultType="Integer">
+        SELECT COUNT(*) FROM LIKES WHERE POST_ID = #{postId}
+    </select>
 
-	<delete id="deleteComment" parameterType="Long">
-		DELETE FROM COMMENTS
-		WHERE COMMENT_ID = #{commentId}
-	</delete>
+    <update id="updatePostLikeCount" parameterType="Long">
+        UPDATE POSTS 
+        SET LIKE_COUNT = (SELECT COUNT(*) FROM LIKES WHERE POST_ID = #{postId})
+        WHERE POST_ID = #{postId}
+    </update>
 
-	<select id="listComment" parameterType="map"
-		resultType="com.hs.model.CommentDTO">
-		SELECT
-		c.COMMENT_ID AS commentId,
-		c.POST_ID AS postId,
-		c.USER_NUM AS userNum,
-		c.CONTENT AS content,
-		TO_CHAR(c.CREATED_DATE, 'YYYY-MM-DD HH24:MI') AS createdDate,
-		c.PARENT_COMMENT_ID AS
-		parentCommentId,
-		c.IS_DELETED AS isDeleted,
-		m.USER_NICKNAME AS
-		userNickName,
-		m.USER_PROFILE AS profileImage,
-		(SELECT COUNT(*) FROM
-		COMMENTS_LIKES cl WHERE cl.COMMENT_ID = c.COMMENT_ID)
-		AS likeCount,
-		NVL((SELECT COUNT(*) FROM COMMENTS_LIKES cl WHERE cl.COMMENT_ID =
-		c.COMMENT_ID
-		AND cl.USER_NUM = #{userNum}), 0) AS likedByUser
-		FROM
-		COMMENTS c
-		JOIN MEMBER m ON c.USER_NUM = m.USER_NUM
-		WHERE c.POST_ID =
-		#{postId}
-		START WITH c.PARENT_COMMENT_ID IS NULL
-		CONNECT BY PRIOR
-		c.COMMENT_ID = c.PARENT_COMMENT_ID
-		ORDER SIBLINGS BY c.CREATED_DATE ASC
-	</select>
+    <select id="checkPostLiked" parameterType="map" resultType="Integer">
+        SELECT COUNT(*) FROM LIKES 
+        WHERE POST_ID = #{postId} AND USER_NUM = #{userNum}
+    </select>
 
-	<update id="updatePostCommentCount" parameterType="long">
-		UPDATE POSTS
-		SET COMMENT_COUNT = (
-		SELECT COUNT(*)
-		FROM COMMENTS
-		WHERE POST_ID =
-		#{postId} AND IS_DELETED = '0'
-		)
-		WHERE POST_ID = #{postId}
-	</update>
+    <insert id="insertComment" parameterType="com.hs.model.CommentDTO">
+        INSERT INTO COMMENTS (
+            COMMENT_ID, POST_ID, USER_NUM,
+            USER_ID, CONTENT,
+            PARENT_COMMENT_ID, CREATED_DATE, IS_DELETED
+        ) VALUES (
+            SEQ_COMMENTS.NEXTVAL, #{postId}, #{userNum}, #{userId}, #{content},
+            NULLIF(#{parentCommentId}, 0), SYSDATE, '0'
+        )
+    </insert>
 
-	<insert id="insertCommentLike" parameterType="map">
-		INSERT INTO
-		COMMENTS_LIKES (COMMENT_ID, USER_NUM, CREATED_DATE) VALUES
-		(#{commentId}, #{userNum}, SYSDATE)
-	</insert>
-	<delete id="deleteCommentLike" parameterType="map">
-		DELETE FROM
-		COMMENTS_LIKES WHERE COMMENT_ID = #{commentId} AND USER_NUM =
-		#{userNum}
-	</delete>
-	<select id="countCommentLike" parameterType="Long"
-		resultType="Integer">
-		SELECT COUNT(*) FROM COMMENTS_LIKES WHERE COMMENT_ID =
-		#{commentId}
-	</select>
-	<select id="checkCommentLiked" parameterType="map"
-		resultType="Integer">
-		SELECT COUNT(*) FROM COMMENTS_LIKES WHERE COMMENT_ID =
-		#{commentId} AND
-		USER_NUM = #{userNum}
-	</select>
+    <update id="updateComment" parameterType="com.hs.model.CommentDTO">
+        UPDATE COMMENTS
+        SET CONTENT = #{content}, 
+            UPDATED_DATE = SYSDATE
+        WHERE COMMENT_ID = #{commentId} AND USER_NUM = #{userNum}
+    </update>
 
-	<select id="getPostIdByCommentId" parameterType="long"
-		resultType="long">
-		SELECT POST_ID FROM COMMENTS WHERE COMMENT_ID = #{commentId}
-	</select>
+    <delete id="deleteComment" parameterType="Long">
+        DELETE FROM COMMENTS
+        WHERE COMMENT_ID = #{commentId}
+    </delete>
 
-	<insert id="insertReport" parameterType="com.hs.model.ReportDTO">
-    INSERT INTO Report (
-        report_num, report_user_num, report_reason, 
-        report_type, report_content, report_date
-    ) VALUES (
-        SEQ_REPORT.NEXTVAL, #{reportUserNum}, #{reportReason},
-        #{reportType}, #{reportContent}, SYSDATE
-    )
-	</insert>
+    <select id="listComment" parameterType="map" resultType="com.hs.model.CommentDTO">
+        SELECT
+            c.COMMENT_ID AS commentId,
+            c.POST_ID AS postId,
+            c.USER_NUM AS userNum,
+            c.CONTENT AS content,
+            TO_CHAR(c.CREATED_DATE, 'YYYY-MM-DD HH24:MI') AS createdDate,
+            c.PARENT_COMMENT_ID AS parentCommentId,
+            c.IS_DELETED AS isDeleted,
+            m.USER_NICKNAME AS userNickName,
+            m.USER_PROFILE AS profileImage,
+            (SELECT COUNT(*) FROM COMMENTS_LIKES cl WHERE cl.COMMENT_ID = c.COMMENT_ID) AS likeCount,
+            NVL((SELECT COUNT(*) FROM COMMENTS_LIKES cl WHERE cl.COMMENT_ID = c.COMMENT_ID AND cl.USER_NUM = #{userNum}), 0) AS likedByUser
+        FROM COMMENTS c
+        JOIN MEMBER m ON c.USER_NUM = m.USER_NUM
+        WHERE c.POST_ID = #{postId}
+        START WITH c.PARENT_COMMENT_ID IS NULL
+        CONNECT BY PRIOR c.COMMENT_ID = c.PARENT_COMMENT_ID
+        ORDER SIBLINGS BY c.CREATED_DATE ASC
+    </select>
 
-	<update id="updatePostReportCount" parameterType="long">
-	    UPDATE POSTS 
-	    SET REPORT_COUNT = NVL(REPORT_COUNT, 0) + 1
-	    WHERE POST_ID = #{postId}
-	</update>
-	
-	<select id="checkReportHistory" parameterType="map" resultType="int">
-	    SELECT COUNT(*) FROM Report
-	    WHERE report_user_num = #{userNum} 
-	      AND report_content = TO_CHAR(#{postId})
-	      AND report_type = 'POST'
-	</select>
+    <update id="updatePostCommentCount" parameterType="long">
+        UPDATE POSTS
+        SET COMMENT_COUNT = (
+            SELECT COUNT(*)
+            FROM COMMENTS
+            WHERE POST_ID = #{postId} AND IS_DELETED = '0'
+        )
+        WHERE POST_ID = #{postId}
+    </update>
+
+    <insert id="insertCommentLike" parameterType="map">
+        INSERT INTO COMMENTS_LIKES (COMMENT_ID, USER_NUM, CREATED_DATE) 
+        VALUES (#{commentId}, #{userNum}, SYSDATE)
+    </insert>
+
+    <delete id="deleteCommentLike" parameterType="map">
+        DELETE FROM COMMENTS_LIKES 
+        WHERE COMMENT_ID = #{commentId} AND USER_NUM = #{userNum}
+    </delete>
+
+    <select id="countCommentLike" parameterType="Long" resultType="Integer">
+        SELECT COUNT(*) FROM COMMENTS_LIKES WHERE COMMENT_ID = #{commentId}
+    </select>
+
+    <select id="checkCommentLiked" parameterType="map" resultType="Integer">
+        SELECT COUNT(*) FROM COMMENTS_LIKES 
+        WHERE COMMENT_ID = #{commentId} AND USER_NUM = #{userNum}
+    </select>
+
+    <select id="getPostIdByCommentId" parameterType="long" resultType="long">
+        SELECT POST_ID FROM COMMENTS WHERE COMMENT_ID = #{commentId}
+    </select>
+
+    <insert id="insertReport" parameterType="com.hs.model.ReportDTO">
+        INSERT INTO Report (
+            REPORT_NUM, REPORT_USER_NUM, REPORT_REASON, 
+            REPORT_TYPE, REPORT_CONTENT, REPORT_DATE
+        ) VALUES (
+            SEQ_REPORT.NEXTVAL, #{reportUserNum}, #{reportReason},
+            #{reportType}, #{reportContent}, SYSDATE
+        )
+    </insert>
+
+    <update id="updatePostReportCount" parameterType="long">
+        UPDATE POSTS 
+        SET REPORT_COUNT = NVL(REPORT_COUNT, 0) + 1
+        WHERE POST_ID = #{postId}
+    </update>
+    
+    <select id="checkReportHistory" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM Report
+        WHERE REPORT_USER_NUM = #{userNum} 
+          AND REPORT_CONTENT = TO_CHAR(#{postId})
+          AND REPORT_TYPE = 'POST'
+    </select>
+
+    <select id="findTempPost" parameterType="long" resultType="com.hs.model.PostDTO">
+        SELECT 
+            POST_ID AS postId, 
+            USER_NUM AS userNum, 
+            TITLE, 
+            CONTENT, 
+            STATE
+        FROM POSTS 
+        WHERE USER_NUM = #{userNum} 
+          AND STATE = '임시저장' 
+          AND IS_DELETED = '0'
+        ORDER BY POST_ID DESC
+        FETCH FIRST 1 ROWS ONLY
+    </select>
+
 </mapper>

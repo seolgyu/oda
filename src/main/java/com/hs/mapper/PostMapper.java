@@ -40,5 +40,6 @@ public interface PostMapper {
 	public void insertReport(ReportDTO dto) throws Exception;
     public void updatePostReportCount(long postId) throws Exception;
     public int checkReportHistory(Map<String, Object> map);
+	public PostDTO findTempPost(long userNum);
 	
 }
