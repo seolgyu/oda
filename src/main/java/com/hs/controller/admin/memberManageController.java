@@ -234,15 +234,104 @@ public class memberManageController {
 	
 	@ResponseBody
 	@PostMapping("updateDetailStatus")
-	public Map<String, Object> updateDetailStatus(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Map<String, Object> result = new HashMap<>();
-		
-		try {
-			String user_id = req.getParameter("user_id");
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		return result;
+	public Map<String, Object> updateDetailStatus(HttpServletRequest req, HttpServletResponse resp) 
+	        throws ServletException, IOException {
+	    Map<String, Object> result = new HashMap<>();
+	    
+	    try {
+	        String user_id = req.getParameter("user_id");
+	        String statusParam = req.getParameter("status");
+	        
+	        if (user_id == null || user_id.isBlank()) {
+	            result.put("success", false);
+	            result.put("message", "회원 ID가 없습니다.");
+	            return result;
+	        }
+	        
+	        if (statusParam == null || statusParam.isBlank()) {
+	            result.put("success", false);
+	            result.put("message", "상태 값이 없습니다.");
+	            return result;
+	        }
+	        
+	        int status = Integer.parseInt(statusParam);
+	        
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("user_id", user_id);
+	        map.put("status", status);
+	        
+	        // 정지 처리인 경우 추가 정보
+	        if (status == 4) { // 정지
+	            String period = req.getParameter("period");
+	            String reason = req.getParameter("reason");
+	            
+	            if (period != null && !period.isBlank()) {
+	                map.put("period", Integer.parseInt(period));
+	            }
+	            if (reason != null && !reason.isBlank()) {
+	                map.put("reason", reason);
+	            }
+	        }
+	        
+	        // 회원 상태 업데이트
+	        int updateCount = mbService.updateMemberDetailStatus(map);
+	        
+	        if (updateCount > 0) {
+	            result.put("success", true);
+	            result.put("message", "회원 상태가 변경되었습니다.");
+	        } else {
+	            result.put("success", false);
+	            result.put("message", "회원 상태 변경에 실패했습니다.");
+	        }
+	        
+	    } catch (NumberFormatException e) {
+	        e.printStackTrace();
+	        result.put("success", false);
+	        result.put("message", "잘못된 형식의 데이터입니다.");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        result.put("success", false);
+	        result.put("message", "서버 오류가 발생했습니다.");
+	    }
+	    
+	    return result;
+	}
+
+	@ResponseBody
+	@PostMapping("deleteMember")
+	public Map<String, Object> deleteMember(HttpServletRequest req, HttpServletResponse resp) 
+	        throws ServletException, IOException {
+	    Map<String, Object> result = new HashMap<>();
+	    
+	    try {
+	        String user_id = req.getParameter("user_id");
+	        
+	        if (user_id == null || user_id.isBlank()) {
+	            result.put("success", false);
+	            result.put("message", "회원 ID가 없습니다.");
+	            return result;
+	        }
+	        
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("user_id", user_id);
+	        
+	        // 회원 탈퇴 처리
+	        int deleteCount = mbService.deleteMember(map);
+	        
+	        if (deleteCount > 0) {
+	            result.put("success", true);
+	            result.put("message", "회원 탈퇴가 완료되었습니다.");
+	        } else {
+	            result.put("success", false);
+	            result.put("message", "회원 탈퇴에 실패했습니다.");
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        result.put("success", false);
+	        result.put("message", "서버 오류가 발생했습니다.");
+	    }
+	    
+	    return result;
 	}
 }

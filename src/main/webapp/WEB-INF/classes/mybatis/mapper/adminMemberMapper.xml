@@ -208,4 +208,19 @@
     
     ORDER BY days.sortOrder
 	</select>
+	
+<update id="updateMemberDetailStatus" parameterType="map">
+    UPDATE member
+    SET user_status = #{status},
+        user_updated_date = SYSDATE
+    	WHERE user_id = #{user_id}
+</update>
+
+<delete id="deleteMember" parameterType="map">
+    <!-- 논리적 삭제 예시 -->
+    UPDATE member
+    SET user_status = 4,
+        user_updated_date = SYSDATE
+    WHERE user_id = #{user_id}
+</delete>
 </mapper>

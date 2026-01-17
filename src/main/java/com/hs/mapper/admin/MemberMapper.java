@@ -11,4 +11,6 @@ public interface MemberMapper {
 	public int updateMemberStatus(Map<String, Object> map);
 	public MemberDTO memberInfo(Map<String, Object> map);
 	public List<MemberDTO> selectWeeklyUser(Map<String, Object> map);
+	public int updateMemberDetailStatus(Map<String, Object> map);
+	public int deleteMember(Map<String, Object> map);
 }

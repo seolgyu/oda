@@ -12,4 +12,6 @@ public interface MemberService {
 	public int updateMemberStatus(Map<String, Object> map) throws Exception;
 	public MemberDTO memberInfo(Map<String, Object> map);
 	public List<MemberDTO> selectWeeklyUser (Map<String, Object> map);
+	public int updateMemberDetailStatus(Map<String, Object> map);
+	public int deleteMember(Map<String, Object> map);
 }

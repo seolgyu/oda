@@ -28,13 +28,12 @@
 		<div class="nav-group">
 		<button class="nav-item nav-toggle">
 			<span class="material-symbols-outlined">image</span>
-			<span>컨텐츠 관리</span>
+			<span>콘텐츠 관리</span>
 			<span class="material-symbols-outlined arrow">expand_more</span>
       </button>
       
       <div class="nav-sub">
-        <a href="#" class="nav-sub-item">컨텐츠 리스트</a>
-        <a href="#" class="nav-sub-item">컨텐츠 신고 관리</a>
+        <a href="${pageContext.request.contextPath}/admin/content/list" class="nav-sub-item">콘텐츠 관리</a>
       </div>
     </div>
     

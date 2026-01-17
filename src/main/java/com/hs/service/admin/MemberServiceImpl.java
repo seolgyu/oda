@@ -70,5 +70,26 @@ public class MemberServiceImpl implements MemberService{
 		}
 		return selectWeeklyUser;
 	}
+	@Override
+	public int updateMemberDetailStatus(Map<String, Object> map) {
+	    int result = 0;
+	    try {
+	        result = mapper.updateMemberDetailStatus(map);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return result;
+	}
+
+	@Override
+	public int deleteMember(Map<String, Object> map) {
+	    int result = 0;
+	    try {
+	        result = mapper.deleteMember(map);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return result;
+	}
 
 }

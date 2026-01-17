@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.admin.ContentMapper">
+	<!-- 검색 키워드  -->
+	<sql id="where-list">
+		<if test="schType == 'title' ">
+			INSTR(title, #{kwd}) &gt; 0
+		</if>
+		<if test="schType == 'content' ">
+			INSTR(content, #{kwd}) &gt; 0
+		</if>
+		<if test="schType == 'userNickname' ">
+			DBMS_LOB.INSTR(user_nickname, #{kwd}) &gt; 0 
+		</if>
+		<if test="schType == 'createdDate' ">
+			(( TO_CHAR(created_date, 'YYYY-MM-DD') = #{kwd}
+				OR TO_CHAR(created_date, 'YYYYMMDD') = #{kwd} ) OR
+			( TO_CHAR(created_date, 'YYYY-MM-DD') = #{kwd}
+				OR TO_CHAR(created_date, 'YYYYMMDD') = #{kwd} ))
+		</if>
+	</sql>
+	
+	<sql id="state-condition">
+      <choose>
+         <when test="state == '정상'">
+            AND state= '정상'
+         </when>
+         <when test="state == '신고'">
+            AND state = '신고'
+         </when>
+         <when test="state == '신고처리'">
+            AND state = '신고'
+            AND is_deleted = 1
+         </when>
+      </choose>
+   </sql>
+	<select id="memberList" resultType="com.hs.model.admin.ContentDTO">
+		select post_id as postId,
+        mem.user_nickname as userNickname,
+        title,
+        content,
+        CASE WHEN post_type = 'community' THEN '커뮤니티'
+            WHEN post_type = 'PERSONAL' THEN '개인'
+            else '기타' end as postType,
+        TO_CHAR(pos.created_date, 'YYYY-MM-DD HH24:MI:SS') as createdDate,
+        state
+		from posts pos, member mem
+	    <where>
+	    	<if test="kwd != null and kwd != ''">
+				AND <include refid="where-list"/>
+			</if>
+			<if test="state != null and state != '' and state != 'null'">
+				<include refid="state-condition"/>
+			</if>
+			AND pos.user_num = mem.user_num
+	    </where>
+	    order by post_id DESC
+	    OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	<select id="userCount" parameterType="map" resultType="Integer">
+		select NVL(COUNT(*), 0) countDto
+	    FROM posts
+	    <where>
+	    	<if test="kwd != null and kwd != ''">
+				AND <include refid="where-list"/>
+			</if>
+			<if test="state != null and state != '' and state != 'null'">
+				<include refid="state-condition"/>
+			</if>
+	    </where>
+	</select>
+	
+	<update id="updateMemberStatus" parameterType="map">
+    UPDATE member SET 
+        user_status = #{status},
+        user_updated_date = SYSDATE
+    WHERE user_id IN
+    <foreach collection="memberIds" item="id" open="(" separator="," close=")">
+        #{id}
+    </foreach>
+	</update>
+	
+	<update id="updateMemberDetailStatus" parameterType="map">
+	    UPDATE member
+	    SET user_status = #{status},
+	        user_updated_date = SYSDATE
+	    	WHERE user_id = #{user_id}
+	</update>
+	
+	<select id="postAllCount" parameterType="map" resultType="Integer">
+		select NVL(COUNT(*), 0) as postAllCount 
+		from posts
+	</select>
+	
+	<select id="postNormalCount" parameterType="map" resultType="Integer">
+		select NVL(COUNT(*), 0) as postNormalCount 
+		from posts
+		where state = '정상'
+		and is_deleted = 0
+	</select>
+	
+	<select id="postDeclaCount" parameterType="map" resultType="Integer">
+		select NVL(COUNT(*), 0) from posts
+		where state = '신고'
+		and is_deleted = 0
+	</select>
+	
+	<select id="postProCount" parameterType="map" resultType="Integer">
+		select NVL(COUNT(*), 0) from posts
+		where state = '신고'
+		and is_deleted = 1
+	</select>
+	
+</mapper>

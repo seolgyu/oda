@@ -874,224 +874,185 @@ body {
 
                 <!-- 액션 버튼 -->
                 <div class="glass-card">
-                    <div class="action-buttons">
-                        <button type="button" class="btn btn-secondary" 
-						    onclick="location.href='${pageContext.request.contextPath}/admin/member/list?page=${page}&size=${size}&schType=${schType}&kwd=${kwd}&state=${state}'">
-						    목록으로
-						</button>
-						<button type="button" class="btn-action btn-action-success" onclick="openSuspendModal()">
-                            <span class="material-symbols-outlined">check_circle</span>
-                            회원 활성
-                        </button>
-                        <button type="button" class="btn-action btn-action-warning" onclick="openSuspendModal()">
-                            <span class="material-symbols-outlined">block</span>
-                            회원 정지
-                        </button>
-                        <button type="button" class="btn-action btn-action-secondary" onclick="setDormant()">
-                            <span class="material-symbols-outlined">bedtime</span>
-                            휴면 전환
-                        </button>
-                        <button type="button" class="btn-action btn-action-danger" onclick="deleteMember()">
-                            <span class="material-symbols-outlined">delete</span>
-                            회원 탈퇴
-                        </button>
-                    </div>
-                </div>
-
+				    <div class="action-buttons">
+				        <button type="button" class="btn btn-secondary"
+				            onclick="location.href='${pageContext.request.contextPath}/admin/member/list?page=${page}&size=${size}&schType=${schType}&kwd=${kwd}&state=${state}'">
+				            목록으로
+				        </button>
+				        <button type="button" class="btn-action btn-action-success" onclick="activateMember()">
+				            <span class="material-symbols-outlined">check_circle</span>
+				            회원 활성
+				        </button>
+				        <button type="button" class="btn-action btn-action-warning" onclick="suspendMember()">
+				            <span class="material-symbols-outlined">block</span>
+				            회원 정지
+				        </button>
+				        <button type="button" class="btn-action btn-action-secondary" onclick="setDormant()">
+				            <span class="material-symbols-outlined">bedtime</span>
+				            휴면 전환
+				        </button>
+				        <button type="button" class="btn-action btn-action-danger" onclick="deleteMember()">
+				            <span class="material-symbols-outlined">delete</span>
+				            회원 탈퇴
+				        </button>
+				    </div>
+				</div>
             </div>
         </main>
     </div>
-
-    <!-- 정지 처리 모달 -->
-    <div class="modal-overlay" id="suspendModal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 class="modal-title">회원 정지</h3>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">정지 기간</label>
-                    <select class="form-select" id="suspendPeriod">
-                        <option value="7">7일</option>
-                        <option value="30">30일</option>
-                        <option value="90">90일</option>
-                        <option value="365">1년</option>
-                        <option value="999999">영구</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">정지 사유</label>
-                    <textarea class="form-textarea" id="suspendReason" placeholder="정지 사유를 입력하세요"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-modal btn-modal-cancel" onclick="closeModal('suspendModal')">취소</button>
-                <button type="button" class="btn-modal btn-modal-confirm" onclick="confirmSuspend()">정지</button>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 
-    <!-- 서버 데이터를 JavaScript 전역 변수로 전달 -->
     <script type="text/javascript">
-    // 서버에서 전달받은 데이터를 전역 변수로 설정
-    window.memberData = {
-        userId: '${memberDto.user_id}',
-        weeklyActivity: [
-            <c:forEach var="item" items="${weeklyActivity}" varStatus="status">
-            {
-                dayName: '${item.dayName}',
-                noticeCount: ${item.noticeCount},
-                commentCount: ${item.commentCount}
-            }<c:if test="${!status.last}">,</c:if>
-            </c:forEach>
-        ],
-        contextPath: '${pageContext.request.contextPath}',
-        pageInfo: {
-            page: '${page}',
-            size: '${size}',
-            schType: '${schType}',
-            kwd: '${kwd}',
-            state: '${state}'
-        }
+// 서버에서 전달받은 데이터를 전역 변수로 설정
+window.memberData = {
+    userId: '${memberDto.user_id}',
+    weeklyActivity: [
+        <c:forEach var="item" items="${weeklyActivity}" varStatus="status">
+        {
+            dayName: '${item.dayName}',
+            noticeCount: ${item.noticeCount},
+            commentCount: ${item.commentCount}
+        }<c:if test="${!status.last}">,</c:if>
+        </c:forEach>
+    ],
+    contextPath: '${pageContext.request.contextPath}',
+    pageInfo: {
+        page: '${page}',
+        size: '${size}',
+        schType: '${schType}',
+        kwd: '${kwd}',
+        state: '${state}'
+    }
+};
+
+// 회원 활성화
+function activateMember() {
+    if(!confirm('회원을 활성화하시겠습니까?')) {
+        return;
+    }
+    
+    let url = '${pageContext.request.contextPath}/admin/member/updateDetailStatus';
+    let params = { 
+        user_id: window.memberData.userId,
+        status: 1 // 정상
     };
-
-    // 모달 열기/닫기
-    function openModal(modalId) {
-        $('#' + modalId).addClass('show');
-    }
-
-    function closeModal(modalId) {
-        $('#' + modalId).removeClass('show');
-    }
-
-    function openSuspendModal() {
-        openModal('suspendModal');
-    }
-
-    // 회원 정지
-    function confirmSuspend() {
-        let period = $('#suspendPeriod').val();
-        let reason = $('#suspendReason').val();
-        
-        if(!reason.trim()) {
-            alert('정지 사유를 입력해주세요.');
-            return;
-        }
-        
-        let url = '${pageContext.request.contextPath}/admin/member/suspend';
-        let params = {
-            memberId: 'M00001',
-            period: period,
-            reason: reason
-        };
-        
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: params,
-            dataType: 'json',
-            success: function(data) {
-                if(data.state === 'true') {
-                    alert('회원 정지가 완료되었습니다.');
-                    closeModal('suspendModal');
-                    location.reload();
-                } else {
-                    alert('회원 정지에 실패했습니다.');
-                }
-            },
-            error: function() {
-                alert('오류가 발생했습니다.');
+    
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: params,
+        dataType: 'json',
+        success: function(data) {
+            if(data.success) {
+                alert('회원이 활성화되었습니다.');
+                location.reload();
+            } else {
+                alert(data.message || '활성화에 실패했습니다.');
             }
-        });
-    }
-
-    // 회원 활성화
-    function activateMember() {
-        if(!confirm('회원을 활성화하시겠습니까?')) {
-            return;
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('오류가 발생했습니다.');
         }
-        
-        let url = '${pageContext.request.contextPath}/admin/member/activate';
-        let params = { memberId: 'M00001' };
-        
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: params,
-            dataType: 'json',
-            success: function(data) {
-                if(data.state === 'true') {
-                    alert('회원이 활성화되었습니다.');
-                    location.reload();
-                } else {
-                    alert('활성화에 실패했습니다.');
-                }
-            },
-            error: function() {
-                alert('오류가 발생했습니다.');
-            }
-        });
-    }
+    });
+}
 
-    // 휴면 전환
-    function setDormant() {
-        if(!confirm('회원을 휴면 상태로 전환하시겠습니까?')) {
-            return;
-        }
-        
-        let url = '${pageContext.request.contextPath}/admin/member/dormant';
-        let params = { memberId: 'M00001' };
-        
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: params,
-            dataType: 'json',
-            success: function(data) {
-                if(data.state === 'true') {
-                    alert('휴면 전환이 완료되었습니다.');
-                    location.reload();
-                } else {
-                    alert('휴면 전환에 실패했습니다.');
-                }
-            },
-            error: function() {
-                alert('오류가 발생했습니다.');
-            }
-        });
+// 회원 정지 (모달 없이 바로 실행)
+function suspendMember() {
+    if(!confirm('회원을 정지 상태로 전환하시겠습니까?')) {
+        return;
     }
+    
+    let url = '${pageContext.request.contextPath}/admin/member/updateDetailStatus';
+    let params = {
+        user_id: window.memberData.userId,
+        status: 4 // 정지
+    };
+    
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: params,
+        dataType: 'json',
+        success: function(data) {
+            if(data.success) {
+                alert('회원 정지가 완료되었습니다.');
+                location.reload();
+            } else {
+                alert(data.message || '회원 정지에 실패했습니다.');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('오류가 발생했습니다.');
+        }
+    });
+}
 
-    // 회원 탈퇴
-    function deleteMember() {
-        if(!confirm('정말로 이 회원을 탈퇴 처리하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
-            return;
-        }
-        
-        let url = '${pageContext.request.contextPath}/admin/member/delete';
-        let params = { memberId: 'M00001' };
-        
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: params,
-            dataType: 'json',
-            success: function(data) {
-                if(data.state === 'true') {
-                    alert('회원 탈퇴가 완료되었습니다.');
-                    location.href = '${pageContext.request.contextPath}/admin/member/list';
-                } else {
-                    alert('회원 탈퇴에 실패했습니다.');
-                }
-            },
-            error: function() {
-                alert('오류가 발생했습니다.');
-            }
-        });
+// 휴면 전환
+function setDormant() {
+    if(!confirm('회원을 휴면 상태로 전환하시겠습니까?')) {
+        return;
     }
-    </script>
+    
+    let url = '${pageContext.request.contextPath}/admin/member/updateDetailStatus';
+    let params = { 
+        user_id: window.memberData.userId,
+        status: 3 // 휴면
+    };
+    
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: params,
+        dataType: 'json',
+        success: function(data) {
+            if(data.success) {
+                alert('휴면 전환이 완료되었습니다.');
+                location.reload();
+            } else {
+                alert(data.message || '휴면 전환에 실패했습니다.');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('오류가 발생했습니다.');
+        }
+    });
+}
+
+// 회원 탈퇴
+function deleteMember() {
+    if(!confirm('정말로 이 회원을 탈퇴 처리하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
+        return;
+    }
+    
+    let url = '${pageContext.request.contextPath}/admin/member/deleteMember';
+    let params = { 
+        user_id: window.memberData.userId
+    };
+    
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: params,
+        dataType: 'json',
+        success: function(data) {
+            if(data.success) {
+                alert('회원 탈퇴가 완료되었습니다.');
+                location.href = '${pageContext.request.contextPath}/admin/member/list';
+            } else {
+                alert(data.message || '회원 탈퇴에 실패했습니다.');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('오류가 발생했습니다.');
+        }
+    });
+}
+</script>
 	<script src="${pageContext.request.contextPath}/dist/js/admin_member_chart.js"></script>
 </body>
 </html>
