@@ -79,5 +79,28 @@ public class SettingServiceImpl implements SettingService {
 		return list;
 	}
 
+	@Override
+	public List<PostDTO> listSavedPost(Map<String, Object> map) throws SQLException {
+		List<PostDTO> list = null;
+		
+		try {
+			list = mapper.listSavedPost(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+
+	@Override
+	public int totalCountSavedPost(Long userNum) throws SQLException {
+		try {
+			return mapper.totalCountSavedPost(userNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
 
 }

@@ -183,6 +183,61 @@
 	text-overflow: ellipsis;
 	word-break: break-all;
 }
+
+/* 클릭 가능한 텍스트 효과 */
+.cursor-pointer {
+	cursor: pointer;
+}
+
+.hover-underline:hover {
+	text-decoration: underline;
+	text-underline-offset: 4px;
+}
+
+/* 모달 리스트 아이템 디자인 */
+.follow-item {
+	padding: 12px 20px;
+	transition: all 0.2s ease;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.follow-item:hover {
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.follow-item:last-child {
+	border-bottom: none;
+}
+
+/* 팔로잉 중인 버튼 (회색/반투명) */
+.btn-following {
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.btn-following:hover {
+	background: rgba(255, 255, 255, 0.1);
+	color: #fff;
+}
+
+/* 모달 전용 커스텀 스크롤바 */
+.custom-scrollbar::-webkit-scrollbar {
+	width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+	background: rgba(255, 255, 255, 0.2);
+}
 </style>
 </head>
 <body>
@@ -262,9 +317,12 @@
 										<h1 class="text-white fs-2 fw-bold mb-1">${user.userNickname}
 										</h1>
 										<p class="text-secondary mb-0">
-											c/${user.userId} | <span class="text-white fw-bold">14.2k</span>
-											Followers | <span class="text-white fw-bold">8.5k</span>
-											Visitors
+											c/${user.userId} | <span
+												class="text-white fw-bold cursor-pointer hover-underline"
+												onclick="openFollowModal('Followers')">14.2k</span> Follower
+											| <span
+												class="text-white fw-bold cursor-pointer hover-underline"
+												onclick="openFollowModal('Following')">8.5k</span> Following
 										</p>
 									</div>
 									<div class="ms-auto pb-2 d-flex gap-2">
@@ -530,7 +588,8 @@
 												<span
 													class="material-symbols-outlined text-secondary opacity-20"
 													style="font-size: 80px;">rocket_launch</span>
-												<h4 class="text-white mt-3 fw-bold opacity-75">등록된 게시글이 없습니다</h4>
+												<h4 class="text-white mt-3 fw-bold opacity-75">등록된 게시글이
+													없습니다</h4>
 												<c:if
 													test="${not empty sessionScope.member and sessionScope.member.userId eq user.userId}">
 													<button
@@ -548,8 +607,9 @@
 						</div>
 
 						<fmt:setLocale value="ko_KR" />
-						<fmt:parseDate value="${user.createdDate}" var="parsedDate" pattern="yyyy-MM-dd" />
-						
+						<fmt:parseDate value="${user.createdDate}" var="parsedDate"
+							pattern="yyyy-MM-dd" />
+
 						<aside class="d-none d-xl-flex flex-column gap-2"
 							style="width: 320px; flex-shrink: 0; position: sticky; top: 100px;">
 
@@ -714,6 +774,59 @@
 			style="color: #a855f7 !important;"></h5>
 		<p id="preview-desc" class="text-secondary mb-0"
 			style="font-size: 11px; line-height: 1.5;"></p>
+	</div>
+
+	<div class="modal fade" id="followModal" tabindex="-1"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered"
+			style="max-width: 340px;">
+			<div class="modal-content glass-card border-0 shadow-lg"
+				style="background: rgba(15, 15, 20, 0.98); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.05) !important;">
+
+				<div class="modal-header p-2 px-4"
+					style="border-bottom: 1px solid rgba(255, 255, 255, 0.03);">
+					<h5
+						class="modal-title text-white fw-bold text-uppercase tracking-widest"
+						id="followModalLabel" style="font-size: 0.7rem; opacity: 0.5;">List</h5>
+					<button type="button" class="btn-close btn-close-white opacity-30"
+						data-bs-dismiss="modal" aria-label="Close"
+						style="font-size: 0.6rem;"></button>
+				</div>
+
+				<div class="modal-body p-0 custom-scrollbar"
+					style="max-height: 480px; overflow-y: auto;">
+					<div class="d-flex flex-column" id="follow-list-container">
+
+						<div
+							class="follow-item d-flex align-items-center p-2 px-4 cursor-pointer"
+							style="border-bottom: 1px solid rgba(255, 255, 255, 0.03); height: 48px;">
+							<div
+								class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
+								style="width: 32px; height: 32px; background: linear-gradient(135deg, #4f46e5, #7c3aed); flex-shrink: 0; font-size: 0.75rem;">1</div>
+							<div class="ms-3 d-flex align-items-center gap-2 overflow-hidden">
+								<span class="text-white fw-bold text-truncate"
+									style="font-size: 0.8rem; opacity: 0.85;">Explorer_01</span> <span
+									class="text-secondary" style="font-size: 0.7rem; opacity: 0.4;">@user_01</span>
+							</div>
+						</div>
+						<div
+							class="follow-item d-flex align-items-center p-2 px-4 cursor-pointer"
+							style="height: 48px;">
+							<div
+								class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
+								style="width: 32px; height: 32px; background: linear-gradient(135deg, #f59e0b, #d97706); flex-shrink: 0; font-size: 0.75rem;">11</div>
+							<div class="ms-3 d-flex align-items-center gap-2 overflow-hidden">
+								<span class="text-white fw-bold text-truncate"
+									style="font-size: 0.8rem; opacity: 0.85;">Last_Target_11</span>
+								<span class="text-secondary"
+									style="font-size: 0.7rem; opacity: 0.4;">@user_11</span>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<script type="text/javascript">
@@ -902,6 +1015,13 @@
 		    setTimeout(() => { 
 		        if(card.style.opacity === '0') card.classList.add('d-none'); 
 		    }, 200);
+		}
+		
+		function openFollowModal(type) {
+		    // 헤더 텍스트만 바꿔주고 모달 오픈!
+		    document.getElementById('followModalLabel').innerText = type;
+		    const followModal = new bootstrap.Modal(document.getElementById('followModal'));
+		    followModal.show();
 		}
 	</script>
 </body>

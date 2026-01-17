@@ -18,7 +18,26 @@
     	LEFT OUTER JOIN fileat f ON p.post_id = f.post_id
     	WHERE l.user_num = #{userNum}
     	AND p.is_deleted = '0'
-    	ORDER BY l.post_id DESC
+    	ORDER BY l.created_date DESC
+    	OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+    </select>
+    
+    <select id="listSavedPost" parameterType="map" resultType="com.hs.model.PostDTO">
+        SELECT
+        	l.post_id AS postId,
+        	l.user_num AS userNum,
+        	m.user_nickname AS authorNickname,
+        	p.title,
+        	p.content,
+        	p.created_date AS createdDate,
+        	f.file_path AS thumbnail
+    	FROM saved s
+    	LEFT OUTER JOIN posts p ON l.post_id = p.post_id
+    	LEFT OUTER JOIN member m ON l.user_num = m.user_num
+    	LEFT OUTER JOIN fileat f ON p.post_id = f.post_id
+    	WHERE s.user_num = #{userNum}
+    	AND p.is_deleted = '0'
+    	ORDER BY s.saved_date DESC
     	OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
     </select>
     
@@ -27,6 +46,14 @@
     	FROM likes l
     	LEFT OUTER JOIN posts p ON l.post_id = p.post_id
     	WHERE l.user_num = #{userNum}
+    	AND p.is_deleted = '0'
+    </select>
+    
+    <select id="totalCountSavedPost" parameterType="Long" resultType="Integer">
+        SELECT COUNT(*)
+    	FROM saved s
+    	LEFT OUTER JOIN posts p ON s.post_id = p.post_id
+    	WHERE s.user_num = #{userNum}
     	AND p.is_deleted = '0'
     </select>
     

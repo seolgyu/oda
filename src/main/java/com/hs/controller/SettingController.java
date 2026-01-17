@@ -139,6 +139,25 @@ public class SettingController {
     
     @RequestMapping("saved")
     public String settingsSaved(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	HttpSession session = req.getSession();
+    	
+    	try {
+	    	SessionInfo info = (SessionInfo) session.getAttribute("member");
+	    	Long userNum = (Long)info.getMemberIdx();
+	        
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("userNum", userNum);
+	        map.put("offset", 0);
+	        map.put("size", 10);
+	        
+	        List<PostDTO> list = settingService.listSavedPost(map);
+	        
+	       req.setAttribute("list", list);
+	       req.setAttribute("totalCount", settingService.totalCountSavedPost(userNum));
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
         return "member/setting/settings_saved";
     }
     
@@ -502,6 +521,38 @@ public class SettingController {
         return model;
     }
     
+    @GetMapping("loadSavedPost")
+    @ResponseBody
+    public Map<String, Object> loadSavedPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	HttpSession session = req.getSession();
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	
+    	try {
+	    	SessionInfo info = (SessionInfo) session.getAttribute("member");
+	    	if (info == null) {
+	    		model.put("status", "error");
+	    		return model;
+	    	}
+	    	Long userNum = (Long)info.getMemberIdx();
+	    	int pageNo = Integer.parseInt(req.getParameter("page"));	
+	    	
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("userNum", userNum);
+	        map.put("offset", (pageNo - 1) * 10);
+	        map.put("size", 10);
+	        
+	        List<PostDTO> list = settingService.listSavedPost(map);
+	        
+	       model.put("list", list);
+	       model.put("status", "success");
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    		model.put("status", "error");
+    	}
+    	
+        return model;
+    }
+    
     @PostMapping("toggleLike")
     @ResponseBody
     public Map<String, Object> toggleLike(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -524,6 +575,39 @@ public class SettingController {
 			int likeCount = postService.countPostLike(postId);
 			
 			model.put("likeCount", likeCount);
+			model.put("status", "success");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("status", "error");
+		}
+		
+    	return model;
+    }
+    
+    @PostMapping("toggleSaved")
+    @ResponseBody
+    public Map<String, Object> toggleSaved(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	HttpSession session = req.getSession();
+
+		try {
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			
+			if (info == null) {
+				model.put("status", "error");
+	            return model;
+	        }
+			
+			// Long userNum = (Long)info.getMemberIdx();
+	        // Long postId = Long.parseLong(req.getParameter("postId"));
+	        
+	        // 수정할 부분
+			// postService.insertPostLike(postId, userNum);
+			
+			// int likeCount = postService.countPostLike(postId);
+			
+			// model.put("likeCount", likeCount);
 			model.put("status", "success");
 			
 		} catch (Exception e) {
