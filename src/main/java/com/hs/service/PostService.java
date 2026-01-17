@@ -30,4 +30,5 @@ public interface PostService {
 	void insertReport(ReportDTO dto) throws Exception;
 	public PostDTO findTempPost(long userNum);
 	public void saveTempPost(PostDTO dto) throws Exception;
+	public List<PostDTO> listCommunityPost(Map<String, Object> map); 
 }

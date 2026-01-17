@@ -1,0 +1,177 @@
+@charset "UTF-8";
+
+/* 탭 버튼 컨테이너 내부 간격 조정 */
+#mypage-tabs {
+	display: flex;
+	gap: 8px;
+	padding: 2px;
+}
+
+/* 탭 버튼 기본 상태 (확실히 보이게 수정) */
+#mypage-tabs .btn-sm, .layout-tabs .btn-sm {
+	transition: all 0.2s ease-in-out;
+	color: rgba(255, 255, 255, 0.7) !important; /* 잘 보이도록 밝기 조절 */
+	background: transparent !important;
+	border: 1px solid rgba(255, 255, 255, 0.1) !important; /* 약한 테두리 추가 */
+	font-weight: 500 !important;
+}
+
+/* 마우스를 올렸을 때 (Hover) */
+#mypage-tabs .btn-sm:hover, .layout-tabs .btn-sm:hover {
+	color: #ffffff !important;
+	background: rgba(255, 255, 255, 0.15) !important;
+	border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* 활성화된 버튼 (선택됨 - 가장 중요) */
+.active-filter {
+	background: #ffffff !important; /* 배경 흰색 */
+	color: #000000 !important; /* 글자 검은색 */
+	border: 1px solid #ffffff !important;
+	font-weight: 700 !important;
+	box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); /* 은은한 흰색 광택 */
+}
+
+/* 탭 콘텐츠 영역 기본 숨김 */
+.tab-content {
+	display: none;
+}
+
+/* 캐러셀 기본 레이아웃 */
+.post-carousel {
+	border-radius: 12px;
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	position: relative;
+	background: rgba(0, 0, 0, 0.2); /* 이미지 로딩 전 배경색 */
+}
+
+/* 좌우 화살표 버튼 커스텀 */
+.carousel-control-prev, .carousel-control-next {
+	width: 36px;
+	height: 36px;
+	background: rgba(0, 0, 0, 0.4); /* 반투명 블랙 */
+	border-radius: 50%;
+	top: 50%;
+	transform: translateY(-50%);
+	margin: 0 12px;
+	backdrop-filter: blur(4px); /* 뒤에 비치는 이미지 흐리게 */
+	transition: all 0.2s ease-in-out;
+	opacity: 0; /* 평소에는 숨김 */
+}
+
+/* 포스트 카드에 마우스 올리면 화살표 나타나기 */
+.glass-card:hover .carousel-control-prev, .glass-card:hover .carousel-control-next
+	{
+	opacity: 1;
+}
+
+.carousel-control-prev:hover, .carousel-control-next:hover {
+	background: rgba(255, 255, 255, 0.2);
+	transform: translateY(-50%) scale(1.1);
+}
+
+/* 하단 인디케이터(점) 커스텀 */
+.carousel-indicators {
+	margin-bottom: 0.5rem;
+}
+
+.carousel-indicators [data-bs-target] {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background-color: #fff;
+	opacity: 0.4;
+	border: none;
+	margin: 0 4px;
+	transition: opacity 0.3s ease;
+}
+
+.carousel-indicators .active {
+	opacity: 1;
+	transform: scale(1.2);
+}
+
+/* 이미지 비율 및 정렬 */
+.carousel-item img {
+	object-fit: cover;
+	width: 100%;
+	height: 100%;
+}
+
+/* 리스트 모드가 아닐 때 (기본 카드형) */
+.card-view-item {
+	display: block;
+}
+
+.list-view-item {
+	display: none !important;
+}
+
+#post-list-container.list-mode {
+	gap: 12px !important; /* 카드형보다 간격을 좁게 설정 */
+}
+
+#post-list-container.list-mode .card-view-item {
+	display: none !important;
+}
+
+#post-list-container.list-mode .list-view-item {
+	display: flex !important;
+}
+
+/* (추가) 카드 모드일 때 신규 생성된 리스트형 제어 */
+#post-list-container:not(.list-mode) .list-view-item {
+	display: none !important;
+}
+
+#post-list-container:not(.list-mode) .card-view-item {
+	display: block !important;
+}
+
+/* (수정) 리스트 모드일 때 개별 카드 스타일 */
+#post-list-container.list-mode .post-item-card {
+	margin-bottom: 0 !important;
+	border-radius: 12px !important;
+	padding: 0 !important; /* 내부 간격은 list-view-item에서 조절 */
+}
+
+/* 리스트 모드 텍스트 한줄 자르기 */
+#post-list-container.list-mode .text-truncate {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* 리스트 아이템에 마우스를 올렸을 때 효과 */
+#post-list-container.list-mode .post-item-card:hover {
+	background: rgba(255, 255, 255, 0.08);
+	transform: translateY(-1px);
+	border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* 리스트 모드일 때 아바타 크기 고정 */
+#post-list-container.list-mode .avatar-sm {
+	flex-shrink: 0;
+}
+
+/* 제목과 본문을 한 줄로 나란히 배치할 때 제목 강조 */
+#post-list-container.list-mode .list-view-item span.fw-bold {
+	color: #e0e0e0;
+	min-width: fit-content;
+}
+
+/* 전환 시 부드러운 느낌을 위한 트랜지션 */
+.post-item-card {
+	transition: all 0.2s ease-in-out;
+}
+
+/* (추가) 본문 2줄 제한 및 말줄임 처리 */
+.text-truncate-2 {
+	display: -webkit-box;
+	-webkit-line-clamp: 2; /* 2줄까지만 표시 */
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-break: break-all;
+}

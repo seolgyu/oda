@@ -6,6 +6,7 @@
 <html lang="ko">
 <head>
 <%@ include file="/WEB-INF/views/home/head.jsp"%>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/community_post.css">
 </head>
 <body>
 
@@ -112,105 +113,265 @@
                     </div>
 
                     <div class="d-flex gap-4 w-100" style="max-width: 1100px;">
+                        <div class="flex-column gap-4"
+							style="width: 730px; min-width: 730px; flex-shrink: 0; display: flex;">
+
+							<div
+								class="glass-panel px-3 py-2 d-flex align-items-center justify-content-between shadow-sm">
+								<div class="d-flex gap-2" id="compage-tabs">
+									<button
+										class="btn btn-sm rounded-pill px-3 fw-bold active-filter"
+										data-sort="latest">최신순
+									</button>
+									<button
+										class="btn btn-sm rounded-pill px-3 fw-medium text-secondary hover-white border-0"
+										data-sort="views">인기순
+									</button>
+									<button
+										class="btn btn-sm rounded-pill px-3 fw-medium text-secondary hover-white border-0"
+										data-sort="comments">댓글순
+									</button>
+								</div>
+								<div
+									class="layout-tabs d-flex align-items-center gap-2 border-start border-white border-opacity-10 ps-3">
+									<button class="btn btn-sm rounded-pill px-3 active-filter">
+										<span class="material-symbols-outlined fs-5">view_day</span>
+									</button>
+
+									<button class="btn btn-sm rounded-pill px-3">
+										<span class="material-symbols-outlined fs-5">reorder</span>
+									</button>
+								</div>
+							</div>
+
+							<div id="post-list-container" class="d-flex flex-column gap-4">
+								<c:choose>
+									<c:when test="${not empty post}">
+										<c:forEach var="item" items="${post}">
+											<div class="glass-card shadow-lg group mb-4 post-item-card" data-id="${item.postId}">
+
+												<div class="list-view-item p-3" style="display: none;">
+													<div class="d-flex align-items-start gap-3 w-100">
+														<div class="flex-shrink-0 thumbnail-box"
+															style="width: 90px; height: 90px;">
+															<c:choose>
+																<c:when test="${not empty item.fileList}">
+																	<img src="${item.fileList[0].filePath}"
+																		class="w-100 h-100 object-fit-cover rounded-3 border border-white border-opacity-10">
+																</c:when>
+																<c:otherwise>
+																	<div
+																		class="w-100 h-100 rounded-3 d-flex align-items-center justify-content-center border border-white border-opacity-10"
+																		style="background: rgba(255, 255, 255, 0.05);">
+																		<span class="material-symbols-outlined opacity-20">image</span>
+																	</div>
+																</c:otherwise>
+															</c:choose>
+														</div>
+
+														<div
+															class="flex-grow-1 overflow-hidden d-flex flex-column justify-content-between"
+															style="min-height: 90px;">
+															<div>
+																<div class="d-flex align-items-center gap-2 mb-1">
+																	<span class="text-white fw-bold text-sm">${item.authorNickname}</span>
+																	<span class="text-secondary text-xs opacity-75">c/${item.authorId}</span>
+																	<span class="ms-auto text-xs text-gray-500">${item.createdDate}</span>
+																</div>
+
+																<c:if test="${not empty item.title}">
+																	<h4
+																		class="text-white text-sm fw-bold mb-0 text-truncate">${item.title}</h4>
+																</c:if>
+
+																<p
+																	class="text-light opacity-50 text-xs mb-2 text-truncate">
+																	${item.content}</p>
+															</div>
+
+															<div
+																class="d-flex align-items-center justify-content-between mt-auto">
+																<div class="d-flex gap-3">
+																	<button
+																		class="btn-icon d-flex align-items-center gap-1 p-0"
+																		onclick="toggleLike(this, '${item.postId}')">
+																		<span
+																			class="material-symbols-outlined fs-6 ${item.likedByUser ? 'text-danger' : ''}"
+																			style="font-variation-settings: 'FILL' ${item.likedByUser ? 1 : 0};">favorite</span>
+																		<span class="text-xs opacity-75 like-count">${item.likeCount}</span>
+																	</button>
+																	<button
+																		class="btn-icon d-flex align-items-center gap-1 p-0"
+																		onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
+																		<span class="material-symbols-outlined fs-6">chat_bubble</span>
+																		<span class="text-xs opacity-75">${item.commentCount}</span>
+																	</button>
+																	<button class="btn-icon p-0">
+																		<span class="material-symbols-outlined fs-6">repeat</span>
+																	</button>
+																</div>
+																<div class="d-flex gap-3 text-white-50">
+																	<button class="btn-icon p-0" title="공유하기">
+																		<span class="material-symbols-outlined fs-6">share</span>
+																	</button>
+																	<button class="btn-icon p-0" title="저장하기">
+																		<span class="material-symbols-outlined fs-6">bookmark</span>
+																	</button>
+																	<button class="btn-icon p-0" title="신고하기">
+																		<span class="material-symbols-outlined fs-6">report</span>
+																	</button>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+
+												<div class="card-view-item">
+													<div
+														class="p-3 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
+														<div class="d-flex align-items-center gap-3">
+															<div
+																class="avatar-md bg-info text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden"
+																style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #a855f7);">
+																<c:choose>
+																	<c:when test="${not empty item.authorProfileImage}">
+																		<img src="${item.authorProfileImage}"
+																			class="w-100 h-100 object-fit-cover">
+																	</c:when>
+																	<c:otherwise>${fn:substring(item.authorNickname, 0, 1)}</c:otherwise>
+																</c:choose>
+															</div>
+															<div>
+																<h3 class="text-sm fw-medium text-white mb-0">${item.authorNickname}</h3>
+																<p class="text-xs text-gray-500 mb-0">${item.createdDate}</p>
+															</div>
+														</div>
+														<button class="btn-icon text-white-50">
+															<span class="material-symbols-outlined">more_horiz</span>
+														</button>
+													</div>
+
+													<div class="p-3 pb-2">
+														<c:if test="${not empty item.title}">
+															<h4 class="text-white fs-6 fw-bold mb-1">${item.title}</h4>
+														</c:if>
+														<p class="text-light text-sm mb-0 lh-base"
+															style="white-space: pre-wrap;">${item.content}</p>
+													</div>
+
+													<c:if test="${not empty item.fileList}">
+														<div class="p-3 pt-0">
+															<c:choose>
+																<c:when test="${item.fileList.size() > 1}">
+																	<div id="carousel-${item.postId}"
+																		class="carousel slide post-carousel"
+																		data-bs-ride="false">
+																		<div class="carousel-indicators">
+																			<c:forEach var="file" items="${item.fileList}"
+																				varStatus="status">
+																				<button type="button"
+																					data-bs-target="#carousel-${item.postId}"
+																					data-bs-slide-to="${status.index}"
+																					class="${status.first ? 'active' : ''}"></button>
+																			</c:forEach>
+																		</div>
+																		<div class="carousel-inner">
+																			<c:forEach var="file" items="${item.fileList}"
+																				varStatus="status">
+																				<div
+																					class="carousel-item ${status.first ? 'active' : ''}">
+																					<div class="ratio ratio-16x9">
+																						<img src="${file.filePath}"
+																							class="d-block w-100 object-fit-cover">
+																					</div>
+																				</div>
+																			</c:forEach>
+																		</div>
+																		<button class="carousel-control-prev" type="button"
+																			data-bs-target="#carousel-${item.postId}"
+																			data-bs-slide="prev">
+																			<span class="material-symbols-outlined fs-4">chevron_left</span>
+																		</button>
+																		<button class="carousel-control-next" type="button"
+																			data-bs-target="#carousel-${item.postId}"
+																			data-bs-slide="next">
+																			<span class="material-symbols-outlined fs-4">chevron_right</span>
+																		</button>
+																	</div>
+																</c:when>
+																<c:otherwise>
+																	<div class="post-carousel">
+																		<div class="ratio ratio-16x9">
+																			<img src="${item.fileList[0].filePath}"
+																				class="d-block w-100 object-fit-cover">
+																		</div>
+																	</div>
+																</c:otherwise>
+															</c:choose>
+														</div>
+													</c:if>
+
+													<div
+														class="px-3 py-2 d-flex align-items-center justify-content-between border-top border-white border-opacity-10"
+														style="background: rgba(255, 255, 255, 0.05);">
+														<div class="d-flex gap-4">
+															<button class="btn-icon d-flex align-items-center gap-1"
+																onclick="toggleLike(this, '${item.postId}')">
+																<span
+																	class="material-symbols-outlined fs-5 ${item.likedByUser ? 'text-danger' : ''}"
+																	style="font-variation-settings: 'FILL' ${item.likedByUser ? 1 : 0};">favorite</span>
+																<span class="text-xs opacity-75 like-count">${item.likeCount}</span>
+															</button>
+															<button class="btn-icon d-flex align-items-center gap-1"
+																onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
+																<span class="material-symbols-outlined fs-5">chat_bubble</span>
+																<span class="text-xs opacity-75">${item.commentCount}</span>
+															</button>
+															<button class="btn-icon">
+																<span class="material-symbols-outlined fs-5">repeat</span>
+															</button>
+														</div>
+														<div class="d-flex gap-3 text-white-50">
+															<button class="btn-icon" title="공유하기">
+																<span class="material-symbols-outlined fs-5">share</span>
+															</button>
+															<button class="btn-icon" title="저장하기">
+																<span class="material-symbols-outlined fs-5">bookmark</span>
+															</button>
+															<button class="btn-icon" title="신고하기">
+																<span class="material-symbols-outlined fs-5">report</span>
+															</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</c:forEach>
+									</c:when>
+
+									<c:otherwise>
+										<div class="glass-card py-5 text-center shadow-lg border-0"
+											style="background: rgba(255, 255, 255, 0.02); border-radius: 1rem !important;">
+											<div class="py-4">
+												<span
+													class="material-symbols-outlined text-secondary opacity-20"
+													style="font-size: 80px;">rocket_launch</span>
+												<h4 class="text-white mt-3 fw-bold opacity-75">등록된 게시글이 없습니다</h4>
+												<c:if
+													test="${not empty sessionScope.member and sessionScope.member.userId eq user.userId}">
+													<button
+														onclick="location.href='${pageContext.request.contextPath}/post/write';"
+														class="btn btn-outline-primary rounded-pill px-4 btn-sm mt-3 fw-bold">
+														게시글 작성하기</button>
+												</c:if>
+											</div>
+										</div>
+									</c:otherwise>
+								</c:choose>
+							</div>
+
+							<div id="sentinel" style="height: 50px;"></div>
+						</div>
                         
-                        <div class="flex-grow-1 d-flex flex-column gap-4" style="min-width: 0;">
-                            
-                            <div class="glass-panel px-3 py-2 d-flex align-items-center justify-content-between shadow-sm">
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-sm rounded-pill px-3 fw-bold active-filter" style="background: rgba(255, 255, 255, 0.1); color: white; border: none;">인기순</button>
-                                    <button class="btn btn-sm rounded-pill px-3 fw-medium text-secondary hover-white border-0">최신순</button>
-                                    <button class="btn btn-sm rounded-pill px-3 fw-medium text-secondary hover-white border-0">댓글순</button>
-                                </div>
-                                <div class="d-flex align-items-center gap-1 border-start border-white border-opacity-10 ps-2">
-                                    <button class="btn-icon text-white hover-purple"><span class="material-symbols-outlined fs-5">view_day</span></button>
-                                    <button class="btn-icon text-secondary hover-white"><span class="material-symbols-outlined fs-5">reorder</span></button>
-                                </div>
-                            </div>
-
-                            <div class="glass-panel p-3 shadow-lg">
-                                <div class="d-flex gap-3">
-                                    <div class="avatar-lg text-white fw-bold flex-shrink-0" style="background: linear-gradient(to top right, #a855f7, #6366f1);">MK</div>
-                                    <div class="flex-grow-1">
-                                        <input class="create-input text-base w-100 mb-2" placeholder="Share your latest creation..." type="text" style="background: transparent; border: none; color: white; outline: none;"/>
-                                        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-25">
-                                            <div class="d-flex gap-2">
-                                                <button class="btn-icon text-gray-400 hover-purple"><span class="material-symbols-outlined fs-5">image</span></button>
-                                                <button class="btn-icon text-gray-400 hover-blue"><span class="material-symbols-outlined fs-5">movie</span></button>
-                                                <button class="btn-icon text-gray-400 hover-orange"><span class="material-symbols-outlined fs-5">schema</span></button>
-                                            </div>
-                                            <button class="action-btn-pill">Post</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="glass-card shadow-lg group">
-                                <div class="p-3 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="avatar-md bg-warning text-white fw-bold">JS</div>
-                                        <div><h3 class="text-sm fw-medium text-white mb-0">Julia Smith</h3><p class="text-xs text-gray-500 mb-0">2 hours ago</p></div>
-                                    </div>
-                                    <button class="btn-icon"><span class="material-symbols-outlined">more_horiz</span></button>
-                                </div>
-                                <div class="p-3">
-                                    <p class="text-light text-sm mb-3 lh-base">Explored a new generative flow today. The combination of vector fields and particle systems created this amazing nebulae effect. 🌌✨</p>
-                                    <div class="ratio ratio-16x9 w-100 rounded-3 overflow-hidden position-relative border border-white border-opacity-10">
-                                        <div class="position-absolute w-100 h-100" style="background: linear-gradient(to bottom right, #312e81, #581c87, #000); opacity: 0.8;"></div>
-                                        <div class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center">
-                                            <div class="rounded-circle" style="width: 8rem; height: 8rem; background: rgba(168, 85, 247, 0.3); filter: blur(40px);"></div>
-                                        </div>
-                                        <div class="position-absolute bottom-0 end-0 m-3 px-2 py-1 rounded text-xs font-monospace text-white-50 border border-white border-opacity-10" style="background: rgba(0, 0, 0, 0.6);">Generation #4291</div>
-                                    </div>
-                                </div>
-                                <div class="px-3 py-2 d-flex align-items-center justify-content-between" style="background: rgba(255, 255, 255, 0.05);">
-                                    <div class="d-flex gap-4">
-                                        <button class="btn-icon text-xs ps-0 d-flex align-items-center gap-2"><span class="material-symbols-outlined fs-6 text-danger">favorite</span> 24</button>
-                                        <button class="btn-icon text-xs d-flex align-items-center gap-2"><span class="material-symbols-outlined fs-6">chat_bubble</span> 5</button>
-                                    </div>
-                                    <button class="btn-icon text-xs pe-0 d-flex align-items-center gap-1"><span class="material-symbols-outlined fs-6">share</span> Share</button>
-                                </div>
-                            </div>
-
-                            <div class="glass-card shadow-lg group">
-                                <div class="p-3 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="avatar-md bg-success text-white fw-bold">DT</div>
-                                        <div><h3 class="text-sm fw-medium text-white mb-0">David Torres</h3><p class="text-xs text-gray-500 mb-0">5 hours ago</p></div>
-                                    </div>
-                                    <button class="btn-icon"><span class="material-symbols-outlined">more_horiz</span></button>
-                                </div>
-                                <div class="p-3">
-                                    <p class="text-light text-sm mb-3">Working on the UI components for the new design system. Thoughts on this palette?</p>
-                                    <div class="row g-2" style="height: 12rem;">
-                                        <div class="col-6 h-100">
-                                            <div class="h-100 rounded-3 border border-white border-opacity-10 p-2 position-relative overflow-hidden" style="background-color: #1e1e24;">
-                                                <div class="mt-4 d-flex flex-column gap-2">
-                                                    <div class="rounded" style="height: 8px; width: 75%; background: rgba(255, 255, 255, 0.1);"></div>
-                                                    <div class="rounded border border-white border-opacity-10 border-dashed d-flex align-items-center justify-content-center text-xs text-muted" style="height: 64px; background: rgba(255, 255, 255, 0.05);">Component A</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 h-100">
-                                            <div class="h-100 rounded-3 border border-white border-opacity-10 p-2 position-relative overflow-hidden" style="background-color: #1e1e24;">
-                                                <div class="d-flex flex-column gap-2">
-                                                    <div class="d-flex gap-2">
-                                                        <div class="rounded" style="width: 32px; height: 32px; background: rgba(255, 255, 255, 0.1);"></div>
-                                                        <div class="flex-grow-1 d-flex flex-column gap-1"><div class="rounded" style="height: 8px; width: 100%; background: rgba(255, 255, 255, 0.1);"></div></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="px-3 py-2 d-flex align-items-center justify-content-between" style="background: rgba(255, 255, 255, 0.05);">
-                                    <div class="d-flex gap-4">
-                                        <button class="btn-icon text-xs ps-0 d-flex align-items-center gap-2"><span class="material-symbols-outlined fs-6">favorite</span> 86</button>
-                                        <button class="btn-icon text-xs d-flex align-items-center gap-2"><span class="material-symbols-outlined fs-6">chat_bubble</span> 12</button>
-                                    </div>
-                                    <button class="btn-icon text-xs pe-0 d-flex align-items-center gap-1"><span class="material-symbols-outlined fs-6">share</span> Share</button>
-                                </div>
-                            </div>
-                        </div>
 
                         <aside class="d-none d-xl-flex flex-column gap-4" style="width: 320px; flex-shrink: 0;">
 						    <div class="glass-card p-4 shadow-lg">
@@ -289,10 +450,20 @@
 	        <p id="toastMessage" class="toast-msg text-sm font-medium text-white/90 mb-0"></p>
 	    </div>
 	</div>
+	
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/util-jquery.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
+	
+	<script>
+    // JS 파일들이 참조할 전역 변수
+    window.cp = "${pageContext.request.contextPath}";
+    window.communityId = "${dto.community_id}"; 
+    window.currentSort = "${currentSort}"; // 컨트롤러에서 넘겨받은 정렬 상태
+	</script>
+	
 	<script src="${pageContext.request.contextPath}/dist/js/community.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/community_post.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/community_form.js"></script>
 </body>
 </html>

@@ -30,7 +30,7 @@
 	</delete>
 	
 	<select id="checkJoinCommunity" parameterType="map" resultType="int">
-		SELECT COUNT(*) from community_follow
+		SELECT NVL(COUNT(*), 0) from community_follow
 		WHERE community_id = #{community_id} AND user_num = #{user_num}
 	</select>
 	
@@ -55,7 +55,7 @@
 	</update>
 	
 	<select id="checkFavorite" parameterType="map" resultType="int">
-		SELECT COUNT(*) from community_favorites
+		SELECT NVL(COUNT(*), 0) from community_favorites
 		WHERE community_id = #{community_id} AND user_num = #{user_num}
 	</select>
 	

@@ -396,5 +396,33 @@
         ORDER BY POST_ID DESC
         FETCH FIRST 1 ROWS ONLY
     </select>
+    
+    <select id="listCommunityPost" parameterType="map" resultType="com.hs.model.PostDTO">
+	    SELECT
+	        p.POST_ID AS postId,
+	        p.USER_NUM AS userNum,
+	        p.COMMUNITY_ID AS communityId,
+	        p.TITLE,
+	        p.CONTENT,
+	        p.VIEW_COUNT AS viewCount,
+	        p.LIKE_COUNT AS likeCount,
+	        (SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED = '0') AS commentCount,
+	        p.CREATED_DATE AS createdDate,
+	        p.STATE,
+	        u.USER_NICKNAME AS authorNickname,
+	        u.USER_ID AS authorId,
+	        u.USER_PROFILE AS authorProfileImage  FROM POSTS p
+	    LEFT JOIN MEMBER u ON p.USER_NUM = u.USER_NUM
+	    WHERE p.COMMUNITY_ID = #{community_id}
+	      AND p.IS_DELETED = '0'
+	      AND (TRIM(p.STATE) = '정상' OR (TRIM(p.STATE) = '나만보기' AND p.USER_NUM = #{user_num, jdbcType=BIGINT}))
+	    ORDER BY 
+	    <choose>
+	        <when test="sort == 'views'">p.VIEW_COUNT DESC, p.POST_ID DESC</when>
+	        <when test="sort == 'comments'">commentCount DESC, p.POST_ID DESC</when>
+	        <otherwise>p.POST_ID DESC</otherwise>
+	    </choose>
+	    OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+	</select>
 
 </mapper>

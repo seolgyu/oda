@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.hs.model.CommunityDTO;
+import com.hs.model.MemberDTO;
+import com.hs.model.PostDTO;
 import com.hs.model.SessionInfo;
 import com.hs.mvc.annotation.Controller;
 import com.hs.mvc.annotation.GetMapping;
@@ -16,6 +18,8 @@ import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
 import com.hs.service.CommunityService;
 import com.hs.service.CommunityServiceImpl;
+import com.hs.service.PostService;
+import com.hs.service.PostServiceImpl;
 import com.hs.util.CloudinaryUtil;
 
 import jakarta.servlet.ServletException;
@@ -28,7 +32,7 @@ import jakarta.servlet.http.Part;
 @RequestMapping("/community/*")
 public class CommunityController {
 	private CommunityService cservice = new CommunityServiceImpl();
-	
+	private PostService postService = new PostServiceImpl();
 	@GetMapping("create")
 	public ModelAndView createForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
 		ModelAndView mav = new ModelAndView("community/create");
@@ -76,8 +80,14 @@ public class CommunityController {
 	@GetMapping("main")
 	public ModelAndView mainPage(HttpServletRequest req, HttpServletResponse resp) {
 		String com_id = req.getParameter("community_id");
+		
+		String sort = req.getParameter("sort");
+	    if(sort == null || sort.isEmpty()) sort = "latest";
+	    
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		Long user_num = info.getMemberIdx();
 		
 		if(com_id == null || com_id.isEmpty()) {
 			return new ModelAndView("redirect:/community/list");
@@ -86,16 +96,27 @@ public class CommunityController {
 		try {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("community_id", Long.parseLong(com_id));
-			map.put("user_num", info.getMemberIdx());
+			map.put("user_num", user_num);
 			
 			CommunityDTO dto = cservice.findById(map);
-			int is_follow = cservice.checkJoinCommunity(map);
 			
 			if(dto != null) {
+				int is_follow = cservice.checkJoinCommunity(map);
 				dto.setIs_follow(is_follow);
+				
+				Map<String, Object> postMap = new HashMap<>();
+	            postMap.put("community_id", Long.parseLong(com_id));
+	            postMap.put("user_num", user_num); // '나만보기' 필터링용
+	            postMap.put("sort", sort);         // 정렬 기준
+	            postMap.put("offset", 0);
+	            postMap.put("size", 5);
+
+	            List<PostDTO> list = postService.listCommunityPost(postMap);
 				
 				ModelAndView mav = new ModelAndView("community/main");
 				mav.addObject("dto", dto);
+				mav.addObject("post", list);    // JSP에서 <c:forEach>로 뿌릴 데이터
+	            mav.addObject("currentSort", sort); // 현재 어떤 정렬인지 UI 표시용
 				return mav;
 			}
 		} catch (Exception e) {
@@ -415,6 +436,44 @@ public class CommunityController {
 	        map.put("status", "error");
 	    }
 	    return map;
+	}
+	
+	// 무한 스크롤 시 데이터를 가져오는 '입' 역할 (기존 main 메서드 아래에 추가)
+	@GetMapping("postList")
+	@ResponseBody // 페이지 이동이 아니라 '데이터'만 보낸다는 뜻
+	public Map<String, Object> postList(HttpServletRequest req, HttpServletResponse resp) {
+	    Map<String, Object> model = new HashMap<>();
+	    try {
+	        // 자바스크립트가 보내주는 정보들 받기
+	        long communityId = Long.parseLong(req.getParameter("community_id"));
+	        String strOffset = req.getParameter("offset");
+	        int offset = (strOffset != null) ? Integer.parseInt(strOffset) : 0;
+	        String sort = req.getParameter("sort");
+	        if(sort == null || sort.isEmpty()) sort = "latest";
+
+	        HttpSession session = req.getSession();
+	        SessionInfo info = (SessionInfo)session.getAttribute("member");
+	        long userNum = (info != null) ? info.getMemberIdx() : 0L;
+
+	        // DB 조회를 위한 데이터 세팅
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("community_id", communityId);
+	        map.put("user_num", userNum);
+	        map.put("sort", sort);
+	        map.put("offset", offset);
+	        map.put("size", 5);
+
+	        // 데이터 조회
+	        List<PostDTO> list = postService.listCommunityPost(map);
+	        
+	        // 결과 담아서 보내기
+	        model.put("list", list);
+	        model.put("status", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        model.put("status", "error");
+	    }
+	    return model; // JSON 형태로 자바스크립트에게 전달됨
 	}
 	
 }

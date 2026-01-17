@@ -1,6 +1,7 @@
 package com.hs.service;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -344,6 +345,46 @@ public class PostServiceImpl implements PostService {
 	        e.printStackTrace();
 	        throw e;
 	    }
+	}
+
+	@Override
+	public List<PostDTO> listCommunityPost(Map<String, Object> map) {
+	    List<PostDTO> list = new ArrayList<>(); // null 대신 빈 리스트로 초기화
+	    try {
+	        // 1. 게시글 목록 조회
+	        list = mapper.listCommunityPost(map);
+	        
+	        if (list == null) return new ArrayList<>();
+
+	        // 2. 루프를 돌며 추가 정보 세팅
+	        for(PostDTO item : list) {
+	            // [수정 포인트] user_num을 꺼낼 때 Null 체크를 아주 꼼꼼하게 합니다.
+	            Object userNumObj = map.get("user_num");
+	            long loginUserNum = 0L;
+	            
+	            if (userNumObj != null) {
+	                try {
+	                    loginUserNum = Long.parseLong(userNumObj.toString());
+	                } catch (Exception e) {
+	                    loginUserNum = 0L; 
+	                }
+	            }
+
+	            // 좋아요 여부 확인
+	            if (loginUserNum != 0) {
+	                item.setLikedByUser(isLiked(item.getPostId(), loginUserNum));
+	            }
+	            
+	            // 파일 리스트 가져오기 (Null 방지)
+	            List<FileAtDTO> files = mapper.listFileAt(item.getPostId());
+	            item.setFileList(files != null ? files : new ArrayList<>());
+	        }
+	    } catch (Exception e) {
+	        // 여기가 핵심! 에러가 나면 무조건 서버 콘솔(빨간글씨)에 찍히게 합니다.
+	        System.out.println("로그: listCommunityPost에서 에러 발생!!!");
+	        e.printStackTrace(); 
+	    }
+	    return list;
 	}
 
 }
