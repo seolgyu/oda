@@ -143,7 +143,7 @@
 			member_count, post_count, TO_CHAR(created_date, 'YYYY-MM-DD') created_date, 
 			today_visit, total_visit, user_num, category_id
 		FROM COMMUNITY 
-		WHERE com_name = #{com_name}
+		WHERE com_name = #{com_name, jdbcType=VARCHAR}
 	</select>
 	
 	<select id="findById" parameterType="map" resultType="com.hs.model.CommunityDTO">
@@ -151,7 +151,7 @@
 			member_count, post_count, TO_CHAR(created_date, 'YYYY-MM-DD') created_date, 
 			today_visit, total_visit, user_num, category_id,
 			(SELECT COUNT(*) FROM community_favorites
-			 WHERE community_id = COMMUNITY.community_id AND user_num = #{user_num}) is_favorite
+			 WHERE community_id = COMMUNITY.community_id AND user_num = #{user_num, jdbcType=NUMERIC}) is_favorite
 		FROM COMMUNITY 
 		WHERE community_id = #{community_id}
 	</select>

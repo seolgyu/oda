@@ -442,15 +442,6 @@
         </main>
 	</div>
 	
-	<div id="sessionToast" class="glass-toast flex items-center gap-4">
-	    <div class="toast-icon-circle flex-none">
-	        <span id="toastIcon" class="material-symbols-outlined text-[20px]">check_circle</span>
-	    </div>
-	    <div class="flex-1">
-	        <p id="toastMessage" class="toast-msg text-sm font-medium text-white/90 mb-0"></p>
-	    </div>
-	</div>
-	
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/util-jquery.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
