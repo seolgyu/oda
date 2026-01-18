@@ -203,7 +203,7 @@ function renderMyPost(item) {
                             <div class="d-flex align-items-center gap-2 mb-1">
                                 <span class="text-white fw-bold text-sm">${item.authorNickname}</span>
                                 <span class="text-secondary text-xs opacity-75">c/${item.authorId}</span>
-                                <span class="ms-auto text-xs text-gray-500">${item.createdDate}</span>
+                                <span class="ms-auto text-xs text-gray-500">${item.timeAgo}</span>
                             </div>
                             ${item.title ? `<h4 class="text-white text-sm fw-bold mb-0 text-truncate">${item.title}</h4>` : ''}
                             <p class="text-light opacity-50 text-xs mb-2 text-truncate">${item.content}</p>
@@ -243,7 +243,7 @@ function renderMyPost(item) {
                         </div>
                         <div>
                             <h3 class="text-sm fw-medium text-white mb-0">${item.authorNickname}</h3>
-                            <p class="text-xs text-gray-500 mb-0">${item.createdDate}</p>
+                            <p class="text-xs text-gray-500 mb-0">${item.timeAgo}</p>
                         </div>
                     </div>
                     <button class="btn-icon text-white-50"><span class="material-symbols-outlined">more_horiz</span></button>

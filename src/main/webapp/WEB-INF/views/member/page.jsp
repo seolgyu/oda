@@ -396,7 +396,7 @@
 																<div class="d-flex align-items-center gap-2 mb-1">
 																	<span class="text-white fw-bold text-sm">${item.authorNickname}</span>
 																	<span class="text-secondary text-xs opacity-75">c/${item.authorId}</span>
-																	<span class="ms-auto text-xs text-gray-500">${item.createdDate}</span>
+																	<span class="ms-auto text-xs text-gray-500">${item.timeAgo}</span>
 																</div>
 
 																<c:if test="${not empty item.title}">
@@ -463,7 +463,7 @@
 															</div>
 															<div>
 																<h3 class="text-sm fw-medium text-white mb-0">${item.authorNickname}</h3>
-																<p class="text-xs text-gray-500 mb-0">${item.createdDate}</p>
+																<p class="text-xs text-gray-500 mb-0">${item.timeAgo}</p>
 															</div>
 														</div>
 														<button class="btn-icon text-white-50">
