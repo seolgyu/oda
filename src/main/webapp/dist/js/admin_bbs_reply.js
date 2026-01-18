@@ -30,8 +30,8 @@ function addNewContent(data) {
    
    const htmlText = renderReplies(listReply, sessionMember, pageNo);
    
-   $('div#listReply .reply-count').html(`댓글 ${replyCount}`);
-   $('div#listReply .reply-page').html(`[목록, ${pageNo}/${total_page} 페이지]`);
+   $('div#listReply .reply-count').html(`<span class="material-symbols-outlined" style="font-size: 1.2rem; vertical-align: middle;">comment</span> 댓글 ${replyCount}개`);
+   $('div#listReply .reply-page').html(`${pageNo} / ${total_page} 페이지`);
    
    $('div#listReply .list-content').attr('data-pageNo', pageNo);
    $('div#listReply .list-content').attr('data-totalPage', total_page);
@@ -106,7 +106,7 @@ $(function(){
 // 댓글 삭제
 $(function(){
 	$('div.reply').on('click', '.deleteReply', function(){
-		if(! confirm('게시글을 삭제하시겠습니까?')){
+		if(! confirm('댓글을 삭제하시겠습니까?')){
 			return false;
 		}
 		
@@ -130,7 +130,7 @@ $(function(){
       
       let isUserLiked = $btn.parent('td').attr('data-userLikedReply') !== '-1';
       if(isUserLiked) {
-         alert('게시글 공감여부가 등록되었습니다.');
+         alert('댓글 공감여부가 등록되었습니다.');
          return false;
       }
       
@@ -139,9 +139,9 @@ $(function(){
 	  
 	  console.log('댓글 넘버' + replyNum + ' : ' + '댓글 좋아요여부' + ' : ' + replyLike);
       
-      let msg = '게시글이 마음에 들지 않으십니까 ? ';
+      let msg = '댓글이 마음에 들지 않으십니까?';
       if(replyLike === '1') {
-         msg = '게시글에 공감하십니까 ? ';
+         msg = '댓글에 공감하십니까?';
       }
       
       if(! confirm(msg)) {
@@ -161,7 +161,7 @@ $(function(){
 			console.log('댓글 좋아요 개수' + likeCount + ' : ' + '댓글 싫어요 개수' + ' : ' + disLikeCount);
             
             $btn.parent('td').attr('data-userLikedReply', replyLike);
-            $btn.find('i').css('color', 'red');
+            $btn.find('i').css('color', '#ef4444');
             
             $btn.parent('td').children().eq(0).find('span').html(likeCount);
             $btn.parent('td').children().eq(1).find('span').html(disLikeCount);
@@ -254,7 +254,7 @@ $(function(){
 // 댓글별 답글 삭제
 $(function(){
 	$('div.reply').on('click', '.deleteReplyAnswer', function(){
-		if(! confirm('게시물을 삭제하시겠습니까 ? ')) {
+		if(! confirm('답글을 삭제하시겠습니까?')) {
 		    return false;
 		}
 		
@@ -279,9 +279,9 @@ $(function(){
 		
 		let replyNum = $(this).attr('data-replyNum');
 		let showReply = $(this).attr('data-showReply');
-		let msg = '댓글을 숨김 하시겠습니까 ? ';
+		let msg = '댓글을 숨김 하시겠습니까?';
 		if(showReply === '0') {
-			msg = '댓글 숨김을 해제 하시겠습니까 ? ';
+			msg = '댓글 숨김을 해제 하시겠습니까?';
 		}
 		if(! confirm(msg)) {
 			return false;
@@ -296,11 +296,11 @@ $(function(){
 			if(data.state === 'true') {
 				let $item = $($menu).closest('tr').next('tr').find('td');
 				if(showReply === '1') {
-					$item.removeClass('text-primary').removeClass('text-opacity-50');
+					$item.removeClass('reply-hidden');
 					$menu.attr('data-showReply', '1');
 					$menu.text('숨김');
 				} else {
-					$item.addClass('text-primary').addClass('text-opacity-50');
+					$item.addClass('reply-hidden');
 					$menu.attr('data-showReply', '0');
 					$menu.text('표시');
 				}
@@ -319,9 +319,9 @@ $(function(){
 		let replyNum = $(this).attr('data-replyNum');
 		let showReply = $(this).attr('data-showReply');
 		
-		let msg = '댓글을 숨김 하시겠습니까 ? ';
+		let msg = '답글을 숨김 하시겠습니까?';
 		if(showReply === '0') {
-			msg = '댓글 숨김을 해제 하시겠습니까 ? ';
+			msg = '답글 숨김을 해제 하시겠습니까?';
 		}
 		if(! confirm(msg)) {
 			return false;
@@ -334,13 +334,13 @@ $(function(){
 		
 		const fn = function(data){
 			if(data.state === 'true') {
-				let $item = $menu.closest('.row').next('div');
+				let $item = $menu.closest('.reply-answer-item').find('.reply-answer-content');
 				if(showReply === '1') {
-					$item.removeClass('text-primary').removeClass('text-opacity-50');
+					$item.removeClass('reply-hidden');
 					$menu.attr('data-showReply', '1');
 					$menu.html('숨김');
 				} else {
-					$item.addClass('text-primary').addClass('text-opacity-50');
+					$item.addClass('reply-hidden');
 					$menu.attr('data-showReply', '0');
 					$menu.html('표시');
 				}
@@ -359,69 +359,91 @@ function renderReplies(listReply, sessionMember, pageNo) {
     const isWriter = sessionMember.userId === vo.userId;
     const isAdmin = sessionMember.userLevel > 50;
     const showReplyText = vo.showReply == 1 ? "숨김" : "표시";
-    const contentClass = vo.showReply == 0 ? 'text-primary text-opacity-50' : '';
+    const contentClass = vo.showReply == 0 ? 'reply-hidden' : '';
 	
     let menuHTML = '';
     if (isWriter) {
       menuHTML = `
-        <div class="deleteReply reply-menu-item" data-replyNum="${vo.replyNum}" data-pageNo="${pageNo}">삭제</div>
-        <div class="hideReply reply-menu-item" data-replyNum="${vo.replyNum}" data-showReply="${vo.showReply}">${showReplyText}</div>
+        <div class="deleteReply reply-menu-item" data-replyNum="${vo.replyNum}" data-pageNo="${pageNo}">
+          <span class="material-symbols-outlined" style="font-size: 1rem;">delete</span>
+          삭제
+        </div>
+        <div class="hideReply reply-menu-item" data-replyNum="${vo.replyNum}" data-showReply="${vo.showReply}">
+          <span class="material-symbols-outlined" style="font-size: 1rem;">${vo.showReply == 1 ? 'visibility_off' : 'visibility'}</span>
+          ${showReplyText}
+        </div>
       `;
     } else if (isAdmin) {
       menuHTML = `
-        <div class="deleteReply reply-menu-item" data-replyNum="${vo.replyNum}" data-pageNo="${pageNo}">삭제</div>
-        <div class="blockReply reply-menu-item" data-replyNum="${vo.replyNum}" data-pageNo="${pageNo}">차단</div>
+        <div class="deleteReply reply-menu-item" data-replyNum="${vo.replyNum}" data-pageNo="${pageNo}">
+          <span class="material-symbols-outlined" style="font-size: 1rem;">delete</span>
+          삭제
+        </div>
+        <div class="blockReply reply-menu-item" data-replyNum="${vo.replyNum}" data-pageNo="${pageNo}">
+          <span class="material-symbols-outlined" style="font-size: 1rem;">block</span>
+          차단
+        </div>
       `;
     } else {
       menuHTML = `
-        <div class="notifyReply reply-menu-item" data-replyNum="${vo.replyNum}">신고</div>
-        <div class="blockReply reply-menu-item" data-replyNum="${vo.replyNum}" data-pageNo="${pageNo}">차단</div>
+        <div class="notifyReply reply-menu-item" data-replyNum="${vo.replyNum}">
+          <span class="material-symbols-outlined" style="font-size: 1rem;">report</span>
+          신고
+        </div>
+        <div class="blockReply reply-menu-item" data-replyNum="${vo.replyNum}" data-pageNo="${pageNo}">
+          <span class="material-symbols-outlined" style="font-size: 1rem;">block</span>
+          차단
+        </div>
       `;
     }
    
    let likedHTML = '&nbsp;';
    if(liked === '1') {
-      const likeColor = vo.userLikedReply == 1 ? 'color:red;' : '';
-      const dislikeColor = vo.userLikedReply == 0 ? 'color:red;' : '';
+      const likeColor = vo.userLikedReply == 1 ? 'color:#ef4444;' : '';
+      const dislikeColor = vo.userLikedReply == 0 ? 'color:#ef4444;' : '';
       
       likedHTML = `
-         <button type="button" class="btn btn-light btnSendReplyLike" data-replyNum="${vo.replyNum}" data-replyLike="1" title="좋아요">
+         <button type="button" class="btn btnSendReplyLike" data-replyNum="${vo.replyNum}" data-replyLike="1" title="좋아요">
             <i class="bi bi-hand-thumbs-up" style="${likeColor}"></i> <span>${vo.likeCount}</span>
          </button>
       `;
    }
 
    return `
-   <tr class="border table-light">
-            <td colspan="2">
-              <div class="row p-1">
-               <div class="col-auto">
-                  <div class="d-flex align-items-center reply-writer">
-                     <span class="material-symbols-outlined" style="font-size: 1.6rem; color: #94A3B8;">account_circle</span>
-                     <div class="ms-2">
-                        <div class="name">${vo.user_nickname}</div>
-                        <div class="date">${vo.reg_date}</div>
+      <tr class="reply-item-header">
+         <td colspan="2">
+            <div class="reply-header-wrapper">
+               <div class="reply-writer">
+                  <span class="material-symbols-outlined user-icon">account_circle</span>
+                  <div class="writer-info">
+                     <div class="name">${vo.user_nickname}</div>
+                     <div class="date">
+                        <span class="material-symbols-outlined" style="font-size: 0.875rem;">schedule</span>
+                        ${vo.reg_date}
                      </div>
                   </div>
                </div>
-               <div class="col align-self-center text-end">
-                  <span class="reply-dropdown"><span class="material-symbols-outlined">more_vert</span></span>
+               <div class="reply-actions">
+                  <span class="reply-dropdown">
+                     <span class="material-symbols-outlined">more_vert</span>
+                  </span>
                   <div class="reply-menu d-none">
                      ${menuHTML}
                   </div>
                </div>
             </div>
-            </td>
-          </tr>
-      
-      <tr>
-         <td colspan="2" valign="top" class="${contentClass}">${vo.content}</td>
+         </td>
       </tr>
       
-      <tr>
+      <tr class="reply-item-content">
+         <td colspan="2" class="reply-content ${contentClass}">${vo.content}</td>
+      </tr>
+      
+      <tr class="reply-item-footer">
          <td>
-            <button type="button" class="btn btn-light btnReplyAnswerLayout" data-replyNum="${vo.replyNum}">
-               답글 <span id="answerCount${vo.replyNum}">${vo.answerCount}</span>
+            <button type="button" class="btn btnReplyAnswerLayout" data-replyNum="${vo.replyNum}">
+               <span class="material-symbols-outlined" style="font-size: 1rem;">reply</span>
+               답글 <span id="answerCount${vo.replyNum}" class="answer-count-badge">${vo.answerCount}</span>
             </button>
          </td>
          <td align="right" data-userLikedReply="${vo.userLikedReply}">
@@ -431,13 +453,16 @@ function renderReplies(listReply, sessionMember, pageNo) {
       
       <tr class="reply-answer d-none">
          <td colspan="2">
-            <div class="border rounded">
+            <div class="reply-answer-container">
                <div id="listReplyAnswer${vo.replyNum}" class="answer-list"></div>
-               <div>
-                  <textarea class="form-control m-2"></textarea>
-               </div>
-               <div class="text-end pe-2 pb-1">
-                  <button type="button" class="btn btn-light btnSendReplyAnswer" data-replyNum="${vo.replyNum}">답글 등록</button>
+               <div class="answer-form">
+                  <textarea class="form-control" placeholder="답글을 입력해주세요..."></textarea>
+                  <div class="answer-form-footer">
+                     <button type="button" class="btn btnSendReplyAnswer" data-replyNum="${vo.replyNum}">
+                        <span class="material-symbols-outlined" style="font-size: 1rem;">send</span>
+                        답글 등록
+                     </button>
+                  </div>
                </div>
             </div>
          </td>
@@ -451,48 +476,70 @@ function renderReplyAnswers(listReplyAnswer, sessionMember) {
     const isWriter = sessionMember.userId === vo.userId;
     const isAdmin = sessionMember.userLevel > 50;
     const showReplyText = vo.showReply == 1 ? "숨김" : "표시";
-    const contentClass = vo.showReply == 0 ? 'text-primary text-opacity-50' : '';
+    const contentClass = vo.showReply == 0 ? 'reply-hidden' : '';
 
     let menuHTML = '';
     if (isWriter) {
       menuHTML = `
-        <div class="deleteReplyAnswer reply-menu-item" data-replyNum="${vo.replyNum}" data-parentNum="${vo.parentNum}">삭제</div>
-        <div class="hideReplyAnswer reply-menu-item" data-replyNum="${vo.replyNum}" data-showReply="${vo.showReply}">${showReplyText}</div>
+        <div class="deleteReplyAnswer reply-menu-item" data-replyNum="${vo.replyNum}" data-parentNum="${vo.parentNum}">
+          <span class="material-symbols-outlined" style="font-size: 1rem;">delete</span>
+          삭제
+        </div>
+        <div class="hideReplyAnswer reply-menu-item" data-replyNum="${vo.replyNum}" data-showReply="${vo.showReply}">
+          <span class="material-symbols-outlined" style="font-size: 1rem;">${vo.showReply == 1 ? 'visibility_off' : 'visibility'}</span>
+          ${showReplyText}
+        </div>
       `;
     } else if (isAdmin) {
       menuHTML = `
-        <div class="deleteReplyAnswer reply-menu-item" data-replyNum="${vo.replyNum}" data-parentNum="${vo.parentNum}">삭제</div>
-        <div class="blockReplyAnswer reply-menu-item" data-replyNum="${vo.replyNum}" data-parentNum="${vo.parentNum}">차단</div>
+        <div class="deleteReplyAnswer reply-menu-item" data-replyNum="${vo.replyNum}" data-parentNum="${vo.parentNum}">
+          <span class="material-symbols-outlined" style="font-size: 1rem;">delete</span>
+          삭제
+        </div>
+        <div class="blockReplyAnswer reply-menu-item" data-replyNum="${vo.replyNum}" data-parentNum="${vo.parentNum}">
+          <span class="material-symbols-outlined" style="font-size: 1rem;">block</span>
+          차단
+        </div>
       `;
     } else {
       menuHTML = `
-        <div class="notifyReplyAnswer reply-menu-item" data-replyNum="${vo.replyNum}">신고</div>
-        <div class="blockReplyAnswer reply-menu-item" data-replyNum="${vo.replyNum}" data-parentNum="${vo.parentNum}">차단</div>
+        <div class="notifyReplyAnswer reply-menu-item" data-replyNum="${vo.replyNum}">
+          <span class="material-symbols-outlined" style="font-size: 1rem;">report</span>
+          신고
+        </div>
+        <div class="blockReplyAnswer reply-menu-item" data-replyNum="${vo.replyNum}" data-parentNum="${vo.parentNum}">
+          <span class="material-symbols-outlined" style="font-size: 1rem;">block</span>
+          차단
+        </div>
       `;
     }
 
     return `
-      <div class="border-bottom m-1">
-         <div class="row p-1">
-            <div class="col-auto">
-               <div class="row reply-writer">
-                  <div class="col-1"><span class="material-symbols-outlined" style="font-size: 1.6rem; color: #94A3B8;">account_circle</span></div>
-                  <div class="col ms-2 align-self-center">
-                     <div class="name">${vo.user_nickname}</div>
-                     <div class="date">${vo.reg_date}</div>
+      <div class="reply-answer-item">
+         <div class="reply-answer-header">
+            <div class="reply-writer">
+               <span class="material-symbols-outlined user-icon answer-icon">subdirectory_arrow_right</span>
+               <span class="material-symbols-outlined user-icon">account_circle</span>
+               <div class="writer-info">
+                  <div class="name">${vo.user_nickname}</div>
+                  <div class="date">
+                     <span class="material-symbols-outlined" style="font-size: 0.875rem;">schedule</span>
+                     ${vo.reg_date}
                   </div>
                </div>
             </div>
             
-            <div class="col align-self-center text-end">
-               <span class="reply-dropdown"><span class="material-symbols-outlined">more_vert</span></span>
+            <div class="reply-actions">
+               <span class="reply-dropdown">
+                  <span class="material-symbols-outlined">more_vert</span>
+               </span>
                <div class="reply-menu d-none">
                   ${menuHTML}
                </div>
             </div>
          </div>
          
-         <div class="p-2 ${contentClass}">
+         <div class="reply-answer-content ${contentClass}">
             ${vo.content}
          </div>
       </div>

@@ -263,6 +263,21 @@ select.glass-input-box {
 .attachment-item:hover .download-icon {
     opacity: 1;
 }
+
+/* SmartEditor textarea 글자색 하얀색 */
+#ir1 {
+    color: #ffffff !important;
+}
+
+/* SmartEditor iframe 내부 본문 글자색 */
+.se2_input_area {
+    color: #ffffff !important;
+}
+
+/* iframe 로드 후 body 글자색 */
+#se2_iframe body {
+    color: #ffffff !important;
+}
 </style>
 </head>
 <body class="bg-background-dark text-white">
@@ -459,6 +474,22 @@ nhn.husky.EZCreator.createInIFrame({
 	fOnAppLoad: function(){
 		// 로딩 완료 후
 		oEditors.getById['ir1'].setDefaultFont('돋움', 12);
+		
+		// 에디터 iframe 본문 글자색 하얀색 설정
+		setTimeout(function() {
+			var sEditor = oEditors.getById['ir1'];
+			var oDocument = sEditor.getWYSIWYGDocument();
+			
+			if (oDocument && oDocument.body) {
+				// body 기본 글자색 설정
+				oDocument.body.style.color = '#FFFFFF';
+				
+				// CSS 스타일 추가
+				var style = oDocument.createElement('style');
+				style.innerHTML = 'body { color: #FFFFFF !important; } p { color: #FFFFFF !important; }';
+				oDocument.head.appendChild(style);
+			}
+		}, 100);
 	},
 });
 

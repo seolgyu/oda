@@ -1,540 +1,326 @@
-@charset "UTF-8";
-
-/* ==========================================
-   댓글 섹션
-   ========================================== */
-.reply {
-    clear: both;
-    padding: 2rem 0;
-    margin-top: 2rem;
-    border-top: 1px solid #374151;
+/* 댓글 아이템 스타일 */
+.reply-item-header td {
+    padding: 1.25rem 2rem 0.5rem 2rem !important;
+    border: none !important;
+    background-color: transparent;
 }
 
-.reply .bold {
-    font-weight: 600;
-    color: #F8FAFC;
-    font-size: 1.125rem;
-    margin-bottom: 0.5rem;
-    display: block;
+.reply-item-content td {
+    padding: 0.5rem 2rem !important;
+    border: none !important;
+    background-color: transparent;
 }
 
-/* ==========================================
-   댓글 작성 폼
-   ========================================== */
-.reply .form-header {
-    padding-bottom: 1rem;
-    margin-bottom: 1.5rem;
+.reply-item-footer td {
+    padding: 0.75rem 2rem 1.25rem 2rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    background-color: transparent;
 }
 
-.reply-form {
-    background-color: rgba(30, 41, 59, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-}
-
-.reply-form tr > td {
-    padding: 0.5rem 0;
-}
-
-.reply-form textarea {
-    width: 100%;
-    height: 100px;
-    resize: vertical;
-    background-color: rgba(15, 23, 42, 0.5);
-    border: 1px solid #334155;
-    color: #E2E8F0 !important;
-    border-radius: 0.5rem;
-    padding: 0.75rem 1rem;
-    font-size: 0.9375rem;
-    transition: all 0.2s ease;
-}
-
-.reply-form textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    background-color: rgba(15, 23, 42, 0.8);
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-    color: #E2E8F0 !important;
-}
-
-.reply-form textarea::placeholder {
-    color: #64748b !important;
-}
-
-.reply-form button {
-    padding: 0.5rem 1.5rem;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    font-size: 0.875rem;
-    transition: all 0.2s;
-    cursor: pointer;
-}
-
-.reply-form button:hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-}
-
-/* ==========================================
-   댓글 정보 영역
-   ========================================== */
-.reply .reply-info {
-    padding: 1.5rem 0;
+.reply-header-wrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #374151;
-    margin-bottom: 1.5rem;
 }
 
-.reply-info .reply-count {
-    color: var(--primary-color);
-    font-weight: 600;
-    font-size: 1rem;
-}
-
-.reply-info .reply-page {
-    color: var(--text-muted);
-    font-size: 0.875rem;
-}
-
-/* ==========================================
-   댓글 테이블
-   ========================================== */
-.reply .table {
-    margin-bottom: 1.5rem;
-    background-color: transparent;
-}
-
-.reply .table td {
-    padding: 1rem 1.5rem;
-    background-color: rgba(30, 41, 59, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    color: #E2E8F0;
-    border-color: #374151;
-    vertical-align: middle;
-}
-
-.reply .table tr.border {
-    border-color: #374151 !important;
-}
-
-.reply .table-light {
-    --bs-table-bg: rgba(30, 41, 59, 0.4);
-    --bs-table-color: #E2E8F0;
-    --bs-table-border-color: #374151;
-}
-
-.reply .table tbody tr:first-child td:first-child {
-    border-top-left-radius: 0.5rem;
-}
-
-.reply .table tbody tr:first-child td:last-child {
-    border-top-right-radius: 0.5rem;
-}
-
-/* ==========================================
-   댓글 작성자 정보
-   ========================================== */
-.reply-writer {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.reply-writer .material-symbols-outlined {
+.user-icon {
     font-size: 2rem;
-    color: #60A5FA;
-    flex-shrink: 0;
+    color: #94A3B8;
 }
 
-.reply-writer .name {
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: #F8FAFC;
-    margin-bottom: 0.25rem;
-}
-
-.reply-writer .date {
-    font-size: 0.8125rem;
-    color: var(--text-muted);
-}
-
-/* ==========================================
-   댓글 드롭다운 메뉴
-   ========================================== */
-.reply .reply-dropdown {
-    cursor: pointer;
-    padding: 0.375rem 0.5rem;
-    border-radius: 0.375rem;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-}
-
-.reply .reply-dropdown:hover {
-    background-color: rgba(37, 99, 235, 0.1);
-}
-
-.reply .reply-dropdown .material-symbols-outlined {
-    color: var(--text-muted);
-    font-size: 1.25rem;
-}
-
-.reply .reply-dropdown:hover .material-symbols-outlined {
-    color: var(--primary-color);
-}
-
-.reply .reply-menu {
-    position: absolute;
-    width: 100px;
-    background: rgba(30, 41, 59, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 0.5rem;
-    z-index: 9999;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-}
-
-.reply .reply-menu-item {
-    text-align: center;
-    cursor: pointer;
-    padding: 0.75rem;
-    color: #E2E8F0;
-    font-size: 0.875rem;
-    transition: all 0.2s;
-}
-
-.reply .reply-menu-item:not(:last-child) {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.reply .reply-menu-item:hover {
-    color: var(--primary-color);
-    background-color: rgba(37, 99, 235, 0.1);
-}
-
-.reply .deleteReply,
-.reply .deleteReplyAnswer,
-.reply .notifyReply,
-.reply .notifyReplyAnswer,
-.reply .hideReply,
-.reply .hideReplyAnswer,
-.reply .blockReply,
-.reply .blockReplyAnswer {
-    cursor: pointer;
-}
-
-/* ==========================================
-   댓글 내용
-   ========================================== */
-.reply .table td[colspan="2"]:not(:first-child) {
-    padding: 1.5rem;
-    line-height: 1.7;
-    font-size: 0.9375rem;
-    background-color: rgba(15, 23, 42, 0.3);
-    border-top: 1px solid #374151;
-}
-
-/* ==========================================
-   댓글 액션 버튼
-   ========================================== */
-.reply .btn-light {
-    background-color: transparent;
-    border: 1px solid #374151;
-    color: #D1D5DB;
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    border-radius: 0.5rem;
-    transition: all 0.2s;
-}
-
-.reply .btn-light:hover {
-    background-color: rgba(51, 65, 85, 0.5);
-    border-color: #475569;
-    color: #F8FAFC;
-    transform: translateY(-1px);
-}
-
-.reply .btnReplyAnswerLayout {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* ==========================================
-   좋아요/싫어요 버튼
-   ========================================== */
-.reply .btnSendReplyLike {
-    margin-left: 0.5rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.reply .btnSendReplyLike:hover {
-    background-color: rgba(37, 99, 235, 0.1);
-    border-color: var(--primary-color);
-}
-
-.reply .btnSendReplyLike i {
-    font-size: 1rem;
-    transition: transform 0.2s;
-}
-
-.reply .btnSendReplyLike:hover i {
-    transform: scale(1.1);
-}
-
-/* ==========================================
-   답글 영역
-   ========================================== */
-.reply-answer {
-    background-color: transparent !important;
-}
-
-.reply-answer > td {
-    padding: 1rem !important;
-    background-color: rgba(15, 23, 42, 0.5) !important;
-}
-
-.reply-answer .border {
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 0.5rem;
-    background-color: rgba(30, 41, 59, 0.4);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    padding: 1rem;
-}
-
-.reply-answer textarea {
-    width: 100%;
-    height: 75px;
-    resize: vertical;
-    background-color: rgba(15, 23, 42, 0.5);
-    border: 1px solid #334155;
-    color: #E2E8F0 !important;
-    border-radius: 0.5rem;
-    padding: 0.75rem;
-    margin: 0.5rem;
-    transition: all 0.2s;
-}
-
-.reply-answer textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    background-color: rgba(15, 23, 42, 0.8);
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-    color: #E2E8F0 !important;
-}
-
-.reply-answer textarea::placeholder {
-    color: #64748b !important;
-}
-
-.reply-answer .btnSendReplyAnswer {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.5rem 1.25rem;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-
-.reply-answer .btnSendReplyAnswer:hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-}
-
-/* ==========================================
-   답글 리스트
-   ========================================== */
-.answer-list {
-    padding: 0;
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-.answer-list::-webkit-scrollbar {
-    width: 6px;
-}
-
-.answer-list::-webkit-scrollbar-track {
-    background: rgba(15, 23, 42, 0.3);
-    border-radius: 3px;
-}
-
-.answer-list::-webkit-scrollbar-thumb {
-    background: #334155;
-    border-radius: 3px;
-}
-
-.answer-list::-webkit-scrollbar-thumb:hover {
-    background: #475569;
-}
-
-.answer-list .border-bottom {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-    margin: 0.5rem;
-    padding: 1rem;
-    background-color: rgba(15, 23, 42, 0.3);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    border-radius: 0.5rem;
-    transition: all 0.2s;
-}
-
-.answer-list .border-bottom:hover {
-    background-color: rgba(15, 23, 42, 0.5);
-    border-color: rgba(37, 99, 235, 0.3) !important;
-}
-
-.answer-list .border-bottom:last-child {
-    border-bottom: none !important;
-    margin-bottom: 0.5rem;
-}
-
-.answer-list .reply-writer {
-    padding: 0;
-}
-
-.answer-list .reply-writer .material-symbols-outlined {
-    font-size: 1.75rem;
-}
-
-.answer-list .reply-writer .name {
-    font-size: 0.875rem;
-}
-
-.answer-list .reply-writer .date {
-    font-size: 0.75rem;
-}
-
-/* ==========================================
-   숨김 처리된 댓글
-   ========================================== */
-.text-primary.text-opacity-50 {
-    color: #60A5FA !important;
-    opacity: 0.5 !important;
-    font-style: italic;
-}
-
-/* ==========================================
-   페이징
-   ========================================== */
-.reply .list-footer {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #374151;
-}
-
-.reply .page-navigation {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* ==========================================
-   반응형 디자인
-   ========================================== */
-@media (max-width: 768px) {
-    .reply {
-        padding: 1.5rem 0;
-    }
-    
-    .reply-writer {
-        flex-direction: row;
-        gap: 0.5rem;
-    }
-    
-    .reply .table td {
-        padding: 0.75rem 1rem;
-    }
-    
-    .reply-answer .border {
-        padding: 0.75rem;
-    }
-    
-    .reply-form {
-        padding: 1rem;
-    }
-    
-    .answer-list .border-bottom {
-        margin: 0.25rem;
-        padding: 0.75rem;
-    }
-    
-    .reply-form textarea {
-        height: 80px;
-    }
-    
-    .reply-answer textarea {
-        height: 60px;
-    }
-}
-
-/* ==========================================
-   댓글 작성자 정보 레이아웃 통일
-   ========================================== */
-.reply-writer {
-    display: flex;
-    align-items: center;
-    gap: 0;
-}
-
-.reply-writer .material-symbols-outlined {
-    font-size: 2rem;
-    color: #60A5FA;
-    flex-shrink: 0;
-    margin-right: 0.75rem;
-}
-
-.reply-writer > div {
+.writer-info {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
 }
 
-.reply-writer .name {
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: #F8FAFC;
-    margin-bottom: 0;
-    line-height: 1.2;
+.reply-content {
+    line-height: 1.6;
+    padding-left: 3.5rem !important;
+    color: #f1f5f9;
 }
 
-.reply-writer .date {
-    font-size: 0.8125rem;
-    color: var(--text-muted);
-    margin-bottom: 0;
-    line-height: 1.2;
+.reply-hidden {
+    opacity: 0.4;
+    font-style: italic;
 }
 
-/* 답글 리스트의 작성자 정보 */
-.answer-list .reply-writer .material-symbols-outlined {
-    font-size: 1.75rem;
-}
-
-.answer-list .reply-writer .name {
-    font-size: 0.875rem;
-}
-
-.answer-list .reply-writer .date {
+/* 답글 카운트 배지 */
+.answer-count-badge {
+    display: inline-block;
+    background-color: rgba(59, 130, 246, 0.2);
+    color: var(--primary-color);
+    padding: 0.125rem 0.5rem;
+    border-radius: 1rem;
     font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.25rem;
+}
+
+/* 답글 컨테이너 */
+.reply-answer-container {
+    background-color: rgb(15, 23, 52);
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 0.5rem 2rem 1rem 2rem;
+    overflow: hidden;
+}
+
+.answer-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0.75rem;
+    background-color: transparent;
+}
+
+.answer-list:empty {
+    display: none;
+}
+
+/* 답글 아이템 */
+.reply-answer-item {
+    background-color: rgba(30, 41, 59, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.5rem;
+    margin: 0.5rem;
+    padding: 0.875rem 1rem;
+    transition: background-color 0.2s;
+}
+
+.reply-answer-item:hover {
+    background-color: rgba(30, 41, 59, 0.4);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.reply-answer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.answer-icon {
+    font-size: 1.25rem !important;
+    color: var(--primary-color);
+}
+
+.reply-answer-content {
+    padding-left: 3.25rem;
+    color: var(--text-light);
+    line-height: 1.6;
+    font-size: 0.9rem;
+}
+
+/* 답글 작성 폼 */
+.answer-form {
+    padding: 1rem;
+    background-color: rgba(15, 23, 42, 0.25);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.answer-form .form-control {
+    background-color: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    color: var(--text-light);
+    padding: 0.75rem 1rem;
+    min-height: 80px;
+    resize: vertical;
+    transition: all 0.3s ease;
+    margin-bottom: 0.75rem;
+}
+
+.answer-form .form-control:focus {
+    background-color: rgba(15, 23, 42, 0.8);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+.answer-form-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* 댓글/답글 버튼 통합 스타일 */
+.reply .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    transition: all 0.3s ease;
+}
+
+/* 댓글 등록 버튼 (메인) */
+.btnSendReply {
+    background-color: rgba(59, 130, 246, 0.2) !important;
+    border: 1px solid rgba(59, 130, 246, 0.4) !important;
+    color: var(--text-light) !important;
+}
+
+.btnSendReply:hover {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* 답글 보기 버튼 */
+.btnReplyAnswerLayout {
+    background-color: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: var(--text-muted) !important;
+}
+
+.btnReplyAnswerLayout:hover {
+    background-color: rgba(59, 130, 246, 0.1) !important;
+    border-color: rgba(59, 130, 246, 0.3) !important;
+    color: var(--text-light) !important;
+}
+
+/* 좋아요 버튼 */
+.btnSendReplyLike {
+    background-color: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: var(--text-muted) !important;
+}
+
+.btnSendReplyLike:hover {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+    color: #f87171 !important;
+}
+
+.btnSendReplyLike i {
+    font-size: 1rem;
+    transition: transform 0.2s;
+}
+
+.btnSendReplyLike:hover i {
+    transform: scale(1.1);
+}
+
+/* 답글 등록 버튼 */
+.btnSendReplyAnswer {
+    background-color: rgba(59, 130, 246, 0.15) !important;
+    border: 1px solid rgba(59, 130, 246, 0.3) !important;
+    color: var(--primary-color) !important;
+}
+
+.btnSendReplyAnswer:hover {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* 댓글 없음 상태 */
+.reply .list-content:empty::after {
+    content: "아직 댓글이 없습니다. 첫 댓글을 남겨보세요!";
+    display: block;
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .reply-header-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .reply-content {
+        padding-left: 1rem !important;
+    }
+    
+    .reply-answer-content {
+        padding-left: 1rem;
+    }
+    
+    .reply-item-header td,
+    .reply-item-content td,
+    .reply-item-footer td {
+        padding: 0.75rem 1rem !important;
+    }
+    
+    .user-icon {
+        font-size: 1.75rem;
+    }
+    
+    .answer-icon {
+        font-size: 1.1rem !important;
+    }
+}
+
+/* 스크롤바 스타일링 */
+.answer-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.answer-list::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 3px;
+}
+
+.answer-list::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.3);
+    border-radius: 3px;
+}
+
+.answer-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.5);
+}
+
+/* 애니메이션 */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.reply-item-header,
+.reply-answer-item {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* 호버 효과 */
+.reply-item-header:hover,
+.reply-item-content:hover + .reply-item-footer,
+.reply-item-footer:hover {
+    background-color: rgba(15, 23, 42, 0.15);
+}
+
+/* 포커스 상태 */
+.answer-form textarea:focus {
+    transform: scale(1.01);
+}
+
+/* 로딩 상태 (선택적) */
+.reply.loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 3px solid rgba(59, 130, 246, 0.3);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
