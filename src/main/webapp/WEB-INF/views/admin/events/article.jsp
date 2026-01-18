@@ -140,34 +140,44 @@
             display: flex;
             justify-content: center;
         }
-        .btn-like {
-            background-color: transparent;
-            border: 1.5px solid #4B5563;
-            color: #D1D5DB;
-            border-radius: 2rem;
-            padding: 0.6rem 2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-        .btn-like:hover {
-            border-color: var(--heart-red);
-            color: var(--heart-red);
-            background-color: rgba(239, 68, 68, 0.05);
-        }
-        .btn-like.active {
-            border-color: var(--heart-red);
-            color: var(--heart-red);
-            background-color: rgba(239, 68, 68, 0.1);
-        }
-        .btn-like .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400;
-        }
-        .btn-like.active .material-symbols-outlined {
-            font-variation-settings: 'FILL' 1, 'wght' 400;
-            color: var(--heart-red);
+.btn-like {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 1.5px solid #4B5563;
+        color: #D1D5DB;
+        border-radius: 2rem;
+        padding: 0.6rem 2rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    /* 마우스 호버 시 */
+    .btn-like:hover {
+        border-color: var(--heart-red);
+        color: var(--heart-red);
+    }
+
+    /* 좋아요 활성화(active) 상태 */
+    .btn-like.active {
+        border-color: var(--heart-red);
+        color: var(--heart-red);
+        background-color: rgba(239, 68, 68, 0.1);
+    }
+
+    /* 아이콘 기본 설정 */
+    .btn-like .material-symbols-outlined {
+        font-size: 20px;
+        font-variation-settings: 'FILL' 0, 'wght' 400;
+        transition: font-variation-settings 0.2s ease;
+    }
+
+    /* active 상태일 때 아이콘 채우기 */
+    .btn-like.active .material-symbols-outlined {
+        font-variation-settings: 'FILL' 1, 'wght' 400;
+        color: var(--heart-red);
+    }
         .content-image-placeholder {
             max-width: 100%;
             margin: 1.5rem 0;
@@ -204,7 +214,6 @@
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            border-top: 1px solid #374151;
         }
         .btn-action {
             padding: 0.5rem 1.50rem;
@@ -215,7 +224,7 @@
         }
         .btn-outline-custom {
             border: 1px solid #4B5563;
-            color: #D1D5DB;
+            color: #FFFFFF;
             background: transparent;
         }
         .btn-outline-custom:hover {
@@ -366,8 +375,15 @@
         .material-symbols-outlined {
             font-size: 1.1rem;
         }
+        
+        .hover-pink:hover { 
+        	color: #ec4899 !important; 
+        }
+        
+
 
 </style>
+
 </head> 
 <body class="bg-background-dark text-white">
 
@@ -433,12 +449,26 @@
 		</c:if>
 	</div>
 	
+	<!--  
 	<div class="like-button-container">
 		<button class="btn btn-like active">
 			<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1, 'wght' 400;">favorite</span>
 			좋아요
 		</button>
 	</div>
+	-->
+	<div class="like-button-container">
+	    <button type="button" class="btn btn-like ${isUserLiked ? 'active' : ''}" 
+	            onclick="sendLike('${dto.event_num}', this)">
+	        
+	        <span class="material-symbols-outlined" 
+	              style="font-variation-settings: 'FILL' ${isUserLiked ? 1 : 0}, 'wght' 400;">
+	            favorite
+	        </span>
+	        <span class="like-count">${boardLikeCount}</span>
+	    </button>
+	</div>
+
 	
 	<div class="navigation-links">
 		<c:if test="${not empty prevDto}">
@@ -556,7 +586,9 @@
 	</div>
 	
 	<div class="action-footer">
-		<button class="btn btn-action btn-list" onclick="location.href='${pageContext.request.contextPath}/admin/events/list';">리스트</button>
+		<button class="btn btn-action btn-list" onclick="location.href='${pageContext.request.contextPath}/admin/events/list';">
+		<span class="material-symbols-outlined">list</span>
+		</button>
 	</div>
 
 			</div>
@@ -565,21 +597,88 @@
 	</div>
 
 
-	<script type="text/javascript">
-		function deleteOk() {
-		    if(confirm('게시글을 삭제 하시 겠습니까 ? ')) {
-		    	let params = 'event_num=${dto.event_num}&${query}';
-			    let url = '${pageContext.request.contextPath}/events/delete?' + params;
-		    	location.href = url;
-		    }
-		}
-	</script>
+<script type="text/javascript">
+    // 1. 삭제 함수
+    function deleteOk() {
+    if (confirm('이벤트를 삭제하시겠습니까?')) {
+        // 1. 가상의 폼 생성
+        const form = document.createElement('form');
+        form.method = 'POST';
+        // 컨트롤러의 @PostMapping 주소에 맞게 설정 (현재 메서드명이 delete이므로 기본 주소 호출)
+        form.action = '${pageContext.request.contextPath}/admin/events/delete';
+
+        // 2. 컨트롤러에서 요구하는 파라미터들 추가
+        const params = {
+            'event_num': '${dto.event_num}',
+            'page': '${page}',
+            'size': '${size}',
+            'schType': '${schType}',
+            'kwd': '${kwd}'
+        };
+
+        for (const key in params) {
+            if (params.hasOwnProperty(key)) {
+                const hiddenField = document.createElement('input');
+                hiddenField.type = 'hidden';
+                hiddenField.name = key;
+                hiddenField.value = params[key];
+                form.appendChild(hiddenField);
+            }
+        }
+
+        // 3. 폼 전송
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+    // 2. 좋아요 함수 (독립적으로 위치)
+    function sendLike(event_num, btnElement) {
+    const isCurrentlyLiked = btnElement.classList.contains('active');
+    const url = "${pageContext.request.contextPath}/admin/events/insertBoardLike";
+
+    const params = new URLSearchParams();
+    params.append('event_num', event_num);
+    params.append('userLiked', isCurrentlyLiked ? 'true' : 'false');
+
+    fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.state === "true") {
+            const icon = btnElement.querySelector('.material-symbols-outlined');
+            
+            if (isCurrentlyLiked) {
+                btnElement.classList.remove('active');
+                icon.style.fontVariationSettings = "'FILL' 0, 'wght' 400";
+            } else {
+                btnElement.classList.add('active');
+                icon.style.fontVariationSettings = "'FILL' 1, 'wght' 400";
+            }
+
+            // 개수 업데이트 (class 기준)
+            const countSpan = btnElement.querySelector('.like-count');
+            if (countSpan) {
+                countSpan.innerText = data.boardLikeCount;
+            }
+        } else if (data.state === "liked") {
+            alert("이미 좋아하고 있습니다.");
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+    }
+</script>
 
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/admin_bbs_util.js"></script>
-    <script src="${pageContext.request.contextPath}/dist/js/admin_events.js"></script>
+    <!-- <script src="${pageContext.request.contextPath}/dist/js/admin_events.js"></script> -->
 
 </body>
 </html>

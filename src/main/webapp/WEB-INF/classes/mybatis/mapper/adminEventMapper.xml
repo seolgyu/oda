@@ -225,5 +225,150 @@
 		FROM event_fileat
 		WHERE file_at_id = #{file_at_id}
 	</select>
+	
+	<!-- 1개 이상 삭제 시 첨부파일 -->
+	<delete id="deletelistEventFile" parameterType="java.util.List">
+		DELETE FROM EVENT_FILEAT
+		WHERE event_num IN 
+    <foreach collection="list" item="event_num" open="(" separator="," close=")">
+        #{event_num}
+    </foreach>
+	</delete>
+	
+  <!-- 좋아요 -->
+	<!-- 좋아요 추가  -->
+	<insert id="insertBoardLike" parameterType="map">
+		INSERT INTO EVENT_LIKES(event_num, user_num, created_date) 
+			VALUES(#{event_num}, #{user_num}, SYSDATE)
+	</insert>
+	
+	<!-- 종아요 취소 -->
+	<delete id="deleteBoardLike" parameterType="map">
+		DELETE FROM EVENT_LIKES
+		WHERE event_num = #{event_num} AND user_num = #{user_num}
+	</delete>
+	
+	<!-- 좋아요 개수 -->
+	<select id="boardLikeCount" parameterType="Long" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM EVENT_LIKES
+		WHERE event_num = #{event_num}
+	</select>
+	
+	<!-- 좋아요 여부 -->
+	<select id="hasUserBoardLiked" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM EVENT_LIKES
+		WHERE event_num = #{event_num} AND user_num = #{user_num}
+	</select>
+	
+	
+  <!-- 댓글 -->
+	<!-- 댓글 등록 -->
+	<insert id="insertReply" parameterType="com.hs.model.admin.EventReplyDTO">
+		INSERT INTO EVENT_COMMENTS(comment_id, user_Id, parent_comment_id, showReply, content, created_date, update_date, event_num, user_num)
+			VALUES(ev_comment_seq.NEXTVAL, #{user_Id}, #{parent_comment_id}, 1, #{content}, SYSDATE, SYSDATE, #{event_num}, #{user_num})
+	</insert>
+	
+	<!--  댓글 개수 -->
+	<select id="replyCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM EVENT_COMMENTS
+		WHERE event_num = #{event_num} AND parent_comment_id = 0 AND block = 0
+		<if test="userLevel lt 51">
+			AND (showReply = 1 OR user_Id = #{user_Id})
+		</if>
+	</select>
+	
+	<!-- 댓글 리스트 -->
+	<select id="listReply" parameterType="map" resultType="com.hs.model.admin.EventReplyDTO">
+			SELECT e.comment_id, e.user_Id, user_nickname,
+			content, e.created_date, showReply, e.event_num,
+			NVL(answerCount, 0) answerCount,
+			NVL(likeCount, 0) likeCount,
+			NVL(disLikeCount, 0) disLikeCount
+		FROM EVENT_COMMENTS e
+		JOIN member m ON e.user_Id = m.user_Id
+		LEFT OUTER JOIN
+		(
+			SELECT parent_comment_id, COUNT(*) answerCount
+			FROM EVENT_COMMENTS
+			WHERE parent_comment_id != 0 AND block = 0
+			GROUP BY parent_comment_id
+		) a ON e.comment_id = a.parent_comment_id
+		
+		LEFT OUTER JOIN
+		(
+			SELECT comment_id,
+					COUNT(DECODE(ReplyLike, 1, 1)) likeCount,
+					COUNT(DECODE(ReplyLike, 0, 1)) disLikeCount
+			FROM EVENT_COMMENTS_LIKES
+			GROUP BY comment_id
+		) c ON e.comment_id = c.comment_id
+		WHERE event_num = #{event_num} AND e.parent_comment_id = 0 AND e.block = 0
+		<if test="userLevel lt 51">
+			AND ( showReply = 1 OR e.user_Id = #{user_Id} )
+		</if>
+		ORDER BY e.comment_id DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="deleteReply" parameterType="map">
+		DELETE FROM EVENT_COMMENTS
+		WHERE comment_id = #{comment_id}
+		<if test="mode == 'relpt'">
+			OR parent_comment_id = #{comment_id}
+		</if>
+	</delete>
+	
+	<!-- 대댓글 리스트 -->
+	<select id="listReplyAnswer" parameterType="map" resultType="com.hs.model.admin.EventReplyDTO">
+		SELECT comment_id, event_num, e.user_Id, user_nickname, content, created_date, parent_comment_id, showReply
+		FROM EVENT_COMMENTS e
+		JOIN member m ON e.user_Id = m.user_Id
+		WHERE parent_comment_id = #{parent_comment_id}
+		<if test="userLevel lt 51">
+			AND ( showReply = 1 OR e.user_Id = #{user_Id})
+		
+		</if>
+	</select>
+	
+	<!-- 대댓글 개수 -->
+	<select id="replyAnswerCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM EVENT_COMMENTS
+		WHERE parent_comment_id = #{parent_comment_id} AND block = 0
+		<if test="userLevel lt 51">
+			AND (showReply = 1 OR user_Id = #{user_Id})
+		</if>
+	</select>
+	
+	<!-- 댓글 보임,숨김 -->
+	<update id="updateReplyShowHide" parameterType="map">
+		UPDATE EVENT_COMMENTS SET showReply = #{showReply}
+		WHERE comment_id = #{comment_id} AND user_Id = #{user_Id}
+	</update>
+	
+	<!-- 댓글 좋아요. 싫어요 추가 -->
+	<insert id="insertReplyLike" parameterType="map">
+		INSERT INTO EVENT_COMMENTS_LIKES (comment_id, user_Id, created_date)
+			VALUES(#{comment_id}, #{user_Id}, SYSDATE)
+	</insert>
+	
+	<!-- 좋아요 / 싫어요 개수 -->
+	<select id="replyLikeCount" parameterType="map" resultType="map">
+		SELECT COUNT(DECODE(ReplyLike, 1, 1)) likeCount,
+		COUNT(DECODE(ReplyLike, 0, 1)) disLikeCount
+		FROM EVENT_COMMENTS_LIKES
+		WHERE comment_id = #{comment_id}
+	</select>
+	
+	<!-- 유저 좋아요/싫어요 여부 -->
+	<select id="hasUserReplyLiked" parameterType="map" resultType="Integer">
+		SELECT replyLike
+		FROM EVENT_COMMENTS_LIKES
+		WHERE comment_id = #{comment_id} AND user_Id = #{user_Id}
+	</select>
 
 </mapper>

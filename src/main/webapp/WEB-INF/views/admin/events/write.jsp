@@ -274,9 +274,7 @@ select.glass-input-box {
 									</button>
 
 								</div>
-								<textarea class="editor-textarea" name="event_content" placeholder="사용자들에게 안내할 이벤트 상세 내용을 작성하세요...">
-									${dto.event_content}	
-								</textarea>
+								<textarea class="editor-textarea" name="event_content" placeholder="사용자들에게 안내할 이벤트 상세 내용을 작성하세요...">${dto.event_content}</textarea>
 							</div>
 						</div>
 
@@ -320,53 +318,63 @@ select.glass-input-box {
 
 <script type="text/javascript">
 function sendOk() {
-	const f = document.eventForm;
-	let str;
-	
-	str = f.event_title.value.trim();
-	if( ! str ) {
-		alert('제목을 입력하세요. ');
-		f.event_title.focus();
-		return false;
-	}
-
-	str = f.event_content.value.trim();
-	if( ! str || str === '<p><br></p>' ) {
-		alert('내용을 입력하세요. ');
-		return false;
-	}
-
-	f.action = '${pageContext.request.contextPath}/admin/events/${mode}';
-	
-	f.submit();
-}
+    const f = document.eventForm;
+    let str;
 
 
-<c:if test="${mode=='update'}">
-function deleteFile(file_at_id) {
-    if(!confirm('사진을 삭제하시겠습니까?')) {
+    str = f.event_title.value.trim();
+    if (!str) {
+        alert('제목을 입력하세요.');
+        f.event_title.focus();
         return;
     }
 
-    // 페이지 이동 없이 서버에 조용히 요청만 보냄
-    const url = '${pageContext.request.contextPath}/admin/events/deleteFile?file_at_id=' + file_at_id;
 
-    fetch(url, { method: 'POST' })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                // 서버 삭제 성공 시, 화면에서 해당 이미지 박스만 제거
-                const element = document.getElementById("file-" + file_at_id);
-                if (element) {
-                    element.remove();
-                }
-            } else {
-                alert("파일 삭제 실패!");
-            }
-        })
-        .catch(err => alert("오류가 발생했습니다: " + err));
+    str = f.event_content.value.trim();
+    if (!str) {
+        alert('내용을 입력하세요.');
+        f.event_content.focus();
+        return;
+    }
+
+
+    const startDateVal = f.start_date.value;
+    const endDateVal = f.end_date.value;
+
+    if (!startDateVal) {
+        alert('시작일을 선택하세요.');
+        f.start_date.focus();
+        return;
+    }
+    if (!endDateVal) {
+        alert('종료일을 선택하세요.');
+        f.end_date.focus();
+        return;
+    }
+
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    
+    const startDate = new Date(startDateVal).getTime();
+    const endDate = new Date(endDateVal).getTime();
+
+
+    if (startDate < today) {
+        alert('이벤트 시작일이 잘못되었습니다. 확인해주세요.');
+        f.start_date.focus();
+        return;
+    }
+
+
+    if (endDate <= startDate) {
+        alert('이벤트 종료일이 시작일보다 작습니다. 확인해주세요.');
+        f.end_date.focus();
+        return;
+    }
+
+    f.submit();
 }
-</c:if>
 
 </script>
 

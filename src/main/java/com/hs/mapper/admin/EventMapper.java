@@ -42,6 +42,9 @@ public interface EventMapper {
 	// 첨부파일 삭제
 	public void deleteEventFile(long event_num) throws SQLException;
 	
+	// 리스트에서 1개 이상 삭제 시 첨부파일 
+	public void deletelistEventFile(List<Long> list) throws SQLException;
+	
 	// 첨부파일 리스트(ok)
 	public List<EventDTO> listEventFile(long num);
 	// 첨부파일 검색
@@ -49,7 +52,7 @@ public interface EventMapper {
 	
 	
 	// 좋아요
-	public EventDTO hasUserBoardLiked(Map<String, Object> map);
+	public int hasUserBoardLiked(Map<String, Object> map);
 	public void insertBoardLike(Map<String, Object> map) throws SQLException;
 	public void deleteBoardLike(Map<String, Object> map) throws SQLException;
 	public int boardLikeCount(long num);
@@ -67,6 +70,6 @@ public interface EventMapper {
 	// 댓글 좋아요
 	public void insertReplyLike(Map<String, Object> map) throws SQLException;
 	public Map<String, Object> replyLikeCount(Map<String, Object> map);
-	public Integer hasUserReplyLiked(Map<String, Object> map);
+	public Integer  hasUserReplyLiked(Map<String, Object> map);
 	
 }

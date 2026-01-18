@@ -1,14 +1,15 @@
 package com.hs.model.admin;
 
 public class EventReplyDTO {
-	private long replyNum;
+	private long comment_id;
 	private long event_num;
-	private String userId;
+	private String user_Id;
+	private long user_num;
 	private String userName;
 	private String content;
-	private String update;
+	private String created_date;
 	private int hitCount;
-	private long parentNum;
+	private long parent_comment_id;
 	private int replyLike;
 	private int showReply;
 	private int block;
@@ -20,11 +21,11 @@ public class EventReplyDTO {
 	private int userLikedReply;
 	
 	
-	public long getReplyNum() {
-		return replyNum;
+	public long getComment_id() {
+		return comment_id;
 	}
-	public void setReplyNum(long replyNum) {
-		this.replyNum = replyNum;
+	public void setgetComment_id(long getComment_id) {
+		this.comment_id = getComment_id;
 	}
 	public long getEvent_num() {
 		return event_num;
@@ -32,11 +33,11 @@ public class EventReplyDTO {
 	public void setEvent_num(long event_num) {
 		this.event_num = event_num;
 	}
-	public String getUserId() {
-		return userId;
+	public String getUser_Id() {
+		return user_Id;
 	}
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUser_Id(String user_Id) {
+		this.user_Id = user_Id;
 	}
 	public String getUserName() {
 		return userName;
@@ -50,17 +51,17 @@ public class EventReplyDTO {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public String getupdate() {
-		return update;
+	public String getCreated_date() {
+		return created_date;
 	}
-	public void setReg_date(String update) {
-		this.update = update;
+	public void setCreated_date(String created_date) {
+		this.created_date = created_date;
 	}
-	public long getParentNum() {
-		return parentNum;
+	public long getParent_comment_id() {
+		return parent_comment_id;
 	}
-	public void setParentNum(long parentNum) {
-		this.parentNum = parentNum;
+	public void setParent_comment_id(long parent_comment_id) {
+		this.parent_comment_id = parent_comment_id;
 	}
 	public int getReplyLike() {
 		return replyLike;
@@ -115,6 +116,12 @@ public class EventReplyDTO {
 	}
 	public void setHitCount(int hitCount) {
 		this.hitCount = hitCount;
+	}
+	public long getUser_num() {
+		return user_num;
+	}
+	public void setUser_num(long user_num) {
+		this.user_num = user_num;
 	}
 	
 	

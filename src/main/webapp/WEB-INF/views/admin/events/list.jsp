@@ -291,22 +291,23 @@ input:-webkit-autofill:focus {
 						        <input type="hidden" name="size" value="${size}">
 						         <input type="hidden" name="status" value="${status}">
 						         
-						        <div class="input-group search-wrapper">
-						            <select name="schType" class="form-select glass-select" style="max-width: 120px; background: transparent; border: none; border-right: 1px solid rgba(255, 255, 255, 0.1); color: white; padding-right: 2rem;">
-						                <option value="all" ${schType == 'all' ? 'selected' : ''}>전체</option>
-						                <option value="event_title" ${schType == 'event_title' ? 'selected' : ''}>제목+내용</option>
-						                <option value="event_content" ${schType == 'event_content' ? 'selected' : ''}>내용</option>
-						                <option value="event_content" ${schType == 'event_content' ? 'selected' : ''}>시작일</option>
-						            </select>
-						            
-						            <span style="width:10px;"></span>
-						            <span class="material-icons-round text-white-25 mt-2" onclick="search();" style="cursor: pointer;">search</span> 
-						            <input type="text" name="kwd" class="form-control glass-input" value="${kwd}" placeholder="제목,내용,시작일 검색...">
-						        </div>
+						       <div class="input-group search-wrapper">
+							    <select name="schType" class="form-select glass-select" style="max-width: 100px; background: transparent; border: none; border-right: 1px solid rgba(255, 255, 255, 0.1); color: white; padding-right: 2rem;">
+							        <option value="all" ${schType == 'all' ? 'selected' : ''}>전체</option>
+							        <option value="event_title" ${schType == 'event_title' ? 'selected' : ''}>제목+내용</option>
+							        <option value="event_content" ${schType == 'event_content' ? 'selected' : ''}>내용</option>
+							        <option value="start_date" ${schType == 'start_date' ? 'selected' : ''}>시작일</option> </select>
+							    
+							    <span style="width:10px;"></span>
+							    <input type="text" name="kwd" class="form-control glass-input" value="${kwd}" placeholder="제목,내용,시작일 검색...">
+						    	<span class="material-icons-round text-white-25 mt-2" onclick="search();" style="cursor: pointer;">search</span> 
+								<span class="material-icons-round text-white-25 mt-2 ms-2" onclick="resetSearch();" style="cursor: pointer;">refresh</span>
+								</div>
 							</form>
 						</div>
 					</div>
 				</div>
+
 
 				<div class="glass-table-container">
 					<div class="table-responsive">
@@ -343,10 +344,14 @@ input:-webkit-autofill:focus {
 								</tr>
 								</c:forEach>
 								
+							<form name="deleteForm" id="deleteForm" method="post">
+								<input type="hidden" name="page" value="${page}">
+	    						<input type="hidden" name="size" value="${size}">
+    						
 								<c:forEach var="dto" items="${list}" varStatus="active_status">
 								<tr>
 									<td class="text-center">
-										<input type="checkbox" class="form-check-input" name="event_num"></td>
+										<input type="checkbox" class="form-check-input" name="event_nums" value="${dto.event_num}">
 									<td class="text-white">${dto.event_num}</td>
 									<td>
 										<c:if test="${dto.active_status == '진행예정'}">
@@ -369,6 +374,7 @@ input:-webkit-autofill:focus {
 									<td class="text-center text-white-50">${dto.ev_hitcount}</td>
 								</tr>
 								</c:forEach>
+								</form>
 							</tbody>
 						</table>
 					</div>
@@ -387,43 +393,117 @@ input:-webkit-autofill:focus {
 	</div>
 
 <script type="text/javascript">
+
+// 이벤트 등록 제약
 function sendOk() {
-	const f = document.eventForm;
-	let str;
-	
-	str = f.title.value.trim();
-	if( ! str ) {
-		alert('제목을 입력하세요. ');
-		f.title.focus();
-		return;
-	}
+    const f = document.eventForm;
+    let str;
+    
+    // 제목 검사
+    str = f.event_title.value.trim(); // name 속성이 event_title인지 확인하세요
+    if( ! str ) {
+        alert('제목을 입력하세요. ');
+        f.event_title.focus();
+        return;
+    }
 
-	str = f.content.value.trim();
-	if( ! str ) {
-		alert('내용을 입력하세요. ');
-		f.content.focus();
-		return;
-	}
+    // 내용 검사
+    str = f.event_content.value.trim();
+    if( ! str ) {
+        alert('내용을 입력하세요. ');
+        f.event_content.focus();
+        return;
+    }
 
+    // --- 날짜 제약 추가 시작 ---
+    const now = new Date();
+    // 시, 분, 초를 0으로 초기화하여 '날짜'만 비교
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 
-	f.action = '${pageContext.request.contextPath}/admin/events/${mode}';
-	f.submit();
-	
-	return true;
+    // 시작일(start_date) 검사
+    const startDateVal = f.start_date.value;
+    if(!startDateVal) {
+        alert('시작일을 선택하세요.');
+        f.start_date.focus();
+        return;
+    }
+    const startDate = new Date(startDateVal).getTime();
+
+    // 제약 1: 시작일은 오늘 날짜와 같거나 커야 함
+    if(startDate < today) {
+        alert('시작일은 오늘보다 이전일 수 없습니다.');
+        f.start_date.focus();
+        return;
+    }
+
+    // 종료일(end_date) 검사
+    const endDateVal = f.end_date.value;
+    if(!endDateVal) {
+        alert('종료일을 선택하세요.');
+        f.end_date.focus();
+        return;
+    }
+    const endDate = new Date(endDateVal).getTime();
+
+    // 제약 2: 종료일은 시작일보다 커야 함
+    if(endDate <= startDate) {
+        alert('종료일은 시작일보다 이후 날짜여야 합니다.');
+        f.end_date.focus();
+        return;
+    }
+    // --- 날짜 제약 추가 끝 ---
+
+    f.action = '${pageContext.request.contextPath}/admin/events/${mode}';
+    f.submit();
 }
 
-
-<c:if test="${mode=='update'}">
-function deleteFile(fileNum) {
-	if(! confirm('파일을 삭제 하시겠습니까 ? ')) {
-		return;
-	}
-	
-	let params = 'event_num=${dto.event_num}&file_at_id=' + file_at_id + '&page=${page}&size=${size}';
-	let url = '${pageContext.request.contextPath}/admin/event/deleteFile?' + params;
-	location.href = url;
+//검색 초기화 함수
+function resetSearch() {
+    const pathname = window.location.pathname;
+    // 검색어(kwd), 검색타입(schType), 상태(status) 등을 모두 날리고 첫 페이지로 이동
+    location.href = pathname; 
 }
-</c:if>
+
+// 기존 search 함수가 정의된 곳에 함께 두시면 됩니다.
+window.resetSearch = resetSearch;
+
+// 상세보기 삭제
+function deleteOk() {
+    if (!confirm('게시글을 삭제하시겠습니까?')) {
+        return;
+    }
+
+    const f = document.createElement('form');
+    f.method = 'POST';
+    f.action = '${pageContext.request.contextPath}/admin/events/deleteList';
+
+    // 컨트롤러의 String[] nn = req.getParameterValues("event_nums")와 매칭
+    const inputNum = document.createElement('input');
+    inputNum.type = 'hidden';
+    inputNum.name = 'event_nums'; 
+    inputNum.value = '${dto.event_num}';
+    f.appendChild(inputNum);
+
+    // 검색 및 페이지 정보 유지
+    const params = {
+        'page': '${page}',
+        'size': '${size}',
+        'schType': '${schType}',
+        'kwd': '${kwd}'
+    };
+
+    for (const key in params) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = params[key];
+        f.appendChild(input);
+    }
+
+    document.body.appendChild(f);
+    f.submit();
+}
+
 </script>
 
 

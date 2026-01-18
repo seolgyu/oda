@@ -63,6 +63,8 @@ public class EventServiceImpl implements EventService {
 	public void deleteEvent(long event_num) throws Exception {
 		// 이벤트 삭제(1개씩)
 		try {
+			mapper.deleteEventFile(event_num);
+			
 			mapper.deleteEvent(event_num);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -75,6 +77,8 @@ public class EventServiceImpl implements EventService {
 	public void deleteListEvent(List<Long> list) throws Exception {
 		// 삭제 1개 이상
 		try {
+			
+			mapper.deletelistEventFile(list);
 			mapper.deleteListEvent(list);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -222,19 +226,20 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public boolean isUserBoardLiked(Map<String, Object> map) {
-		try {
-			EventDTO dto = mapper.hasUserBoardLiked(map);
-			
-			if(dto != null) {
-				return true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		
-		}
-		return false;
+		int result = 0;
+	    try {
+	        // XML에서 resultType="Integer"로 바꿨다면 여기서 숫자가 잘 담깁니다.
+	        result = mapper.hasUserBoardLiked(map); 
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        // 에러가 나면 일단 false를 리턴하게 해서 페이지는 뜨게 만듭니다.
+	        return false;
+	    }
+	    // 0보다 크면(데이터가 있으면) true, 없으면 false!
+	    return result > 0;
 	}
 
+	
 	@Override
 	public void insertBoardLike(Map<String, Object> map) throws Exception {
 		// 종아요

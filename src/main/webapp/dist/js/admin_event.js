@@ -50,78 +50,27 @@ $(function(){
     });
 	
 	
-	
-    $('form-check-input-all').on('change', function(){
-		const isChecked = $(this).prop('checked');
-		$('input[name=event_num]').prop('checked', isChecked);
-	});
-	
-	
-	$(document).on('change', 'input[name=event_num]', function(){
-		const totalCount = $('input[name=event_num]').length;
-		const checkedCount = $('input[name=event_num]:checked').length;
-		$('.form-check-input-all').prop('checked', totalCount === checkedCount);
-	});
-	
-	function getSearchParams(){
-		const urlParams = new URLSearchParams(window.location.search);
-		return {
-			schType: $('select[name="schType"]').val() || 'all',
-			kwd: $('input[name="kwd"]').val() || '',
-			status: $('input[name="status"]').val() || '',
-			size: $('input[name="size"]').val() || '10',
-			page: urlParams.get('page') || '1'
-		};
-	}
-	
-	function addHiddenInput(form, name, value){
-		if(value){
-			$('<input>')
-				.attr('type', 'hidden')
-				.attr('name', name)
-				.val(value)
-				.appendTo(form)
-		}
-	}
-
-	// 검색 조회 시 top고정 리스트 숨기기
-	
-	// 이벤트 삭제
-	$('#btnDeleteList').on('click', function(e) {
-	    e.preventDefault();
-
-	    const checkedItems = $('input[name="event_num"]:checked');
-
-	    if(checkedItems.length === 0) {
-	        alert('삭제할 이벤트를 선택해주세요.');
+	$('#btnDeleteList').on('click', function() {
+	    // 1. 체크박스 선택 확인
+	    const $checked = $('input[name="event_nums"]:checked');
+		
+		console.log("체크된 개수: " + $checked.length);
+		
+	    if ($checked.length === 0) {
+	        alert('삭제할 항목을 선택하세요.');
 	        return;
 	    }
 
-	    if(!confirm(`선택한 ${checkedItems.length}개의 이벤트를 삭제하시겠습니까?`)) {
-	        return;
-	    }
+	    if (!confirm('선택한 항목을 삭제하시겠습니까?')) return;
 
+	    // 2. HTML에 만든 폼 이름으로 접근
 	    const f = document.deleteForm;
-	    $(f).empty();
 
-	    checkedItems.each(function() {
-	        $(this).clone().appendTo(f);
-	    });
-
-	    const params = getSearchParams();
-	    addHiddenInput(f, 'schType', params.schType);
-	    addHiddenInput(f, 'kwd', params.kwd);
-	    addHiddenInput(f, 'state', params.state);
-	    addHiddenInput(f, 'size', params.size);
-	    addHiddenInput(f, 'page', params.page);
-
-	    const pathname = window.location.pathname;
-	    const baseUrl = pathname.substring(0, pathname.lastIndexOf('/'));
-	    f.action = baseUrl + '/deleteList';
+	    f.action = "deleteList"; 
+	    
+	    // 4. 전송
 	    f.submit();
 	});
-
-	
 });
 
 
