@@ -42,5 +42,12 @@ public interface PostMapper {
     public int checkReportHistory(Map<String, Object> map);
 	public PostDTO findTempPost(long userNum);
 	public List<PostDTO> listCommunityPost(Map<String, Object> map);
-	
+	public int checkPostSaved(Map<String, Object> map) throws Exception;
+	public void insertPostSave(Map<String, Object> map) throws Exception;
+	public void deletePostSave(Map<String, Object> map) throws Exception;
+	public int checkPostReposted(Map<String, Object> map) throws Exception;
+	public void insertPostRepost(Map<String, Object> map) throws Exception;
+	public void deletePostRepost(Map<String, Object> map) throws Exception;
+	public List<PostDTO> listSavedPost(Map<String, Object> map);
+    public List<PostDTO> listRepostedPost(Map<String, Object> map);
 }

@@ -43,6 +43,11 @@
 	background: rgba(248, 113, 113, 0.1) !important;
 }
 
+.action-btn-hover.btn-repost:hover {
+    color: #4ade80 !important;              
+    background: rgba(74, 222, 128, 0.1) !important; 
+}
+
 /* Pink style for likes */
 .text-pink {
 	color: #ec4899 !important;
@@ -273,32 +278,12 @@
 	box-shadow: 0 0 10px #a855f7;
 }
 
-@
-keyframes loading-expand { 0% {
-	width: 50px;
-	opacity: 0.5;
+@keyframes loading-expand { 
+	0% { width: 50px; opacity: 0.5; } 
+	50% { width:200px; opacity:1; }
+	100% { width:50px; opacity:0.5; }
 }
-50
-%
-{
-width
-:
-200px;
-opacity
-:
-1;
-}
-100
-%
-{
-width
-:
-50px;
-opacity
-:
-0.5;
-}
-}
+
 </style>
 </head>
 <body>
@@ -452,7 +437,6 @@ opacity
 	<c:if test="${not empty sessionScope.toastMsg}">
 		<script>
 		$(document).ready(function() {
-		    // 세션에 저장된 메시지가 있다면 출력 (JSTL 사용)
 		    const toastType = "${sessionScope.toastType}";
 		    const toastMsg = "${sessionScope.toastMsg}";
 		    
@@ -833,6 +817,80 @@ opacity
 		    });
 		}
 		
+		
+		function toggleSave(postId, btn) {
+			if (isLogin === "false") {
+	            if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
+	                location.href = contextPath + "/member/login";
+	            }
+	            return;
+	        }
+
+	        $.ajax({
+	            url: "${pageContext.request.contextPath}/post/insertPostSave",
+	            type: "post",
+	            data: { postId: postId },
+	            dataType: "json",
+	            success: function(data) {
+	                if (data.state === "success") {
+	                    const $btn = $(btn);
+	                    const $icon = $btn.find("span.material-symbols-outlined");
+	                    
+	                    if (data.saved) {
+	                       
+	                        $icon.text("bookmark");
+	                        $btn.addClass("text-warning");
+	                        showToast("success", "게시글을 저장했습니다.");
+	                    } else {
+	                        
+	                        $icon.text("bookmark_border");
+	                        $btn.removeClass("text-warning");
+	                        showToast("info", "저장을 취소했습니다.");
+	                    }
+	                } else if (data.state === "login_required") {
+	                    location.href = "${pageContext.request.contextPath}/member/login";
+	                }
+	            },
+	            error: function(e) {
+	                console.log(e);
+	            }
+	        });
+	    }
+	 
+	    function toggleRepost(postId, btn) {
+	    	if (isLogin === "false") {
+	            if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
+	                location.href = contextPath + "/member/login";
+	            }
+	            return;
+	        }
+	        $.ajax({
+	            url: "${pageContext.request.contextPath}/post/insertPostRepost",
+	            type: "post",
+	            data: { postId: postId },
+	            dataType: "json",
+	            success: function(data) {
+	                if (data.state === "success") {
+	                    const $btn = $(btn);
+	                    
+	                    if (data.reposted) {
+	                        
+	                        $btn.addClass("text-success");
+	                        showToast("success", "게시글을 리그렘했습니다.");
+	                    } else {
+	                       
+	                        $btn.removeClass("text-success");
+	                        showToast("info", "리그렘을 취소했습니다.");
+	                    }
+	                } else if (data.state === "login_required") {
+	                    location.href = "${pageContext.request.contextPath}/member/login";
+	                }
+	            },
+	            error: function(e) {
+	                console.log(e);
+	            }
+	        });
+	    }
 	</script>
 	
 	

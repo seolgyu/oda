@@ -171,6 +171,9 @@
         <result property="showLikes" column="showLikes" />
         <result property="showViews" column="showViews" />
         <result property="state" column="state" />
+        <result property="savedByUser" column="savedByUser" />
+        <result property="repostedByUser" column="repostedByUser" />
+        
         
         <collection property="fileList" ofType="com.hs.model.FileAtDTO">
             <id property="fileAtId" column="fileAtId" />
@@ -192,12 +195,11 @@
             p.SHOW_LIKES AS showLikes,
             p.SHOW_VIEWS AS showViews,
             p.STATE AS state,
-
+			NVL((SELECT COUNT(*) FROM SAVED WHERE POST_ID = p.POST_ID AND USER_NUM = #{userNum}), 0) AS savedByUser,
+			NVL((SELECT COUNT(*) FROM REPOST WHERE POST_ID = p.POST_ID AND USER_NUM = #{userNum}), 0) AS repostedByUser,
             NVL(u.USER_NICKNAME, 'Unknown') AS authorNickname,
             u.USER_PROFILE AS authorProfileImage,
-
             NVL((SELECT COUNT(*) FROM LIKES WHERE POST_ID = p.POST_ID AND USER_NUM = #{userNum}), 0) AS likedByUser,
-
             f.FILE_AT_ID AS fileAtId,
             f.FILE_PATH AS filePath,
             f.FILE_ORDER AS fileOrder
@@ -288,7 +290,7 @@
             USER_ID, CONTENT,
             PARENT_COMMENT_ID, CREATED_DATE, IS_DELETED
         ) VALUES (
-            SEQ_COMMENTS.NEXTVAL, #{postId}, #{userNum}, #{userId}, #{content},
+            COMMENTS_SEQ.NEXTVAL, #{postId}, #{userNum}, #{userId}, #{content},
             NULLIF(#{parentCommentId}, 0), SYSDATE, '0'
         )
     </insert>
@@ -364,7 +366,7 @@
             REPORT_NUM, REPORT_USER_NUM, REPORT_REASON, 
             REPORT_TYPE, REPORT_CONTENT, REPORT_DATE
         ) VALUES (
-            SEQ_REPORT.NEXTVAL, #{reportUserNum}, #{reportReason},
+            REPORT_SEQ.NEXTVAL, #{reportUserNum}, #{reportReason},
             #{reportType}, #{reportContent}, SYSDATE
         )
     </insert>
@@ -424,5 +426,97 @@
 	    </choose>
 	    OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
 	</select>
+	
+	<insert id="insertPostSave" parameterType="map">
+        INSERT INTO SAVED (SAVE_ID, USER_NUM, POST_ID, SAVED_DATE)
+        VALUES (SAVED_SEQ.NEXTVAL, #{userNum}, #{postId}, SYSDATE)
+    </insert>
+
+    <delete id="deletePostSave" parameterType="map">
+        DELETE FROM SAVED WHERE POST_ID = #{postId} AND USER_NUM = #{userNum}
+    </delete>
+
+    <select id="checkPostSaved" parameterType="map" resultType="Integer">
+        SELECT COUNT(*) FROM SAVED WHERE POST_ID = #{postId} AND USER_NUM = #{userNum}
+    </select>
+
+
+    <insert id="insertPostRepost" parameterType="map">
+        INSERT INTO REPOST (REPOST_ID, USER_NUM, POST_ID, REPOST_DATE)
+        VALUES (REPOST_SEQ.NEXTVAL, #{userNum}, #{postId}, SYSDATE)
+    </insert>
+
+    <delete id="deletePostRepost" parameterType="map">
+        DELETE FROM REPOST WHERE POST_ID = #{postId} AND USER_NUM = #{userNum}
+    </delete>
+    
+    <select id="checkPostReposted" parameterType="map" resultType="Integer">
+        SELECT COUNT(*) FROM REPOST WHERE POST_ID = #{postId} AND USER_NUM = #{userNum}
+    </select>
+    
+    <select id="listSavedPost" parameterType="map" resultMap="postMap">
+        SELECT
+            p.POST_ID AS postId,
+            p.USER_NUM AS userNum,
+            p.TITLE AS title,
+            p.CONTENT AS content,
+            p.VIEW_COUNT AS viewCount,
+            p.LIKE_COUNT AS likeCount,
+            (SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED = '0') AS commentCount,
+            TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD HH24:MI:SS') AS createdDate,
+            p.SHOW_LIKES AS showLikes,
+            p.SHOW_VIEWS AS showViews,
+            p.STATE AS state,
+            u.USER_NICKNAME AS authorNickname,
+            u.USER_PROFILE AS authorProfileImage,
+           
+            NVL((SELECT COUNT(*) FROM LIKES WHERE POST_ID = p.POST_ID AND USER_NUM = #{userNum}), 0) AS likedByUser,
+            1 AS savedByUser, -- 저장 목록이니까 무조건 true
+            NVL((SELECT COUNT(*) FROM REPOST WHERE POST_ID = p.POST_ID AND USER_NUM = #{userNum}), 0) AS repostedByUser,
+
+            f.FILE_AT_ID AS fileAtId,
+            f.FILE_PATH AS filePath
+        FROM SAVED s
+        JOIN POSTS p ON s.POST_ID = p.POST_ID
+        JOIN MEMBER u ON p.USER_NUM = u.USER_NUM
+        LEFT JOIN FILEAT f ON p.POST_ID = f.POST_ID AND f.FILE_ORDER = 0 -- 썸네일(첫번째 사진)만
+        WHERE s.USER_NUM = #{targetUserNum} -- 내 피드 주인
+          AND p.IS_DELETED = '0'
+        ORDER BY s.SAVED_DATE DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+    </select>
+
+    <select id="listRepostedPost" parameterType="map" resultMap="postMap">
+        SELECT
+            p.POST_ID AS postId,
+            p.USER_NUM AS userNum,
+            p.TITLE AS title,
+            p.CONTENT AS content,
+            p.VIEW_COUNT AS viewCount,
+            p.LIKE_COUNT AS likeCount,
+            (SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED = '0') AS commentCount,
+            TO_CHAR(p.CREATED_DATE, 'YYYY-MM-DD HH24:MI:SS') AS createdDate,
+            p.SHOW_LIKES AS showLikes,
+            p.SHOW_VIEWS AS showViews,
+            p.STATE AS state,
+            u.USER_NICKNAME AS authorNickname,
+            u.USER_PROFILE AS authorProfileImage,
+
+            NVL((SELECT COUNT(*) FROM LIKES WHERE POST_ID = p.POST_ID AND USER_NUM = #{userNum}), 0) AS likedByUser,
+            NVL((SELECT COUNT(*) FROM SAVED WHERE POST_ID = p.POST_ID AND USER_NUM = #{userNum}), 0) AS savedByUser,
+            1 AS repostedByUser, 
+
+            f.FILE_AT_ID AS fileAtId,
+            f.FILE_PATH AS filePath
+        FROM REPOST r
+        JOIN POSTS p ON r.POST_ID = p.POST_ID
+        JOIN MEMBER u ON p.USER_NUM = u.USER_NUM
+        LEFT JOIN FILEAT f ON p.POST_ID = f.POST_ID AND f.FILE_ORDER = 0
+        WHERE r.USER_NUM = #{targetUserNum}
+          AND p.IS_DELETED = '0'
+        ORDER BY r.REPOST_DATE DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+    </select>
+	
 
 </mapper>

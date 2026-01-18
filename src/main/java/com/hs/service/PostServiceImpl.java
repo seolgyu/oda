@@ -349,16 +349,15 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public List<PostDTO> listCommunityPost(Map<String, Object> map) {
-	    List<PostDTO> list = new ArrayList<>(); // null 대신 빈 리스트로 초기화
+	    List<PostDTO> list = new ArrayList<>(); 
 	    try {
-	        // 1. 게시글 목록 조회
+	    
 	        list = mapper.listCommunityPost(map);
 	        
 	        if (list == null) return new ArrayList<>();
 
-	        // 2. 루프를 돌며 추가 정보 세팅
 	        for(PostDTO item : list) {
-	            // [수정 포인트] user_num을 꺼낼 때 Null 체크를 아주 꼼꼼하게 합니다.
+	         
 	            Object userNumObj = map.get("user_num");
 	            long loginUserNum = 0L;
 	            
@@ -370,21 +369,81 @@ public class PostServiceImpl implements PostService {
 	                }
 	            }
 
-	            // 좋아요 여부 확인
 	            if (loginUserNum != 0) {
 	                item.setLikedByUser(isLiked(item.getPostId(), loginUserNum));
 	            }
-	            
-	            // 파일 리스트 가져오기 (Null 방지)
+	
 	            List<FileAtDTO> files = mapper.listFileAt(item.getPostId());
 	            item.setFileList(files != null ? files : new ArrayList<>());
 	        }
 	    } catch (Exception e) {
-	        // 여기가 핵심! 에러가 나면 무조건 서버 콘솔(빨간글씨)에 찍히게 합니다.
+	        
 	        System.out.println("로그: listCommunityPost에서 에러 발생!!!");
 	        e.printStackTrace(); 
 	    }
 	    return list;
 	}
+	
+	@Override
+    public boolean insertPostSave(long postId, long userNum) throws Exception {
+        boolean result = false;
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("postId", postId);
+            map.put("userNum", userNum);
+         
+            int count = mapper.checkPostSaved(map);
+
+            if (count == 0) {
+               
+                mapper.insertPostSave(map);
+                result = true; 
+            } else {
+               
+                mapper.deletePostSave(map);
+                result = false; 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return result;
+    }
+
+    @Override
+    public boolean insertPostRepost(long postId, long userNum) throws Exception {
+        boolean result = false;
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("postId", postId);
+            map.put("userNum", userNum);
+
+            int count = mapper.checkPostReposted(map);
+
+            if (count == 0) {
+               
+                mapper.insertPostRepost(map);
+                result = true; 
+            } else {
+               
+                mapper.deletePostRepost(map);
+                result = false; 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return result;
+    }
+    
+    @Override
+    public List<PostDTO> listSavedPost(Map<String, Object> map) {
+        return mapper.listSavedPost(map);
+    }
+
+    @Override
+    public List<PostDTO> listRepostedPost(Map<String, Object> map) {
+        return mapper.listRepostedPost(map);
+    }
 
 }

@@ -22,12 +22,12 @@ public class PostDTO {
 	private List<FileAtDTO> fileList;
 	private String thumbnail;
 	private boolean likedByUser;
-
 	private String authorNickname;
 	private String authorId;
 	private String authorProfileImage;
-
 	private List<ReplyDTO> replyList;
+	private boolean savedByUser;
+    private boolean repostedByUser;
 
 	public Long getPostId() {
 		return postId;
@@ -221,6 +221,22 @@ public class PostDTO {
 
 	public void setShowViews(String showViews) {
 		this.showViews = showViews;
+	}
+	
+	public boolean isSavedByUser() {
+		return savedByUser;
+	}
+
+	public void setSavedByUser(boolean savedByUser) {
+		this.savedByUser = savedByUser;
+	}
+
+	public boolean isRepostedByUser() {
+		return repostedByUser;
+	}
+
+	public void setRepostedByUser(boolean repostedByUser) {
+		this.repostedByUser = repostedByUser;
 	}
 
 }

@@ -19,6 +19,7 @@
 .hover-green:hover { color: #4ade80 !important; }
 .hover-yellow:hover { color: #facc15 !important; }
 .hover-purple:hover { color: #c084fc !important; }
+.hover-red:hover { color: #ef4444 !important; }
 .hover-opacity-100:hover { opacity: 1 !important; }
 .text-pink { color: #ec4899 !important; }
 .carousel-control-prev, .carousel-control-next { width: 10%; opacity: 1; }
@@ -190,20 +191,30 @@
                                         </button>
                                     </div>
 
-                                    <div class="d-flex gap-3">
-                                        <button class="btn btn-link text-decoration-none text-white-50 p-0 hover-yellow">
-                                            <span class="material-symbols-outlined fs-5">bookmark_border</span>
-                                        </button>
-                                        <button class="btn btn-link text-decoration-none text-white-50 p-0 hover-purple"
-                                            onclick="copyUrl('${dto.postId}');"> 
-                                            <span class="material-symbols-outlined fs-5">share</span>
-                                        </button>
-                                        <button class="btn btn-link text-decoration-none text-white-50 p-0 hover-red"
-                                            style="transition: color 0.3s;"
-                                            onclick="openReportModal('${dto.postId}');">
-                                            <span class="material-symbols-outlined fs-5">campaign</span>
-                                        </button>
-                                    </div>
+									<div class="d-flex gap-3">
+									    <button type="button" class="btn btn-link text-decoration-none p-0 hover-yellow ${dto.savedByUser ? 'text-warning' : 'text-white-50'}"
+									            onclick="toggleSave('${dto.postId}', this);">
+									        <span class="material-symbols-outlined fs-5">
+									            ${dto.savedByUser ? 'bookmark' : 'bookmark_border'}
+									        </span>
+									    </button>
+									
+									    <button type="button" class="btn btn-link text-decoration-none p-0 hover-green ${dto.repostedByUser ? 'text-success' : 'text-white-50'}"
+									            onclick="toggleRepost('${dto.postId}', this);">
+									        <span class="material-symbols-outlined fs-5">repeat</span>
+									    </button>
+									
+									    <button type="button" class="btn btn-link text-decoration-none text-white-50 p-0 hover-purple"
+									            onclick="copyUrl('${dto.postId}');"> 
+									        <span class="material-symbols-outlined fs-5">share</span>
+									    </button>
+									
+									    <button type="button" class="btn btn-link text-decoration-none text-white-50 p-0 hover-red"
+									            style="transition: color 0.3s;"
+									            onclick="openReportModal('${dto.postId}');">
+									        <span class="material-symbols-outlined fs-5">campaign</span>
+									    </button>
+									</div>                                                            
                                 </div>
                             </div>
 
@@ -589,6 +600,72 @@
             });
         }
         
+     
+        function toggleSave(postId, btn) {
+
+            $.ajax({
+                url: contextPath + "/post/insertPostSave",
+                type: "post",
+                data: { postId: postId },
+                dataType: "json",
+                success: function(data) {
+                    if (data.state === "success") {
+                        const $btn = $(btn);
+                        const $icon = $btn.find("span.material-symbols-outlined");
+                        
+                        if (data.saved) {
+                          
+                            $icon.text("bookmark");
+                            $btn.addClass("text-warning").removeClass("text-white-50");
+                            showToast("success", "게시글을 저장했습니다.");
+                        } else {
+                           
+                            $icon.text("bookmark_border");
+                            $btn.removeClass("text-warning").addClass("text-white-50");
+                            showToast("error", "저장을 취소했습니다.");
+                        }
+                    } else if (data.state === "login_required") {
+                        location.href = contextPath + "/member/login";
+                    } else {
+                        showToast("error", "오류가 발생했습니다.");
+                    }
+                },
+                error: function(e) {
+                    console.log(e);
+                }
+            });
+        }
+
+        function toggleRepost(postId, btn) {
+            $.ajax({
+                url: contextPath + "/post/insertPostRepost",
+                type: "post",
+                data: { postId: postId },
+                dataType: "json",
+                success: function(data) {
+                    if (data.state === "success") {
+                        const $btn = $(btn);
+                        
+                        if (data.reposted) {
+                           
+                            $btn.addClass("text-success").removeClass("text-white-50");
+                            showToast("success", "게시글을 리그렘했습니다.");
+                        } else {
+                           
+                            $btn.removeClass("text-success").addClass("text-white-50");
+                            showToast("error", "리그렘을 취소했습니다.");
+                        }
+                    } else if (data.state === "login_required") {
+                        location.href = contextPath + "/member/login";
+                    } else {
+                        showToast("error", "오류가 발생했습니다.");
+                    }
+                },
+                error: function(e) {
+                    console.log(e);
+                }
+            });
+        }
     </script>
 </body>
 </html>

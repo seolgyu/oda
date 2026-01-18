@@ -102,19 +102,27 @@
                         <span class="material-symbols-outlined">chat_bubble</span> <span>${dto.commentCount}</span>
                     </button>
                     
-                    <div class="ms-auto d-flex gap-2">
-                        <button class="card-action-btn action-btn-hover btn-share"
-                            onclick="copyUrl('${dto.postId}'); event.stopPropagation();">
-                            <span class="material-symbols-outlined">share</span> <span>공유</span>
-                        </button>
-                        <button class="card-action-btn action-btn-hover btn-save">
-                            <span class="material-symbols-outlined">bookmark</span> <span>저장</span>
-                        </button>
-                        <button class="card-action-btn action-btn-hover btn-report" 
-                             onclick="openReportModal('${dto.postId}'); event.stopPropagation();">
-                            <span class="material-symbols-outlined">campaign</span> <span>신고</span>
-                        </button>
-                    </div>
+					<div class="ms-auto d-flex gap-2">
+					    <button class="card-action-btn action-btn-hover btn-share"
+					        onclick="copyUrl('${dto.postId}'); event.stopPropagation();">
+					        <span class="material-symbols-outlined">share</span> <span>공유</span>
+					    </button>
+					
+					    <button class="card-action-btn action-btn-hover btn-repost ${dto.repostedByUser ? 'text-success' : ''}"
+					        onclick="toggleRepost('${dto.postId}', this); event.stopPropagation();">
+					        <span class="material-symbols-outlined">repeat</span> <span>리그렘</span>
+					    </button>
+					
+					    <button class="card-action-btn action-btn-hover btn-save ${dto.savedByUser ? 'text-warning' : ''}"
+					        onclick="toggleSave('${dto.postId}', this); event.stopPropagation();">
+					        <span class="material-symbols-outlined">${dto.savedByUser ? 'bookmark' : 'bookmark_border'}</span> <span>저장</span>
+					    </button>
+					
+					    <button class="card-action-btn action-btn-hover btn-report" 
+					         onclick="openReportModal('${dto.postId}'); event.stopPropagation();">
+					        <span class="material-symbols-outlined">campaign</span> <span>신고</span>
+					    </button>
+					</div>
                 </div>
             </div>
         </div>
@@ -187,17 +195,27 @@
                             onclick="goArticle('${dto.postId}'); event.stopPropagation();">
                             <span class="material-symbols-outlined">chat_bubble</span> <span>${dto.commentCount}</span>
                         </button>
+                        
                         <button class="compact-action-btn action-btn-hover btn-share p-0 border-0"
                             onclick="copyUrl('${dto.postId}'); event.stopPropagation();">
                             <span class="material-symbols-outlined">share</span> <span>공유</span>
                         </button>
-                        <button class="compact-action-btn action-btn-hover btn-save p-0 border-0">
-                            <span class="material-symbols-outlined">bookmark</span> <span>저장</span>
-                        </button>
+                        
+						<button class="compact-action-btn action-btn-hover btn-repost p-0 border-0 ${dto.repostedByUser ? 'text-success' : ''}"
+						    onclick="toggleRepost('${dto.postId}', this); event.stopPropagation();">
+						    <span class="material-symbols-outlined">repeat</span> <span>리그렘</span>
+						</button>    
+						                    
+                        <button class="compact-action-btn action-btn-hover btn-save p-0 border-0 ${dto.savedByUser ? 'text-warning' : ''}"
+        					onclick="toggleSave('${dto.postId}', this); event.stopPropagation();">
+       						<span class="material-symbols-outlined">${dto.savedByUser ? 'bookmark' : 'bookmark_border'}</span> <span>저장</span>
+    					</button>
+                        
                         <button class="compact-action-btn action-btn-hover btn-report p-0 border-0"
                             onclick="openReportModal('${dto.postId}'); event.stopPropagation();">
                             <span class="material-symbols-outlined">campaign</span> <span>신고</span>
                         </button>
+                        
                     </div>
                 </div>
             </div>

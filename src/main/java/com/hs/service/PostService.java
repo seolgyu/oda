@@ -31,4 +31,8 @@ public interface PostService {
 	public PostDTO findTempPost(long userNum);
 	public void saveTempPost(PostDTO dto) throws Exception;
 	public List<PostDTO> listCommunityPost(Map<String, Object> map); 
+	public boolean insertPostSave(long postId, long userNum) throws Exception;
+	public boolean insertPostRepost(long postId, long userNum) throws Exception;
+	public List<PostDTO> listSavedPost(Map<String, Object> map);
+    public List<PostDTO> listRepostedPost(Map<String, Object> map);
 }

@@ -706,4 +706,65 @@ public class PostController {
         resp.getWriter().print(jobj.toString());
     }
 	
+    // 게시글 저장 기능 (AJAX)
+    @PostMapping("insertPostSave")
+    public void insertPostSave(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession session = req.getSession();
+        SessionInfo info = (SessionInfo) session.getAttribute("member");
+        JSONObject jobj = new JSONObject();
+
+        if (info == null) {
+            jobj.put("state", "login_required");
+            resp.setContentType("application/json; charset=UTF-8");
+            resp.getWriter().print(jobj.toString());
+            return;
+        }
+
+        try {
+            long postId = Long.parseLong(req.getParameter("postId"));
+ 
+            boolean saved = service.insertPostSave(postId, info.getMemberIdx());
+
+            jobj.put("state", "success");
+            jobj.put("saved", saved);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            jobj.put("state", "error");
+        }
+
+        resp.setContentType("application/json; charset=UTF-8");
+        resp.getWriter().print(jobj.toString());
+    }
+
+    // 게시글 리그렘 기능 (AJAX)
+    @PostMapping("insertPostRepost")
+    public void insertPostRepost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession session = req.getSession();
+        SessionInfo info = (SessionInfo) session.getAttribute("member");
+        JSONObject jobj = new JSONObject();
+
+        if (info == null) {
+            jobj.put("state", "login_required");
+            resp.setContentType("application/json; charset=UTF-8");
+            resp.getWriter().print(jobj.toString());
+            return;
+        }
+
+        try {
+            long postId = Long.parseLong(req.getParameter("postId"));
+ 
+            boolean reposted = service.insertPostRepost(postId, info.getMemberIdx());
+
+            jobj.put("state", "success");
+            jobj.put("reposted", reposted);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            jobj.put("state", "error");
+        }
+
+        resp.setContentType("application/json; charset=UTF-8");
+        resp.getWriter().print(jobj.toString());
+    }
 }
