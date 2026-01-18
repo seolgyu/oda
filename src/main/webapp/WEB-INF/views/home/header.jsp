@@ -87,8 +87,13 @@
 			</div>
 		</c:if>
 	</div>
+</header>
 
-	<script>
+<div id="toastContainer"
+	class="toast-container position-fixed bottom-0 end-0 p-3"
+	style="z-index: 9999;"></div>
+
+<script>
 		function searchOda() {
 			// 1. 입력값 가져오기
 			const input = document.getElementById("totalSearchInput");
@@ -106,5 +111,52 @@
 			location.href = "${pageContext.request.contextPath}/main?keyword="
 					+ encodeURIComponent(keyword);
 		}
+		
+		function showToast(type, msg) {
+			const container = document.getElementById('toastContainer');
+			const toastId = 'toast-' + Date.now();
+
+			let title = 'SYSTEM', icon = 'info', color = '#8B5CF6';
+			if (type === "success") { title = 'SUCCESS'; icon = 'check_circle'; color = '#4ade80'; }
+			else if (type === "error") { title = 'ERROR'; icon = 'error'; color = '#f87171'; }
+
+			const toastHtml = `
+					<div id="\${toastId}" class="glass-toast \${type}">
+			            <div class="d-flex align-items-center gap-3">
+			                <div class="toast-icon-circle">
+			                    <span class="material-symbols-outlined fs-5">\${icon}</span>
+			                </div>
+			                <div class="toast-content">
+			                    <h4 class="text-xs fw-bold text-uppercase tracking-widest mb-1" style="color: ${color}">\${title}</h4>
+			                    <p class="text-sm text-gray-300 mb-0">\${msg}</p>
+			                </div>
+			            </div>
+			        </div>`;
+
+			const $newToast = $(toastHtml);
+			$(container).append($newToast);
+
+			setTimeout(() => $newToast.addClass('show'), 50);
+
+			setTimeout(() => {
+				$newToast.removeClass('show');
+
+				setTimeout(() => {
+					$newToast.animate({
+						height: 0,
+						marginTop: 0,
+						marginBottom: 0,
+						paddingTop: 0,
+						paddingBottom: 0,
+						opacity: 0
+					}, {
+						duration: 350,
+						easing: "swing",
+						complete: function() {
+							$(this).remove();
+						}
+					});
+				}, 400);
+			}, 2500);
+		}
 	</script>
-</header>

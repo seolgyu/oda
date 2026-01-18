@@ -231,29 +231,3 @@ function renderMyPost(item) {
         </div>
     `;
 }
-function showToast(type, msg) {
-	const $toast = $('#sessionToast');
-	const $title = $('#toastTitle');
-	const $icon = $('#toastIcon');
-
-	$('#toastMessage').text(msg);
-
-	if (type === "success") {
-		$title.text('SUCCESS').css('color', '#4ade80');
-		$icon.text('check_circle');
-	}
-	else if (type === "info") {
-		$title.text('INFO').css('color', '#8B5CF6');
-		$icon.text('info');
-	}
-	else if (type === "error") {
-		$title.text('ERROR').css('color', '#f87171');
-		$icon.text('error');
-	}
-
-	$toast.addClass('show');
-
-	setTimeout(function() {
-		$toast.removeClass('show');
-	}, 2500);
-}

@@ -250,17 +250,68 @@ body {
 }
 
 /* [10] 알림창 */
-.glass-toast {
-    position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-    z-index: 9999; min-width: 320px; padding: 1rem 1.5rem; border-radius: 1rem;
-    backdrop-filter: blur(16px); background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    opacity: 0;
+/* 1. 토스트들을 담는 전체 바구니 설정 */
+.toast-container {
+    position: fixed;
+    top: 30px; /* 화면 상단에서 시작 */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column; /* 위에서 아래로 쌓임 */
+    align-items: center;
+    gap: 10px;
+    pointer-events: none; /* 컨테이너 자체가 클릭을 방해하지 않도록 설정 */
 }
-.glass-toast.show { top: 30px; opacity: 1; }
+
+/* 2. 개별 토스트 스타일 */
+.glass-toast {
+    pointer-events: auto; /* 토스트 내부 버튼 등은 클릭 가능하게 */
+    margin-bottom: 12px; /* 토스트 사이 간격 */
+    min-width: 320px;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(16px) saturate(180%);
+    background: rgba(15, 15, 20, 0.25); /* 가독성을 위해 살짝 높임 */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+    
+    /* 애니메이션 설정 */
+    opacity: 0;
+    transform: translateY(-20px) scale(0.9); /* 위에서 살짝 작게 나타남 */
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    
+    overflow: hidden; /* 높이가 줄어들 때 내부 내용이 넘치지 않도록 */
+    box-sizing: border-box; /* 패딩이 높이에 영향을 주지 않도록 */
+}
+
+/* 3. 나타날 때의 효과 */
+.glass-toast.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* 4. 아이콘 서클 (기존 유지) */
 .toast-icon-circle {
-    width: 36px; height: 36px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(to top right, #a855f7, #6366f1); color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to top right, #a855f7, #6366f1);
+    color: white;
+    flex-shrink: 0; /* 텍스트 길어져도 아이콘 찌그러짐 방지 */
+}
+
+/* success 타입일 때 왼쪽 테두리에 네온 광원 추가 */
+.glass-toast.success {
+    border-left: 4px solid #4ade80;
+    box-shadow: -5px 0 15px rgba(74, 222, 128, 0.2);
+}
+
+/* error 타입일 때 */
+.glass-toast.error {
+    border-left: 4px solid #f87171;
+    box-shadow: -5px 0 15px rgba(248, 113, 113, 0.2);
 }

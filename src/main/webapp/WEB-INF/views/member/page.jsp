@@ -257,19 +257,6 @@
 				<div class="planet planet-2"></div>
 			</div>
 
-			<div id="sessionToast" class="glass-toast shadow-lg">
-				<div class="d-flex align-items-center gap-3">
-					<div class="toast-icon-circle">
-						<span id="toastIcon" class="material-symbols-outlined fs-5">info</span>
-					</div>
-					<div class="toast-content">
-						<h4 id="toastTitle"
-							class="text-xs fw-bold text-uppercase tracking-widest mb-1">System</h4>
-						<p id="toastMessage" class="text-sm text-gray-300 mb-0">메시지</p>
-					</div>
-				</div>
-			</div>
-
 			<div class="feed-scroll-container custom-scrollbar">
 				<div class="d-flex flex-column align-items-center py-4 px-3">
 
