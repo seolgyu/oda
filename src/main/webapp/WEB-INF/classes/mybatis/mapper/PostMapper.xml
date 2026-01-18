@@ -232,6 +232,7 @@
             NVL((SELECT COUNT(*) FROM LIKES WHERE POST_ID = p.POST_ID AND USER_NUM = #{userNum}), 0) AS likedByUser,
             f.FILE_AT_ID AS fileAtId,
             f.FILE_PATH AS filePath,
+            f.FILE_TYPE AS fileType,
             f.FILE_ORDER AS fileOrder
 
         FROM (

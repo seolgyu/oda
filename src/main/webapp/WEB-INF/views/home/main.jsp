@@ -278,6 +278,29 @@
 	box-shadow: 0 0 10px #a855f7;
 }
 
+.video-sound-btn {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    color: white;
+    transition: background 0.2s;
+}
+.video-sound-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+.video-sound-btn span {
+    font-size: 18px;
+}
+
 @keyframes loading-expand { 
 	0% { width: 50px; opacity: 0.5; } 
 	50% { width:200px; opacity:1; }
@@ -585,8 +608,7 @@
 	        if(currentKeyword) {
 	            $("#totalSearchInput").val(currentKeyword);
 	        }
-	        
-	        // 캐러셀 버튼 초기화
+	      
 	        initCarouselButtons();
 	    });
 		
@@ -612,6 +634,135 @@
 				observer.observe(sentinel);
 			}
 		});
+		
+		/* 동영상 자동 재생 및 우선순위 관리 스크립트 */
+		document.addEventListener("DOMContentLoaded", function() {
+		    // 1. 현재 화면에 50% 이상 들어온 비디오들을 담아둘 목록 (Set)
+		    const visibleVideos = new Set();
+
+		    const observerOptions = {
+		        root: null, // 뷰포트 기준
+		        rootMargin: '0px',
+		        threshold: 0.5 // [중요] 50% 이상 보이면 감지 (0.7은 너무 빡빡해서 잘 안될 수 있음)
+		    };
+
+		    const videoObserver = new IntersectionObserver((entries) => {
+		        entries.forEach(entry => {
+		            if (entry.isIntersecting) {
+		                // 화면에 들어왔으면 목록에 추가
+		                visibleVideos.add(entry.target);
+		            } else {
+		                // 화면에서 나가면 목록에서 제거하고 즉시 정지
+		                visibleVideos.delete(entry.target);
+		                entry.target.pause();
+		            }
+		        });
+
+		        // [핵심 로직] 화면에 보이는 비디오들 중 '대장(가장 위에 있는 것)'을 뽑아서 재생
+		        handleAutoPlay();
+
+		    }, observerOptions);
+
+		    // 우선순위 결정 및 재생 함수
+		    function handleAutoPlay() {
+		        if (visibleVideos.size === 0) return;
+
+		        // Set을 배열로 변환
+		        const videosArr = Array.from(visibleVideos);
+
+		        // [정렬] 화면 위쪽(top) 좌표가 작을수록 위에 있는 동영상임
+		        videosArr.sort((a, b) => {
+		            return a.getBoundingClientRect().top - b.getBoundingClientRect().top;
+		        });
+
+		        // 1등(가장 위에 있는 비디오) 선정
+		        const topVideo = videosArr[0];
+
+		        // 1등만 재생
+		        const playPromise = topVideo.play();
+		        if (playPromise !== undefined) {
+		            playPromise.catch(e => { 
+		                // 브라우저 정책상 사용자가 클릭하기 전에는 자동재생을 막는 경우가 있음 (콘솔 로그 생략)
+		            });
+		        }
+
+		        // 나머지 모든 비디오(1등이 아닌 애들)는 강제 정지
+		        document.querySelectorAll('video.feed-video').forEach(v => {
+		            if (v !== topVideo) {
+		                v.pause();
+		            }
+		        });
+		    }
+
+		    // [MutationObserver] 무한 스크롤로 새로 생긴 동영상 감지
+		    // '#list-container'는 게시글 목록을 감싸는 div의 ID입니다. (page.jsp나 main.jsp 구조 확인 필요)
+		    // 만약 ID를 모른다면 document.body로 설정해도 되지만, 성능을 위해 정확한 컨테이너가 좋습니다.
+		    const feedContainer = document.getElementById('list-container') || document.body;
+
+		    const mutationObserver = new MutationObserver((mutations) => {
+		        mutations.forEach((mutation) => {
+		            mutation.addedNodes.forEach((node) => {
+		                if (node.nodeType === 1) { // 요소 노드만
+		                    // 새로 추가된 요소 안에 있는 비디오 찾아서 관찰 시작
+		                    const videos = node.querySelectorAll('video.feed-video');
+		                    videos.forEach(v => videoObserver.observe(v));
+		                }
+		            });
+		        });
+		    });
+
+		    // 감시 시작
+		    mutationObserver.observe(feedContainer, { childList: true, subtree: true });
+
+		    // 처음에 이미 로딩된 비디오들도 관찰 시작
+		    document.querySelectorAll('video.feed-video').forEach(v => videoObserver.observe(v));
+		});
+
+		// 마우스 호버 시 컨트롤바 표시/숨김 관리
+		function showVideoControls(container) {
+		    const video = $(container).find('video')[0];
+		    const soundBtn = $(container).find('.video-sound-btn');
+		    
+		    // 비디오 태그가 없으면(이미지인 경우) 리턴
+		    if (!video) return;
+
+		    // 1. 브라우저 기본 컨트롤바 활성화 (재생바, 전체화면 등 나옴)
+		    video.setAttribute("controls", "controls");
+		    
+		    // 2. 컨트롤바랑 겹치니까 우리가 만든 소리 버튼은 잠시 숨김
+		    soundBtn.hide();
+		}
+
+		function hideVideoControls(container) {
+		    const video = $(container).find('video')[0];
+		    const soundBtn = $(container).find('.video-sound-btn');
+		    
+		    if (!video) return;
+
+		    // [중요] 전체화면 모드일 때는 컨트롤바를 없애면 안 됨!
+		    if (!document.fullscreenElement) {
+		        // 1. 컨트롤바 제거
+		        video.removeAttribute("controls");
+		        
+		        // 2. 소리 버튼 다시 표시
+		        soundBtn.show();
+		    }
+		}
+		
+		// 소스 아이콘 토글 함수
+		function toggleSound(btn, event) {
+		    event.stopPropagation(); // 카드 클릭 이벤트 방지
+		    const video = $(btn).prev('video')[0];
+		    const icon = $(btn).find('span');
+		    
+		    if (video.muted) {
+		        video.muted = false;
+		        icon.text("volume_up");
+		    } else {
+		        video.muted = true;
+		        icon.text("volume_off");
+		    }
+		}
 
 		
 		function loadMorePosts() {
@@ -891,6 +1042,10 @@
 	            }
 	        });
 	    }
+	    
+	    
+	    
+	    
 	</script>
 	
 	

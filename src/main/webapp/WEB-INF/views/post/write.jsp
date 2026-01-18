@@ -149,7 +149,7 @@
                                 <div class="mb-3">
                                     <label class="form-label text-white-50 small text-uppercase fw-bold mb-1">Images</label>
                                     <input type="file" name="selectFile" id="selectFile" class="form-control write-input" multiple 
-                                           accept="image/*" onchange="handleFileSelect(this);">
+                                           accept="image/*, video/*" onchange="handleFileSelect(this);">
                                     
                                     <div class="viewer mt-2 d-flex flex-wrap gap-2"></div>
                                     
@@ -227,31 +227,45 @@
             if (input.files) {
                 const filesArr = Array.from(input.files);
                 filesArr.forEach(file => {
-                    if (!file.type.match("image.*")) return;
+                	if (!file.type.match("image.*") && !file.type.match("video.*")) {
+                        alert("이미지 또는 동영상 파일만 업로드할 수 있습니다.");
+                        return;
+                    }
                  
                     dataTransfer.items.add(file);  
                   
-                    renderNewFiles();
                 });
+                
+                renderNewFiles();
 
                 input.files = dataTransfer.files;
             }
         }
 
         function renderNewFiles() {
-
             $(".new-img-item").remove();
-            
             const $viewer = $(".viewer");
             const files = dataTransfer.files;
 
             for(let i=0; i<files.length; i++) {
                 const file = files[i];
                 const reader = new FileReader();
+                
                 reader.onload = function(e) {
+                    let mediaTag = "";
+                    
+                    // 파일 타입이 비디오인지 확인
+                    if (file.type.startsWith("video/")) {
+                        // 동영상은 muted(음소거) 상태로 미리보기
+                        mediaTag = `<video src="\${e.target.result}" style="width:100%; height:100%; object-fit:cover;" muted playsinline onmouseover="this.play()" onmouseout="this.pause()"></video>`;
+                    } else {
+                        // 이미지는 기존대로 처리
+                        mediaTag = `<img src="\${e.target.result}">`;
+                    }
+
                     let html = `
                         <div class="img-item new-img-item">
-                            <img src="\${e.target.result}">
+                            \${mediaTag}
                             <div class="btn-delete-img" onclick="deleteNewFile(\${i});">&times;</div>
                         </div>
                     `;

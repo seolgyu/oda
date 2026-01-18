@@ -36,9 +36,10 @@ import jakarta.servlet.http.Part;
 
 @Controller
 @RequestMapping("/post/*")
-@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, 
-		maxFileSize = 1024 * 1024 * 30,
-		maxRequestSize = 1024 * 1024 * 50 
+@MultipartConfig(
+		fileSizeThreshold = 1024 * 1024 * 2, 
+		maxFileSize = 1024 * 1024 * 200,
+		maxRequestSize = 1024 * 1024 * 300 
 )
 public class PostController {
 

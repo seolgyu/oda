@@ -19,9 +19,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @MultipartConfig(
 	// location = "c:/temp",			// 파일을 임시로 저장할 경로(생략가능. 기본값 ""), 지정된 경로가 없으면 업로드가 안됨
-	fileSizeThreshold = 1024 * 1024,	// 업로드된 파일이 임시로 서버에 저장되지 않고 메모리에서 스트림으로 바로 전달되는 크기
-	maxFileSize = 1024 * 1024 * 5,		// 업로드된 하나의 파일 크기. 기본 용량 제한 없음
-	maxRequestSize = 1024 * 1024 * 10	// 폼 전체 용량
+	fileSizeThreshold = 1024 * 1024 * 2,	// 업로드된 파일이 임시로 서버에 저장되지 않고 메모리에서 스트림으로 바로 전달되는 크기
+	maxFileSize = 1024 * 1024 * 200,		// 업로드된 하나의 파일 크기. 기본 용량 제한 없음
+	maxRequestSize = 1024 * 1024 * 300	// 폼 전체 용량
 )
 @WebServlet("/")
 public class DispatcherServlet extends HttpServlet {
