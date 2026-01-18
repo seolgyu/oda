@@ -97,19 +97,6 @@
 				<div class="planet planet-1"></div>
 				<div class="planet planet-2"></div>
 			</div>
-			
-			<div id="sessionToast" class="glass-toast shadow-lg">
-				<div class="d-flex align-items-center gap-3">
-					<div class="toast-icon-circle">
-						<span id="toastIcon" class="material-symbols-outlined fs-5">info</span>
-					</div>
-					<div class="toast-content">
-						<h4 id="toastTitle"
-							class="text-xs fw-bold text-uppercase tracking-widest mb-1">System</h4>
-						<p id="toastMessage" class="text-sm text-gray-300 mb-0">메시지</p>
-					</div>
-				</div>
-			</div>
 
 			<div class="feed-scroll-container custom-scrollbar">
 				<div class="d-flex justify-content-center py-4 pb-0 px-3">
@@ -195,7 +182,8 @@
 										</div>
 									</div>
 
-									<a href="#" class="setting-nav-item"> <span
+									<a href="#" class="setting-nav-item"
+									   data-url="${pageContext.request.contextPath}/member/settings/notification"> <span
 										class="material-symbols-outlined">notifications_active</span>
 										<span>Notifications</span>
 									</a>

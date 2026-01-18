@@ -15,7 +15,7 @@
     	FROM likes l
     	LEFT OUTER JOIN posts p ON l.post_id = p.post_id
     	LEFT OUTER JOIN member m ON l.user_num = m.user_num
-    	LEFT OUTER JOIN fileat f ON p.post_id = f.post_id
+    	LEFT OUTER JOIN fileat f ON p.post_id = f.post_id AND f.file_order = 0
     	WHERE l.user_num = #{userNum}
     	AND p.is_deleted = '0'
     	ORDER BY l.created_date DESC
@@ -24,17 +24,17 @@
     
     <select id="listSavedPost" parameterType="map" resultType="com.hs.model.PostDTO">
         SELECT
-        	l.post_id AS postId,
-        	l.user_num AS userNum,
+        	s.post_id AS postId,
+        	s.user_num AS userNum,
         	m.user_nickname AS authorNickname,
         	p.title,
         	p.content,
         	p.created_date AS createdDate,
         	f.file_path AS thumbnail
     	FROM saved s
-    	LEFT OUTER JOIN posts p ON l.post_id = p.post_id
-    	LEFT OUTER JOIN member m ON l.user_num = m.user_num
-    	LEFT OUTER JOIN fileat f ON p.post_id = f.post_id
+    	LEFT OUTER JOIN posts p ON s.post_id = p.post_id
+    	LEFT OUTER JOIN member m ON s.user_num = m.user_num
+    	LEFT OUTER JOIN fileat f ON p.post_id = f.post_id AND f.file_order = 0
     	WHERE s.user_num = #{userNum}
     	AND p.is_deleted = '0'
     	ORDER BY s.saved_date DESC
@@ -103,6 +103,32 @@
     	FROM comments
     	WHERE user_num = #{userNum}
     	AND is_deleted = '0'
+    </select>
+    
+    <update id="updateNotiOption" parameterType="map">
+    	UPDATE notification_options
+    	SET UPDATED_DATE = SYSDATE
+        	<choose>
+            	<when test="type == 'like'">, ALLOW_LIKE = #{status}</when>
+            	<when test="type == 'comment'">, ALLOW_COMMENT = #{status}</when>
+            	<when test="type == 'repost'">, ALLOW_REPOST = #{status}</when>
+            	<when test="type == 'follow'">, ALLOW_FOLLOW = #{status}</when>
+            	<when test="type == 'notice'">, ALLOW_NOTICE = #{status}</when>
+            	<when test="type == 'event'">, ALLOW_EVENT = #{status}</when>
+            </choose>
+    	WHERE USER_NUM = #{userNum}
+	</update>
+	
+	<select id="getNotiOption" parameterType="Long" resultType="com.hs.model.NotificationOptionDTO">
+        SELECT
+        	user_num AS userNum,
+        	allow_like AS allowLike,
+        	allow_comment AS allowComment,
+        	allow_follow AS allowFollow,
+        	allow_repost AS allowRepost,
+        	updated_Date AS updatedDate
+    	FROM notification_options
+    	WHERE user_num = #{userNum}
     </select>
 	
 </mapper>

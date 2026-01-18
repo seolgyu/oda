@@ -217,4 +217,14 @@ public class MemberServiceImpl implements MemberService {
 		return 0;
 	}
 
+	@Override
+	public void insertNotiOption(Long userNum) throws SQLException {
+		try {
+			mapper.insertNotiOption(userNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
 }

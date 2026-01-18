@@ -4,10 +4,31 @@
 window.page = 1;
 window.isLoading = false;
 window.io = null;
+window.currentTab = 'my-posts';
 
 $(function() {
 	initInfiniteScroll();
+
+	$('#mypage-tabs button').on('click', function() {
+		const target = $(this).data('target');
+		if (window.currentTab === target) return;
+
+		$('#mypage-tabs button').removeClass('active-filter').addClass('text-secondary border-0').removeClass('fw-bold');
+		$(this).addClass('active-filter').removeClass('text-secondary border-0').addClass('fw-bold');
+
+		window.currentTab = target;
+		window.page = 1;
+		$('#post-list-container').empty();
+
+		initInfiniteScroll();
+
+		loadNextPage(getTabUrl(), renderMyPost, true);
+	});
 });
+
+function getTabUrl() {
+    return window.currentTab === 'reposts' ? '/member/settings/loadMyReposts' : '/member/settings/loadMyPosts';
+}
 
 function initInfiniteScroll() {
 	if (window.io) window.io.disconnect();
@@ -20,28 +41,28 @@ function initInfiniteScroll() {
 	window.io = new IntersectionObserver((entries) => {
 		entries.forEach(entry => {
 			if (entry.isIntersecting && !window.isLoading) {
-				loadNextPage('/member/settings/loadMyPosts', renderMyPost);
+				loadNextPage(getTabUrl(), renderMyPost);
 			}
 		});
 	}, {
 		root: $scrollContainer,
-		rootMargin: '200px',
+		rootMargin: '300px',
 		threshold: 0.1
 	});
 
 	window.io.observe($sentinel);
 }
 
-function loadNextPage(url, renderFunc) {
+function loadNextPage(url, renderFunc, isFirst = false) {
 	if (window.isLoading) return;
 	window.isLoading = true;
 
-	const nextPage = window.page + 1;
+	const targetPage = isFirst ? 1 : window.page + 1;
 
 	$.ajax({
 		url: window.cp + url,
 		type: 'POST',
-		data: { page: nextPage, userId: window.userId },
+		data: { page: targetPage, userId: window.userId },
 		dataType: 'json',
 		success: function(data) {
 			if (data.status === 'success' && data.list && data.list.length > 0) {
@@ -63,15 +84,28 @@ function loadNextPage(url, renderFunc) {
 					}
 				});
 
-				window.page = nextPage;
+				window.page = targetPage;
 				window.isLoading = false;
 			} else {
 				window.isLoading = false;
 				if (window.io) window.io.disconnect();
+				if (isFirst && (!data.list || data.list.length === 0)) {
+					const emptyMsg = window.currentTab === 'reposts' ? '리포스트한 게시글이 없습니다' : '등록된 게시글이 없습니다';
+					const emptyHtml = `
+				    	<div class="glass-card py-5 text-center shadow-lg border-0 w-100"
+				    		style="background: rgba(255, 255, 255, 0.02); border-radius: 1rem !important;">
+				    		<div class="py-4">
+				    			<span class="material-symbols-outlined text-secondary opacity-20" style="font-size: 80px;">rocket_launch</span>
+				    			<h4 class="text-white mt-3 fw-bold opacity-75">${emptyMsg}</h4>
+				    		</div>
+				    	</div>`;
+					$('#post-list-container').html(emptyHtml);
+				}
 			}
 		},
 		error: function() {
 			window.isLoading = false;
+			showToast("error", "데이터를 불러오는 데 실패했습니다.");
 		}
 	});
 }
@@ -79,20 +113,33 @@ function loadNextPage(url, renderFunc) {
 function renderMyPost(item) {
 	const cp = window.cp; // contextPath
 	const isListMode = $('#post-list-container').hasClass('list-mode');
+	const isRepostTab = window.currentTab === 'reposts';
+	
+	let repostBadgeHtml = '';
+	    if (isRepostTab) {
+	        repostBadgeHtml = `
+	            <div class="px-3 pt-3 pb-0 d-flex align-items-center gap-2" style="opacity: 0.85;">
+	                <div class="d-flex align-items-center gap-1 bg-success bg-opacity-10 px-2 py-1 rounded-pill" 
+	                     style="border: 1px solid rgba(25, 135, 84, 0.2);">
+	                    <span class="material-symbols-outlined" style="font-size: 14px; color: #198754; font-weight: bold;">repeat</span>
+	                    <span style="font-size: 11px; font-weight: 700; color: #198754; letter-spacing: -0.2px;">Reposted</span>
+	                </div>
+	                <span class="text-secondary" style="font-size: 11px; letter-spacing: -0.3px;">
+	                    on ${item.repostDate}
+	                </span>
+	            </div>
+	        `;
+	    }
 
-	// [1] 축약형과 카드형의 display 상태 결정
 	const listViewDisplay = isListMode ? 'flex' : 'none';
 	const cardViewDisplay = isListMode ? 'none' : 'block';
 
-	// [2] 좋아요 상태 및 파일 체크 로직
 	const likedClass = item.likedByUser ? 'text-danger' : '';
 	const likedFill = item.likedByUser ? 1 : 0;
 
-	// 이미지 리스트 처리
 	const hasImages = item.fileList && item.fileList.length > 0;
 	const firstImg = hasImages ? item.fileList[0].filePath : null;
 
-	// [3] 카드형 전용 미디어(캐러셀) HTML 생성
 	let cardMediaHtml = '';
 	if (hasImages) {
 		if (item.fileList.length > 1) {
@@ -139,6 +186,7 @@ function renderMyPost(item) {
 
 	return `
         <div class="glass-card shadow-lg group mb-4 post-item-card">
+			${repostBadgeHtml}
             <div class="list-view-item p-3" style="display: ${listViewDisplay};">
                 <div class="d-flex align-items-start gap-3 w-100">
                     <div class="flex-shrink-0 thumbnail-box" style="width: 90px; height: 90px;">

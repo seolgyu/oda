@@ -16,7 +16,10 @@ public interface PostMapper {
 	public void deletePost(long postId) throws Exception;
 	public PostDTO findById(long postId);
 	public List<PostDTO> listPost();
+	
 	public List<PostDTO> listUserPost(Map<String, Object> map) throws SQLException;
+	public List<PostDTO> listUserRepost(Map<String, Object> map) throws SQLException;
+	
 	public void insertFileAt(FileAtDTO fileDto) throws Exception;
 	public void updateHitCount(long postId) throws Exception;
 	public List<FileAtDTO> listFileAt(long postId);

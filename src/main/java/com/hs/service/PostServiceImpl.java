@@ -305,6 +305,22 @@ public class PostServiceImpl implements PostService {
 	}
 	
 	@Override
+	public List<PostDTO> listUserRepost(Map<String, Object> map) throws SQLException {
+		List<PostDTO> list = null;
+		try {
+			list = mapper.listUserRepost(map);
+			for(PostDTO item : list) {
+				item.setLikedByUser(isLiked(item.getPostId(), (Long)map.get("loginUserNum")));
+				List<FileAtDTO> files = mapper.listFileAt(item.getPostId());
+				item.setFileList(files);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	@Override
 	public void insertReport(ReportDTO dto) throws Exception {
 	    try {
 	        mapper.insertReport(dto);

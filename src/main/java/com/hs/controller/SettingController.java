@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hs.model.MemberDTO;
+import com.hs.model.NotificationOptionDTO;
 import com.hs.model.PostDTO;
 import com.hs.model.ReplyDTO;
 import com.hs.model.SessionInfo;
@@ -181,8 +182,8 @@ public class SettingController {
 	        
 	        List<ReplyDTO> list = settingService.getMyReply(map);
 	        
-	       req.setAttribute("list", list);
-	       req.setAttribute("totalCount", settingService.totalCountMyComment(userNum));
+	        req.setAttribute("list", list);
+	        req.setAttribute("totalCount", settingService.totalCountMyComment(userNum));
     	} catch(Exception e) {
     		e.printStackTrace();
     	}
@@ -199,6 +200,23 @@ public class SettingController {
     public String settingsPrivacyScope(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         return "member/setting/settings_privacyScope";
     }
+    
+	@RequestMapping("notification")
+	public String settingsNotification(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		HttpSession session = req.getSession();
+
+		try {
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			Long userNum = (Long) info.getMemberIdx();
+			
+			NotificationOptionDTO dto = settingService.getNotiOption(userNum);
+
+			req.setAttribute("options", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "member/setting/settings_notification";
+	}
     
     @PostMapping("updateAccount")
     @ResponseBody
@@ -599,15 +617,14 @@ public class SettingController {
 	            return model;
 	        }
 			
-			// Long userNum = (Long)info.getMemberIdx();
-	        // Long postId = Long.parseLong(req.getParameter("postId"));
+			Long userNum = (Long)info.getMemberIdx();
+	        Long postId = Long.parseLong(req.getParameter("postId"));
 	        
-	        // 수정할 부분
-			// postService.insertPostLike(postId, userNum);
+			postService.insertPostSave(postId, userNum);
 			
-			// int likeCount = postService.countPostLike(postId);
+			int savedCount = postService.countPostLike(postId);
 			
-			// model.put("likeCount", likeCount);
+			model.put("savedCount", savedCount);
 			model.put("status", "success");
 			
 		} catch (Exception e) {
@@ -681,6 +698,79 @@ public class SettingController {
 	       model.put("user", dto);
 	       model.put("list", list);
 	       model.put("status", "success");
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    		model.put("status", "error");
+    	}
+    	
+        return model;
+    }
+    
+    @PostMapping("loadMyReposts")
+    @ResponseBody
+    public Map<String, Object> loadMyReposts(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	HttpSession session = req.getSession();
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	
+    	try {
+	    	SessionInfo info = (SessionInfo) session.getAttribute("member");
+	    	Long loginUserNum = (info != null) ? info.getMemberIdx() : 0L;
+	    	
+	    	if (info == null) {
+	    		model.put("status", "error");
+	    		return model;
+	    	}
+	    	
+	    	int pageNo = Integer.parseInt(req.getParameter("page"));
+	    	String userId = req.getParameter("userId");
+	    	
+	    	MemberDTO dto = service.findById(userId);
+	    	
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("loginUserNum", loginUserNum);
+	        map.put("userNum", dto.getUserIdx());
+	        map.put("offset", (pageNo - 1) * 5);
+	        map.put("size", 5);
+	        
+	        List<PostDTO> list = postService.listUserRepost(map);
+	        
+	        model.put("user", dto);
+	        model.put("list", list);
+	        model.put("status", "success");
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    		model.put("status", "error");
+    	}
+    	
+        return model;
+    }
+    
+    @PostMapping("toggleNotiOption")
+    @ResponseBody
+    public Map<String, Object> toggleNotiOption(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	HttpSession session = req.getSession();
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	
+    	try {
+	    	SessionInfo info = (SessionInfo) session.getAttribute("member");
+	    	Long userNum = (info != null) ? info.getMemberIdx() : 0L;
+	    	
+	    	if (info == null) {
+	    		model.put("status", "error");
+	    		return model;
+	    	}
+	    	
+	    	String type = req.getParameter("type");
+	    	int status = Integer.parseInt(req.getParameter("status"));
+	    	
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("userNum", userNum);
+	        map.put("type", type);
+	        map.put("status", status);
+	        
+	        settingService.updateNotiOption(map);
+	        
+	        model.put("status", "success");
     	} catch(Exception e) {
     		e.printStackTrace();
     		model.put("status", "error");

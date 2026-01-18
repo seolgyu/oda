@@ -113,6 +113,36 @@
         ORDER BY p.POST_ID DESC
         OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
     </select>
+    
+    <select id="listUserRepost" parameterType="map" resultType="com.hs.model.PostDTO">
+        SELECT
+            p.POST_ID AS postId,
+            p.USER_NUM AS userNum,
+            p.COMMUNITY_ID AS communityId,
+            p.TITLE,
+            p.CONTENT,
+            p.POST_TYPE AS postType,
+            p.VIEW_COUNT AS viewCount,
+            p.LIKE_COUNT AS likeCount,
+            (SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED = '0') AS commentCount,
+            p.CREATED_DATE AS createdDate,
+            p.UPDATED_DATE AS updatedDate,
+            p.STATE,
+            p.REPLY_ENABLED AS replyEnabled,
+            p.SHOW_LIKES AS showLikes,
+            p.SHOW_VIEWS AS showViews,
+            u.USER_NICKNAME AS authorNickname,
+            u.USER_ID AS authorId,
+            u.USER_PROFILE AS authorProfileImage,
+            r.REPOST_DATE AS repostDate
+        FROM REPOST r
+        JOIN POSTS p ON r.POST_ID = p.POST_ID
+        JOIN MEMBER u ON p.USER_NUM = u.USER_NUM
+        WHERE r.USER_NUM = #{userNum}
+          AND p.IS_DELETED = '0'
+        ORDER BY r.REPOST_DATE DESC
+        OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+    </select>
 
     <insert id="insertFileAt" parameterType="com.hs.model.FileAtDTO">
         INSERT INTO FILEAT (

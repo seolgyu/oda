@@ -3,77 +3,73 @@ package com.hs.model;
 import java.util.Date;
 
 public class NotificationDTO {
-	private Long notificationId; // PK
-	private Long userId; // 수신자
-	private String type; // COMMENT, LIKE...
+	
+	// Notification DB Attributes
+	private Long notiId;
+	private String type;
 	private String content;
-	private String relatedType; // POST, COMMENT...
-	private Long relatedId;
-	private String isRead; // '0', '1'
-	private Date createdAt;
-
-	public Long getNotificationId() {
-		return notificationId;
+	private String target;
+	private boolean checked;
+	private Date createdDate;
+	private Long toUserNum;
+	private Long fromUserNum;
+	
+	// 좋아요 알림
+	
+	// 댓글 알림
+	
+	// 리포스트 알림
+	
+	// 신고 알림
+	
+	public Long getNotiId() {
+		return notiId;
 	}
-
-	public void setNotificationId(Long notificationId) {
-		this.notificationId = notificationId;
+	public void setNotiId(Long notiId) {
+		this.notiId = notiId;
 	}
-
-	public Long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-
 	public String getType() {
 		return type;
 	}
-
 	public void setType(String type) {
 		this.type = type;
 	}
-
 	public String getContent() {
 		return content;
 	}
-
 	public void setContent(String content) {
 		this.content = content;
 	}
-
-	public String getRelatedType() {
-		return relatedType;
+	public String getTarget() {
+		return target;
 	}
-
-	public void setRelatedType(String relatedType) {
-		this.relatedType = relatedType;
+	public void setTarget(String target) {
+		this.target = target;
 	}
-
-	public Long getRelatedId() {
-		return relatedId;
+	
+	public Date getCreatedDate() {
+		return createdDate;
 	}
-
-	public void setRelatedId(Long relatedId) {
-		this.relatedId = relatedId;
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
-
-	public String getIsRead() {
-		return isRead;
+	public Long getToUserNum() {
+		return toUserNum;
 	}
-
-	public void setIsRead(String isRead) {
-		this.isRead = isRead;
+	public void setToUserNum(Long toUserNum) {
+		this.toUserNum = toUserNum;
 	}
-
-	public Date getCreatedAt() {
-		return createdAt;
+	public Long getFromUserNum() {
+		return fromUserNum;
 	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
+	public void setFromUserNum(Long fromUserNum) {
+		this.fromUserNum = fromUserNum;
+	}
+	public boolean isChecked() {
+		return checked;
+	}
+	public void setChecked(boolean checked) {
+		this.checked = checked;
 	}
 
 }

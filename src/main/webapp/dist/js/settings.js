@@ -5,6 +5,7 @@ let page = 1;
 let isLoading = false;
 let io;
 
+
 const observerOptions = {
 	root: document.querySelector('.feed-scroll-container'),
 	rootMargin: '0px',
@@ -113,7 +114,7 @@ function renderSavedPost(list) {
             <div class="action-section d-flex align-items-center justify-content-center border-start border-white border-opacity-10 flex-shrink-0"
                  style="width: 70px;">
                 <button type="button" class="btn-save-toggle" onclick="toggleSave(this, '${list.postId}')">
-                    <span class="material-symbols-outlined text-primary" 
+                    <span class="material-symbols-outlined text-warning" 
                           style="font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;">
                         bookmark
                     </span>
@@ -279,33 +280,5 @@ function hideFieldError(input) {
 
 	$input.next('.error-text').remove();
 	$input.parent().next('.error-text').remove();
-}
-
-// modelToast 알림
-function showToast(type, msg) {
-	const $toast = $('#sessionToast');
-	const $title = $('#toastTitle');
-	const $icon = $('#toastIcon');
-
-	$('#toastMessage').text(msg);
-
-	if (type === "success") {
-		$title.text('SUCCESS').css('color', '#4ade80');
-		$icon.text('check_circle');
-	}
-	else if (type === "info") {
-		$title.text('INFO').css('color', '#8B5CF6');
-		$icon.text('info');
-	}
-	else if (type === "error") {
-		$title.text('ERROR').css('color', '#f87171');
-		$icon.text('error');
-	}
-
-	$toast.addClass('show');
-
-	setTimeout(function() {
-		$toast.removeClass('show');
-	}, 2500);
 }
 

@@ -28,6 +28,7 @@ public class PostDTO {
 	private List<ReplyDTO> replyList;
 	private boolean savedByUser;
     private boolean repostedByUser;
+    private String repostDate;
 
 	public Long getPostId() {
 		return postId;
@@ -237,6 +238,14 @@ public class PostDTO {
 
 	public void setRepostedByUser(boolean repostedByUser) {
 		this.repostedByUser = repostedByUser;
+	}
+
+	public String getRepostDate() {
+		return repostDate;
+	}
+
+	public void setRepostDate(String repostDate) {
+		this.repostDate = repostDate;
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hs.mapper.SettingMapper;
+import com.hs.model.NotificationOptionDTO;
 import com.hs.model.PostDTO;
 import com.hs.model.ReplyDTO;
 import com.hs.mybatis.support.MapperContainer;
@@ -102,5 +103,26 @@ public class SettingServiceImpl implements SettingService {
 		return 0;
 	}
 
+	@Override
+	public void updateNotiOption(Map<String, Object> map) throws SQLException {
+		try {
+			mapper.updateNotiOption(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public NotificationOptionDTO getNotiOption(Long userNum) throws SQLException {
+		NotificationOptionDTO dto = null;
+		try {
+			dto = mapper.getNotiOption(userNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return dto;
+	}
 
 }

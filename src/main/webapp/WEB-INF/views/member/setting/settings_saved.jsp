@@ -10,7 +10,7 @@
 			<p class="text-secondary text-sm mb-0">Review and manage your cosmic bookmarks.</p>
 		</div>
 		<span class="text-secondary text-xs pb-1">Total <span
-			class="text-white fw-bold">${totalCount}</span></span>
+			class="text-white fw-bold">${savedCount}</span></span>
 	</div>
 
 	<div class="d-flex flex-column gap-2 list-container">
@@ -53,7 +53,7 @@
 							style="width: 70px;">
 							<button type="button" class="btn-save-toggle"
 								onclick="toggleSave(this, '${item.postId}')">
-								<span class="material-symbols-outlined text-primary"
+								<span class="material-symbols-outlined text-warning"
 									style="font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;">
 									bookmark </span> </button>
 						</div>
@@ -100,10 +100,19 @@
 	display: flex; align-items: center; justify-content: center;
 }
 .btn-save-toggle:hover {
-	background: rgba(99, 102, 241, 0.15); /* 블루 계열 호버 */
-	transform: scale(1.1);
+	background: rgba(255, 193, 7, 0.1); 
+    transform: scale(1.1);
 }
-.text-primary { color: #818cf8 !important; } /* 북마크 강조용 라이트 블루 */
+
+.text-warning { 
+    color: #ffc107 !important; 
+    filter: drop-shadow(0 0 5px rgba(255, 193, 7, 0.3)); /* 은은한 발광 효과 */
+}
+
+.text-secondary { 
+    color: rgba(255, 255, 255, 0.5) !important; 
+}
+
 .text-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>
 
@@ -132,27 +141,26 @@ function toggleSave(btn, postId) {
     
 	const $icon = $(btn).find('.material-symbols-outlined');
     const $item = $(btn).closest('.record-item');
-    const isSaved = $icon.hasClass('text-primary');
+    const isSaved = $icon.hasClass('text-warning');
     
     $.ajax({
 		type: "POST",
-		url: '${pageContext.request.contextPath}/member/settings/toggleSave',
+		url: '${pageContext.request.contextPath}/member/settings/toggleSaved',
 		data: {postId: postId},
 		dataType: "json",
 		success: function(data) {
 			if (data.status === 'success') {
 				if(isSaved) {
-			        $icon.css('font-variation-settings', "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24");
-			        $icon.removeClass('text-primary').addClass('text-secondary');
-			        $item.css('opacity', '0.5');
-			        showToast("success", "북마크를 취소했습니다.");
-			    } else {
-					// 다시 저장
-			        $icon.css('font-variation-settings', "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24");
-			        $icon.removeClass('text-secondary').addClass('text-primary');
-			        $item.css('opacity', '1');
-			        showToast("success", "북마크에 저장되었습니다.");
-			    }
+                    $icon.css('font-variation-settings', "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24");
+                    $icon.removeClass('text-warning').addClass('text-secondary');
+                    $item.css('opacity', '0.5');
+                    showToast("info", "북마크를 취소했습니다.");
+                } else {
+                    $icon.css('font-variation-settings', "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24");
+                    $icon.removeClass('text-secondary').addClass('text-warning');
+                    $item.css('opacity', '1');
+                    showToast("success", "북마크에 저장되었습니다.");
+                }
 			} else {
 				showToast("error", "저장에 실패했습니다.");
 			}

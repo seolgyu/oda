@@ -942,16 +942,6 @@
 											'gap-4');
 								}
 							});
-
-					// [참고] 기존 탭(My Post / Repost) 코드와 충돌하지 않도록 별도로 관리됩니다.
-					$('#mypage-tabs button').on(
-							'click',
-							function() {
-								$(this).parent().find('button').removeClass(
-										'active-filter');
-								$(this).addClass('active-filter');
-								// 여기에 포스트 필터링(Ajax 등) 로직을 추가하시면 됩니다.
-							});
 				});
 		
 		function showBadgePreview(e, title, desc) {

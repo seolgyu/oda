@@ -53,6 +53,11 @@
 		INSERT INTO log_login (login_num, login_usernum, login_time)
 		VALUES (log_login_seq.NEXTVAL, #{userNum}, SYSDATE)
 	</insert>
+	
+	<insert id="insertNotiOption" parameterType="Long">
+		INSERT INTO notification_options(user_num, allow_like, allow_comment, allow_follow, allow_repost, updated_date)
+		VALUES(#{userNum}, 1, 1, 1, 1, SYSDATE)
+	</insert>
 
 	<select id="findById" parameterType="String" resultType="com.hs.model.MemberDTO">
 		SELECT user_num AS userIdx, 

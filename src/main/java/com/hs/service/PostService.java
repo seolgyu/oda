@@ -16,7 +16,10 @@ public interface PostService {
 	public PostDTO findById(long postId);
 	public List<PostDTO> listPost();
 	public List<PostDTO> listPostMain(Map<String, Object> map);
+	
 	public List<PostDTO> listUserPost(Map<String, Object> map) throws SQLException;
+	public List<PostDTO> listUserRepost(Map<String, Object> map) throws SQLException;
+	
     List<CommentDTO> listComment(long postId, long currentUserNum);
     void insertComment(CommentDTO dto) throws Exception;
     void updateComment(CommentDTO dto) throws Exception;

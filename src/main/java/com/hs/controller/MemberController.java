@@ -298,6 +298,9 @@ public class MemberController {
 
 			service.insertMember(dto);
 			
+			MemberDTO newUser = service.findById(userId);
+			service.insertNotiOption(newUser.getUserIdx());
+			
 			session.removeAttribute("isVerified");
 			session.removeAttribute("verifiedEmail");
 			session.removeAttribute("targetEmail");
