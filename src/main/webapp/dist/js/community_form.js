@@ -48,6 +48,45 @@ $(function() {
 	});
 });
 
+$(function() {
+    // 페이지 로드 시 URL 파라미터 확인
+    const params = new URLSearchParams(window.location.search);
+    const joinStatus = params.get('join');
+	const leaveStatus = params.get('leave');
+    const communityId = params.get('community_id');
+
+    // 디버깅용 (브라우저 콘솔에서 확인 가능)
+    console.log("Current Join Status:", joinStatus);
+
+    if (joinStatus === 'success') {
+        // 즉시 실행하면 DOM이 덜 그려졌을 수 있으니 아주 약간의 지연(100ms)을 줍니다.
+        setTimeout(function() {
+            if (typeof showToast === 'function') {
+                showToast("success", "성공적으로 가입되었습니다!");
+            } else {
+                console.error("showToast 함수를 찾을 수 없습니다. header.jsp가 포함되었는지 확인하세요.");
+            }
+        }, 100);
+
+        // 토스트를 띄운 후, 주소창에서 join=success만 제거하고 community_id는 남겨둠
+        if (communityId) {
+            const newUrl = window.location.pathname + '?community_id=' + communityId;
+            window.history.replaceState({}, '', newUrl);
+        }
+    }
+	
+	if (leaveStatus === 'success') {
+	        setTimeout(function() {
+	            if (typeof showToast === 'function') {
+	                showToast("success", "탈퇴 처리가 완료되었습니다.");
+	            }
+	        }, 100);
+
+	        // 주소창에서 ?leave=success 제거
+	        window.history.replaceState({}, '', window.location.pathname);
+	    }
+    
+});
 
 function initFormState() {
     const dbIsPrivate = $('#db_is_private').val();
@@ -72,10 +111,11 @@ function initFormState() {
 
 function checkCommunityName() {
     const $nameInput = $('input[name="com_name"]');
-    const name = $nameInput.val().trim();
+    const com_name = $nameInput.val().trim();
     const $errorEl = $('#error-com_name, #nameError');
+	const community_id = $('input[name="community_id"]').val() || "";
 
-    if (!name) {
+    if (!com_name) {
         $errorEl.text("커뮤니티 이름을 입력해주세요.").removeClass('text-green-500').addClass('text-red-500').show();
         return;
     }
@@ -90,7 +130,7 @@ function checkCommunityName() {
 		}
 	};
 
-    ajaxRequest('checkName', 'GET', { com_name: com_name, community_id: community_Id }, 'json', fn);
+    ajaxRequest('checkName', 'GET', { com_name: com_name, community_id: community_id }, 'json', fn);
 }
 
 
@@ -164,10 +204,10 @@ function submitCommunity($form) {
         params = new FormData($form[0]);
         isFile = true;
 		
-		if ($('#avatar-img-view').hasClass('d-none')) {
+		if ($('#avatar-img-view').hasClass('hidden')) {
 			params.append("isIconDeleted", "true");
 		}
-		if ($('#banner-img-view').hasClass('d-none')) {
+		if ($('#banner-img-view').hasClass('hidden')) {
 			params.append("isBannerDeleted", "true");
 		}
 		
@@ -311,13 +351,15 @@ function leaveCommunity(communityId) {
             ajaxRequest("leave", 'GET', { community_id: communityId }, 'json', function(res) {
                 if(res.status === 'success') {
                     if(location.pathname.includes('management')) {
-                        location.reload(); 
+                        location.href = location.pathname + "?leave=success"; 
                     } else {
                         $('.btn-join-toggle').attr('data-joined', 'false').text('가입하기');
                         closeConfirmModal();
                         showToast("success", "탈퇴 처리가 완료되었습니다.");
                     }
-                }
+                } else{
+					showToast("error", "탈퇴 처리에 실패했습니다.");
+				}
             });
         }
     );
@@ -330,27 +372,48 @@ function closeConfirmModal() {
 }
 
 function showToast(type, msg) {
-    const $toast = $('#sessionToast').length ? $('#sessionToast') : $('.glass-toast');
-    const $msg = $('#toastMessage').length ? $('#toastMessage') : $toast.find('.toast-msg'); 
-    const $icon = $toast.find('.material-symbols-outlined');
-    const $iconCircle = $toast.find('.toast-icon-circle');
+    const container = document.getElementById('toastContainer');
+    if (!container) return; 
 
-    $msg.text(msg);
-
-    if (type === "success") {
-        $icon.text('check_circle');
-        $iconCircle.css('background', 'linear-gradient(to top right, #22c55e, #10b981)');
-    } else if (type === "error") {
-        $icon.text('error');
-        $iconCircle.css('background', 'linear-gradient(to top right, #ef4444, #f43f5e)');
-    } else if (type === "info") {
-        $icon.text('info');
-        $iconCircle.css('background', 'linear-gradient(to top right, #a855f7, #6366f1)');
+    const toastId = 'toast-' + Date.now();
+    let title = 'SYSTEM', icon = 'info', color = '#8B5CF6';
+    
+    if (type === "success") { 
+        title = 'SUCCESS'; icon = 'check_circle'; color = '#4ade80'; 
+    } else if (type === "error") { 
+        title = 'ERROR'; icon = 'error'; color = '#f87171'; 
     }
 
-    $toast.addClass('show');
+    // 백슬래시(\)를 모두 제거한 순수 template literal 문법입니다.
+    const toastHtml = `
+        <div id="${toastId}" class="glass-toast ${type}">
+            <div class="d-flex align-items-center gap-3">
+                <div class="toast-icon-circle">
+                    <span class="material-symbols-outlined fs-5">${icon}</span>
+                </div>
+                <div class="toast-content">
+                    <h4 class="text-xs fw-bold text-uppercase tracking-widest mb-1" style="color: ${color}">${title}</h4>
+                    <p class="text-sm text-gray-300 mb-0">${msg}</p>
+                </div>
+            </div>
+        </div>`;
 
-    setTimeout(function() {
-        $toast.removeClass('show');
+    const $newToast = $(toastHtml);
+    $(container).append($newToast);
+
+    setTimeout(() => $newToast.addClass('show'), 50);
+
+    setTimeout(() => {
+        $newToast.removeClass('show');
+        setTimeout(() => {
+            $newToast.animate({
+                height: 0, marginTop: 0, marginBottom: 0,
+                paddingTop: 0, paddingBottom: 0, opacity: 0
+            }, {
+                duration: 350,
+                easing: "swing",
+                complete: function() { $(this).remove(); }
+            });
+        }, 400);
     }, 2500);
 }
