@@ -60,12 +60,30 @@ $(function(){
 // 회원 상세 페이지 이동
 // ==========================================
 function viewDetail(userId) {
-    const contextPath = document.querySelector('input[name="contextPath"]')?.value || '';
-    const page = document.querySelector('input[name="page"]')?.value || '1';
-    const size = document.querySelector('input[name="size"]')?.value || '10';
-    const schType = document.querySelector('select[name="schType"]')?.value || '';
-    const kwd = document.querySelector('input[name="kwd"]')?.value || '';
-    const state = document.querySelector('input[name="state"]')?.value || '';
+    // 수정: optional chaining 제거
+    // const contextPath = document.querySelector('input[name="contextPath"]')?.value || '';
+    const contextPathInput = document.querySelector('input[name="contextPath"]');
+    const contextPath = contextPathInput ? contextPathInput.value : '';
+    
+    // const page = document.querySelector('input[name="page"]')?.value || '1';
+    const pageInput = document.querySelector('input[name="page"]');
+    const page = pageInput ? pageInput.value : '1';
+    
+    // const size = document.querySelector('input[name="size"]')?.value || '10';
+    const sizeInput = document.querySelector('input[name="size"]');
+    const size = sizeInput ? sizeInput.value : '10';
+    
+    // const schType = document.querySelector('select[name="schType"]')?.value || '';
+    const schTypeInput = document.querySelector('select[name="schType"]');
+    const schType = schTypeInput ? schTypeInput.value : '';
+    
+    // const kwd = document.querySelector('input[name="kwd"]')?.value || '';
+    const kwdInput = document.querySelector('input[name="kwd"]');
+    const kwd = kwdInput ? kwdInput.value : '';
+    
+    // const state = document.querySelector('input[name="state"]')?.value || '';
+    const stateInput = document.querySelector('input[name="state"]');
+    const state = stateInput ? stateInput.value : '';
     
     // URL 파라미터 구성
     let url = contextPath + '/admin/member/detailmember?user_id=' + encodeURIComponent(userId);
@@ -103,11 +121,17 @@ function bulkDormant() {
         memberIds.push(checkbox.value);
     });
     
-    if (!confirm(`선택한 ${memberIds.length}명의 회원을 휴면 상태로 변경하시겠습니까?`)) {
+    // 수정: template literals를 문자열 연결로 변경
+    // if (!confirm(`선택한 ${memberIds.length}명의 회원을 휴면 상태로 변경하시겠습니까?`)) {
+    if (!confirm('선택한 ' + memberIds.length + '명의 회원을 휴면 상태로 변경하시겠습니까?')) {
         return;
     }
     
-    const contextPath = document.querySelector('input[name="contextPath"]')?.value || '';
+    // 수정: optional chaining 제거
+    // const contextPath = document.querySelector('input[name="contextPath"]')?.value || '';
+    const contextPathInput = document.querySelector('input[name="contextPath"]');
+    const contextPath = contextPathInput ? contextPathInput.value : '';
+    
     const formData = new FormData();
     formData.append('memberIds', memberIds.join(','));
     formData.append('status', 3);
@@ -150,11 +174,17 @@ function bulkSuspend() {
         memberIds.push(checkbox.value);
     });
     
-    if (!confirm(`선택한 ${memberIds.length}명의 회원을 정지 상태로 변경하시겠습니까?`)) {
+    // 수정: template literals를 문자열 연결로 변경
+    // if (!confirm(`선택한 ${memberIds.length}명의 회원을 정지 상태로 변경하시겠습니까?`)) {
+    if (!confirm('선택한 ' + memberIds.length + '명의 회원을 정지 상태로 변경하시겠습니까?')) {
         return;
     }
     
-    const contextPath = document.querySelector('input[name="contextPath"]')?.value || '';
+    // 수정: optional chaining 제거
+    // const contextPath = document.querySelector('input[name="contextPath"]')?.value || '';
+    const contextPathInput = document.querySelector('input[name="contextPath"]');
+    const contextPath = contextPathInput ? contextPathInput.value : '';
+    
     const formData = new FormData();
     formData.append('memberIds', memberIds.join(','));
     formData.append('status', 4);
@@ -197,11 +227,17 @@ function bulkActivate() {
         memberIds.push(checkbox.value);
     });
     
-    if (!confirm(`선택한 ${memberIds.length}명의 회원을 정상 상태로 변경하시겠습니까?`)) {
+    // 수정: template literals를 문자열 연결로 변경
+    // if (!confirm(`선택한 ${memberIds.length}명의 회원을 정상 상태로 변경하시겠습니까?`)) {
+    if (!confirm('선택한 ' + memberIds.length + '명의 회원을 정상 상태로 변경하시겠습니까?')) {
         return;
     }
     
-    const contextPath = document.querySelector('input[name="contextPath"]')?.value || '';
+    // 수정: optional chaining 제거
+    // const contextPath = document.querySelector('input[name="contextPath"]')?.value || '';
+    const contextPathInput = document.querySelector('input[name="contextPath"]');
+    const contextPath = contextPathInput ? contextPathInput.value : '';
+    
     const formData = new FormData();
     formData.append('memberIds', memberIds.join(','));
     formData.append('status', 1);

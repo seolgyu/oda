@@ -12,4 +12,5 @@ public interface ContentMapper {
 	public int postProCount();
 	public int userCount(Map<String, Object> map);
 	public List<ContentDTO> memberList(Map<String, Object> map);
+	public int updateMemberStatus(Map<String, Object> map) throws Exception;
 }

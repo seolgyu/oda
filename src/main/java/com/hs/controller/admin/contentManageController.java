@@ -8,7 +8,9 @@ import java.util.Map;
 import com.hs.model.admin.ContentDTO;
 import com.hs.mvc.annotation.Controller;
 import com.hs.mvc.annotation.GetMapping;
+import com.hs.mvc.annotation.PostMapping;
 import com.hs.mvc.annotation.RequestMapping;
+import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
 import com.hs.service.admin.ContentService;
 import com.hs.service.admin.ContentServiceImpl;
@@ -122,5 +124,47 @@ public class contentManageController {
 			e.printStackTrace();
 		}
 		return mav;
+	}
+	
+	@ResponseBody
+	@PostMapping("updateStatus")
+	public Map<String, Object> updateStatus(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Map<String, Object> result = new HashMap<>();
+		
+		try {
+			String memberIds = req.getParameter("memberIds");
+			String status = req.getParameter("status");
+			
+			if (memberIds == null || memberIds.isBlank()) {
+				result.put("success", false);
+				result.put("message", "게시물 ID가 없습니다.");
+				return result;
+			}
+			
+			// 쉼표로 구분된 ID 문자열을 배열로 변환
+			String[] idArray = memberIds.split(",");
+			
+			Map<String, Object> map = new HashMap<>();
+			map.put("memberIds", idArray);
+			map.put("status", status);
+			
+			// 일괄 상태 업데이트
+			int updateCount = service.updateMemberStatus(map);
+			
+			if (updateCount > 0) {
+				result.put("success", true);
+				result.put("message", updateCount + "명의 게시물 상태를 변경했습니다.");
+			} else {
+				result.put("success", false);
+				result.put("message", "게시물 상태 변경에 실패했습니다.");
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("success", false);
+			result.put("message", "서버 오류가 발생했습니다.");
+		}
+		
+		return result;
 	}
 }

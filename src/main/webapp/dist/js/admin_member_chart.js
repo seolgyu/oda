@@ -14,7 +14,8 @@ function initActivityChart() {
     }
     
     // window.memberData에서 데이터 가져오기
-    let chartData = window.memberData?.weeklyActivity || [];
+    /*let chartData = window.memberData?.weeklyActivity || [];*/
+	let chartData = window.memberData && window.memberData.weeklyActivity ? window.memberData.weeklyActivity : [];
     
     // 데이터가 없으면 기본값 사용
     if (chartData.length === 0) {

@@ -76,5 +76,19 @@ public class ContentServiceImpl implements ContentService{
 		}
 		return meberList;
 	}
+	
+	@Override
+	public int updateMemberStatus(Map<String, Object> map) throws Exception {
+	    int result = 0;
+	    
+	    try {
+	        result = mapper.updateMemberStatus(map);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw e;
+	    }
+	    
+	    return result;
+	}
 
 }
