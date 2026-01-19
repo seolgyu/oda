@@ -1,5 +1,6 @@
 package com.hs.service;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,6 +175,17 @@ public class CommunityServiceImpl implements CommunityService{
 		List<CommunityDTO> list = null;
 		try {
 			list = mapper.getPopularCategoryList();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	@Override
+	public List<CommunityDTO> getMyCommunity(Long userNum) throws SQLException {
+		List<CommunityDTO> list = null;
+		try {
+			list = mapper.getMyCommunity(userNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

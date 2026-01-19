@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.hs.mail.Mail;
 import com.hs.mail.MailSender;
+import com.hs.model.CommunityDTO;
 import com.hs.model.MemberDTO;
 import com.hs.model.PostDTO;
 import com.hs.model.SessionInfo;
@@ -16,6 +17,8 @@ import com.hs.mvc.annotation.PostMapping;
 import com.hs.mvc.annotation.RequestMapping;
 import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
+import com.hs.service.CommunityService;
+import com.hs.service.CommunityServiceImpl;
 import com.hs.service.MemberService;
 import com.hs.service.MemberServiceImpl;
 import com.hs.service.PostService;
@@ -32,6 +35,7 @@ import jakarta.servlet.http.HttpSession;
 public class MemberController {
 	private MemberService service = new MemberServiceImpl();
 	private PostService postService = new PostServiceImpl();
+	private CommunityService communityService = new CommunityServiceImpl();
 
 	// @RequestMapping(value = "login", method = RequestMethod.GET)
 	@GetMapping("login")
@@ -527,9 +531,12 @@ public class MemberController {
 	        dto.setReplyCount(service.getReplyCount(userNum));
 	        dto.setTotalContribution(dto.getPostCount() + dto.getReplyCount());
 	        
-	        ModelAndView mav = new ModelAndView("member/page"); // userPage.jsp로 이동
+	        List<CommunityDTO> community = communityService.getMyCommunity(userNum);
+	        
+	        ModelAndView mav = new ModelAndView("member/page");
 	        mav.addObject("user", dto);
 	        mav.addObject("post", list);
+	        mav.addObject("community", community);
 	        return mav;
 
 	    } catch (Exception e) {

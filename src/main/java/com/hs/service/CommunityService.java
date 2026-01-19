@@ -1,5 +1,6 @@
 package com.hs.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -23,4 +24,6 @@ public interface CommunityService {
 	public List<CommunityDTO> managementList(Map<String, Object> map);
 	public List<CommunityDTO> communityList(String keyword, String category_id, Long user_num);
 	public List<CommunityDTO> getPopularCategoryList();
+	
+	public List<CommunityDTO> getMyCommunity(Long userNum) throws SQLException;
 }

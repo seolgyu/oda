@@ -156,4 +156,26 @@
 		WHERE community_id = #{community_id}
 	</select>
 	
+	<select id="getMyCommunity" parameterType="Long" resultType="com.hs.model.CommunityDTO">
+		SELECT DISTINCT 
+            f.COMMUNITY_ID AS community_id,
+			f.FOLLOW_DATE     AS follow_date,
+			c.COM_DESCRIPTION AS com_description,
+			c.COM_NAME        AS com_name,
+			c.ICON_IMAGE      AS icon_image,
+			c.BANNER_IMAGE    AS banner_image,
+			c.IS_PRIVATE      AS is_private,
+			c.MEMBER_COUNT    AS member_count,
+			c.POST_COUNT      AS post_count,
+			c.CREATED_DATE    AS created_date,
+			c.USER_NUM        AS user_num,
+			c.CATEGORY_ID     AS category_id,
+			c.TODAY_VISIT     AS today_visit,
+			c.TOTAL_VISIT     AS total_visit
+		FROM COMMUNITY c
+		LEFT OUTER JOIN COMMUNITY_FOLLOW f ON c.community_id = f.community_id
+		WHERE c.user_num = #{userNum} OR f.user_num = #{userNum}
+		ORDER BY CASE WHEN c.user_num = #{userNum} THEN 0 ELSE 1 END
+	</select>
+	
 </mapper>

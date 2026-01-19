@@ -266,6 +266,23 @@
 	transition: all 0.2s ease;
 	border-radius: 50%; /* 호버 배경을 동그랗게 */
 }
+
+.fleet-item {
+    padding: 10px;      /* 클릭 영역 확보를 위해 약간 넓힘 */
+    margin: -10px;      /* 레이아웃 유지 */
+    border-radius: 12px;
+    transition: background 0.3s ease; /* 배경색 변화만 부드럽게 */
+}
+
+.fleet-item:hover {
+    background: rgba(255, 255, 255, 0.07); 
+    box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.03);
+}
+
+.fleet-item:hover .material-symbols-outlined {
+    color: #ffffff !important;
+    opacity: 1;
+}
 </style>
 </head>
 <body>
@@ -780,35 +797,49 @@
 								<div
 									class="d-flex align-items-center justify-content-between mb-4">
 									<h3
-										class="text-white text-xs fw-bold text-uppercase tracking-widest mb-0 opacity-75">Joined
-										Fleets</h3>
-									<span class="text-secondary" style="font-size: 10px;">3
-										Active</span>
+										class="text-white text-xs fw-bold text-uppercase tracking-widest mb-0 opacity-75">
+										Joined Fleets</h3>
+									<span class="text-secondary" style="font-size: 10px;">
+										${fn:length(community)} Active </span>
 								</div>
 
 								<div class="d-flex flex-column gap-4">
-									<div
-										class="d-flex align-items-center justify-content-between cursor-pointer"
-										style="cursor: pointer;">
-										<div class="d-flex align-items-center gap-3">
-											<div class="rounded-circle shadow-sm"
-												style="width: 42px; height: 42px; background: linear-gradient(135deg, #e11d48, #4c1d95); border: 2px solid rgba(255, 255, 255, 0.1);"></div>
-											<div>
-												<p class="text-white fw-bold mb-0"
-													style="font-size: 0.9rem;">r/Stargazers</p>
-												<p class="text-secondary mb-0" style="font-size: 10px;">14.2k
-													explorers</p>
-											</div>
-										</div>
-										<span class="material-symbols-outlined text-white-50 fs-5">arrow_forward</span>
-									</div>
-								</div>
+									<c:choose>
+										<c:when test="${not empty community}">
+											<c:forEach var="fleet" items="${community}">
+												<div
+													class="d-flex align-items-center justify-content-between cursor-pointer fleet-item"
+													onclick="location.href='${pageContext.request.contextPath}/community/main?community_id=${fleet.community_id}';">
 
-								<div
-									class="text-center pt-4 border-top border-white border-opacity-10 mt-4">
-									<a href="#"
-										class="text-primary text-xs fw-bold text-decoration-none opacity-75">EXPLORE
-										ALL FLEETS</a>
+													<div class="d-flex align-items-center gap-3">
+													
+														<c:choose>
+															<c:when test="${not empty fleet.icon_image}">
+																<img src="${fleet.icon_image}"
+																	class="rounded-circle shadow-sm"
+																	style="width: 42px; height: 42px; border: 2px solid rgba(255, 255, 255, 0.1); object-fit: cover;">
+															</c:when>
+															<c:otherwise>
+																<div class="rounded-circle shadow-sm"
+																	style="width: 42px; height: 42px; background: linear-gradient(135deg, #e11d48, #4c1d95); border: 2px solid rgba(255, 255, 255, 0.1);">
+																</div>
+															</c:otherwise>
+														</c:choose>
+
+														<div class="overflow-hidden">
+															<p class="text-white fw-bold mb-0 text-truncate"
+																style="font-size: 0.9rem; max-width: 180px;">
+																r/${fleet.com_name}</p>
+															<p class="text-secondary mb-0" style="font-size: 10px;">
+																${fleet.total_member_count} explorers</p>
+														</div>
+													</div>
+													<span
+														class="material-symbols-outlined text-white-50 fs-5 transition-all">arrow_forward</span>
+												</div>
+											</c:forEach>
+										</c:when>
+    								</c:choose>
 								</div>
 							</div>
 
