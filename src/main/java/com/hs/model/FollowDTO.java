@@ -4,7 +4,14 @@ public class FollowDTO {
 	private long followId;
 	private long reqId; //요청 user_num
 	private long addId; //받는 user_num
+	private int count;
 	
+	public int getCount() {
+		return count;
+	}
+	public void setCount(int count) {
+		this.count = count;
+	}
 	public long getFollowId() {
 		return followId;
 	}

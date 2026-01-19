@@ -12,10 +12,23 @@
 		)
         VALUES 
         (
-        follow_seq.NEXTVAL, 
-        #{reqId}, 
-        #{addId}, 
-        SYSDATE
+	        follow_seq.NEXTVAL, 
+	        #{reqId}, 
+	        #{addId}, 
+	        SYSDATE
         )
     </insert>
+    
+    <select id="followCount" parameterType="com.hs.model.FollowDTO">
+    select COUNT(*) AS count
+	from follow
+	where req_id = #{reqId}
+	and add_id = #{addId}
+    </select>
+    
+    <delete id="followDelApply" parameterType="map">
+    delete from follow
+	where req_id = #{reqId}
+	and add_id = #{addId}
+    </delete>
 </mapper>

@@ -42,6 +42,7 @@ public class FollowController {
 	    SessionInfo info = (SessionInfo) session.getAttribute("member");
 	    
 	    long addId = Long.parseLong(req.getParameter("addUserNum"));
+	    Integer count = 0;
 
 		try {
 			Map<String, Object> map = new HashMap<>();
@@ -49,10 +50,20 @@ public class FollowController {
 			map.put("reqId", info.getMemberIdx());
 			map.put("addId", addId);
 			
-			service.followApply(map);
+			count = service.followCount(map);
 			
-			result.put("state", "true");
-	        result.put("message", "팔로우 요청이 완료되었습니다.");
+			if(count == null || count == 0) {
+	            // 팔로우 기록이 없을 경우 팔로우 신청
+	            service.followApply(map);
+	            result.put("state", "true");
+	            result.put("message", "팔로우 요청이 완료되었습니다.");
+	        } else {
+	            // 팔로우 기록이 있을 경우 팔로우 취소
+	            service.followDelApply(map);
+	            result.put("state", "true");
+	            result.put("message", "팔로우가 취소되었습니다.");
+	        }
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("state", "false");
