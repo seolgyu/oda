@@ -1,15 +1,20 @@
 package com.hs.service;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.hs.mapper.MemberMapper;
+import com.hs.mapper.PostMapper;
+import com.hs.model.FileAtDTO;
 import com.hs.model.MemberDTO;
+import com.hs.model.PostDTO;
 import com.hs.mybatis.support.MapperContainer;
 
 public class MemberServiceImpl implements MemberService {
 	private MemberMapper mapper = MapperContainer.get(MemberMapper.class);
+	private PostMapper postMapper = MapperContainer.get(PostMapper.class);
 
 	@Override
 	public MemberDTO loginMember(Map<String, Object> map) {
@@ -225,6 +230,86 @@ public class MemberServiceImpl implements MemberService {
 			e.printStackTrace();
 			throw e;
 		}
+	}
+	
+	@Override
+	public List<PostDTO> listUserPost(Map<String, Object> map) throws SQLException {
+		List<PostDTO> list = null;
+		try {
+			list = postMapper.listUserPost(map);
+			for(PostDTO item : list) {
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put("userNum", (Long)map.get("loginUserNum"));
+				params.put("postId", item.getPostId());
+				
+				item.setLikedByUser(isLikedPost(params));
+				item.setSavedByUser(isSavedPost(params));
+				item.setRepostedByUser(isRepostedPost(params));
+				List<FileAtDTO> files = postMapper.listFileAt(item.getPostId());
+				item.setFileList(files);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	@Override
+	public List<PostDTO> listUserRepost(Map<String, Object> map) throws SQLException {
+		List<PostDTO> list = null;
+		try {
+			list = postMapper.listUserRepost(map);
+			for(PostDTO item : list) {
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put("userNum", (Long)map.get("loginUserNum"));
+				params.put("postId", item.getPostId());
+				
+				item.setLikedByUser(isLikedPost(params));
+				item.setSavedByUser(isSavedPost(params));
+				item.setRepostedByUser(isRepostedPost(params));
+				List<FileAtDTO> files = postMapper.listFileAt(item.getPostId());
+				item.setFileList(files);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	@Override
+	public boolean isLikedPost(Map<String, Object> map) throws SQLException {
+		try {
+			if(mapper.isLikedPost(map) > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isSavedPost(Map<String, Object> map) throws SQLException {
+		try {
+			if(mapper.isSavedPost(map) > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isRepostedPost(Map<String, Object> map) throws SQLException {
+		try {
+			if(mapper.isRepostedPost(map) > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

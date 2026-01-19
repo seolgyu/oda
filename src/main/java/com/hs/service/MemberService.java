@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hs.model.MemberDTO;
+import com.hs.model.PostDTO;
 
 public interface MemberService {
 	public MemberDTO loginMember(Map<String, Object> map);
@@ -39,4 +40,11 @@ public interface MemberService {
 	public Long findUserNum(Map<String, Object> map) throws SQLException;
 	
 	public List<Map<String, Object>> listAgeSection();
+	
+	public List<PostDTO> listUserPost(Map<String, Object> map) throws SQLException;
+	public List<PostDTO> listUserRepost(Map<String, Object> map) throws SQLException;
+	
+	public boolean isLikedPost(Map<String, Object> map) throws SQLException;
+	public boolean isSavedPost(Map<String, Object> map) throws SQLException;
+	public boolean isRepostedPost(Map<String, Object> map) throws SQLException;
 }

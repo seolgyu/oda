@@ -111,6 +111,7 @@ function loadNextPage(url, renderFunc, isFirst = false) {
 }
 
 function renderMyPost(item) {
+	console.log("서버에서 받은 데이터:", item);
 	const cp = window.cp; // contextPath
 	const isListMode = $('#post-list-container').hasClass('list-mode');
 	const isRepostTab = window.currentTab === 'reposts';
@@ -134,8 +135,16 @@ function renderMyPost(item) {
 	const listViewDisplay = isListMode ? 'flex' : 'none';
 	const cardViewDisplay = isListMode ? 'none' : 'block';
 
+	// 상태값 미리 계산
 	const likedClass = item.likedByUser ? 'text-danger' : '';
 	const likedFill = item.likedByUser ? 1 : 0;
+	
+	const savedClass = item.savedByUser ? 'text-warning' : '';
+	const savedFill = item.savedByUser ? 1 : 0;
+	const savedIcon = item.savedByUser ? 'bookmark' : 'bookmark_border';
+	
+	const repostClass = item.repostedByUser ? 'text-success' : '';
+	const repostFill = item.repostedByUser ? 1 : 0;
 
 	const hasImages = item.fileList && item.fileList.length > 0;
 	const firstImg = hasImages ? item.fileList[0].filePath : null;
@@ -143,7 +152,6 @@ function renderMyPost(item) {
 	let cardMediaHtml = '';
 	if (hasImages) {
 		if (item.fileList.length > 1) {
-			// 여러 장일 때: 캐러셀 복구
 			const carouselId = `carousel-${item.postId}`;
 			cardMediaHtml = `
                 <div class="p-3 pt-0">
@@ -172,7 +180,6 @@ function renderMyPost(item) {
                     </div>
                 </div>`;
 		} else {
-			// 한 장일 때
 			cardMediaHtml = `
                 <div class="p-3 pt-0">
                     <div class="post-carousel">
@@ -219,12 +226,20 @@ function renderMyPost(item) {
                                     <span class="material-symbols-outlined fs-6">chat_bubble</span>
                                     <span class="text-xs opacity-75">${item.commentCount}</span>
                                 </button>
-                                <button class="btn-icon p-0"><span class="material-symbols-outlined fs-6">repeat</span></button>
+                                <button class="btn-icon btn-repost p-0 ${repostClass}" onclick="toggleRepost('${item.postId}', this);">
+                                    <span class="material-symbols-outlined fs-6" style="font-variation-settings: 'FILL' ${repostFill};">repeat</span>
+                                </button>
                             </div>
                             <div class="d-flex gap-3 text-white-50">
-                                <button class="btn-icon p-0" title="공유하기"><span class="material-symbols-outlined fs-6">share</span></button>
-                                <button class="btn-icon p-0" title="저장하기"><span class="material-symbols-outlined fs-6">bookmark</span></button>
-                                <button class="btn-icon p-0" title="신고하기"><span class="material-symbols-outlined fs-6">report</span></button>
+                                <button class="btn-icon p-0" title="공유하기" onclick="copyUrl('${item.postId}')">
+                                    <span class="material-symbols-outlined fs-6">share</span>
+                                </button>
+                                <button class="btn-icon btn-save p-0 ${savedClass}" title="저장하기" onclick="toggleSave('${item.postId}', this);">
+                                    <span class="material-symbols-outlined fs-6" style="font-variation-settings: 'FILL' ${savedFill};">${savedIcon}</span>
+                                </button>
+                                <button class="btn-icon p-0" title="신고하기" onclick="openReportModal('${item.postId}');">
+                                    <span class="material-symbols-outlined fs-6">report</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -256,25 +271,45 @@ function renderMyPost(item) {
 
                 ${cardMediaHtml}
 
-                <div class="px-3 py-2 d-flex align-items-center justify-content-between border-top border-white border-opacity-10" 
-                     style="background: rgba(255, 255, 255, 0.05);">
-                    <div class="d-flex gap-4">
-                        <button class="btn-icon d-flex align-items-center gap-1" onclick="toggleLike(this, '${item.postId}')">
-                            <span class="material-symbols-outlined fs-5 ${likedClass}" style="font-variation-settings: 'FILL' ${likedFill};">favorite</span>
-                            <span class="text-xs opacity-75 like-count">${item.likeCount}</span>
-                        </button>
-                        <button class="btn-icon d-flex align-items-center gap-1" onclick="location.href='${cp}/post/article?postId=${item.postId}';">
-                            <span class="material-symbols-outlined fs-5">chat_bubble</span>
-                            <span class="text-xs opacity-75">${item.commentCount}</span>
-                        </button>
-                        <button class="btn-icon"><span class="material-symbols-outlined fs-5">repeat</span></button>
-                    </div>
-                    <div class="d-flex gap-3 text-white-50">
-                        <button class="btn-icon" title="공유하기"><span class="material-symbols-outlined fs-5">share</span></button>
-                        <button class="btn-icon" title="저장하기"><span class="material-symbols-outlined fs-5">bookmark</span></button>
-                        <button class="btn-icon" title="신고하기"><span class="material-symbols-outlined fs-5">report</span></button>
-                    </div>
-                </div>
+				<div class="px-3 py-2 d-flex align-items-center justify-content-between border-top border-white border-opacity-10" 
+				     style="background: rgba(255, 255, 255, 0.05);">
+				    <div class="d-flex gap-4">
+				        <button class="btn-icon d-flex align-items-center gap-1" onclick="toggleLike(this, '${item.postId}')">
+				            <span class="material-symbols-outlined fs-5 ${likedClass}" 
+				                  style="font-variation-settings: 'FILL' ${likedFill};">favorite</span>
+				            <span class="text-xs opacity-75 like-count">${item.likeCount}</span>
+				        </button>
+
+				        <button class="btn-icon d-flex align-items-center gap-1" onclick="location.href='${cp}/post/article?postId=${item.postId}';">
+				            <span class="material-symbols-outlined fs-5">chat_bubble</span>
+				            <span class="text-xs opacity-75">${item.commentCount}</span>
+				        </button>
+
+				        <button class="btn-icon btn-repost ${repostClass}" 
+				                onclick="toggleRepost('${item.postId}', this);">
+				            <span class="material-symbols-outlined fs-5" 
+				                  style="font-variation-settings: 'FILL' ${repostFill};">repeat</span>
+				        </button>
+				    </div>
+
+				    <div class="d-flex gap-3 text-white-50">
+				        <button class="btn-icon" title="공유하기" onclick="copyUrl('${item.postId}')">
+				            <span class="material-symbols-outlined fs-5">share</span>
+				        </button>
+
+				        <button class="btn-icon btn-save ${savedClass}" 
+				                title="저장하기" onclick="toggleSave('${item.postId}', this);">
+				            <span class="material-symbols-outlined fs-5" 
+				                  style="font-variation-settings: 'FILL' ${savedFill};">
+				                ${savedIcon}
+				            </span>
+				        </button>
+
+				        <button class="btn-icon" title="신고하기" onclick="openReportModal('${item.postId}');">
+				            <span class="material-symbols-outlined fs-5">report</span>
+				        </button>
+				    </div>
+				</div>
             </div>
         </div>
     `;

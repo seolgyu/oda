@@ -522,7 +522,7 @@ public class MemberController {
 	        map.put("offset", 0);
 	        map.put("size", 5);
 
-	        List<PostDTO> list = postService.listUserPost(map);
+	        List<PostDTO> list = service.listUserPost(map);
 	        dto.setPostCount(service.getPostCount(userNum));
 	        dto.setReplyCount(service.getReplyCount(userNum));
 	        dto.setTotalContribution(dto.getPostCount() + dto.getReplyCount());

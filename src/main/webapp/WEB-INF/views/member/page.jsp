@@ -238,6 +238,34 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
 	background: rgba(255, 255, 255, 0.2);
 }
+
+/* [상태 피드백] 저장/북마크 활성화 (Yellow) */
+.text-warning, .text-warning .material-symbols-outlined {
+	color: #facc15 !important;
+	font-variation-settings: 'FILL' 1;
+}
+
+/* [상태 피드백] 리포스트 활성화 (Green) */
+.text-success, .text-success .material-symbols-outlined {
+	color: #4ade80 !important;
+	font-variation-settings: 'FILL' 1;
+}
+
+.btn-save:hover {
+	color: #facc15 !important;
+	background: rgba(250, 204, 21, 0.1) !important;
+}
+
+.btn-repost:hover {
+	color: #4ade80 !important;
+	background: rgba(74, 222, 128, 0.1) !important;
+}
+
+/* 공통 버튼 애니메이션 */
+.btn-icon {
+	transition: all 0.2s ease;
+	border-radius: 50%; /* 호버 배경을 동그랗게 */
+}
 </style>
 </head>
 <body>
@@ -372,7 +400,8 @@
 
 												<div class="list-view-item p-3" style="display: none;">
 													<div class="d-flex align-items-start gap-3 w-100">
-														<div class="flex-shrink-0 thumbnail-box app-user-trigger" data-user-id="${item.authorId}"
+														<div class="flex-shrink-0 thumbnail-box app-user-trigger"
+															data-user-id="${item.authorId}"
 															style="width: 90px; height: 90px;">
 															<c:choose>
 																<c:when test="${not empty item.fileList}">
@@ -394,7 +423,9 @@
 															style="min-height: 90px;">
 															<div>
 																<div class="d-flex align-items-center gap-2 mb-1">
-																	<span class="text-white fw-bold text-sm app-user-trigger" data-user-id="${item.authorId}">${item.authorNickname}</span>
+																	<span
+																		class="text-white fw-bold text-sm app-user-trigger"
+																		data-user-id="${item.authorId}">${item.authorNickname}</span>
 																	<span class="text-secondary text-xs opacity-75">c/${item.authorId}</span>
 																	<span class="ms-auto text-xs text-gray-500">${item.timeAgo}</span>
 																</div>
@@ -420,24 +451,40 @@
 																			style="font-variation-settings: 'FILL' ${item.likedByUser ? 1 : 0};">favorite</span>
 																		<span class="text-xs opacity-75 like-count">${item.likeCount}</span>
 																	</button>
+
 																	<button
 																		class="btn-icon d-flex align-items-center gap-1 p-0"
 																		onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
 																		<span class="material-symbols-outlined fs-6">chat_bubble</span>
 																		<span class="text-xs opacity-75">${item.commentCount}</span>
 																	</button>
-																	<button class="btn-icon p-0">
-																		<span class="material-symbols-outlined fs-6">repeat</span>
+
+																	<button
+																		class="btn-icon p-0 btn-repost ${item.repostedByUser ? 'text-success' : ''}"
+																		onclick="toggleRepost('${item.postId}', this);">
+																		<span class="material-symbols-outlined fs-6"
+																			style="font-variation-settings: 'FILL' ${item.repostedByUser ? 1 : 0};">repeat</span>
 																	</button>
 																</div>
+
 																<div class="d-flex gap-3 text-white-50">
-																	<button class="btn-icon p-0" title="공유하기">
+																	<button class="btn-icon p-0" title="공유하기"
+																		onclick="copyUrl('${item.postId}')">
 																		<span class="material-symbols-outlined fs-6">share</span>
 																	</button>
-																	<button class="btn-icon p-0" title="저장하기">
-																		<span class="material-symbols-outlined fs-6">bookmark</span>
+
+																	<button
+																		class="btn-icon p-0 btn-save ${item.savedByUser ? 'text-warning' : ''}"
+																		title="저장하기"
+																		onclick="toggleSave('${item.postId}', this);">
+																		<span class="material-symbols-outlined fs-6"
+																			style="font-variation-settings: 'FILL' ${item.savedByUser ? 1 : 0};">
+																			${item.savedByUser ? 'bookmark' : 'bookmark_border'}
+																		</span>
 																	</button>
-																	<button class="btn-icon p-0" title="신고하기">
+
+																	<button class="btn-icon p-0" title="신고하기"
+																		onclick="openReportModal('${item.postId}');">
 																		<span class="material-symbols-outlined fs-6">report</span>
 																	</button>
 																</div>
@@ -463,7 +510,9 @@
 																</c:choose>
 															</div>
 															<div>
-																<h3 class="text-sm fw-medium text-white mb-0 app-user-trigger" data-user-id="${item.authorId}">${item.authorNickname}</h3>
+																<h3
+																	class="text-sm fw-medium text-white mb-0 app-user-trigger"
+																	data-user-id="${item.authorId}">${item.authorNickname}</h3>
 																<p class="text-xs text-gray-500 mb-0">${item.timeAgo}</p>
 															</div>
 														</div>
@@ -543,23 +592,38 @@
 																	style="font-variation-settings: 'FILL' ${item.likedByUser ? 1 : 0};">favorite</span>
 																<span class="text-xs opacity-75 like-count">${item.likeCount}</span>
 															</button>
+
 															<button class="btn-icon d-flex align-items-center gap-1"
 																onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
 																<span class="material-symbols-outlined fs-5">chat_bubble</span>
 																<span class="text-xs opacity-75">${item.commentCount}</span>
 															</button>
-															<button class="btn-icon">
-																<span class="material-symbols-outlined fs-5">repeat</span>
+
+															<button
+																class="btn-icon btn-repost ${item.repostedByUser ? 'text-success' : ''}"
+																onclick="toggleRepost('${item.postId}', this);">
+																<span class="material-symbols-outlined fs-5"
+																	style="font-variation-settings: 'FILL' ${item.repostedByUser ? 1 : 0};">repeat</span>
 															</button>
 														</div>
+
 														<div class="d-flex gap-3 text-white-50">
-															<button class="btn-icon" title="공유하기">
+															<button class="btn-icon" title="공유하기"
+																onclick="copyUrl('${item.postId}')">
 																<span class="material-symbols-outlined fs-5">share</span>
 															</button>
-															<button class="btn-icon" title="저장하기">
-																<span class="material-symbols-outlined fs-5">bookmark</span>
+
+															<button
+																class="btn-icon btn-save ${item.savedByUser ? 'text-warning' : ''}"
+																title="저장하기"
+																onclick="toggleSave('${item.postId}', this);">
+																<span class="material-symbols-outlined fs-5"
+																	style="font-variation-settings: 'FILL' ${item.savedByUser ? 1 : 0};">
+																	${item.savedByUser ? 'bookmark' : 'bookmark_border'} </span>
 															</button>
-															<button class="btn-icon" title="신고하기">
+
+															<button class="btn-icon" title="신고하기"
+																onclick="openReportModal('${item.postId}');">
 																<span class="material-symbols-outlined fs-5">report</span>
 															</button>
 														</div>
@@ -817,9 +881,49 @@
 		</div>
 	</div>
 
+	<div class="modal fade" id="reportModal" tabindex="-1"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content glass-card border-0"
+				style="background: rgba(30, 30, 30, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
+				<div class="modal-header border-bottom border-secondary">
+					<h5 class="modal-title text-white">게시글 신고</h5>
+					<button type="button" class="btn-close btn-close-white"
+						data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" id="reportPostId">
+					<p class="text-gray-300 mb-3 small">신고 사유를 선택해주세요.</p>
+
+					<select id="reportReasonSelect"
+						class="form-select bg-dark text-white border-secondary mb-3"
+						onchange="toggleReportReason(this)">
+						<option value="">사유 선택...</option>
+						<option value="스팸/홍보 도배">스팸/홍보 도배</option>
+						<option value="욕설/비하 발언">욕설/비하 발언</option>
+						<option value="음란물/유해 정보">음란물/유해 정보</option>
+						<option value="custom">직접 입력</option>
+					</select>
+
+					<textarea id="reportReasonText"
+						class="form-control bg-dark text-white border-secondary" rows="4"
+						placeholder="신고 사유를 입력하세요..." style="display: none;"></textarea>
+				</div>
+				<div class="modal-footer border-top border-secondary">
+					<button type="button" class="btn btn-secondary btn-sm"
+						data-bs-dismiss="modal">취소</button>
+					<button type="button" class="btn btn-danger btn-sm"
+						onclick="submitReport()">신고하기</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<script type="text/javascript">
 		window.userId = "${user.userId}";
 		window.cp = "${pageContext.request.contextPath}";
+		const contextPath = window.cp;
+		const isLogin = "${not empty sessionScope.member}";
 	</script>
 
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -910,6 +1014,180 @@
 						}
 					});
 		}
+		
+		function copyUrl(postId) {
+		    
+		    const url = window.location.origin + '${pageContext.request.contextPath}/post/article?postId=' + postId;
+
+		    if (navigator.clipboard && navigator.clipboard.writeText) {
+		        navigator.clipboard.writeText(url).then(() => {
+		        	showToast("success", "클립보드에 주소가 복사되었습니다.");
+		        }).catch(err => {
+		            // 실패 시 구형 방식 시도
+		            fallbackCopyTextToClipboard(url);
+		        });
+		    } else {
+		        // 구형 브라우저(또는 HTTP 환경) 대응
+		        fallbackCopyTextToClipboard(url);
+		    }
+		}
+
+		// 구형 브라우저용 복사 함수 (임시 textarea 생성 방식)
+		function fallbackCopyTextToClipboard(text) {
+		    const textArea = document.createElement("textarea");
+		    textArea.value = text;
+		    
+		    // 화면 밖으로 숨김
+		    textArea.style.position = "fixed";
+		    textArea.style.left = "-9999px";
+		    document.body.appendChild(textArea);
+		    textArea.focus();
+		    textArea.select();
+
+		    try {
+		        const successful = document.execCommand('copy');
+		        if (successful) {
+		        	showToast("success", "클립보드에 주소가 복사되었습니다.");
+		        } else {
+		        	showToast("error", "주소 복사에 실패했습니다.");
+		        }
+		    } catch (err) {
+		    	showToast("error", "주소 복사에 실패했습니다.");
+		    }
+		    document.body.removeChild(textArea);
+		}
+		
+		function openReportModal(postId) {			
+			if (isLogin === "false") {
+		        if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
+		            location.href = contextPath + "/member/login";
+		        }
+		        return; 
+		    }
+			
+		    $("#reportPostId").val(postId);
+		    $("#reportReasonSelect").val("");
+		    $("#reportReasonText").val("").hide();
+		    
+		    const myModal = new bootstrap.Modal(document.getElementById('reportModal'));
+		    myModal.show();
+		}
+
+		function toggleReportReason(select) {
+		    if(select.value === "custom") {
+		        $("#reportReasonText").show().focus();
+		    } else {
+		        $("#reportReasonText").hide();
+		    }
+		}
+
+		function submitReport() {
+		    const postId = $("#reportPostId").val();
+		    let reason = $("#reportReasonSelect").val();
+		    
+		    if(!reason) {
+		        showToast("error", "신고 사유를 선택해주세요.");
+		        return;
+		    }
+		    if(reason === "custom") {
+		        reason = $("#reportReasonText").val().trim();
+		        if(!reason) {
+		            showToast("error", "상세 사유를 입력해주세요.");
+		            return;
+		        }
+		    }
+		    
+		    $.ajax({
+		        url: contextPath + "/post/report",
+		        type: "post",
+		        data: { postId: postId, reason: reason },
+		        dataType: "json",
+		        success: function(data) {
+		            $('#reportModal').modal('hide');
+		            if(data.state === "success") {
+		                showToast("success", "신고가 접수되었습니다.");
+		            } else if(data.state === "login_required") {
+		                if(confirm("로그인이 필요합니다.")) location.href = contextPath + "/member/login";
+		            } else {
+		                showToast("error", "신고 실패");
+		            }
+		        },
+		        error: function() { showToast("error", "서버 에러"); }
+		    });
+		}
+		
+		
+		function toggleSave(postId, btn) {
+			if (isLogin === "false") {
+	            if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
+	                location.href = contextPath + "/member/login";
+	            }
+	            return;
+	        }
+
+	        $.ajax({
+	            url: "${pageContext.request.contextPath}/post/insertPostSave",
+	            type: "post",
+	            data: { postId: postId },
+	            dataType: "json",
+	            success: function(data) {
+	                if (data.state === "success") {
+	                    const $btn = $(btn);
+	                    const $icon = $btn.find("span.material-symbols-outlined");
+	                    
+	                    if (data.saved) {
+	                       
+	                        $icon.text("bookmark");
+	                        $btn.addClass("text-warning");
+	                        showToast("success", "게시글을 저장했습니다.");
+	                    } else {
+	                        
+	                        $icon.text("bookmark_border");
+	                        $btn.removeClass("text-warning");
+	                        showToast("info", "저장을 취소했습니다.");
+	                    }
+	                } else if (data.state === "login_required") {
+	                    location.href = "${pageContext.request.contextPath}/member/login";
+	                }
+	            },
+	            error: function(e) {
+	                console.log(e);
+	            }
+	        });
+	    }
+	 
+	    function toggleRepost(postId, btn) {
+	    	if (isLogin === "false") {
+	            if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
+	                location.href = contextPath + "/member/login";
+	            }
+	            return;
+	        }
+	        $.ajax({
+	            url: "${pageContext.request.contextPath}/post/insertPostRepost",
+	            type: "post",
+	            data: { postId: postId },
+	            dataType: "json",
+	            success: function(data) {
+	                if (data.state === "success") {
+	                    const $btn = $(btn);
+	                    
+	                    if (data.reposted) {
+	                        $btn.addClass("text-success");
+	                        showToast("success", "게시글을 리그렘했습니다.");
+	                    } else {
+	                        $btn.removeClass("text-success");
+	                        showToast("info", "리그렘을 취소했습니다.");
+	                    }
+	                } else if (data.state === "login_required") {
+	                    location.href = "${pageContext.request.contextPath}/member/login";
+	                }
+	            },
+	            error: function(e) {
+	                console.log(e);
+	            }
+	        });
+	    }
 
 		$(document).ready(
 				function() {
