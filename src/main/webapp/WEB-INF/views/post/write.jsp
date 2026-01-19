@@ -67,22 +67,11 @@
     <%@ include file="../home/header.jsp"%>
 
     <div class="app-body">
+    
         <%@ include file="../home/sidebar.jsp"%>
 
         <main class="app-main">
-        
-        	<div id="sessionToast" class="glass-toast shadow-lg">
-                <div class="d-flex align-items-center gap-3">
-                   <div class="toast-icon-circle">
-                      <span id="toastIcon" class="material-symbols-outlined fs-5">info</span>
-                   </div>
-                   <div class="toast-content">
-                      <h4 id="toastTitle" class="text-xs fw-bold text-uppercase tracking-widest mb-1">System</h4>
-                      <p id="toastMessage" class="text-sm text-gray-300 mb-0">메시지</p>
-                   </div>
-                </div>
-            </div>
-            
+
             <div class="space-background">
                 <div class="stars"></div><div class="stars2"></div><div class="stars3"></div>
                 <div class="planet planet-1"></div><div class="planet planet-2"></div>
@@ -114,9 +103,10 @@
                                 </c:if>
                                 
                                 <%-- 2. 커뮤니티 ID 전달 (등록/수정 공통) --%>
+							    <%-- 컨트롤러 파라미터(communityId) 혹은 DTO의 정보를 우선순위에 따라 hidden에 담음 --%>
 							    <c:set var="targetComid" value="${not empty communityId ? communityId : dto.communityId}"/>
-							    <c:if test="${not empty targetComid}">
-							        <input type="hidden" name="community_id" value="${targetComid}">
+							    <c:if test="${not empty targetCid}">
+							        <input type="hidden" name="communityId" value="${targetComid}">
 							    </c:if>
 
                                 <div class="mb-3">
@@ -178,7 +168,7 @@
 								    <div class="d-flex gap-2">
 								       	<c:set var="cancelUrl" value="${pageContext.request.contextPath}/main"/>
 						                
-						                <c:if test="${not empty targetComid}">
+						                <c:if test="${not empty targetCid}">
 							                <c:set var="cancelUrl" value="${pageContext.request.contextPath}/community/main?community_id=${targetComid}"/>
 							            </c:if>
 						                
@@ -389,27 +379,7 @@
                 }
             });
         }
-        
-        function showToast(type, msg) {
-            const $toast = $('#sessionToast');
-            const $title = $('#toastTitle');
-            const $icon = $('#toastIcon');
-            $('#toastMessage').text(msg);
-            if (type === "success") {
-                $title.text('SUCCESS').css('color', '#4ade80');
-                $icon.text('check_circle');
-            } else if (type === "info") {
-                $title.text('INFO').css('color', '#8B5CF6');
-                $icon.text('info');
-            } else if (type === "error") {
-                $title.text('ERROR').css('color', '#f87171');
-                $icon.text('error');
-            }
-            $toast.addClass('show');
-            setTimeout(function() {
-                $toast.removeClass('show');
-            }, 2500);
-        }
+
     </script>
 </body>
 </html>

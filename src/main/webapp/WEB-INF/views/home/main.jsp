@@ -314,6 +314,7 @@
 	<%@ include file="header.jsp"%>
 
 	<div class="app-body">
+	
 		<%@ include file="sidebar.jsp"%>
 
 		<main class="app-main">
