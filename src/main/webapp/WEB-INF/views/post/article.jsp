@@ -142,70 +142,19 @@
                                         <div class="mb-4">
                                             <div id="imageCarousel" class="carousel slide" data-bs-interval="false">
                                                 <div class="carousel-inner rounded-3 overflow-hidden">    
-                                                
-													                                            
-																																														                                                           
+																															                                                           
 													<c:forEach var="dto" items="${listFile}" varStatus="status">
 													    <div class="carousel-item ${status.first ? 'active' : ''}">
-													        <div class="d-flex align-items-center justify-content-center bg-black position-relative" style="height: 600px; width: 100%; overflow: hidden;">
-													            
-													            <%-- 1. 확장자 확인 (대소문자 무시) --%>
-													            <c:set var="fullPath" value="${fn:toLowerCase(dto.filePath)}" />
-													            <c:set var="isMovie" value="${fn:endsWith(fullPath, '.mp4') or fn:endsWith(fullPath, '.mov') or fn:endsWith(fullPath, '.webm') or fn:endsWith(fullPath, '.avi') or dto.fileType eq 'mp4'}" />
-													            
-													            <c:choose>
-													                <%-- [CASE 1] 동영상 --%>
-													                <c:when test="${isMovie}">
-													                    
-													                    <%-- Cloudinary URL 변환 로직 (fn:split 사용) --%>
-													                    <c:choose>
-													                        <c:when test="${fn:startsWith(dto.filePath, 'http')}">
-													                            <c:set var="originalUrl" value="${dto.filePath}" />
-													                            <c:set var="urlParts" value="${fn:split(originalUrl, '.')}" />
-													                            <c:set var="baseUrl" value="" />
-													                            <c:forEach var="part" items="${urlParts}" varStatus="stat">
-													                                <c:if test="${!stat.last}">
-													                                    <c:set var="baseUrl" value="${baseUrl}${part}." />
-													                                </c:if>
-													                            </c:forEach>
-													                            <c:set var="baseUrl" value="${fn:substring(baseUrl, 0, fn:length(baseUrl)-1)}" />
-													                            
-													                            <c:set var="finalVideoUrl" value="${baseUrl}.mp4" />
-													                            <c:set var="finalPosterUrl" value="${baseUrl}.jpg" />
-													                        </c:when>
-													                        <c:otherwise>
-													                            <%-- 로컬 파일 --%>
-													                            <c:set var="finalVideoUrl" value="${pageContext.request.contextPath}/uploads/photo/${dto.filePath}" />
-													                            <c:set var="finalPosterUrl" value="" />
-													                        </c:otherwise>
-													                    </c:choose>
-													
-													                    <video class="d-block w-100 h-100" 
-													                           poster="${finalPosterUrl}"
-													                           style="object-fit: contain; z-index: 10;"
-													                           controls autoplay muted loop playsinline preload="metadata">
-													                        <source src="${finalVideoUrl}" type="video/mp4">
-													                        <p>브라우저가 동영상을 지원하지 않습니다.</p>
-													                    </video>
-													                    
-													                    </c:when>
-													                
-													                <%-- [CASE 2] 이미지 --%>
-													                <c:otherwise>
-													                    <c:choose>
-													                        <c:when test="${fn:startsWith(dto.filePath, 'http')}">
-													                            <img src="${dto.filePath}" class="d-block w-100 h-100" style="object-fit: contain;">
-													                        </c:when>
-													                        <c:otherwise>
-													                            <img src="${pageContext.request.contextPath}/uploads/photo/${dto.filePath}" class="d-block w-100 h-100" style="object-fit: contain;">
-													                        </c:otherwise>
-													                    </c:choose>
-													                </c:otherwise>
-													            </c:choose>
-													            
-													        </div>
+													        
+													        <%-- 공통 파일에 데이터 전달 --%>
+													        <c:set var="mediaPath" value="${dto.filePath}" scope="request" />
+													        <c:set var="mediaMode" value="article" scope="request" /> <%-- 'article' 모드 --%>
+													        
+													        <%-- 공통 파일 호출 --%>
+													        <jsp:include page="/WEB-INF/views/post/mediaview.jsp" />
+													        
 													    </div>
-													</c:forEach>													                                                              
+													</c:forEach>																									                                                              
                                                                                             
                                                 </div>
                                                 <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev" id="btnPrev" style="display: none;">
