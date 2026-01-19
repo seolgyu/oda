@@ -175,3 +175,25 @@
 	text-overflow: ellipsis;
 	word-break: break-all;
 }
+
+/* 저장/북마크 활성화 (Yellow) */
+.text-warning, .text-warning .material-symbols-outlined {
+    color: #facc15 !important;
+    font-variation-settings: 'FILL' 1;
+}
+
+/* 리그렘 활성화 (Green) */
+.text-success, .text-success .material-symbols-outlined {
+    color: #4ade80 !important;
+    font-variation-settings: 'FILL' 1;
+}
+
+/* 아이콘 활성화 색상 강제 지정 */
+.text-danger, .text-danger span { color: #ff4757 !important; }
+.text-warning, .text-warning span { color: #ffca28 !important; }
+.text-success, .text-success span { color: #2ed573 !important; }
+
+/* 머티리얼 아이콘 채우기 효과 */
+.text-danger span, .text-warning span, .text-success span {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
+}

@@ -206,7 +206,7 @@
 																		<span class="material-symbols-outlined fs-6">chat_bubble</span>
 																		<span class="text-xs opacity-75">${item.commentCount}</span>
 																	</button>
-																	<button class="btn-icon p-0">
+																	<button class="btn-icon p-0" onclick="toggleRepost('${item.postId}', this);">
 																		<span class="material-symbols-outlined fs-6">repeat</span>
 																	</button>
 																</div>
@@ -327,18 +327,18 @@
 																<span class="material-symbols-outlined fs-5">chat_bubble</span>
 																<span class="text-xs opacity-75">${item.commentCount}</span>
 															</button>
-															<button class="btn-icon">
+															<button class="btn-icon" onclick="toggleRepost('${item.postId}', this)">
 																<span class="material-symbols-outlined fs-5">repeat</span>
 															</button>
 														</div>
 														<div class="d-flex gap-3 text-white-50">
-															<button class="btn-icon" title="공유하기">
+															<button class="btn-icon" title="공유하기" onclick="copyUrl('${item.postId}')">
 																<span class="material-symbols-outlined fs-5">share</span>
 															</button>
-															<button class="btn-icon" title="저장하기">
+															<button class="btn-icon" title="저장하기" onclick="toggleSave('${item.postId}', this)">
 																<span class="material-symbols-outlined fs-5">bookmark</span>
 															</button>
-															<button class="btn-icon" title="신고하기">
+															<button class="btn-icon" title="신고하기" onclick="openReportModal('${item.postId}')">
 																<span class="material-symbols-outlined fs-5">report</span>
 															</button>
 														</div>
@@ -444,6 +444,7 @@
 	
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/util-jquery.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 	
 	<script>
@@ -453,6 +454,8 @@
     window.currentSort = "${currentSort}"; // 컨트롤러에서 넘겨받은 정렬 상태
     window.ownerIdx = "${dto.user_num}";
     window.currentUserIdx = "${sessionScope.member.memberIdx}";
+    const contextPath = "${pageContext.request.contextPath}";
+    const isLogin = "${empty sessionScope.member ? 'false' : 'true'}";
 	</script>
 	
 	<script src="${pageContext.request.contextPath}/dist/js/community.js"></script>
@@ -461,9 +464,8 @@
 	
 	<script>
 	    $(function() {
-	        <%-- 세션에 메시지가 남아있다면 (헤더에서 에러나서 못 지웠다면) --%>
+	        <%-- 세션에 메시지가 남아있다면 --%>
 	        <c:if test="${not empty sessionScope.toastMsg}">
-	            // 이제는 community_form.js가 로드되었으니 showToast를 부를 수 있음!
 	            if (typeof showToast === 'function') {
 	                showToast('${sessionScope.toastType}', '${sessionScope.toastMsg}');
 	            }
@@ -477,5 +479,31 @@
 	    });
 	</script>
 	
+	<div class="modal fade" id="reportModal" tabindex="-1" aria-hidden="true">
+	    <div class="modal-dialog modal-dialog-centered">
+	        <div class="modal-content glass-card border-0" style="background: rgba(30, 30, 30, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
+	            <div class="modal-header border-bottom border-secondary">
+	                <h5 class="modal-title text-white">게시글 신고</h5>
+	                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+	            </div>
+	            <div class="modal-body">
+	                <input type="hidden" id="reportPostId">
+	                <p class="text-gray-300 mb-3 small">신고 사유를 선택해주세요.</p>
+	                <select id="reportReasonSelect" class="form-select bg-dark text-white border-secondary mb-3" onchange="toggleReportReason(this)">
+	                    <option value="">사유 선택...</option>
+	                    <option value="스팸/홍보 도배">스팸/홍보 도배</option>
+	                    <option value="욕설/비하 발언">욕설/비하 발언</option>
+	                    <option value="음란물/유해 정보">음란물/유해 정보</option>
+	                    <option value="custom">직접 입력</option>
+	                </select>
+	                <textarea id="reportReasonText" class="form-control bg-dark text-white border-secondary" rows="4" placeholder="신고 사유를 입력하세요..." style="display: none;"></textarea>
+	            </div>
+	            <div class="modal-footer border-top border-secondary">
+	                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">취소</button>
+	                <button type="button" class="btn btn-danger btn-sm" onclick="submitReport()">신고하기</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
 </body>
 </html>
