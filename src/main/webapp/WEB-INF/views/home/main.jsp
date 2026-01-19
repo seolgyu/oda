@@ -8,7 +8,9 @@
 <head>
 <%@ include file="head.jsp"%>
 <style>
-/* Existing styles */
+/* =========================================
+   [1] 기본 레이아웃 및 필터바 스타일
+   ========================================= */
 .filter-bar {
 	background: transparent !important;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -16,69 +18,81 @@
 	padding-bottom: 1rem;
 	position: relative;
 	z-index: 1000;
+	/* [수정] 필터바 양쪽 끝 정렬 보장 */
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
 }
 
+/* 게시글 컨테이너 중앙 정렬 및 확장 (핵심 수정) */
+.feed-container-center {
+	/* [수정] 650px 제한을 풀고 화면의 85%까지 넓게 씀 */
+	max-width: 800px !important; 
+	width: 90% !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+/* =========================================
+   [2] 버튼 호버 효과 (기존 유지)
+   ========================================= */
 .action-btn-hover.btn-like:hover {
 	color: #ec4899 !important;
 	background: rgba(236, 72, 153, 0.1) !important;
 }
-
 .action-btn-hover.btn-comment:hover {
 	color: #60a5fa !important;
 	background: rgba(96, 165, 250, 0.1) !important;
 }
-
 .action-btn-hover.btn-share:hover {
 	color: #c084fc !important;
 	background: rgba(192, 132, 252, 0.1) !important;
 }
-
 .action-btn-hover.btn-save:hover {
 	color: #facc15 !important;
 	background: rgba(250, 204, 21, 0.1) !important;
 }
-
 .action-btn-hover.btn-report:hover {
 	color: #f87171 !important;
 	background: rgba(248, 113, 113, 0.1) !important;
 }
-
 .action-btn-hover.btn-repost:hover {
     color: #4ade80 !important;              
-    background: rgba(74, 222, 128, 0.1) !important; 
+    background: rgba(74, 222, 128, 0.1) !important;
 }
-
-/* Pink style for likes */
 .text-pink {
 	color: #ec4899 !important;
 }
 
+/* =========================================
+   [3] 카드형 (Card View) 스타일
+   ========================================= */
 .feed-card {
 	border: 1px solid rgba(255, 255, 255, 0.08);
 	margin-bottom: 2rem;
 	cursor: pointer;
+	width: 100%; /* 꽉 채우기 */
 }
 
+/* 캐러셀(이미지 슬라이더) */
 .carousel-inner {
 	background-color: #000;
 	border-radius: 0.5rem;
 }
-
 .image-container {
-	height: 350px;
+	height: 450px; /* [수정] 화면이 커졌으므로 높이도 조금 더 시원하게 */
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
 	background: #000;
 }
-
 .slider-img {
 	max-width: 100%;
 	max-height: 100%;
 	object-fit: contain;
 }
-
 .carousel-btn-glass {
 	width: 44px;
 	height: 44px;
@@ -91,73 +105,16 @@
 	color: white;
 	transition: all 0.2s;
 }
-
 .carousel-btn-glass:hover {
 	background: rgba(255, 255, 255, 0.25);
 	transform: scale(1.1);
 }
-
 .carousel-control-prev, .carousel-control-next {
 	opacity: 1;
 	width: 10%;
 }
 
-.compact-card {
-	display: flex;
-	flex-direction: row;
-	gap: 1rem;
-	padding: 0.8rem 1rem;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	background: rgba(25, 25, 25, 0.6);
-	margin-bottom: 0 !important;
-	border-radius: 0 !important;
-	cursor: pointer;
-	transition: background 0.2s;
-	align-items: stretch;
-	width: 100%;
-	box-sizing: border-box;
-}
-
-.compact-card:hover {
-	background: rgba(255, 255, 255, 0.08);
-}
-
-.compact-card:first-child {
-	border-top-left-radius: 1rem !important;
-	border-top-right-radius: 1rem !important;
-}
-
-.compact-card:last-child {
-	border-bottom-left-radius: 1rem !important;
-	border-bottom-right-radius: 1rem !important;
-	border-bottom: none;
-}
-
-.compact-thumbnail-area {
-	width: 90px;
-	height: 65px;
-	border-radius: 8px;
-	flex-shrink: 0;
-	overflow: hidden;
-	position: relative;
-	background: #000;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.compact-thumb-img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	transition: transform 0.3s;
-	display: block;
-}
-
-.compact-card:hover .compact-thumb-img {
-	transform: scale(1.05);
-}
-
+/* 카드 하단 액션 버튼 */
 .card-action-btn {
 	display: flex;
 	align-items: center;
@@ -172,16 +129,88 @@
 	transition: all 0.2s ease-in-out;
 	cursor: pointer;
 }
-
 .card-action-btn .material-symbols-outlined {
 	font-size: 1.2rem;
 }
 
-.compact-action-btn {
+/* =========================================
+   [4] 축약형 (Compact View) 스타일 - 디자인 깨짐 수정
+   ========================================= */
+.compact-card {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+	padding: 0.8rem 1rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(25, 25, 25, 0.6);
+	margin-bottom: 0 !important;
+	border-radius: 0 !important;
+	cursor: pointer;
+	transition: background 0.2s;
+	align-items: center; /* 수직 중앙 정렬 */
+	width: 100%;
+	box-sizing: border-box;
+}
+.compact-card:hover {
+	background: rgba(255, 255, 255, 0.08);
+}
+.compact-card:first-child {
+	border-top-left-radius: 1rem !important;
+	border-top-right-radius: 1rem !important;
+}
+.compact-card:last-child {
+	border-bottom-left-radius: 1rem !important;
+	border-bottom-right-radius: 1rem !important;
+	border-bottom: none;
+}
+
+/* 썸네일 영역 */
+.compact-thumbnail-area {
+	width: 100px;  /* [수정] 썸네일 크기 살짝 키움 */
+	height: 70px;
+	border-radius: 8px;
+	flex-shrink: 0;
+	overflow: hidden;
+	position: relative;
+	background: #000;
 	display: flex;
 	align-items: center;
-	gap: 6px;
-	padding: 6px 10px !important;
+	justify-content: center;
+}
+.compact-thumb-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.3s;
+	display: block;
+}
+.compact-card:hover .compact-thumb-img {
+	transform: scale(1.05);
+}
+
+/* 텍스트 내용 영역 (제목 등) */
+/* 내용이 길어지면 ... 처리하고 버튼을 밀어내지 않게 함 */
+.compact-card > div:nth-child(2) { 
+    flex-grow: 1;
+    min-width: 0; /* Flexbox text overflow fix */
+    margin-right: 15px;
+}
+
+/* 축약형 액션 버튼 그룹 (우측 정렬 및 깨짐 방지) */
+.compact-action-group {
+	display: flex !important;
+	flex-direction: row !important;
+	align-items: center !important;
+	gap: 5px !important; /* 버튼 사이 간격 */
+	flex-shrink: 0; /* 절대 줄어들지 않음 */
+}
+
+/* 축약형 개별 버튼 */
+.compact-action-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 6px 10px !important; /* 내부 여백 고정 */
 	border-radius: 50px !important;
 	color: #9ca3af;
 	font-size: 0.85rem !important;
@@ -190,45 +219,28 @@
 	border: none;
 	transition: all 0.2s ease-in-out;
 	cursor: pointer;
-	white-space: nowrap !important;
+	white-space: nowrap !important; /* 텍스트 줄바꿈 금지 */
+	flex-shrink: 0 !important; /* 찌그러짐 방지 */
 }
-
 .compact-action-btn .material-symbols-outlined {
-	font-size: 1.1rem !important;
+	font-size: 1.2rem !important;
+	margin-right: 4px;
 }
 
-.compact-action-group {
-	display: flex !important;
-	flex-direction: row !important;
-	align-items: center !important;
-	gap: 0.4rem !important;
+/* 메타 정보 (날짜, 작성자 등) */
+.compact-meta-info {
+	white-space: nowrap !important;
+	flex-shrink: 0;
+	color: #6b7280;
 }
 
-.feed-container-center {
-	max-width: 650px;
-	margin-left: auto;
-	margin-right: auto;
-}
+/* =========================================
+   [5] 기타 유틸리티 (모달, 로딩바, 소리버튼)
+   ========================================= */
+.feed-wrapper-compact { gap: 0 !important; }
+.feed-wrapper-card { gap: 1.5rem !important; }
 
-.feed-wrapper-compact {
-	gap: 0 !important;
-}
-
-.feed-wrapper-card {
-	gap: 1.5rem !important;
-}
-
-.feed-wrapper-compact .compact-card:first-child {
-	border-top-left-radius: 1rem !important;
-	border-top-right-radius: 1rem !important;
-}
-
-.feed-wrapper-compact .compact-card:last-child {
-	border-bottom-left-radius: 1rem !important;
-	border-bottom-right-radius: 1rem !important;
-	border-bottom: none;
-}
-
+/* 모달 닫기 버튼 */
 .modal-close-btn {
 	position: absolute;
 	top: -40px;
@@ -246,29 +258,21 @@
 	transition: all 0.2s;
 	z-index: 1056;
 }
-
 .modal-close-btn:hover {
 	background: rgba(255, 255, 255, 0.2);
 	transform: scale(1.1);
 }
 
-.compact-meta-info {
-	white-space: nowrap !important;
-	flex-shrink: 0;
-	min-width: 0;
-}
-
+/* 무한 스크롤 로딩바 */
 .loading-bar-wrapper {
 	width: 100%;
 	padding: 20px 0;
-	display: none; /* 기본 숨김 */
+	display: none;
 	justify-content: center;
 }
-
 .loading-bar-wrapper.active {
 	display: flex;
 }
-
 .loading-bar {
 	width: 50px;
 	height: 4px;
@@ -278,6 +282,7 @@
 	box-shadow: 0 0 10px #a855f7;
 }
 
+/* 비디오 음소거 버튼 */
 .video-sound-btn {
     position: absolute;
     bottom: 15px;
@@ -301,12 +306,12 @@
     font-size: 18px;
 }
 
+/* 애니메이션 */
 @keyframes loading-expand { 
 	0% { width: 50px; opacity: 0.5; } 
 	50% { width:200px; opacity:1; }
 	100% { width:50px; opacity:0.5; }
 }
-
 </style>
 </head>
 <body>
