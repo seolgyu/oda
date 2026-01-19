@@ -476,4 +476,23 @@ public class CommunityController {
 	    return model; // JSON 형태로 자바스크립트에게 전달됨
 	}
 	
+	@PostMapping("post/write")
+	public String communityWriteSubmit(PostDTO dto, HttpServletRequest req, HttpSession session) throws Exception {
+	    // 1. 세션에서 유저 번호 꺼내기
+	    SessionInfo info = (SessionInfo) session.getAttribute("member");
+	    dto.setUserNum(info.getMemberIdx());
+	    dto.setPostType("COMMUNITY");
+	    
+	    // 2. 파일 업로드 처리 (Cloudinary 등 기존 PostController 로직 사용)
+	    // ...
+	    
+	    // 3. DB 저장 (PostServiceImpl 사용)
+	    postService.insertPost(dto); 
+	    
+	    // 4. 성공 후 해당 커뮤니티로 리다이렉트
+	    session.setAttribute("toastMsg", "게시글이 등록되었습니다.");
+	    session.setAttribute("toastType", "success");
+	    return "redirect:/community/main?community_id=" + dto.getCommunityId();
+	}
+	
 }

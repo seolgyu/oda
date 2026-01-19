@@ -292,6 +292,29 @@ function updateFavoriteUI() {
     });
 }
 
+function checkJoinAndWrite() {
+    // 1. 가입 여부 확인 (버튼의 data-joined 속성 참조)
+    const $joinBtn = $('.btn-join-toggle');
+    const isJoined = $joinBtn.attr('data-joined') === 'true';
+    
+    // 2. 관리자(커뮤니티 생성자) 여부 확인
+    // main.jsp에서 dto.user_num으로 넘겨준 값이 관리자의 idx입니다.
+    const isOwner = (window.ownerIdx == window.currentUserIdx); // 전역변수 설정 필요
+
+    if (!isJoined && !isOwner) {
+        // 커뮤니티 가입이 안 되어 있으면 토스트 메시지 출력
+        if (typeof showToast === 'function') {
+            showToast('error', '커뮤니티 가입 후 게시글을 작성할 수 있습니다.');
+        } else {
+            alert('커뮤니티 가입 후 게시글을 작성할 수 있습니다.');
+        }
+        return;
+    }
+	const comName = encodeURIComponent("${dto.com_name}");
+    // 3. 통과 시 이동 (community_id 파라미터 포함)
+    location.href = window.cp + "/post/write?community_id=" + window.communityId + "&com_name=" + comName;
+}
+
 function openConfirmModal(title, description, confirmText, confirmColor, confirmAction) {
     const $modal = $('#confirm-modal');
     $modal.find('h3').text(title);

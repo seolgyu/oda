@@ -96,7 +96,14 @@
                             
                             <h5 class="text-white fw-bold mb-3 border-bottom border-secondary border-opacity-25 pb-2">
                                 <c:choose>
-                                    <c:when test="${mode == 'update'}">Edit Post</c:when>
+                                    <c:when test="${mode == 'update'}">Edit Post
+                                    <%-- 수정 모드일 때 소속 커뮤니티가 있다면 표시 --%>
+							            <c:choose>
+							                <c:when test="${not empty dto.communityId}">Post Update (Community)</c:when>
+							                <c:otherwise>Edit Post</c:otherwise>
+							            </c:choose>
+                                    </c:when>
+                                    <c:when test="${not empty com_name}">${com_name} 커뮤니티의 새글</c:when>
                                     <c:otherwise>New Post</c:otherwise>
                                 </c:choose>
                             </h5>
@@ -105,6 +112,13 @@
                                 <c:if test="${mode == 'update'}">
                                     <input type="hidden" name="postId" value="${dto.postId}">
                                 </c:if>
+                                
+                                <%-- 2. 커뮤니티 ID 전달 (등록/수정 공통) --%>
+							    <%-- 컨트롤러 파라미터(communityId) 혹은 DTO의 정보를 우선순위에 따라 hidden에 담음 --%>
+							    <c:set var="targetComid" value="${not empty communityId ? communityId : dto.communityId}"/>
+							    <c:if test="${not empty targetCid}">
+							        <input type="hidden" name="communityId" value="${targetComid}">
+							    </c:if>
 
                                 <div class="mb-3">
                                     <label class="form-label text-white-50 small text-uppercase fw-bold mb-1">Title</label>
@@ -163,7 +177,14 @@
 								    </div>
 								
 								    <div class="d-flex gap-2">
-								       	<button type="button" class="btn btn-sm btn-secondary" onclick="location.href='${pageContext.request.contextPath}/main'">Cancel</button>
+								       	<c:set var="cancelUrl" value="${pageContext.request.contextPath}/main"/>
+						                
+						                <c:if test="${not empty targetCid}">
+							                <c:set var="cancelUrl" value="${pageContext.request.contextPath}/community/main?community_id=${targetComid}"/>
+							            </c:if>
+						                
+						                <button type="button" class="btn btn-sm btn-secondary" onclick="location.href='${cancelUrl}'">Cancel</button>
+								       	
 								       	<button type="button" class="btn btn-sm btn-primary px-4 fw-bold" 
 								       			style="background: #a855f7; border: none;" onclick="sendOk();">
 								            	${mode == 'update' ? 'Update' : 'Post'}

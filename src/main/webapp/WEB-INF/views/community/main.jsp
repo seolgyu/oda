@@ -415,7 +415,7 @@
 						
 						        <button class="btn w-100 rounded-pill fw-bold py-2 mb-3 text-white" 
 								        style="background: linear-gradient(135deg, #a855f7, #9333ea); border: none; transition: transform 0.2s, box-shadow 0.2s;"
-								        onclick=""
+								        onclick="checkJoinAndWrite();"
 								        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(168, 85, 247, 0.4)';"
 								        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
 								    게시글 쓰기
@@ -451,6 +451,8 @@
     window.cp = "${pageContext.request.contextPath}";
     window.communityId = "${dto.community_id}"; 
     window.currentSort = "${currentSort}"; // 컨트롤러에서 넘겨받은 정렬 상태
+    window.ownerIdx = "${dto.user_num}";
+    window.currentUserIdx = "${sessionScope.member.memberIdx}";
 	</script>
 	
 	<script src="${pageContext.request.contextPath}/dist/js/community.js"></script>

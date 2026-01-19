@@ -58,6 +58,12 @@ public class PostController {
 		}
 
 		ModelAndView mav = new ModelAndView("post/write");
+		
+		String communityId = req.getParameter("communityId");
+	    String comName = req.getParameter("com_name");
+	    
+	    mav.addObject("communityId", communityId);
+	    mav.addObject("com_name", comName);
 		mav.addObject("mode", "write");
 		return mav;
 	}
@@ -75,11 +81,17 @@ public class PostController {
 
 		try {
 			PostDTO dto = new PostDTO();
+			
+			String communityId = req.getParameter("community_id");
+	        if(communityId != null && !communityId.isEmpty()) {
+	            dto.setCommunityId(Long.parseLong(communityId));
+	            dto.setPostType("COMMUNITY");
+	        } else {
+	            dto.setPostType("PERSONAL"); // 마이피드
+	        }
 
 			dto.setTitle(req.getParameter("title"));
 			dto.setContent(req.getParameter("content"));
-
-			dto.setPostType("COMMUNITY");
 
 			String chkReply = req.getParameter("chkReply");
 			dto.setReplyEnabled(chkReply != null ? "0" : "1");
@@ -148,11 +160,16 @@ public class PostController {
 			
 		    session.setAttribute("toastMsg", "새로운 게시글이 등록되었습니다.");
 		    session.setAttribute("toastType", "success");
+		    
+		    if(dto.getCommunityId() != null) {
+	            return new ModelAndView("redirect:/community/main?community_id=" + dto.getCommunityId());
+	        }
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+		
 		return new ModelAndView("redirect:/main");
 	}
 
@@ -204,10 +221,18 @@ public class PostController {
 			PostDTO dto = new PostDTO();
 
 			dto.setPostId(Long.parseLong(req.getParameter("postId")));
+			
 			dto.setTitle(req.getParameter("title"));
 			dto.setContent(req.getParameter("content"));
-			dto.setPostType("COMMUNITY");
-
+			
+			String communityId = req.getParameter("communityId");
+	        if(communityId != null && !communityId.isEmpty()) {
+	            dto.setCommunityId(Long.parseLong(communityId));
+	            dto.setPostType("COMMUNITY");
+	        } else {
+	        	dto.setPostType("PERSONAL");
+	        }
+	        
 			String chkReply = req.getParameter("chkReply");
 			dto.setReplyEnabled(chkReply != null ? "0" : "1");
 			
@@ -277,6 +302,10 @@ public class PostController {
 			
 		    session.setAttribute("toastMsg", "게시글이 성공적으로 수정되었습니다.");
 		    session.setAttribute("toastType", "success");
+		    
+		    if(dto.getCommunityId() != null) {
+	            return new ModelAndView("redirect:/community/main?community_id=" + dto.getCommunityId());
+	        }
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -356,6 +385,10 @@ public class PostController {
 				
 		        session.setAttribute("toastMsg", "게시글이 삭제되었습니다.");
 		        session.setAttribute("toastType", "success");
+		        
+		        if (dto.getCommunityId() != null && dto.getCommunityId() != 0) {
+	                return new ModelAndView("redirect:/community/main?community_id=" + dto.getCommunityId());
+	            }
 			}
 
 		} catch (Exception e) {
