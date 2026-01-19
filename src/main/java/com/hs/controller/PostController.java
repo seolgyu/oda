@@ -361,7 +361,8 @@ public class PostController {
 		ModelAndView mav = new ModelAndView("post/article");
 		mav.addObject("dto", dto);
 		mav.addObject("memberdto", memberdto);
-
+		mav.addObject("listFile", dto.getFileList());
+		
 		return mav;
 	}
 

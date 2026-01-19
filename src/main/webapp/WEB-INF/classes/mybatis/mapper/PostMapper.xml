@@ -46,7 +46,7 @@
         WHERE POST_ID = #{postId}
     </update>
 
-    <select id="findById" parameterType="long" resultType="com.hs.model.PostDTO">
+	<select id="findById" parameterType="long" resultMap="postMap">
         SELECT
             p.POST_ID AS postId,
             p.USER_NUM AS userNum,
@@ -64,12 +64,18 @@
             p.SHOW_LIKES AS showLikes,
             p.SHOW_VIEWS AS showViews,
             u.USER_NICKNAME AS authorNickname,
-            u.USER_PROFILE AS authorProfileImage
+            u.USER_PROFILE AS authorProfileImage,
+            f.FILE_AT_ID AS fileAtId,
+            f.FILE_PATH AS filePath,
+            f.FILE_TYPE AS fileType,
+            f.FILE_ORDER AS fileOrder
         FROM POSTS p
         JOIN MEMBER u ON p.USER_NUM = u.USER_NUM
+        LEFT JOIN FILEAT f ON p.POST_ID = f.POST_ID
         WHERE p.POST_ID = #{postId}
-    </select>
-
+        ORDER BY f.FILE_ORDER ASC
+    </select>   
+   
     <select id="listPost" resultType="com.hs.model.PostDTO">
         SELECT
             p.POST_ID AS postId,
@@ -209,6 +215,7 @@
             <id property="fileAtId" column="fileAtId" />
             <result property="filePath" column="filePath" />
             <result property="fileOrder" column="fileOrder" />
+            <result property="fileType" column="fileType" />
         </collection>
     </resultMap>
 

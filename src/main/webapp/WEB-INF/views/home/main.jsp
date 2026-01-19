@@ -406,20 +406,24 @@
 		</main>
 	</div>
 
-	<div class="modal fade" id="imageModal" tabindex="-1"
-		aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-xl">
-			<div class="modal-content bg-transparent border-0 position-relative">
-				<button type="button" class="modal-close-btn"
-					onclick="closeImageModal()">
-					<span class="material-symbols-outlined fs-4">close</span>
-				</button>
-				<div class="modal-body p-0 text-center">
-					<img id="modalImage" src="" class="img-fluid rounded-4 shadow-lg"
-						style="max-height: 90vh;">
-				</div>
-			</div>
-		</div>
+	<div id="imageModal" class="modal fade" tabindex="-1" aria-hidden="true" onclick="closeImageModal()">
+	    <div class="modal-dialog modal-dialog-centered modal-lg">
+	        <div class="modal-content bg-transparent border-0">
+	            <div class="modal-body p-0 text-center position-relative">
+	                
+	                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" 
+	                        style="z-index: 10;" onclick="closeImageModal()" aria-label="Close"></button>
+	                
+	                <img id="modalImage" src="" class="img-fluid rounded shadow-lg" style="max-height: 85vh; display: none;">
+	                
+	                <video id="modalVideo" src="" class="img-fluid rounded shadow-lg" 
+	                       style="max-height: 85vh; display: none;" 
+	                       controls autoplay playsinline muted>
+	                </video>
+	
+	            </div>
+	        </div>
+	    </div>
 	</div>
 	
 	<div class="modal fade" id="reportModal" tabindex="-1" aria-hidden="true">
@@ -541,24 +545,60 @@
 		}
 
 		let myModalInstance = null;
-		function showImageModal(imagePath) {
-			if (!imagePath)
-				return;
-			let fullPath = "";
-			if (imagePath.startsWith("http"))
-				fullPath = imagePath;
-			else
-				fullPath = contextPath + '/uploads/photo/' + imagePath;
-			document.getElementById('modalImage').src = fullPath;
-			const modalElement = document.getElementById('imageModal');
-			if (!myModalInstance)
-				myModalInstance = new bootstrap.Modal(modalElement);
-			myModalInstance.show();
-		}
+		
+		function showImageModal(url, type) {
+		    const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+		    const $img = $('#modalImage');
+		    const $video = $('#modalVideo');
+		    const videoElement = $video[0]; // DOM 객체 가져오기
+
+		    // 1. 화면 초기화
+		    $img.hide();
+		    $video.hide();
+		    
+		    // 2. 기존 재생 중지 및 초기화 (매우 중요)
+		    videoElement.pause();
+		    videoElement.currentTime = 0;
+		    videoElement.removeAttribute('src'); // 기존 소스 제거
+
+		    if (type === 'video') {
+		        // [동영상 모드]
+		        console.log("모달 동영상 재생 시도: " + url);
+		        
+		        $video.attr('src', url); // 새 주소 할당
+		        $video.show();
+		        
+		        // ★ 소리 끄기 (자동 재생 정책 준수)
+		        videoElement.muted = true;
+		        
+		        // 약간의 딜레이 후 재생 (모달이 완전히 뜬 뒤 실행)
+		        setTimeout(() => {
+		            const playPromise = videoElement.play();
+		            if (playPromise !== undefined) {
+		                playPromise.then(() => {
+		                    console.log("모달 재생 성공");
+		                }).catch(error => {
+		                    console.log("모달 재생 실패(브라우저 차단):", error);
+		                });
+		            }
+		        }, 300);
+		        
+		    } else {
+		        // [이미지 모드]
+		        $img.attr('src', url);
+		        $img.show();
+		    }
+		    
+		    modal.show();
+		}			
+		
 		function closeImageModal() {
-			if (myModalInstance)
-				myModalInstance.hide();
-		}
+		    const video = document.getElementById('modalVideo');
+		    if (video) {
+		        video.pause();
+		    }
+		    $('#imageModal').modal('hide');
+		}			
 
 		$(document).ready(function() {
 			const carousels = document.querySelectorAll('.carousel');

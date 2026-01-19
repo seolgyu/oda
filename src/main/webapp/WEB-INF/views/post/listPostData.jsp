@@ -179,44 +179,61 @@
 				            <c:set var="path" value="${fn:toLowerCase(dto.fileList[0].filePath)}" />
 				            <c:set var="fType" value="${fn:toLowerCase(dto.fileList[0].fileType)}" />
 				            
-				            <c:choose>
-				                <%-- [수정] URL 끝이 mp4/mov 이거나 DB타입이 mp4면 동영상 --%>
-				                <c:when test="${fn:endsWith(path, '.mp4') or fn:endsWith(path, '.mov') or fType eq 'mp4'}">
-				                    
-				                    <c:choose>
-				                        <c:when test="${fn:startsWith(dto.fileList[0].filePath, 'http')}">
-				                            <c:set var="originalUrl" value="${dto.fileList[0].filePath}" />
-				                            <c:set var="urlParts" value="${fn:split(originalUrl, '.')}" />
-				                            <c:set var="baseUrl" value="" />
-				                            <c:forEach var="part" items="${urlParts}" varStatus="stat">
-				                                <c:if test="${!stat.last}"><c:set var="baseUrl" value="${baseUrl}${part}." /></c:if>
-				                            </c:forEach>
-				                            <c:set var="baseUrl" value="${fn:substring(baseUrl, 0, fn:length(baseUrl)-1)}" />
-				                            
-				                            <c:set var="posterUrl" value="${baseUrl}.jpg" />
-				                            <c:set var="videoUrl" value="${baseUrl}.mp4" />
-				                        </c:when>
-				                        <c:otherwise>
-				                            <c:set var="videoUrl" value="${pageContext.request.contextPath}/uploads/photo/${dto.fileList[0].filePath}" />
-				                            <c:set var="posterUrl" value="" />
-				                        </c:otherwise>
-				                    </c:choose>
-				
-				                    <video src="${videoUrl}" poster="${posterUrl}" class="compact-thumb-img" muted preload="metadata"></video>
-				                    <span class="material-symbols-outlined position-absolute top-50 start-50 translate-middle text-white" style="font-size: 2rem; text-shadow: 0 0 5px rgba(0,0,0,0.5);">play_circle</span>
-				                </c:when>
-				                
-				                <c:otherwise>
-				                     <c:choose>
-				                        <c:when test="${fn:startsWith(dto.fileList[0].filePath, 'http')}">
-				                            <img src="${dto.fileList[0].filePath}" class="compact-thumb-img">
-				                        </c:when>
-				                        <c:otherwise>
-				                            <img src="${pageContext.request.contextPath}/uploads/photo/${dto.fileList[0].filePath}" class="compact-thumb-img">
-				                        </c:otherwise>
-				                    </c:choose>
-				                </c:otherwise>
-				            </c:choose>
+				         			            
+								<c:choose>
+								    <%-- 동영상일 때 --%>
+								    <c:when test="${fn:endsWith(path, '.mp4') or fn:endsWith(path, '.mov') or fType eq 'mp4'}">
+								        
+								        <%-- [수정] 여기도 똑같이 안전한 로직 적용 --%>
+								        <c:choose>
+								            <c:when test="${fn:startsWith(dto.fileList[0].filePath, 'http')}">
+								                <c:set var="originalUrl" value="${dto.fileList[0].filePath}" />
+								                <c:set var="urlParts" value="${fn:split(originalUrl, '.')}" />
+								                <c:set var="baseUrl" value="" />
+								                <c:forEach var="part" items="${urlParts}" varStatus="stat">
+								                    <c:if test="${!stat.last}">
+								                        <c:set var="baseUrl" value="${baseUrl}${part}." />
+								                    </c:if>
+								                </c:forEach>
+								                <c:set var="baseUrl" value="${fn:substring(baseUrl, 0, fn:length(baseUrl)-1)}" />
+								                
+								                <c:set var="videoUrl" value="${baseUrl}.mp4" />
+								                <c:set var="posterUrl" value="${baseUrl}.jpg" />
+								            </c:when>
+								            <c:otherwise>
+								                <c:set var="videoUrl" value="${pageContext.request.contextPath}/uploads/photo/${dto.fileList[0].filePath}" />
+								                <c:set var="posterUrl" value="" />
+								            </c:otherwise>
+								        </c:choose>
+								        
+								        <div class="compact-thumbnail-area shadow-sm"
+								             onclick="event.stopPropagation(); showImageModal('${videoUrl}', 'video');">
+								            
+								            <video src="${videoUrl}" poster="${posterUrl}" class="compact-thumb-img" muted preload="metadata"></video>
+								            <span class="material-symbols-outlined position-absolute top-50 start-50 translate-middle text-white" 
+								                  style="font-size: 2rem; text-shadow: 0 0 5px rgba(0,0,0,0.5);">play_circle</span>
+								        </div>
+								    </c:when>
+								    
+								    <%-- 이미지일 때 --%>
+								    <c:otherwise>
+								        <div class="compact-thumbnail-area shadow-sm"
+								             onclick="event.stopPropagation(); showImageModal('${dto.fileList[0].filePath}', 'image');">
+								             
+								             <c:choose>
+								                <c:when test="${fn:startsWith(dto.fileList[0].filePath, 'http')}">
+								                    <img src="${dto.fileList[0].filePath}" class="compact-thumb-img">
+								                </c:when>
+								                <c:otherwise>
+								                    <img src="${pageContext.request.contextPath}/uploads/photo/${dto.fileList[0].filePath}" class="compact-thumb-img">
+								                </c:otherwise>
+								            </c:choose>
+								        </div>
+								    </c:otherwise>
+								</c:choose>																				            
+												            
+				            
+				            
 				        </c:when>
 				        <c:otherwise>
 				            <div class="d-flex align-items-center justify-content-center w-100 h-100 bg-secondary bg-opacity-25">
