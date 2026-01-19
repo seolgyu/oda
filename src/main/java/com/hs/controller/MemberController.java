@@ -548,7 +548,7 @@ public class MemberController {
 	        param.put("reqId", loginUserNum);
 	        param.put("addId", userNum);
 	        
-	        mav.addObject("isFollowing", followService.followCount(map) > 0 ? true : false);
+	        mav.addObject("isFollowing", followService.followCount(param) > 0 ? true : false);
 	        return mav;
 
 	    } catch (Exception e) {
