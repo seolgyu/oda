@@ -14,7 +14,14 @@ public class ContentDTO {
 	private String postType;
 	private String createdDate;
 	private String state;
+	private String postsUrl;
 	
+	public String getPostsUrl() {
+		return postsUrl;
+	}
+	public void setPostsUrl(String postsUrl) {
+		this.postsUrl = postsUrl;
+	}
 	public String getPostId() {
 		return postId;
 	}

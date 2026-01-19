@@ -94,6 +94,11 @@ public class contentManageController {
 			
 			List<ContentDTO> memberList = service.memberList(map);
 			
+			for(ContentDTO dto : memberList) {
+	            String postsUrl = cp + "/post/article?postId=" + dto.getPostId();
+	            dto.setPostsUrl(postsUrl); // ContentDTO에 postsUrl 필드가 있어야 함
+	        }
+			
 			if (! kwd.isBlank()) {  // if(kwd.length() != 0) { // 검색 상태인 경우
 				query += "&schType=" + schType + "&kwd=" + util.encodeUrl(kwd);
 			}
