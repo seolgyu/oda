@@ -189,7 +189,7 @@ function renderMyPost(item) {
 			${repostBadgeHtml}
             <div class="list-view-item p-3" style="display: ${listViewDisplay};">
                 <div class="d-flex align-items-start gap-3 w-100">
-                    <div class="flex-shrink-0 thumbnail-box" style="width: 90px; height: 90px;">
+                    <div class="flex-shrink-0 thumbnail-box app-user-trigger" data-user-id="${item.authorId}" style="width: 90px; height: 90px;">
                         ${firstImg
 			? `<img src="${firstImg}" class="w-100 h-100 object-fit-cover rounded-3 border border-white border-opacity-10">`
 			: `<div class="w-100 h-100 rounded-3 d-flex align-items-center justify-content-center border border-white border-opacity-10" style="background: rgba(255, 255, 255, 0.05);">
@@ -201,7 +201,7 @@ function renderMyPost(item) {
                     <div class="flex-grow-1 overflow-hidden d-flex flex-column justify-content-between" style="min-height: 90px;">
                         <div>
                             <div class="d-flex align-items-center gap-2 mb-1">
-                                <span class="text-white fw-bold text-sm">${item.authorNickname}</span>
+                                <span class="text-white fw-bold text-sm app-user-trigger" data-user-id="${item.authorId}">${item.authorNickname}</span>
                                 <span class="text-secondary text-xs opacity-75">c/${item.authorId}</span>
                                 <span class="ms-auto text-xs text-gray-500">${item.timeAgo}</span>
                             </div>
@@ -234,7 +234,7 @@ function renderMyPost(item) {
             <div class="card-view-item" style="display: ${cardViewDisplay};">
                 <div class="p-3 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="avatar-md bg-info text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden" 
+                        <div class="avatar-md bg-info text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden app-user-trigger" data-user-id="${item.authorId}" 
                              style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #a855f7);">
                             ${item.authorProfileImage
 			? `<img src="${item.authorProfileImage}" class="w-100 h-100 object-fit-cover">`
@@ -242,7 +242,7 @@ function renderMyPost(item) {
 		}
                         </div>
                         <div>
-                            <h3 class="text-sm fw-medium text-white mb-0">${item.authorNickname}</h3>
+                            <h3 class="text-sm fw-medium text-white mb-0 app-user-trigger" data-user-id="${item.authorId}">${item.authorNickname}</h3>
                             <p class="text-xs text-gray-500 mb-0">${item.timeAgo}</p>
                         </div>
                     </div>

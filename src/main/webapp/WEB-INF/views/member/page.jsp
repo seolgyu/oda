@@ -372,7 +372,7 @@
 
 												<div class="list-view-item p-3" style="display: none;">
 													<div class="d-flex align-items-start gap-3 w-100">
-														<div class="flex-shrink-0 thumbnail-box"
+														<div class="flex-shrink-0 thumbnail-box app-user-trigger" data-user-id="${item.authorId}"
 															style="width: 90px; height: 90px;">
 															<c:choose>
 																<c:when test="${not empty item.fileList}">
@@ -394,7 +394,7 @@
 															style="min-height: 90px;">
 															<div>
 																<div class="d-flex align-items-center gap-2 mb-1">
-																	<span class="text-white fw-bold text-sm">${item.authorNickname}</span>
+																	<span class="text-white fw-bold text-sm app-user-trigger" data-user-id="${item.authorId}">${item.authorNickname}</span>
 																	<span class="text-secondary text-xs opacity-75">c/${item.authorId}</span>
 																	<span class="ms-auto text-xs text-gray-500">${item.timeAgo}</span>
 																</div>
@@ -451,8 +451,9 @@
 														class="p-3 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
 														<div class="d-flex align-items-center gap-3">
 															<div
-																class="avatar-md bg-info text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden"
-																style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #a855f7);">
+																class="avatar-md bg-info text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden app-user-trigger"
+																style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #a855f7);"
+																data-user-id="${item.authorId}">
 																<c:choose>
 																	<c:when test="${not empty item.authorProfileImage}">
 																		<img src="${item.authorProfileImage}"
@@ -462,7 +463,7 @@
 																</c:choose>
 															</div>
 															<div>
-																<h3 class="text-sm fw-medium text-white mb-0">${item.authorNickname}</h3>
+																<h3 class="text-sm fw-medium text-white mb-0 app-user-trigger" data-user-id="${item.authorId}">${item.authorNickname}</h3>
 																<p class="text-xs text-gray-500 mb-0">${item.timeAgo}</p>
 															</div>
 														</div>

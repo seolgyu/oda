@@ -159,4 +159,16 @@
 				}, 400);
 			}, 2500);
 		}
+		
+		document.addEventListener('click', function(e) {
+		    const target = e.target.closest('.app-user-trigger'); 
+		    
+		    if (target) {
+		        const userId = target.dataset.userId;
+		        
+		        if (userId) {
+		            location.href = `${pageContext.request.contextPath}/member/page?id=` + userId;
+		        }
+		    }
+		});
 	</script>

@@ -315,3 +315,21 @@ body {
     border-left: 4px solid #f87171;
     box-shadow: -5px 0 15px rgba(248, 113, 113, 0.2);
 }
+
+/* 유저 프로필/닉네임 클릭 트리거 */
+.app-user-trigger {
+    cursor: pointer !important; /* 마우스 손가락 모양 강제 */
+    transition: transform 0.2s ease, filter 0.2s ease;
+    display: inline-flex; /* 레이아웃 깨짐 방지 */
+    align-items: center;
+}
+
+/* 마우스를 올렸을 때 강조 효과 */
+.app-user-trigger:hover {
+    transform: scale(1.02); /* 아주 살짝 커지는 효과 */
+}
+
+/* 클릭하는 순간의 느낌 */
+.app-user-trigger:active {
+    transform: scale(0.98); /* 눌리는 느낌 */
+}

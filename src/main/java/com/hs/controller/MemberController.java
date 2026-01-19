@@ -514,18 +514,18 @@ public class MemberController {
 	            // return new ModelAndView("redirect:/member/noAuthorized");
 	        }
 	        
+	        Long userNum = dto.getUserIdx();
 	        
 	        Map<String, Object> map = new HashMap<String, Object>();
 	        map.put("loginUserNum", loginUserNum);
-	        map.put("userNum", dto.getUserIdx());
+	        map.put("userNum", userNum);
 	        map.put("offset", 0);
 	        map.put("size", 5);
 
 	        List<PostDTO> list = postService.listUserPost(map);
-	        dto.setPostCount(service.getPostCount(loginUserNum));
-	        dto.setReplyCount(service.getReplyCount(loginUserNum));
+	        dto.setPostCount(service.getPostCount(userNum));
+	        dto.setReplyCount(service.getReplyCount(userNum));
 	        dto.setTotalContribution(dto.getPostCount() + dto.getReplyCount());
-	        
 	        
 	        ModelAndView mav = new ModelAndView("member/page"); // userPage.jsp로 이동
 	        mav.addObject("user", dto);
