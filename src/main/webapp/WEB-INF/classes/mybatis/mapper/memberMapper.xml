@@ -197,5 +197,23 @@
     	FROM comments
     	WHERE user_num = #{userNum} AND is_deleted = '0'
     </select>
+    
+    <select id="isLikedPost" parameterType="map" resultType="Integer">
+    	SELECT COUNT(*)
+    	FROM likes
+    	WHERE user_num = #{userNum} AND post_id = #{postId}
+    </select>
+    
+    <select id="isSavedPost" parameterType="map" resultType="Integer">
+    	SELECT COUNT(*)
+    	FROM saved
+    	WHERE user_num = #{userNum} AND post_id = #{postId}
+    </select>
+    
+    <select id="isRepostedPost" parameterType="map" resultType="Integer">
+    	SELECT COUNT(*)
+    	FROM repost
+    	WHERE user_num = #{userNum} AND post_id = #{postId}
+    </select>
 	
 </mapper>

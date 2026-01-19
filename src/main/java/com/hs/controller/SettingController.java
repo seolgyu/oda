@@ -693,7 +693,7 @@ public class SettingController {
 	        map.put("offset", (pageNo - 1) * 5);
 	        map.put("size", 5);
 	        
-	        List<PostDTO> list = postService.listUserPost(map);
+	        List<PostDTO> list = service.listUserPost(map);
 	        
 	       model.put("user", dto);
 	       model.put("list", list);
@@ -732,7 +732,7 @@ public class SettingController {
 	        map.put("offset", (pageNo - 1) * 5);
 	        map.put("size", 5);
 	        
-	        List<PostDTO> list = postService.listUserRepost(map);
+	        List<PostDTO> list = service.listUserRepost(map);
 	        
 	        model.put("user", dto);
 	        model.put("list", list);

@@ -50,4 +50,8 @@ public interface MemberMapper {
 	public Long findUserNum(Map<String, Object> map) throws SQLException;
 	
 	public List<Map<String, Object>> listAgeSection();
+	
+	public int isLikedPost(Map<String, Object> map) throws SQLException;
+	public int isSavedPost(Map<String, Object> map) throws SQLException;
+	public int isRepostedPost(Map<String, Object> map) throws SQLException;
 }
