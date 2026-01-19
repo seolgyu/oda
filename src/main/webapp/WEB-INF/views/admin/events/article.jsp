@@ -485,104 +485,34 @@
 		</c:if>
 	</div>
 	
+
 	<div class="comments-section">
+	    <form name="replyForm" method="post">
+	        <div class="comment-header">
+	            <span class="material-symbols-outlined">forum</span>
+	            (<span class="reply-count">)</span>
+	        </div>
+	        
+	        <div class="comment-input-container">
+	            <textarea class="comment-textarea" name="content" placeholder="댓글을 입력해주세요. 타인을 비방하거나 개인정보를 유출하는 글의 게시를 삼가해 주세요."></textarea>
+	            <div class="comment-input-footer">
+	                <button type="button" class="btn btn-register btnSendReply">등록</button>
+	            </div>
+	        </div>
+	    </form>
 	
-	<div class="comment-header">
-		<span class="material-symbols-outlined">forum</span>
-		댓글 3개
-	</div>
+	    <div id="listReply" 
+	         class="comment-list"
+	         data-postsUrl="${pageContext.request.contextPath}/admin/events"
+	         data-num="${dto.event_num}"
+	         data-liked="1">
+	        
+	        <div class="list-content-body"></div> 
 	
-	<div class="comment-input-container">
-		<textarea class="comment-textarea" placeholder="댓글을 입력해주세요."></textarea>
-	
-		<div class="comment-input-footer">
-			<button class="btn btn-register">등록</button>
-		</div>
-	</div>
-	
-	<div class="comment-list">
-	<div class="comment-box">
-	
-	<div class="comment-meta">
-		<span class="comment-author">김철수</span>
-			<span class="comment-date">2026-01-01 10:30 
-			<label class="reply-count-trigger" for="toggle-replies-1">(1)</label>
-		</span>
-	</div>
-
-	<div class="comment-body">
-		좋은 정보 감사합니다! 시스템 점검 시간이 정확히 언제부터인가요?
-	</div>
-
-	<div class="comment-actions">
-		<button class="btn-reply">
-			<span class="material-symbols-outlined">chat_bubble</span>
-			답글 쓰기
-		</button>
-		<label class="btn-view-replies" for="toggle-replies-1">
-			<span class="material-symbols-outlined">expand_more</span>
-			답글 보기
-		</label>
-	</div>
-	
-	<input class="reply-toggle-check" id="toggle-replies-1" type="checkbox"/>
-		<div class="re-comment-container">
-			<div class="re-comment-item">
-				<div class="comment-meta">
-					<span class="comment-author">관리자</span>
-					<span class="comment-date">2026-01-01 11:15</span>
-				</div>
-			<div class="comment-body">
-			해당 공지사항 상단 이미지를 참고하시면 시간 확인이 가능하십니다.
-			</div>
-			
-			<div class="comment-actions">
-				<button class="btn-reply">답글 쓰기</button>
-			</div>
-		</div>
-		</div>
-	</div>
-	
-	<div class="comment-box">
-	<div class="comment-meta">
-		<span class="comment-author">이영희</span>
-		<span class="comment-date">2026-01-01 14:05 
-			<label class="reply-count-trigger" for="toggle-replies-2">(1)</label>
-	</span>
-	</div>
-	<div class="comment-body">
-	강사님 화이팅입니다. 좋은 수업 기대하겠습니다!
-	</div>
-
-<div class="comment-actions">
-<button class="btn-reply">
-<span class="material-symbols-outlined">chat_bubble</span>
- 답글 쓰기
-</button>
-<label class="btn-view-replies" for="toggle-replies-2">
-<span class="material-symbols-outlined">expand_more</span>
-답글 보기
-</label>
-</div>
-
-<input checked="" class="reply-toggle-check" id="toggle-replies-2" type="checkbox"/>
-<div class="re-comment-container">
-<div class="re-comment-item">
-<div class="comment-meta">
-<span class="comment-author">박지민</span>
-<span class="comment-date">2026-01-01 15:20</span>
-</div>
-<div class="comment-body">
-저도 정말 기대되네요!
-</div>
-
-	<div class="comment-actions">
-	<button class="btn-reply">답글 쓰기</button>
-	</div>
-					</div>
-				</div>
-			</div>
-		</div>
+	        <div class="list-footer" style="margin-top: 20px;">
+	            <div class="page-navigation"></div>
+	        </div>
+	    </div>
 	</div>
 	
 	<div class="action-footer">
@@ -591,8 +521,8 @@
 		</button>
 	</div>
 
-			</div>
-			</div>
+</div>
+	</div>
 		</main>
 	</div>
 
@@ -671,6 +601,7 @@
     .catch(error => {
         console.error('Error:', error);
     });
+        
     }
 </script>
 

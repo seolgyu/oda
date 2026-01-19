@@ -6,6 +6,7 @@ public class EventReplyDTO {
 	private String user_Id;
 	private long user_num;
 	private String userName;
+	private String userLevel;
 	private String content;
 	private String created_date;
 	private int hitCount;
@@ -24,7 +25,7 @@ public class EventReplyDTO {
 	public long getComment_id() {
 		return comment_id;
 	}
-	public void setgetComment_id(long getComment_id) {
+	public void setComment_id(long getComment_id) {
 		this.comment_id = getComment_id;
 	}
 	public long getEvent_num() {
@@ -122,6 +123,12 @@ public class EventReplyDTO {
 	}
 	public void setUser_num(long user_num) {
 		this.user_num = user_num;
+	}
+	public String getUserLevel() {
+		return userLevel;
+	}
+	public void setUserLevel(String userLevel) {
+		this.userLevel = userLevel;
 	}
 	
 	

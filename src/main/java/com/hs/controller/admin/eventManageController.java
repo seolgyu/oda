@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.hs.model.ReplyDTO;
 import com.hs.model.SessionInfo;
 import com.hs.model.admin.EventDTO;
 import com.hs.model.admin.EventReplyDTO;
@@ -602,11 +603,13 @@ public class eventManageController {
 		try {
 			EventReplyDTO dto = new EventReplyDTO();
 			
-			dto.setgetComment_id(Long.parseLong(req.getParameter("comment_id")));
-			dto.setContent(req.getParameter("content"));
-			dto.setgetComment_id(Long.parseLong(req.getParameter("getParent_comment_id")));
-			
+			dto.setUser_num(info.getMemberIdx());
 			dto.setUser_Id(info.getUserId());
+			dto.setComment_id(Long.parseLong(req.getParameter("comment_id")));
+			dto.setEvent_num(Long.parseLong(req.getParameter("event_num")));
+			dto.setContent(req.getParameter("content"));
+			dto.setParent_comment_id(Long.parseLong(req.getParameter("getParent_comment_id")));
+			
 			
 			service.insertReply(dto);
 			
@@ -728,22 +731,80 @@ public class eventManageController {
 		return mav;
 	}
 	
-	/*
+	// 댓글의 답글 리스트 : AJAX - JSON
 	@ResponseBody
 	@GetMapping("listReplyAnswer")
 	public Map<String, Object> listReplyAnswer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// 댓글의 답글 리스트
-		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, Object> mav = new HashMap<String, Object>();
 		
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
 		try {
+			long parent_comment_id = Long.parseLong(req.getParameter("parent_comment_id"));
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("parent_comment_id", parent_comment_id);
+			map.put("user_Id", info.getUserId());
+			map.put("userLevel", info.getUserLevel());
+			
+			// 답글 개수
+			int count = service.replyAnswerCount(map);
+			// 답글
+			List<EventReplyDTO> listReplyAnswer = service.listReplyAnswer(map);
+			
+			for(EventReplyDTO dto : listReplyAnswer) {
+				dto.setContent(util.htmlSymbols(dto.getContent()));
+			}
+			
+			Map<String, Object> sessionMember = new HashMap<String, Object>();
+			sessionMember.put("user_Id", info.getUserId());
+			sessionMember.put("userLevel", info.getUserLevel());
+			
+			mav.put("sessionMember", sessionMember);
+			mav.put("count", count);
+			mav.put("listReplyAnswer", listReplyAnswer);
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
+			
+			resp.sendError(406);
+			throw e;
 		}
 		
+		return mav;
 	}
-	*/
+	
+	// 댓글 숨김 / 표시 : AJAX - JSON
+	@ResponseBody
+	@PostMapping("replyShowHide")
+	public Map<String, Object> replyShowHide(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Map<String, Object> model = new HashMap<String, Object>();
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		String state = "ture";
+		
+		try {
+			long comment_id = Long.parseLong(req.getParameter("comment_id"));
+			int showReply = Integer.parseInt(req.getParameter("showReply"));
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("comment_id", comment_id);
+			map.put("showReply", showReply);
+			map.put("user_Id", info.getUserId());
+			
+			service.updateReplyShowHide(map);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			state = "false";
+		}
+		
+		model.put("state", state);
+		
+		return model;
+	}
 }
