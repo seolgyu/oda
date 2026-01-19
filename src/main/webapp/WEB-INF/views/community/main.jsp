@@ -458,5 +458,24 @@
 	<script src="${pageContext.request.contextPath}/dist/js/community.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/community_post.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/community_form.js"></script>
+	
+	<script>
+	    $(function() {
+	        <%-- 세션에 메시지가 남아있다면 (헤더에서 에러나서 못 지웠다면) --%>
+	        <c:if test="${not empty sessionScope.toastMsg}">
+	            // 이제는 community_form.js가 로드되었으니 showToast를 부를 수 있음!
+	            if (typeof showToast === 'function') {
+	                showToast('${sessionScope.toastType}', '${sessionScope.toastMsg}');
+	            }
+	            
+	            <%-- 출력이 끝났으니 세션에서 제거 --%>
+	            <% 
+	                session.removeAttribute("toastMsg"); 
+	                session.removeAttribute("toastType"); 
+	            %>
+	        </c:if>
+	    });
+	</script>
+	
 </body>
 </html>

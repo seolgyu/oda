@@ -59,7 +59,7 @@ public class PostController {
 
 		ModelAndView mav = new ModelAndView("post/write");
 		
-		String communityId = req.getParameter("communityId");
+		String communityId = req.getParameter("community_id");
 	    String comName = req.getParameter("com_name");
 	    
 	    mav.addObject("communityId", communityId);
