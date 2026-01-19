@@ -14,7 +14,7 @@
         	f.file_path AS thumbnail
     	FROM likes l
     	LEFT OUTER JOIN posts p ON l.post_id = p.post_id
-    	LEFT OUTER JOIN member m ON l.user_num = m.user_num
+    	LEFT OUTER JOIN member m ON p.user_num = m.user_num
     	LEFT OUTER JOIN fileat f ON p.post_id = f.post_id AND f.file_order = 0
     	WHERE l.user_num = #{userNum}
     	AND p.is_deleted = '0'
@@ -33,7 +33,7 @@
         	f.file_path AS thumbnail
     	FROM saved s
     	LEFT OUTER JOIN posts p ON s.post_id = p.post_id
-    	LEFT OUTER JOIN member m ON s.user_num = m.user_num
+    	LEFT OUTER JOIN member m ON p.user_num = m.user_num
     	LEFT OUTER JOIN fileat f ON p.post_id = f.post_id AND f.file_order = 0
     	WHERE s.user_num = #{userNum}
     	AND p.is_deleted = '0'

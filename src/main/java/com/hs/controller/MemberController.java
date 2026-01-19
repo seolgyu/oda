@@ -19,6 +19,8 @@ import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
 import com.hs.service.CommunityService;
 import com.hs.service.CommunityServiceImpl;
+import com.hs.service.FollowService;
+import com.hs.service.FollowServiceImpl;
 import com.hs.service.MemberService;
 import com.hs.service.MemberServiceImpl;
 import com.hs.service.PostService;
@@ -36,6 +38,7 @@ public class MemberController {
 	private MemberService service = new MemberServiceImpl();
 	private PostService postService = new PostServiceImpl();
 	private CommunityService communityService = new CommunityServiceImpl();
+	private FollowService followService = new FollowServiceImpl();
 
 	// @RequestMapping(value = "login", method = RequestMethod.GET)
 	@GetMapping("login")
@@ -537,6 +540,15 @@ public class MemberController {
 	        mav.addObject("user", dto);
 	        mav.addObject("post", list);
 	        mav.addObject("community", community);
+	        
+	        mav.addObject("followerCount", followService.followerCount(loginUserNum));
+	        mav.addObject("followingCount", followService.followingCount(loginUserNum));
+	        
+	        Map<String, Object> param = new HashMap<String, Object>();
+	        param.put("reqId", loginUserNum);
+	        param.put("addId", userNum);
+	        
+	        mav.addObject("isFollowing", followService.followCount(map) > 0 ? true : false);
 	        return mav;
 
 	    } catch (Exception e) {

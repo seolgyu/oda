@@ -211,14 +211,29 @@
 
 /* 팔로잉 중인 버튼 (회색/반투명) */
 .btn-following {
-	background: rgba(255, 255, 255, 0.05);
-	border: 1px solid rgba(255, 255, 255, 0.2);
-	color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: none !important;
 }
 
 .btn-following:hover {
 	background: rgba(255, 255, 255, 0.1);
 	color: #fff;
+}
+
+/* 팔로우 버튼 기본 스타일 (보라색 그라디언트) */
+.btn-follow-action {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
+    border: none !important;
+    color: white !important;
+    transition: all 0.3s ease;
+}
+
+.btn-follow-action:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
 }
 
 /* 모달 전용 커스텀 스크롤바 */
@@ -268,20 +283,56 @@
 }
 
 .fleet-item {
-    padding: 10px;      /* 클릭 영역 확보를 위해 약간 넓힘 */
-    margin: -10px;      /* 레이아웃 유지 */
-    border-radius: 12px;
-    transition: background 0.3s ease; /* 배경색 변화만 부드럽게 */
+	padding: 10px; /* 클릭 영역 확보를 위해 약간 넓힘 */
+	margin: -10px; /* 레이아웃 유지 */
+	border-radius: 12px;
+	transition: background 0.3s ease; /* 배경색 변화만 부드럽게 */
 }
 
 .fleet-item:hover {
-    background: rgba(255, 255, 255, 0.07); 
-    box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.03);
+	background: rgba(255, 255, 255, 0.07);
+	box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.03);
 }
 
 .fleet-item:hover .material-symbols-outlined {
+	color: #ffffff !important;
+	opacity: 1;
+}
+
+/* 로고 레이아웃 박스 */
+.community-logo-box {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+}
+
+/* 왕관 리더 뱃지 스타일 - 테두리 제거 버전 */
+.community-leader-badge {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: 20px;
+    height: 20px;
+    /* 황금색 그라디언트 유지 */
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    /* 검정 테두리(border)를 제거하고 은은한 외부 광채만 추가 */
+    border: none; 
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+}
+
+/* 아이콘 스타일 */
+.community-leader-badge .material-symbols-outlined {
+    font-size: 13px !important;
     color: #ffffff !important;
-    opacity: 1;
+    font-weight: 900 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 </style>
 </head>
@@ -359,8 +410,10 @@
 									</div>
 									<div class="ms-auto pb-2 d-flex gap-2">
 										<c:if test="${sessionScope.member.userId ne user.userId}">
-											<button
-												class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Follow</button>
+											<button type="button"
+												class="btn btn-follow-action rounded-pill px-4 fw-bold shadow-sm ${isFollowing ? 'btn-following' : ''}"
+												onclick="toggleFollow('${user.userIdx}', this)">
+												${isFollowing ? 'Following' : 'Follow'}</button>
 										</c:if>
 
 										<button
@@ -751,8 +804,7 @@
 
 							<div class="glass-card p-4 shadow-lg">
 								<h3
-									class="text-white text-xs fw-bold text-uppercase tracking-widest mb-3 opacity-75">Honor
-									Badges</h3>
+									class="text-white text-xs fw-bold text-uppercase tracking-widest mb-3 opacity-75">Badges</h3>
 								<div class="d-flex flex-wrap gap-3">
 									<div
 										class="rounded-circle d-flex align-items-center justify-content-center shadow-lg"
@@ -798,7 +850,7 @@
 									class="d-flex align-items-center justify-content-between mb-4">
 									<h3
 										class="text-white text-xs fw-bold text-uppercase tracking-widest mb-0 opacity-75">
-										Joined Fleets</h3>
+										Joined Community</h3>
 									<span class="text-secondary" style="font-size: 10px;">
 										${fn:length(community)} Active </span>
 								</div>
@@ -812,19 +864,26 @@
 													onclick="location.href='${pageContext.request.contextPath}/community/main?community_id=${fleet.community_id}';">
 
 													<div class="d-flex align-items-center gap-3">
-													
-														<c:choose>
-															<c:when test="${not empty fleet.icon_image}">
-																<img src="${fleet.icon_image}"
-																	class="rounded-circle shadow-sm"
-																	style="width: 42px; height: 42px; border: 2px solid rgba(255, 255, 255, 0.1); object-fit: cover;">
-															</c:when>
-															<c:otherwise>
-																<div class="rounded-circle shadow-sm"
-																	style="width: 42px; height: 42px; background: linear-gradient(135deg, #e11d48, #4c1d95); border: 2px solid rgba(255, 255, 255, 0.1);">
+														<div class="community-logo-box">
+															<c:if test="${user.userIdx eq fleet.user_num}">
+																<div class="community-leader-badge" title="커뮤니티 관리자">
+																	<span class="material-symbols-outlined">crown</span>
 																</div>
-															</c:otherwise>
-														</c:choose>
+															</c:if>
+
+															<c:choose>
+																<c:when test="${not empty fleet.icon_image}">
+																	<img src="${fleet.icon_image}"
+																		class="rounded-circle shadow-sm"
+																		style="width: 42px; height: 42px; border: 2px solid rgba(255, 255, 255, 0.1); object-fit: cover;">
+																</c:when>
+																<c:otherwise>
+																	<div class="rounded-circle shadow-sm"
+																		style="width: 42px; height: 42px; background: linear-gradient(135deg, #e11d48, #4c1d95); border: 2px solid rgba(255, 255, 255, 0.1);">
+																	</div>
+																</c:otherwise>
+															</c:choose>
+														</div>
 
 														<div class="overflow-hidden">
 															<p class="text-white fw-bold mb-0 text-truncate"
@@ -839,7 +898,14 @@
 												</div>
 											</c:forEach>
 										</c:when>
-    								</c:choose>
+										<c:otherwise>
+											<div class="text-center py-2">
+												<p class="text-secondary mb-0"
+													style="font-size: 11px; opacity: 0.5;">No joined fleets
+													found.</p>
+											</div>
+										</c:otherwise>
+									</c:choose>
 								</div>
 							</div>
 
@@ -962,6 +1028,7 @@
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/mypage.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/follow.js"></script>
 
 	<script type="text/javascript">
 	

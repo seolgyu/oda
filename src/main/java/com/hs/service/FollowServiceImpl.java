@@ -39,4 +39,24 @@ public class FollowServiceImpl implements FollowService {
 		        throw e;
 		    }
 	}
+
+	@Override
+	public int followerCount(Long userNum) throws SQLException {
+		try {
+			return mapper.followerCount(userNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	@Override
+	public int followingCount(Long userNum) throws SQLException {
+		try {
+			return mapper.followingCount(userNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 }
