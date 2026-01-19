@@ -9,6 +9,7 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
 	window.cp = '${pageContext.request.contextPath}';
+	window.isLogin = "${not empty sessionScope.member}";
 </script>
 <style type="text/css">
 
@@ -220,5 +221,6 @@
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/settings.js"></script>	
+	<script src="${pageContext.request.contextPath}/dist/js/follow.js"></script>	
 </body>
 </html>

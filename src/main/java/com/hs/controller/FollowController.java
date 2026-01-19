@@ -39,6 +39,12 @@ public class FollowController {
 	    
 	    long reqUserNum = info.getMemberIdx();
 	    long addUserNum = Long.parseLong(req.getParameter("addUserNum"));
+	    
+	    if (reqUserNum == addUserNum) {
+	        result.put("status", "self_follow");
+	        return result;
+	    }
+	    
 	    Integer count = 0;
 
 		try {

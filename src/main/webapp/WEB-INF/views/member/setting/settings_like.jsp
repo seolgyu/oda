@@ -150,7 +150,6 @@ $(function() {
     window.isLoading = false;
 
     const target = document.getElementById('sentinel');
-
     if (target) {
         window.io = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -159,7 +158,6 @@ $(function() {
                 }
             });
         }, { threshold: 0.1});
-
         window.io.observe(target);
     }
 });

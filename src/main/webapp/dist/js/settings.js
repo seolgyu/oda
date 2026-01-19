@@ -191,6 +191,43 @@ function renderCommentList(list) {
     `;
 }
 
+function renderFollowItem(dto) {
+    const initial = dto.userNickname ? dto.userNickname.charAt(0) : '?';
+	const profileHtml = dto.userProfile 
+	        ? `<img src="${dto.userProfile}" alt="Profile" class="w-100 h-100 object-fit-cover">`
+	        : `<div class="w-100 h-100 d-flex align-items-center justify-content-center text-white fw-bold" 
+	                style="background: linear-gradient(135deg, #6366f1, #a855f7); font-size: 1.2rem;">
+	               ${initial}
+	           </div>`;
+
+    const isFollowing = (window.currentSocialType === 'following' || dto.followStatus); 
+    
+    const btnClass = isFollowing ? 'btn-following' : '';
+    const btnText = isFollowing ? 'Following' : 'Follow';
+
+    const targetNum = (window.currentSocialType === 'follower') ? dto.reqId : dto.addId;
+
+    return `
+        <div class="record-item d-flex align-items-stretch overflow-hidden shadow-sm mb-1">
+            <div class="flex-grow-1 d-flex align-items-center gap-3 p-3">
+                <div class="rounded-circle border border-white border-opacity-10 shadow-sm overflow-hidden flex-shrink-0 app-user-trigger" data-user-id="${dto.userId}"
+                     style="width: 50px; height: 50px;">
+                    ${profileHtml}
+                </div>
+                <div class="flex-grow-1 min-w-0">
+                    <h4 class="text-white fs-6 fw-bold mb-0 text-truncate app-user-trigger" data-user-id="${dto.userId}">${dto.userNickname}</h4>
+                    <p class="text-secondary text-xs mb-0 opacity-50">c/${dto.userId} • ${dto.registerDate}</p>
+                </div>
+            </div>
+            <div class="action-section d-flex align-items-center justify-content-center border-start border-white border-opacity-10">
+                <button type="button" class="btn-follow-status ${btnClass}" 
+                        onclick="toggleFollow('${targetNum}', this)">
+                    ${btnText}
+                </button>
+            </div>
+        </div>`;
+}
+
 // setting.jsp script
 $(function() {
 	$('.dropdown-trigger').on('click', function() {
@@ -281,4 +318,6 @@ function hideFieldError(input) {
 	$input.next('.error-text').remove();
 	$input.parent().next('.error-text').remove();
 }
+
+
 

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.hs.model.FollowDTO;
 import com.hs.model.MemberDTO;
 import com.hs.model.NotificationOptionDTO;
 import com.hs.model.PostDTO;
@@ -17,6 +18,8 @@ import com.hs.mvc.annotation.PostMapping;
 import com.hs.mvc.annotation.RequestMapping;
 import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
+import com.hs.service.FollowService;
+import com.hs.service.FollowServiceImpl;
 import com.hs.service.MemberService;
 import com.hs.service.MemberServiceImpl;
 import com.hs.service.PostService;
@@ -39,6 +42,7 @@ public class SettingController {
 	private MemberService service = new MemberServiceImpl();
 	private SettingService settingService = new SettingServiceImpl();
 	private PostService postService = new PostServiceImpl();
+	private FollowService followService = new FollowServiceImpl();
 	
 	@RequestMapping("")
 	public ModelAndView settings(HttpServletRequest req, HttpServletResponse resp)
@@ -164,6 +168,30 @@ public class SettingController {
     
     @RequestMapping("follow")
     public String settingsFollow(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	HttpSession session = req.getSession();
+    	
+    	try {
+    		SessionInfo info = (SessionInfo) session.getAttribute("member");    		
+	    	Long userNum = (Long)info.getMemberIdx();
+
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("userNum", userNum);
+	        map.put("type", "follower");
+	        map.put("mode", "settings");
+	        map.put("offset", 0);
+	        map.put("size", 10);
+	        
+	        List<FollowDTO> list = followService.getUserFollowList(map);
+	        
+	        req.setAttribute("type", "follower");
+	        req.setAttribute("list", list);
+	        
+	        req.setAttribute("followerCount", followService.followerCount(userNum));
+	        req.setAttribute("followingCount", followService.followingCount(userNum));
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
         return "member/setting/settings_follow";
     }
     
@@ -563,6 +591,43 @@ public class SettingController {
 	        
 	       model.put("list", list);
 	       model.put("status", "success");
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    		model.put("status", "error");
+    	}
+    	
+        return model;
+    }
+    
+    @GetMapping("loadFollowList")
+    @ResponseBody
+    public Map<String, Object> loadFollowList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	HttpSession session = req.getSession();
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	
+    	try {
+	    	SessionInfo info = (SessionInfo) session.getAttribute("member");
+	    	if (info == null) {
+	    		model.put("status", "error");
+	    		return model;
+	    	}
+	    	Long userNum = (Long)info.getMemberIdx();
+	    	int pageNo = Integer.parseInt(req.getParameter("page"));
+	    	String type = req.getParameter("type");
+	    	
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("userNum", userNum);
+	        map.put("type", "following".equals(type) ? "following" : "follower");
+	        map.put("mode", "settings");
+	        map.put("offset", (pageNo - 1) * 10);
+	        map.put("size", 10);
+	        
+	        List<FollowDTO> list = followService.getUserFollowList(map);
+	        
+	        model.put("list", list);
+	        model.put("followerCount", followService.followerCount(userNum));
+	        model.put("followingCount", followService.followingCount(userNum));
+	        model.put("status", "success");
     	} catch(Exception e) {
     		e.printStackTrace();
     		model.put("status", "error");

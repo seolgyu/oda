@@ -19,7 +19,7 @@
         )
     </insert>
     
-    <select id="followCount" parameterType="com.hs.model.FollowDTO">
+    <select id="followCount" parameterType="map" resultType="Integer">
     select COUNT(*) AS count
 	from follow
 	where req_id = #{reqId}
@@ -43,4 +43,40 @@
     	from follow
     	where req_id = #{userNum}
     </select>
+    
+     <select id="getUserFollowList" parameterType="map" resultType="com.hs.model.FollowDTO">
+	    SELECT
+	        f.follow_id AS followId,
+	        f.req_id AS reqId,
+	        f.add_id AS addId,
+	        f.register_date AS registerDate,
+	        m.user_id AS userId,
+	        m.user_nickname AS userNickname,
+	        m.user_profile AS userProfile
+	    FROM follow f
+	    <choose>
+	        <when test="type == 'following'">
+	            JOIN member m ON f.add_id = m.user_num
+	            WHERE f.req_id = #{userNum}
+	        </when>
+	        <otherwise>
+	            JOIN member m ON f.req_id = m.user_num
+	            WHERE f.add_id = #{userNum}
+	        </otherwise>
+	    </choose>
+	    
+	    <choose>
+	        <when test="mode == 'modal'">
+	            ORDER BY m.user_nickname ASC
+	        </when>
+	        <otherwise>
+	            ORDER BY f.register_date DESC
+	        </otherwise>
+	    </choose>
+	
+	    <if test="mode != 'modal'">
+	        OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	    </if>
+	</select>
+	
 </mapper>

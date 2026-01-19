@@ -130,5 +130,4 @@
     	FROM notification_options
     	WHERE user_num = #{userNum}
     </select>
-	
 </mapper>

@@ -324,11 +324,6 @@ body {
     align-items: center;
 }
 
-/* 마우스를 올렸을 때 강조 효과 */
-.app-user-trigger:hover {
-    transform: scale(1.02); /* 아주 살짝 커지는 효과 */
-}
-
 /* 클릭하는 순간의 느낌 */
 .app-user-trigger:active {
     transform: scale(0.98); /* 눌리는 느낌 */
