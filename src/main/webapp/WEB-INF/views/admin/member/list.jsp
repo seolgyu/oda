@@ -937,40 +937,6 @@ body {
             </div>
         </main>
     </div>
-
-    <!-- 정지 처리 모달 -->
-    <div class="modal-overlay" id="suspendModal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 class="modal-title">회원 정지</h3>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">정지 기간</label>
-                    <select class="form-select" id="suspendPeriod">
-                        <option value="7">7일</option>
-                        <option value="30">30일</option>
-                        <option value="90">90일</option>
-                        <option value="365">1년</option>
-                        <option value="999999">영구</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">정지 사유</label>
-                    <textarea class="form-textarea" id="suspendReason" placeholder="정지 사유를 입력하세요"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-modal btn-modal-cancel" onclick="closeModal('suspendModal')">취소</button>
-                <button type="button" class="btn-modal btn-modal-confirm" onclick="confirmSuspend()">정지</button>
-            </div>
-        </div>
-    </div>
-
-    
-    
-    <%-- function viewDetail(memberId) {
-        location.href = '${pageContext.request.contextPath}/admin/member/detail?memberId=' + memberId; --%>
   
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>

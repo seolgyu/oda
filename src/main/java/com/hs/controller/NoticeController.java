@@ -1,4 +1,4 @@
-package com.hs.controller.admin;
+package com.hs.controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,8 +31,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/admin/notice/*")
-public class noticeManageController {
+@RequestMapping("/notice/*")
+public class NoticeController {
 	private NoticeService service = new NoticeServiceImpl();
 	private MyUtil util = new MyUtil();
 	private FileManager fileManager = new FileManager();
@@ -81,9 +81,10 @@ public class noticeManageController {
 	
 	@GetMapping("list")
 	public ModelAndView notice(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		ModelAndView mav = new ModelAndView("admin/notice/list");
+		ModelAndView mav = new ModelAndView("notice/list");
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
 		try {
 			String page = req.getParameter("page");
 			int current_page = 1;
@@ -138,8 +139,8 @@ public class noticeManageController {
 			if (! kwd.isBlank()) {  // if(kwd.length() != 0) { // 검색 상태인 경우
 				query += "&schType=" + schType + "&kwd=" + util.encodeUrl(kwd);
 			}
-			listUrl = cp + "/admin/notice/list?" + query;
-			articleUrl = cp + "/admin/notice/article?page=" + current_page + "&" + query;
+			listUrl = cp + "/notice/list?" + query;
+			articleUrl = cp + "/notice/article?page=" + current_page + "&" + query;
 
 			String paging = util.paging(current_page, total_page, listUrl);
 
@@ -333,7 +334,7 @@ public class noticeManageController {
 			// 게시물 가져오기
 			NoticeDTO dto = service.findById(num);
 			if (dto == null) {
-				return new ModelAndView("redirect:/admin/notice/list?" + query);
+				return new ModelAndView("redirect:/notice/list?" + query);
 			}
 
 			// 스마트 에디터를 사용하므로 주석 처리
@@ -358,7 +359,7 @@ public class noticeManageController {
 			// 파일
 			List<NoticeDTO> listFile = service.listNoticeFile(num);
 
-			ModelAndView mav = new ModelAndView("admin/notice/article");
+			ModelAndView mav = new ModelAndView("notice/article");
 			
 			mav.addObject("dto", dto);
 			mav.addObject("prevDto", prevDto);
@@ -374,7 +375,7 @@ public class noticeManageController {
 			e.printStackTrace();
 		}
 
-		return new ModelAndView("redirect:/admin/notice/list?" + query);
+		return new ModelAndView("redirect:/notice/list?" + query);
 	}
 	
 	@GetMapping("download")

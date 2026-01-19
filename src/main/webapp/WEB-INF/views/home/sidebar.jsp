@@ -34,7 +34,7 @@
 		<hr class="my-3 border-secondary opacity-25">
 		<div class="text-xs text-secondary px-3 mb-2 text-uppercase fw-bold">Resources</div>
 
-		<button class="nav-item">
+		<button class="nav-item" onclick="location.href='${pageContext.request.contextPath}/notice/list';">
 			<span class="material-symbols-outlined">campaign</span> <span>공지사항</span>
 		</button>
 		<button class="nav-item">

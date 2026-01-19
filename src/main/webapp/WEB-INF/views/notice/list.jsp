@@ -183,18 +183,17 @@
         <div class="planet planet-2"></div>
     </div>
 
-    <%@ include file="../home/adminheader.jsp" %>
+    <%@ include file="/WEB-INF/views/home/header.jsp" %>
 
-    <div class="app-body">
-        <%@ include file="../home/adminsidebar.jsp" %>
+    <div class="app-body flex h-[calc(100vh-56px)] overflow-hidden">
+        <%@ include file="/WEB-INF/views/home/sidebar.jsp"%>
 
 		<main class="app-main custom-scrollbar">
 			<div class="container-fluid p-4 p-md-5" style="max-width: 1300px;">
 			
 			<nav aria-label="breadcrumb" class="mb-4">	
 				<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin">홈</a></li>
-				<li class="breadcrumb-item"><a href="#">서비스 관리</a></li>
+				<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}">홈</a></li>
 				<li aria-current="page" class="breadcrumb-item active">공지사항</li>
 				</ol>
 				</nav>
@@ -208,8 +207,8 @@
 								<span class="material-icons-round fs-4">campaign</span>
 							</div>
 							<div>
-								<h1 class="h3 fw-bold mb-1 text-white">공지사항 관리</h1>
-								<p class="text-white-50 small mb-0">서비스 이용자들에게 업데이트할 공지내용을 관리하세요.</p>
+								<h1 class="h3 fw-bold mb-1 text-white">공지사항</h1>
+								<p class="text-white-50 small mb-0">ODA 커뮤니티 공지사항 목록</p>
 							</div>
 						</div>
 						<div class="d-flex gap-2">
@@ -231,10 +230,10 @@
 						<div class="col-12 col-lg-6">
 							<div class="btn-group glass-btn-group">
 						        <button type="button" class="btn btn-outline-light ${state ? 'active' : ''} btn-sm px-3" value="">전체</button>
-						        <button type="button" class="btn btn-outline-light ${state == '공개' ? 'active' : ''} btn-sm px-3" value="공개">공개</button>
+						        <%-- <button type="button" class="btn btn-outline-light ${state == '공개' ? 'active' : ''} btn-sm px-3" value="공개">공개</button>
 						        <button type="button" class="btn btn-outline-light ${state == '비공개' ? 'active' : ''} btn-sm px-3" value="비공개">비공개</button>
 						        <button type="button" class="btn btn-outline-light ${state == '임시저장' ? 'active' : ''} btn-sm px-3" value="임시저장">임시저장</button>
-						        <button type="button" class="btn btn-outline-light ${state == '신고' ? 'active' : ''} btn-sm px-3" value="신고">신고</button>
+						        <button type="button" class="btn btn-outline-light ${state == '신고' ? 'active' : ''} btn-sm px-3" value="신고">신고</button> --%>
 						    </div>
 						</div>
 							<div class="col-12 col-lg-4 offset-lg-2">

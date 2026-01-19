@@ -16,6 +16,7 @@ public class NoticeDTO {
 	private String is_notice;
 	private String user_id;
 	private Long user_num;
+	private int user_level;
 	
 	private int replyCount;
 	private int boardLikeCount;
@@ -135,5 +136,11 @@ public class NoticeDTO {
 	}
 	public void setBoardLikeCount(int boardLikeCount) {
 		this.boardLikeCount = boardLikeCount;
+	}
+	public int getUser_level() {
+		return user_level;
+	}
+	public void setUser_level(int user_level) {
+		this.user_level = user_level;
 	}
 }
