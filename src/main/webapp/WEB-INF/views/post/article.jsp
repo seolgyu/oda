@@ -186,9 +186,8 @@
                                             <span class="material-symbols-outlined fs-5">chat_bubble_outline</span>
                                             <span class="small" id="postCommentCount">${dto.commentCount}</span>
                                         </button>
-                                        <button class="d-flex align-items-center gap-2 btn btn-link text-decoration-none text-white-50 p-0 hover-green">
-                                            <span class="material-symbols-outlined fs-5">repeat</span>
-                                        </button>
+                                        
+                                        
                                     </div>
 
 									<div class="d-flex gap-3">
@@ -544,25 +543,27 @@
             document.body.removeChild(textArea);
         }
         
-        function openReportModal(postId) {
-            if (isLogin === "false") {
-                if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
-                    location.href = contextPath + "/member/login";
-                }
-                return; 
-            }
-            
-            if (currentUserId && authorId && String(currentUserId) === String(authorId)) {
-                showToast("error", "본인의 게시물은 신고할 수 없습니다.");
-                return;
-            }
-            
-            $("#reportPostId").val(postId);
-            $("#reportReasonSelect").val("");
-            $("#reportReasonText").val("").hide();
-            const myModal = new bootstrap.Modal(document.getElementById('reportModal'));
-            myModal.show();
-        }
+        function openReportModal(postId, authorId) {			
+			if (isLogin === "false") {
+		    
+		    showCustomConfirm("로그인 필요", "로그인이 필요한 서비스입니다.<br>로그인 하시겠습니까?", function() {
+		        
+		        location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
+		    });
+		    return;
+		}
+		if (currentUserId && authorId && String(currentUserId) === String(authorId)) {
+	        showToast("error", "본인의 게시물은 신고할 수 없습니다.");
+	        return; 
+	    }
+		
+	    $("#reportPostId").val(postId);
+	    $("#reportReasonSelect").val("");
+	    $("#reportReasonText").val("").hide();
+	    
+	    const myModal = new bootstrap.Modal(document.getElementById('reportModal'));
+	    myModal.show();
+		}
 
         function toggleReportReason(select) {
             if(select.value === "custom") {
