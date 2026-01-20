@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.hs.mail.Mail;
+import com.hs.mail.MailSender;
 import com.hs.model.admin.MainDTO;
 import com.hs.model.admin.MemberDTO;
 import com.hs.mvc.annotation.Controller;
@@ -22,6 +24,7 @@ import com.hs.util.MyUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/admin/member/*")
@@ -334,4 +337,91 @@ public class memberManageController {
 	    
 	    return result;
 	}
+	
+	@PostMapping("sendStatusEmail")
+	@ResponseBody
+	public Map<String, Object> sendStatusEmail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    Map<String, Object> model = new HashMap<>();
+	    
+	    HttpSession session = req.getSession();
+	    req.setCharacterEncoding("UTF-8");
+
+		try {
+			int statusCodeStr = Integer.parseInt(req.getParameter("statusCode"));
+			String email = req.getParameter("email");
+			String statusText = "";
+			
+			 
+	        if(statusCodeStr == 4) {
+	        	statusText = "관리자에 의해 계정이 정지되었습니다";
+	        }else if(statusCodeStr == 3) {
+	        	statusText = "1년 이상 미접속 되어 계정이 휴면 처리되었습니다";
+	        }
+	        	
+			
+	        System.out.println(">>> 수신 이메일: " + email);
+
+	        String subject = "[ODA Community] 회원계정 상태 변경 알림입니다.";
+	        String content = 
+	        				"<div style='background-color: #ffffff; padding: 50px 20px; font-family: \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif;'>"
+	    	        	    + "  <div style='max-width: 460px; margin: 0 auto; background-color: #1a1c23; background-image: linear-gradient(160deg, #1f232d 0%, #111318 100%); border-radius: 24px; padding: 50px 40px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);'>"
+	    	        	    
+	    	        	    + "    "
+	    	        	    + "    <div style='margin: 0 auto 30px auto; width: 48px; height: 48px; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); border-radius: 50%; display: block;'>"
+	    	        	    + "      <div style='line-height: 48px; color: #ffffff; font-size: 20px;'>◈</div>"
+	    	        	    + "    </div>"
+	    	        	    
+	    	        	    + "    <h2 style='font-size: 22px; font-weight: 700; color: #ffffff; margin: 0 0 12px 0; letter-spacing: -0.5px;'>Change acount status</h2>"
+	    	        	    + "    <p style='font-size: 14px; color: #94a3b8; line-height: 1.6; margin: 0 0 40px 0;'>"
+	    	        	    + "      관리자에 의해 계정 상태가 변경되었습니다.<br>"
+	    	        	    + "    </p>"
+	    	        	    
+	    	        	    + "    "
+	    	        	    + "    <div style='background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 35px 0; margin-bottom: 40px; text-align: center;'>"
+	    	        	    + "      <div style='font-size: 11px; color: #818cf8; font-weight: bold; letter-spacing: 2px; margin-bottom: 12px; text-transform: uppercase;'>계정상태 변경 알림</div>"
+	    	        	    + "      <div style='font-size: 38px; font-weight: 800; color: #ffffff; letter-spacing: 12px; margin-left: 12px; display: inline-block; vertical-align: middle;'>" + statusText + "</div>"
+	    	        	    + "    </div>"
+	    	        	    
+	    	        	    + "    <p style='font-size: 13px; color: #64748b; line-height: 1.6; margin: 0;'>"
+	    	        	    + "      계정상태 관련해서는 관리자에게 문의해주세요.<br>"
+	    	        	    + "    </p>"
+	    	        	    
+	    	        	    + "    <div style='margin: 40px 0 30px; border-top: 1px solid rgba(255, 255, 255, 0.06);'></div>"
+	    	        	    
+	    	        	    + "    <p style='font-size: 11px; color: #475569; line-height: 1.8;'>"
+	    	        	    + "      본 메일은 발신 전용입니다. ⓒ 2026 ODA.<br>"
+	    	        	    + "      All rights reserved."
+	    	        	    + "    </p>"
+	    	        	    + "  </div>"
+	    	        	    + "</div>";
+	        
+	        
+	        Mail dto = new Mail();
+			
+			dto.setSenderName("ODA");
+			dto.setSenderEmail("kimchowon417@gmail.com");
+			dto.setReceiverEmail(email);
+			dto.setSubject(subject);
+			dto.setContent(content);
+					
+			MailSender sender = new MailSender();
+			boolean b = sender.mailSend(dto);
+			System.out.println(">>> 메일 발송 결과: " + b);
+			
+			
+			if(! b) {
+				model.put("status", "emailSendError");
+				return model;
+			}
+	        
+		    model.put("status", "success");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("status", "error");
+		}
+	    
+	    return model;
+	}
+	
 }

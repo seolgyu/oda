@@ -978,7 +978,8 @@ function suspendMember() {
         success: function(data) {
             if(data.success) {
                 alert('회원 정지가 완료되었습니다.');
-                location.reload();
+                /* location.reload(); */
+                sendStatusMail('${}', 4);
             } else {
                 alert(data.message || '회원 정지에 실패했습니다.');
             }
@@ -1054,5 +1055,6 @@ function deleteMember() {
 }
 </script>
 	<script src="${pageContext.request.contextPath}/dist/js/admin_member_chart.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/admin_email_util.js"></script>
 </body>
 </html>

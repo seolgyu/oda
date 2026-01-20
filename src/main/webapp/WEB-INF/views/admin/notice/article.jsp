@@ -22,6 +22,21 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/notice_article_style.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminnoticereply.css">
+    
+    <style type="text/css">
+    	.reply table.reply-form {
+    		/* background: #0f172a !important; */
+    		width: 100% !important;
+    	}
+    	.reply-answer td {
+    		background: #0f172a !important;
+    	 }
+    	 
+    	 .reply .reply-dropdown {
+    	 	color: #fff;
+    	 	
+    	 }
+    </style>
 </head> 
 <body class="bg-background-dark text-white">
 
@@ -184,7 +199,7 @@
                             </span>
                         </div>
                         
-                        <table class="table table-borderless reply-form">
+                        <table class="reply-form">
                             <tr>
                                 <td>
                                     <textarea class="form-control" name="content" placeholder="댓글을 입력해주세요..."></textarea>
