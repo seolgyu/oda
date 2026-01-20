@@ -277,7 +277,7 @@
 			SELECT parentNum, COUNT(*) answerCount
 			FROM noticeReply
 			WHERE parentNum != 0 AND block = 0
-			<if test="userLevel lt 51">
+			<if test="userLevel lt 5">
 				AND ( showReply = 1 OR userId = #{userId} )
 			</if>
 			GROUP BY parentNum
@@ -292,7 +292,7 @@
 			GROUP BY replyNum
 		) c ON r.replyNum = c.replyNum
 		WHERE num = #{num} AND r.parentNum = 0 AND r.block = 0
-		<if test="userLevel lt 51">
+		<if test="userLevel lt 5">
 			AND ( showReply = 1 OR r.userId = #{userId} )
 		</if>
 		ORDER BY r.replyNum DESC
@@ -310,7 +310,7 @@
 		SELECT NVL(COUNT(*), 0)
 		FROM noticereply
 		WHERE num = #{num} AND parentNum = 0 AND block = 0 
-		<if test="userLevel lt 51">
+		<if test="userLevel lt 5">
 			AND ( showReply = 1 OR userId = #{userId} )
 		</if>
 	</select>
@@ -333,7 +333,7 @@
 		FROM noticereply r
 		JOIN member m ON r.userId = m.user_Id
 		WHERE parentNum = #{parentNum}
-		<if test="userLevel lt 51">
+		<if test="userLevel lt 5">
 			AND ( showReply = 1 OR r.userId = #{userId})
 		</if>
 		ORDER BY replyNum DESC
@@ -343,7 +343,7 @@
 		SELECT NVL(COUNT(*), 0)
 		FROM noticereply
 		WHERE parentNum = #{parentNum} AND block = 0
-		<if test="userLevel lt 51">
+		<if test="userLevel lt 5">
 			AND ( showReply = 1 OR userId = #{userId})
 		</if>
 	</select>

@@ -22,6 +22,23 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/notice_article_style.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminnoticereply.css">
+    
+    <style type="text/css">
+    	.reply table.reply-form {
+    		/* background: #0f172a !important; */
+    		width: 100% !important;
+    	}
+    	.reply-answer td {
+    		background: #0f172a !important;
+    	}
+    	 
+    	.reply .reply-dropdown {
+    	 	color: #fff;
+    	}
+    	.reply-content {
+    		color: #fff !important;
+    	}
+    </style>
 </head> 
 <body class="bg-background-dark text-white">
 
@@ -183,7 +200,7 @@
                             </span>
                         </div>
                         
-                        <table class="table table-borderless reply-form">
+                        <table class="reply-form">
                             <tr>
                                 <td>
                                     <textarea class="form-control" name="content" placeholder="댓글을 입력해주세요..."></textarea>
@@ -222,7 +239,7 @@
                 </div>
                 
                 <div class="action-footer">
-                    <button class="btn btn-list" onclick="location.href='${pageContext.request.contextPath}/admin/notice/list?${query}';">
+                    <button class="btn btn-list" onclick="location.href='${pageContext.request.contextPath}/notice/list?${query}';">
                         <span class="material-symbols-outlined" style="font-size: 1.1rem; vertical-align: middle;">list</span>
                         리스트
                     </button>

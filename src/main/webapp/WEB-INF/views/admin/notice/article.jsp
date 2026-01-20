@@ -36,6 +36,9 @@
     	 	color: #fff;
     	 	
     	 }
+    	 .reply-content {
+    		color: #fff !important;
+    	}
     </style>
 </head> 
 <body class="bg-background-dark text-white">

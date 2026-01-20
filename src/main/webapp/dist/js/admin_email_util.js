@@ -5,7 +5,7 @@ function sendStatusMail(email, statusCode) {
 
     $.ajax({
         type: "POST",
-        url: "${pageContext.request.contextPath}/admin/member/sendStatusEmail",
+        url: "/oda/admin/member/sendStatusEmail",
         data: {
             email: email,
             statusCode: statusCode

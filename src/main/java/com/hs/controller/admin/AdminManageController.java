@@ -27,8 +27,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/admin/member/*")
-public class memberManageController {
+@RequestMapping("/admin/adminmanage/*")
+public class AdminManageController {
 	//전체, 활성, 휴면 회원 수 재활용
 	private MainService service = new MainServiceImpl();
 	private MemberService mbService = new MemberServiceImpl();
@@ -36,7 +36,7 @@ public class memberManageController {
 	
 	@GetMapping("list")
 	public ModelAndView memberList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		ModelAndView mav = new ModelAndView("admin/member/list");
+		ModelAndView mav = new ModelAndView("admin/adminmanage/list");
 		
 		//가져와야 하는 값 page, schType, kwd, status, size
 		try {
@@ -108,8 +108,8 @@ public class memberManageController {
 		if (! kwd.isBlank()) {  // if(kwd.length() != 0) { // 검색 상태인 경우
 			query += "&schType=" + schType + "&kwd=" + util.encodeUrl(kwd);
 		}
-		listUrl = cp + "/admin/member/list?" + query;
-		articleUrl = cp + "/admin/member/article?page=" + current_page + "&" + query; //사용자 상세 페이지
+		listUrl = cp + "/admin/adminmanage/list?" + query;
+		articleUrl = cp + "/admin/adminmanage/article?page=" + current_page + "&" + query; //사용자 상세 페이지
 
 		String paging = util.paging(current_page, total_page, listUrl);
 		

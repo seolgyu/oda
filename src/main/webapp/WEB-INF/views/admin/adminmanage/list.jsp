@@ -733,14 +733,14 @@ body {
                 <nav aria-label="breadcrumb" class="mb-4">
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin">홈</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">회원 목록</li>
+                        <li class="breadcrumb-item active" aria-current="page">관리자 목록</li>
                     </ol>
                 </nav>
 
                 <!-- 페이지 헤더 -->
                 <div class="page-header">
-                    <h1 class="page-title">회원 관리</h1>
-                    <p class="page-description">회원 정보 조회 및 상태 관리를 할 수 있습니다</p>
+                    <h1 class="page-title">관리자 관리</h1>
+                    <p class="page-description">관리자 정보 조회 및 상태 관리를 할 수 있습니다</p>
                 </div>
 
                 <!-- 통계 카드 -->
@@ -759,26 +759,8 @@ body {
                             <span class="material-symbols-outlined">check_circle</span>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">정상 회원</div>
+                            <div class="stat-label">관리자</div>
                             <div class="stat-value">${inDto.inmembercount} </div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon warning">
-                            <span class="material-symbols-outlined">block</span>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-label">정지 회원</div>
-                            <div class="stat-value">${stopDto.stopmembercount} </div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon danger">
-                            <span class="material-symbols-outlined">bedtime</span>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-label">휴면 회원</div>
-                            <div class="stat-value">${dorDto.dormembercount} </div>
                         </div>
                     </div>
                 </div>
@@ -808,7 +790,7 @@ body {
                                 <span class="material-symbols-outlined">search</span>
                                 검색
                             </button>
-                            <button type="button" class="btn-reset" onclick="location.href='${pageContext.request.contextPath}/admin/member/list';">
+                            <button type="button" class="btn-reset" onclick="location.href='${pageContext.request.contextPath}/admin/adminmanage/list';">
                                 초기화
                             </button>
                         </div>
@@ -828,22 +810,17 @@ body {
 						        <button type="button" class="btn btn-outline-light ${state == '정지' ? 'active' : ''} btn-sm px-3" value="정지">정지</button>
 						        <button type="button" class="btn btn-outline-light ${state == '휴면' ? 'active' : ''} btn-sm px-3" value="휴면">휴면</button>
 						        
-						        <button type="button" class="btn btn-outline-light ${state == '휴면대상자' ? 'active' : ''} btn-sm px-3" value="휴면대상자">휴면 대상자</button>
-						        <button type="button" class="btn btn-outline-light ${state == '신고대상자' ? 'active' : ''} btn-sm px-3" value="신고대상자">신고 대상자</button>
+						        <button type="button" class="btn btn-outline-light ${state == '관리자' ? 'active' : ''} btn-sm px-3" value="관리자">관리자</button>
 						    </div>
 						</div>
                         <div class="table-actions">
                          	<button type="button" class="btn-bulk btn-bulk-activate" onclick="bulkActivate()">
 						        <span class="material-symbols-outlined">check_circle</span>
-						        선택 정상
+						        관리자 권한 부여
 						    </button>
                             <button type="button" class="btn-bulk btn-bulk-suspend" onclick="bulkSuspend()">
                                 <span class="material-symbols-outlined">block</span>
-                                선택 정지
-                            </button>
-                            <button type="button" class="btn-bulk btn-bulk-dormant" onclick="bulkDormant()">
-                                <span class="material-symbols-outlined">bedtime</span>
-                                선택 휴면
+                                관리자 권한 회수
                             </button>
                         </div>
                     </div>
@@ -860,7 +837,7 @@ body {
                                     <th>가입일</th>
                                     <th>최근 로그인</th>
                                     <th>상태</th>
-                                    <th>관리</th>
+                                    <th>권한</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -917,11 +894,18 @@ body {
 	                                    </c:if>
                                     </td>
                                     <td>
-									    <div class="action-buttons">
-									        <button type="button" class="btn-action btn-action-detail" onclick="viewDetail('${dto.user_id}')">
-									            상세
-									        </button>
-									    </div>
+									    <c:if test="${dto.user_level == 10}">
+	                                        <span class="status-badge active">
+	                                            <span class="status-dot"></span>
+	                                            일반회원
+	                                        </span>
+	                                    </c:if>
+	                                    <c:if test="${dto.user_level >= 90}">
+	                                        <span class="status-badge suspended">
+	                                            <span class="status-dot"></span>
+	                                            관리자
+	                                        </span>
+	                                    </c:if>
 									</td>
                                 </tr>
                                 </c:forEach>

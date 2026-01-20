@@ -155,6 +155,7 @@ public class noticeManageController {
 			mav.addObject("schType", schType);
 			mav.addObject("kwd", kwd);
 			mav.addObject("state", state);
+			mav.addObject("user_level", info.getUserLevel());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

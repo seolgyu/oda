@@ -59,10 +59,10 @@
 		<hr class="my-3 border-secondary opacity-25">
 		<div class="text-xs text-secondary px-3 mb-2 text-uppercase fw-bold">system</div>
 
-		<button class="nav-item">
+		<div class="nav-item">
 			<span class="material-symbols-outlined">settings</span> 
-			<span>시스템 관리</span>
-		</button>
+			<a href="${pageContext.request.contextPath}/admin/adminmanage/list" class="nav-sub-item"><span>사용자권한 관리</span></a>
+		</div>
 		<button class="nav-item">
 			<span class="material-symbols-outlined">logout</span> 
 			<span>로그아웃</span>

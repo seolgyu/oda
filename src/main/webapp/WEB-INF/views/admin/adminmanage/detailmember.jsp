@@ -639,6 +639,7 @@ body {
                 <nav aria-label="breadcrumb" class="mb-4">
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin">홈</a></li>
+                        <li class="breadcrumb-item"><a href="#">회원 관리</a></li>
                         <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin/member/list">회원 목록</a></li>
                         <li class="breadcrumb-item active" aria-current="page">회원 상세</li>
                     </ol>
