@@ -15,6 +15,8 @@ import com.hs.mvc.annotation.PostMapping;
 import com.hs.mvc.annotation.RequestMapping;
 import com.hs.mvc.annotation.ResponseBody;
 import com.hs.mvc.view.ModelAndView;
+import com.hs.service.admin.AdminMemberService;
+import com.hs.service.admin.AdminMemberServiceImpl;
 import com.hs.service.admin.MainService;
 import com.hs.service.admin.MainServiceImpl;
 import com.hs.service.admin.MemberService;
@@ -32,6 +34,7 @@ public class AdminManageController {
 	//전체, 활성, 휴면 회원 수 재활용
 	private MainService service = new MainServiceImpl();
 	private MemberService mbService = new MemberServiceImpl();
+	private AdminMemberService abService = new AdminMemberServiceImpl();
 	private MyUtil util = new MyUtil();
 	
 	@GetMapping("list")
@@ -86,7 +89,7 @@ public class AdminManageController {
 		map.put("state", state);
 	
 		//관리자를 제외한 회원 목록 count, 페이징 재사용
-		int countDto = mbService.userCount(map);
+		int countDto = abService.userCount(map);
 		int total_page = util.pageCount(countDto, size);
 		
 		current_page = Math.min(current_page, total_page);
@@ -103,7 +106,7 @@ public class AdminManageController {
 		String articleUrl;
 		
 		//관리자를 제외한 회원 목록
-		List<MemberDTO> memberList = mbService.memberList(map);
+		List<MemberDTO> memberList = abService.memberList(map);
 		
 		if (! kwd.isBlank()) {  // if(kwd.length() != 0) { // 검색 상태인 경우
 			query += "&schType=" + schType + "&kwd=" + util.encodeUrl(kwd);

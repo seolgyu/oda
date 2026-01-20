@@ -3,13 +3,12 @@ package com.hs.service.admin;
 import java.util.List;
 import java.util.Map;
 
-import com.hs.mapper.admin.MemberMapper;
-import com.hs.model.admin.MainDTO;
+import com.hs.mapper.admin.AdminMemberMapper;
 import com.hs.model.admin.MemberDTO;
 import com.hs.mybatis.support.MapperContainer;
 
-public class AdminMemberServiceImpl implements MemberService{
-	private MemberMapper mapper = MapperContainer.get(MemberMapper.class);
+public class AdminMemberServiceImpl implements AdminMemberService{
+	private AdminMemberMapper mapper = MapperContainer.get(AdminMemberMapper.class);
 	
 	@Override
 	public List<MemberDTO> memberList(Map<String, Object> map) {
