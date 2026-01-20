@@ -105,7 +105,7 @@
 					        <span class="material-symbols-outlined">share</span> <span>공유</span>
 					    </button>
 					
-					    <button class="card-action-btn action-btn-hover btn-repost ${dto.repostedByUser ? 'text-success' : ''}"
+					    <button class="card-action-btn action-btn-hover btn-repost ${dto.repostedByUser ? 'text-repost-green' : ''}"
 					        onclick="toggleRepost('${dto.postId}', this); event.stopPropagation();">
 					        <span class="material-symbols-outlined">repeat</span> <span>리그렘</span>
 					    </button>
@@ -196,7 +196,7 @@
                             <span class="material-symbols-outlined">share</span> <span>공유</span>
                         </button>
                         
-						<button class="compact-action-btn action-btn-hover btn-repost p-0 border-0 ${dto.repostedByUser ? 'text-success' : ''}"
+						<button class="compact-action-btn action-btn-hover btn-repost p-0 border-0 ${dto.repostedByUser ? 'text-repost-green' : ''}"
 						    onclick="toggleRepost('${dto.postId}', this); event.stopPropagation();">
 						    <span class="material-symbols-outlined">repeat</span> <span>리그렘</span>
 						</button>    

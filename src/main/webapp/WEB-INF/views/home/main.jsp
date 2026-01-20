@@ -64,7 +64,9 @@
 .text-pink {
 	color: #ec4899 !important;
 }
-
+.text-repost-green {
+    color: #4ade80 !important;
+}
 /* =========================================
    [3] 카드형 (Card View) 스타일
    ========================================= */
@@ -1148,11 +1150,11 @@
 	                    
 	                    if (data.reposted) {
 	                        
-	                        $btn.addClass("text-success");
+	                        $btn.addClass("text-repost-green");
 	                        showToast("success", "게시글을 리그렘했습니다.");
 	                    } else {
 	                       
-	                        $btn.removeClass("text-success");
+	                        $btn.removeClass("text-repost-green");
 	                        showToast("info", "리그렘을 취소했습니다.");
 	                    }
 	                } else if (data.state === "login_required") {

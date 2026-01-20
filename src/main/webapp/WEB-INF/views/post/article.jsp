@@ -28,6 +28,60 @@
 .image-wrapper { width: 100%; background-color: rgba(0, 0, 0, 0.2); }
 .form-control-sm { background-color: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; }
 .form-control-sm:focus { border-color: #a855f7 !important; box-shadow: none !important; }
+.text-repost-green {
+    color: #4ade80 !important;
+}
+#join-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9990; 
+        background-color: rgba(0, 0, 0, 0.4); 
+        backdrop-filter: blur(3px);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .neon-card {
+        background: rgba(30, 30, 30, 0.8) !important; 
+        backdrop-filter: blur(20px) !important; 
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 2rem;
+        padding: 2rem;
+        width: 320px;
+        text-align: center;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .modal-btn {
+        flex: 1;
+        padding: 12px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.2s;
+        color: white;
+    }
+
+    .btn-cancel {
+        background: rgba(255, 255, 255, 0.1);
+        color: #d1d5db;
+    }
+    .btn-cancel:hover { background: rgba(255, 255, 255, 0.2); }
+    
+    .btn-confirm {
+        background: #3b82f6; /* 파란색 */
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    .btn-confirm:hover { 
+        background: #2563eb; 
+        transform: translateY(-2px); 
+    }
 </style>
 
 <script>
@@ -198,7 +252,7 @@
 									        </span>
 									    </button>
 									
-									    <button type="button" class="btn btn-link text-decoration-none p-0 hover-green ${dto.repostedByUser ? 'text-success' : 'text-white-50'}"
+									    <button type="button" class="btn btn-link text-decoration-none p-0 hover-green ${dto.repostedByUser ? 'text-repost-green' : 'text-white-50'}"
 									            onclick="toggleRepost('${dto.postId}', this);">
 									        <span class="material-symbols-outlined fs-5">repeat</span>
 									    </button>
@@ -284,12 +338,25 @@
         </div>
     </div>
     
+    <div id="join-modal">
+	    <div class="neon-card">
+	        <h3 id="customModalTitle" class="text-white mb-4" style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">알림</h3>
+	        <p id="customModalMsg" style="color: #e5e7eb; margin-bottom: 2rem; line-height: 1.6; font-size: 0.95rem;">내용</p>
+	        
+	        <div style="display: flex; gap: 10px;">
+	            <button id="btnCustomCancel" onclick="closeJoinModal()" class="modal-btn btn-cancel">취소</button>
+	            <button id="btnCustomConfirm" class="modal-btn btn-confirm">확인</button>
+	        </div>
+	    </div>
+	</div>
+	
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 
     <script type="text/javascript">
         const isLogin = "${not empty sessionScope.member ? 'true' : 'false'}";
+        const currentUserId = "${sessionScope.member.memberIdx}";
         const contextPath = "${pageContext.request.contextPath}";
         const postId = "${dto.postId}";
 
@@ -310,12 +377,14 @@
         }
 
         function sendReply() {
-            if (isLogin === "false") {
-                if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
-                    location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
-                }
-                return;
-            }
+				if (isLogin === "false") {
+			    
+			    showCustomConfirm("로그인 필요", "로그인이 필요한 서비스입니다.<br>로그인 하시겠습니까?", function() {
+			        
+			        location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
+			    });
+			    return;
+			}
             const content = $("#replyContent").val().trim();
             if (!content) {
                 alert("댓글 내용을 입력하세요.");
@@ -348,10 +417,14 @@
         }
 
         function sendReplyAnswer(parentCommentId) {
-            if (isLogin === "false") {
-                alert("로그인이 필요합니다.");
-                return;
-            }
+				if (isLogin === "false") {
+			    
+			    showCustomConfirm("로그인 필요", "로그인이 필요한 서비스입니다.<br>로그인 하시겠습니까?", function() {
+			        
+			        location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
+			    });
+			    return;
+			}
             const contentObj = $("#replyContent-" + parentCommentId);
             const content = contentObj.val().trim();
             if (!content) {
@@ -431,12 +504,14 @@
         }
 
         function sendLike(postId, btn) {
-            if (isLogin === "false") {
-                if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
-                    location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
-                }
-                return;
-            }
+				if (isLogin === "false") {
+			    
+			    showCustomConfirm("로그인 필요", "로그인이 필요한 서비스입니다.<br>로그인 하시겠습니까?", function() {
+			        
+			        location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
+			    });
+			    return;
+			}
             $.ajax({
                 url : contextPath + "/post/insertPostLike",
                 type : "post",
@@ -468,12 +543,14 @@
         }
 
         function sendCommentLike(commentId, btn) {
-            if (isLogin === "false") {
-                if (confirm("로그인이 필요합니다.")) {
-                    location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
-                }
-                return;
-            }
+				if (isLogin === "false") {
+			    
+			    showCustomConfirm("로그인 필요", "로그인이 필요한 서비스입니다.<br>로그인 하시겠습니까?", function() {
+			        
+			        location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
+			    });
+			    return;
+			}
             $.ajax({
                 url : contextPath + "/post/insertCommentLike",
                 type : "post",
@@ -609,7 +686,14 @@
         
      
         function toggleSave(postId, btn) {
-
+        	if (isLogin === "false") {
+    		    
+    		    showCustomConfirm("로그인 필요", "로그인이 필요한 서비스입니다.<br>로그인 하시겠습니까?", function() {
+    		        
+    		        location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
+    		    });
+    		    return;
+    		}
             $.ajax({
                 url: contextPath + "/post/insertPostSave",
                 type: "post",
@@ -644,6 +728,14 @@
         }
 
         function toggleRepost(postId, btn) {
+        	if (isLogin === "false") {
+    		    
+    		    showCustomConfirm("로그인 필요", "로그인이 필요한 서비스입니다.<br>로그인 하시겠습니까?", function() {
+    		        
+    		        location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
+    		    });
+    		    return;
+    		}
             $.ajax({
                 url: contextPath + "/post/insertPostRepost",
                 type: "post",
@@ -655,11 +747,11 @@
                         
                         if (data.reposted) {
                            
-                            $btn.addClass("text-success").removeClass("text-white-50");
+                            $btn.addClass("text-repost-green").removeClass("text-white-50");
                             showToast("success", "게시글을 리그렘했습니다.");
                         } else {
                            
-                            $btn.removeClass("text-success").addClass("text-white-50");
+                            $btn.removeClass("text-repost-green").addClass("text-white-50");
                             showToast("error", "리그렘을 취소했습니다.");
                         }
                     } else if (data.state === "login_required") {
@@ -673,6 +765,33 @@
                 }
             });
         }
+        
+        /* [모달 기능] */
+	    function closeJoinModal() {
+	        $('#join-modal').fadeOut(200);
+	    }
+
+	    function showCustomConfirm(title, msg, callback) {
+	        $('#customModalTitle').text(title);
+	        $('#customModalMsg').html(msg);
+	        $('#btnCustomCancel').show();
+	        
+	        $('#btnCustomConfirm').off('click').on('click', function() {
+	            closeJoinModal();
+	            if (callback) callback();
+	        });
+
+	        $('#join-modal').css('display', 'flex').hide().fadeIn(200);
+	    }
+	    
+	    function showCustomAlert(title, msg) {
+	        $('#customModalTitle').text(title);
+	        $('#customModalMsg').html(msg);
+	        $('#btnCustomCancel').hide();
+	        $('#btnCustomConfirm').off('click').on('click', closeJoinModal);
+	        
+	        $('#join-modal').css('display', 'flex').hide().fadeIn(200);
+	    }
     </script>
 </body>
 </html>
