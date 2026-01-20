@@ -23,8 +23,6 @@ import com.hs.service.FollowService;
 import com.hs.service.FollowServiceImpl;
 import com.hs.service.MemberService;
 import com.hs.service.MemberServiceImpl;
-import com.hs.service.PostService;
-import com.hs.service.PostServiceImpl;
 import com.hs.util.MyUtil;
 
 import jakarta.servlet.ServletException;
@@ -36,7 +34,6 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/member/*")
 public class MemberController {
 	private MemberService service = new MemberServiceImpl();
-	private PostService postService = new PostServiceImpl();
 	private CommunityService communityService = new CommunityServiceImpl();
 	private FollowService followService = new FollowServiceImpl();
 

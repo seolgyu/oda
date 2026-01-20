@@ -85,7 +85,7 @@
 
                                 <div class="p-4 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
                                     <div class="d-flex align-items-center gap-3">
-                                        <div class="avatar-md text-white fw-bold d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(45deg, #a855f7, #6366f1); overflow: hidden;">
+                                        <div class="avatar-md text-white fw-bold d-flex align-items-center justify-content-center app-user-trigger" data-user-id="${memberdto.userId}" style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(45deg, #a855f7, #6366f1); overflow: hidden;">
                                             <c:choose>
                                                 <c:when test="${not empty memberdto.profile_photo}">
                                                     <c:choose>

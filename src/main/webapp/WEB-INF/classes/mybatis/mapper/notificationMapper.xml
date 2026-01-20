@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.NotificationMapper">
+
+	<insert id="insertNotification" parameterType="map">
+	 	INSERT INTO notifications(noti_id, type, content, target, checked, created_date, from_user, to_user)
+	 	VALUES(noti_seq.NEXTVAL, #{type}, #{content}, #{target}, 0, SYSDATE, #{fromUserNum}, #{toUserNum})
+	</insert>
+
+	<select id="listNotification" parameterType="map" resultType="com.hs.model.NotificationDTO">
+        SELECT
+        	noti_id AS notiId ,
+        	type,
+        	content,
+        	target,
+        	checked,
+        	created_date AS createdDate,
+        	from_user AS fromUserNum,
+        	to_user AS toUserNum
+    	FROM notifications
+    	WHERE to_user = #{userNum}
+    	AND checked = 0
+    	ORDER BY created_date DESC
+    	OFFSET 0 ROWS FETCH FIRST 10 ROWS ONLY
+    </select>
+    
+    <select id="getUncheckedCount" parameterType="Long" resultType="Integer">
+        SELECT
+        	COUNT(*)
+    	FROM notifications
+    	WHERE to_user = #{userNum}
+    	AND checked = 0
+    	ORDER BY created_date DESC
+    </select>
+    
+    <update id="updateChecked" parameterType="Long">
+        UPDATE notifications SET checked = 1
+    	WHERE noti_id = #{notiId}
+    </update>
+    
+    <update id="updateCheckedAll" parameterType="Long">
+        UPDATE notifications SET checked = 1
+        WHERE to_user = #{userNum} AND checked = 0
+    </update>
+    
+    <delete id="deleteNotification" parameterType="Long">
+    	DELETE FROM notifications
+    	WHERE noti_id = #{notiId}
+    </delete>
+    
+    <delete id="deleteOldNotification" parameterType="Long">
+    	DELETE FROM notifications
+    	WHERE to_user = #{userNum} 
+      	AND checked = 1 
+      	AND created_date &lt; SYSDATE - 30
+    </delete>
+</mapper>
