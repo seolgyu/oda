@@ -8,7 +8,7 @@
 	 	VALUES(noti_seq.NEXTVAL, #{type}, #{content}, #{target}, 0, SYSDATE, #{fromUserNum}, #{toUserNum})
 	</insert>
 
-	<select id="listNotification" parameterType="map" resultType="com.hs.model.NotificationDTO">
+	<select id="listNotification" parameterType="Long" resultType="com.hs.model.NotificationDTO">
         SELECT
         	noti_id AS notiId ,
         	type,

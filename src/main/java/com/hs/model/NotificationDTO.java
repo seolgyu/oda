@@ -10,11 +10,13 @@ public class NotificationDTO {
 	private String content;
 	private String target;
 	private boolean checked;
-	private Date createdDate;
+	private String createdDate;
 	private Long toUserNum;
 	private Long fromUserNum;
 	
-	// 좋아요 알림
+	// 게시글 좋아요 알림
+	private MemberDTO fromUserInfo;
+	private PostDTO targetPost;
 	
 	// 댓글 알림
 	
@@ -47,10 +49,10 @@ public class NotificationDTO {
 		this.target = target;
 	}
 	
-	public Date getCreatedDate() {
-		return createdDate;
+	public String getCreatedDate() {
+		return com.hs.util.DateUtil.calculateTimeAgo(createdDate);
 	}
-	public void setCreatedDate(Date createdDate) {
+	public void setCreatedDate(String createdDate) {
 		this.createdDate = createdDate;
 	}
 	public Long getToUserNum() {
@@ -70,6 +72,18 @@ public class NotificationDTO {
 	}
 	public void setChecked(boolean checked) {
 		this.checked = checked;
+	}
+	public MemberDTO getFromUserInfo() {
+		return fromUserInfo;
+	}
+	public void setFromUserInfo(MemberDTO fromUserInfo) {
+		this.fromUserInfo = fromUserInfo;
+	}
+	public PostDTO getTargetPost() {
+		return targetPost;
+	}
+	public void setTargetPost(PostDTO targetPost) {
+		this.targetPost = targetPost;
 	}
 
 }

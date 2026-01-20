@@ -2,8 +2,10 @@ package com.hs.controller;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.hs.model.NotificationDTO;
 import com.hs.model.SessionInfo;
 import com.hs.mvc.annotation.Controller;
 import com.hs.mvc.annotation.PostMapping;
@@ -22,9 +24,9 @@ import jakarta.servlet.http.HttpSession;
 public class NotificationController {
 	private NotificationService notiService = NotificationServiceImpl.getInstance();
 	
-	@PostMapping("toggleSaved")
+	@PostMapping("loadNotiCount")
     @ResponseBody
-    public Map<String, Object> toggleSaved(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public Map<String, Object> loadNotiCount(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     	Map<String, Object> model = new HashMap<String, Object>();
     	HttpSession session = req.getSession();
 
@@ -37,10 +39,38 @@ public class NotificationController {
 	        }
 			
 			Long userNum = (Long)info.getMemberIdx();
-	        Long postId = Long.parseLong(req.getParameter("postId"));
-	        
+	        int count = notiService.getUncheckedCount(userNum);
 			
+	        model.put("count", count);
+			model.put("status", "success");
 			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("status", "error");
+		}
+		
+    	return model;
+    }
+	
+	@PostMapping("loadNotiList")
+    @ResponseBody
+    public Map<String, Object> loadNotiList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	HttpSession session = req.getSession();
+
+		try {
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			
+			if (info == null) {
+				model.put("status", "error");
+	            return model;
+	        }
+			
+			Long userNum = (Long)info.getMemberIdx();
+			
+			List<NotificationDTO> list = notiService.listNotification(userNum);
+			
+	        model.put("list", list);
 			model.put("status", "success");
 			
 		} catch (Exception e) {

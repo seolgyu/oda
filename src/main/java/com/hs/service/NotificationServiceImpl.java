@@ -18,12 +18,34 @@ public class NotificationServiceImpl implements NotificationService {
     }
 	
 	private NotificationMapper mapper = MapperContainer.get(NotificationMapper.class);
+	
+	private MemberService memberService = new MemberServiceImpl();
+	private PostService postService = new PostServiceImpl();
 
 	@Override
-	public List<NotificationDTO> listNotification(Map<String, Object> map) throws Exception {
+	public List<NotificationDTO> listNotification(Long userNum) throws Exception {
 		List<NotificationDTO> list = null;
 		try {
-			list = mapper.listNotification(map);
+			list = mapper.listNotification(userNum);
+			
+			for(NotificationDTO item : list) {
+				String type = item.getType();
+				Long target = Long.parseLong(item.getTarget());
+				
+				switch (type) {
+		        case "FOLLOW":
+		            break;
+		            
+		        case "POST_LIKE":
+		        	item.setTarget("/member/page?id=" + item.getTarget());
+		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
+		        	item.setTargetPost(postService.findById(target));
+		            break;
+		            
+		        case "COMMENT":
+		            break;
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -32,6 +54,29 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public void insertNotification(Map<String, Object> map) throws Exception {
+		
+		if(map.get("fromUserNum").equals(map.get("toUserNum"))) {
+			return;
+		}
+		
+		String type = (String) map.get("type");
+	    String content = "";
+
+	    switch (type) {
+	        case "FOLLOW":
+	            content = "님이 회원님을 팔로우하기 시작했습니다.";
+	            break;
+	            
+	        case "POST_LIKE":
+	            content = "님이 회원님의 게시글을 좋아합니다.";
+	            break;
+	            
+	        case "COMMENT":
+	            content = "님이 게시글에 댓글을 남겼습니다.";
+	            break;
+	    }
+
+	    map.put("content", content);
 		try {
 			mapper.insertNotification(map);
 		} catch (Exception e) {

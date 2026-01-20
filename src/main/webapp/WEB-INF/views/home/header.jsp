@@ -73,6 +73,64 @@
 .custom-scrollbar::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.15); border-radius: 10px;
 }
+
+/* 알림 버튼을 감싸는 컨테이너 */
+.noti-btn-wrapper {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.noti-badge-circle {
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    
+    background-color: #FF3B30;
+    color: #FFFFFF !important;
+    
+    font-size: 11px; /* 숫자가 잘 보이도록 살짝 키움 */
+    font-weight: 600;
+    line-height: 1;
+    
+    /* 유동적 너비 설정 */
+    min-width: 16px;          /* 숫자 1개일 때의 최소 폭 */
+    height: 16px;             /* 전체적인 높이를 살짝 줄여 슬림하게 */
+    padding: 0 4px;           /* 좌우 여백 */
+    
+    /* 얇은 테두리 적용 */
+    border: 1px solid #FFFFFF; /* 2px에서 1px로 변경 */
+    border-radius: 10px;      /* 캡슐 모양 유지 */
+    
+    display: none;            /* 초기 상태 숨김 (JS에서 제어) */
+    align-items: center;
+    justify-content: center;
+    
+    box-sizing: border-box;
+    z-index: 10;
+    white-space: nowrap;      /* 숫자 줄바꿈 방지 */
+    
+    /* 그림자를 살짝 주면 테두리가 얇아도 배경과 잘 분리됩니다 */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.noti-type-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 부트스트랩 아이콘 스타일 */
+.noti-type-badge i {
+    font-size: 15px; /* 아이콘 크기 */
+    /* 아이콘 테두리 효과 (프사 위에서 잘 보이게 함) */
+    -webkit-text-stroke: 1px #191919; 
+    filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
+}
 </style>
 <header class="app-header">
 	<a href="${pageContext.request.contextPath}/" class="brand-logo">ODA</a>
@@ -115,9 +173,13 @@
 		<button class="btn-icon" title="게시물 작성">
 			<span class="material-symbols-outlined">add</span>
 		</button>
-		<button class="btn-icon" title="알림" onclick="toggleNoti(event)">
-			<span class="material-symbols-outlined">notifications</span>
-		</button>
+		<div class="noti-btn-wrapper">
+    		<button class="btn-icon" title="알림" onclick="toggleNoti(event)">
+        		<span class="material-symbols-outlined">notifications</span>
+        
+        		<span id="noti-badge" class="noti-badge-circle">0</span>
+    		</button>
+		</div>
 
 		<c:if test="${not empty sessionScope.member}">
 			<div class="dropdown">
@@ -167,40 +229,8 @@
 				onclick="closeNoti()">닫기</span>
 		</div>
 
-		<div class="noti-list custom-scrollbar"
-			style="max-height: 420px; overflow-y: auto;">
-
-			<div class="noti-item unread d-flex align-items-center gap-3 py-2 px-3">
-				<div class="noti-avatar-wrapper flex-shrink-0">
-					<div class="rounded-circle border border-white border-opacity-10"
-						style="width: 44px; height: 44px; background-image: url('https://i.pravatar.cc/150?u=1'); background-size: cover; background-position: center;">
-					</div>
-				</div>
-
-				<div class="noti-info flex-grow-1 min-w-0">
-					<p class="mb-1 text-white text-sm text-wrap">
-						<strong>Cosmos_Walker</strong>님이 회원님을 팔로우하기 시작했습니다.
-					</p>
-					<span class="text-xs text-secondary opacity-50">5분 전</span>
-				</div>
-				<div class="unread-dot-indicator"></div>
-			</div>
-
-			<div class="noti-item d-flex align-items-center gap-3 py-2 px-3">
-				<div class="noti-avatar-wrapper flex-shrink-0">
-					<div class="rounded-circle border border-white border-opacity-10"
-						style="width: 44px; height: 44px; background-image: url('https://i.pravatar.cc/150?u=2'); background-size: cover; background-position: center;">
-					</div>
-				</div>
-				<div class="noti-info flex-grow-1 min-w-0">
-					<p class="mb-1 text-white text-sm text-wrap">
-						<strong>Nebula_Hunter</strong>님이 회원님의 게시글을 좋아합니다.
-					</p>
-					<span class="text-xs text-secondary opacity-50">1시간 전</span>
-				</div>
-			</div>
-
-		</div>
+		<div class="noti-list custom-scrollbar" id="notiListContainer" style="max-height: 420px; overflow-y: auto;">
+    	</div>
 
 		<div class="noti-footer py-1 px-2 text-center border-top border-white border-opacity-10">
     		<button class="btn btn-link text-xs text-decoration-none text-secondary hover-white">
@@ -214,107 +244,243 @@
 	class="toast-container position-fixed bottom-0 end-0 p-3"
 	style="z-index: 9999;"></div>
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-		function searchOda() {
-			// 1. 입력값 가져오기
-			const input = document.getElementById("totalSearchInput");
-			const keyword = input.value.trim(); // 공백 제거
 
-			// 2. 유효성 검사 (공백이면 알림)
-			if (!keyword) {
-				alert("검색어를 입력해주세요.");
-				input.focus();
-				return;
-			}
+$(function() {
+	if (${not empty sessionScope.member}) {
+        updateUnreadCount();
+    }
+});
 
-			// 3. 메인 페이지로 키워드와 함께 이동
-			// (PostController와 main.jsp가 이 'keyword' 파라미터를 받아서 처리합니다)
-			location.href = "${pageContext.request.contextPath}/main?keyword="
-					+ encodeURIComponent(keyword);
-		}
-		
-		function showToast(type, msg) {
-			const container = document.getElementById('toastContainer');
-			const toastId = 'toast-' + Date.now();
+function updateUnreadCount() {
+    $.ajax({
+        url: contextPath + '/notification/loadNotiCount',
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+            if (data.status === "success") {
+                const count = data.count;
+                const $badge = $('#noti-badge');
 
-			let title = 'SYSTEM', icon = 'info', color = '#8B5CF6';
-			if (type === "success") { title = 'SUCCESS'; icon = 'check_circle'; color = '#4ade80'; }
-			else if (type === "error") { title = 'ERROR'; icon = 'error'; color = '#f87171'; }
+                if (count > 0) {
+                    $badge.text(count > 99 ? '99+' : count);
+                    $badge.css('display', 'flex');
+                } else {
+                    $badge.hide();
+                }
+            }
+        }
+    });
+}
 
-			const toastHtml = `
-					<div id="\${toastId}" class="glass-toast \${type}">
-			            <div class="d-flex align-items-center gap-3">
-			                <div class="toast-icon-circle">
-			                    <span class="material-symbols-outlined fs-5">\${icon}</span>
-			                </div>
-			                <div class="toast-content">
-			                    <h4 class="text-xs fw-bold text-uppercase tracking-widest mb-1" style="color: ${color}">\${title}</h4>
-			                    <p class="text-sm text-gray-300 mb-0">\${msg}</p>
-			                </div>
-			            </div>
-			        </div>`;
+function searchOda() {
+	// 1. 입력값 가져오기
+	const input = document.getElementById("totalSearchInput");
+	const keyword = input.value.trim(); // 공백 제거
 
-			const $newToast = $(toastHtml);
-			$(container).append($newToast);
+	// 2. 유효성 검사 (공백이면 알림)
+	if (!keyword) {
+		alert("검색어를 입력해주세요.");
+		input.focus();
+		return;
+	}
 
-			setTimeout(() => $newToast.addClass('show'), 50);
+	// 3. 메인 페이지로 키워드와 함께 이동
+	// (PostController와 main.jsp가 이 'keyword' 파라미터를 받아서 처리합니다)
+	location.href = "${pageContext.request.contextPath}/main?keyword="
+			+ encodeURIComponent(keyword);
+}
 
-			setTimeout(() => {
-				$newToast.removeClass('show');
+function showToast(type, msg) {
+	const container = document.getElementById('toastContainer');
+	const toastId = 'toast-' + Date.now();
 
-				setTimeout(() => {
-					$newToast.animate({
-						height: 0,
-						marginTop: 0,
-						marginBottom: 0,
-						paddingTop: 0,
-						paddingBottom: 0,
-						opacity: 0
-					}, {
-						duration: 350,
-						easing: "swing",
-						complete: function() {
-							$(this).remove();
-						}
-					});
-				}, 400);
-			}, 2500);
-		}
-		
-		document.addEventListener('click', function(e) {
-		    const target = e.target.closest('.app-user-trigger'); 
-		    
-		    if (target) {
-		        const userId = target.dataset.userId;
-		        
-		        if (userId) {
-		            location.href = `${pageContext.request.contextPath}/member/page?id=` + userId;
-		        }
-		    }
-		});
-		
-		// 알림 버튼 클릭 이벤트 (기존 버튼에 onclick="toggleNoti(event)" 추가)
-		function toggleNoti(e) {
+	let title = 'SYSTEM', icon = 'info', color = '#8B5CF6';
+	if (type === "success") { title = 'SUCCESS'; icon = 'check_circle'; color = '#4ade80'; }
+	else if (type === "error") { title = 'ERROR'; icon = 'error'; color = '#f87171'; }
+
+	const toastHtml = `
+			<div id="\${toastId}" class="glass-toast \${type}">
+	            <div class="d-flex align-items-center gap-3">
+	                <div class="toast-icon-circle">
+	                    <span class="material-symbols-outlined fs-5">\${icon}</span>
+	                </div>
+	                <div class="toast-content">
+	                    <h4 class="text-xs fw-bold text-uppercase tracking-widest mb-1" style="color: ${color}">\${title}</h4>
+	                    <p class="text-sm text-gray-300 mb-0">\${msg}</p>
+	                </div>
+	            </div>
+	        </div>`;
+
+	const $newToast = $(toastHtml);
+	$(container).append($newToast);
+
+	setTimeout(() => $newToast.addClass('show'), 50);
+
+	setTimeout(() => {
+		$newToast.removeClass('show');
+
+		setTimeout(() => {
+			$newToast.animate({
+				height: 0,
+				marginTop: 0,
+				marginBottom: 0,
+				paddingTop: 0,
+				paddingBottom: 0,
+				opacity: 0
+			}, {
+				duration: 350,
+				easing: "swing",
+				complete: function() {
+					$(this).remove();
+				}
+			});
+		}, 400);
+	}, 2500);
+}
+
+document.addEventListener('click', function(e) {
+    const target = e.target.closest('.app-user-trigger'); 
+    
+    if (target) {
+        const userId = target.dataset.userId;
+        
+        if (userId) {
+            location.href = `${pageContext.request.contextPath}/member/page?id=` + userId;
+        }
+    }
+});
+
+// 알림 버튼 클릭 이벤트 (기존 버튼에 onclick="toggleNoti(event)" 추가)
+function toggleNoti(e) {
     if (e) e.stopPropagation();
     const layer = document.getElementById('notificationLayer');
     
-    // show 클래스가 있으면 제거(위로 슬라이딩), 없으면 추가(아래로 슬라이딩)
+    if (!layer.classList.contains('show')) {
+        loadNotiList();
+    }
+    
     layer.classList.toggle('show');
 }
 
 function closeNoti() {
-    document.getElementById('notificationLayer').classList.remove('show');
+  		document.getElementById('notificationLayer').classList.remove('show');
 }
 
 // 바깥 영역 클릭 시 닫기 로직 유지
 document.addEventListener('click', function(e) {
-    const layer = document.getElementById('notificationLayer');
-    const btn = document.querySelector('[title="알림"]');
-    
-    if (layer && layer.classList.contains('show')) {
-        if (!layer.contains(e.target) && !btn.contains(e.target)) {
-            closeNoti();
-        }
-    }
+  		const layer = document.getElementById('notificationLayer');
+  		const btn = document.querySelector('[title="알림"]');
+  
+  		if (layer && layer.classList.contains('show')) {
+      		if (!layer.contains(e.target) && !btn.contains(e.target)) {
+          		closeNoti();
+      		}
+  		}
 });
-	</script>
+
+function loadNotiList() {
+	const listBody = document.querySelector('.noti-list');
+    
+    listBody.innerHTML = `
+        <div class="d-flex justify-content-center align-items-center p-5">
+            <div class="spinner-border text-light opacity-50" role="status" style="width: 1.5rem; height: 1.5rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>`;
+
+    $.ajax({
+        url: contextPath + '/notification/loadNotiList',
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+            if (data.status === "success") {
+                renderNotiList(data.list);
+            }
+        }
+    });
+}
+
+function renderNotiList(list) {
+    const $container = $('.noti-list'); // 사용하시는 클래스명에 맞춰 선택
+    let html = "";
+
+    if (!list || list.length === 0) {
+        html = '<div class="text-center p-5 opacity-50 text-white text-sm">새로운 알림이 없습니다.</div>';
+        $container.html(html);
+        return;
+    }
+
+    list.forEach(item => {
+        const isUnread = item.checked === 0;
+        const unreadClass = isUnread ? 'unread' : '';
+        const dot = isUnread ? '<div class="unread-dot-indicator"></div>' : '';
+        
+        let typeIconHtml = "";
+        let typeColor = "";
+
+        switch(item.type) {
+            case 'POST_LIKE':
+                typeIconHtml = `<i class="bi bi-heart-fill"></i>`;
+                typeColor = '#f43f5e';
+                break;
+            case 'FOLLOW':
+                typeIconHtml = `<i class="bi bi-person-plus-fill"></i>`;
+                typeColor = '#6366f1';
+                break;
+            case 'COMMENT':
+                typeIconHtml = `<i class="bi bi-chat-fill"></i>`;
+                typeColor = '#10b981';
+                break;
+        }
+
+        const typeBadgeHtml = `
+            <div class="noti-type-badge" style="color: \${typeColor};">
+                \${typeIconHtml}
+            </div>`;
+        
+        const initial = item.fromUserInfo.userNickname ? item.fromUserInfo.userNickname.charAt(0).toUpperCase() : '';
+
+        const profileHtml = item.fromUserInfo.profile_photo
+            ? `<img src="\${item.fromUserInfo.profile_photo}" alt="Profile" class="w-100 h-100 object-fit-cover rounded-circle">`
+            : `<div class="w-100 h-100 d-flex align-items-center justify-content-center text-white fw-bold rounded-circle" 
+                    style="background: linear-gradient(135deg, #6366f1, #a855f7); font-size: 1.1rem;">
+                   ${initial}
+               </div>`;
+               
+               
+        const postTitleHtml = item.targetPost && item.targetPost.title 
+        ? `<div class="text-xs text-white-50 text-truncate mt-1" style="max-width: 250px;">
+            <span class="opacity-50">글 제목: </span> "\${item.targetPost.title}"
+           </div>` 
+        : "";
+
+        html += `
+            <div class="noti-item \${unreadClass} d-flex align-items-center gap-3 py-2 px-3" 
+                 onclick="" style="cursor:pointer;">
+                <div class="noti-avatar-wrapper flex-shrink-0 app-user-trigger" data-user-id="\${item.fromUserInfo.userId}" style="width: 44px; height: 44px; position: relative;">
+                    \${profileHtml}
+                    \${typeBadgeHtml}
+                </div>
+                <div class="noti-info flex-grow-1 min-w-0">
+                <div class="mb-1 text-white text-sm text-wrap d-flex align-items-baseline gap-1">
+                	<span class="fw-bold flex-shrink-0" style="color: #efefff;">
+                		\${item.fromUserInfo.userNickname}
+            		</span>
+            		<span class="opacity-75">
+                		\${item.content}
+            		</span>
+                </div>
+                \${postTitleHtml}
+                <div class="mt-1">
+                	<span class="text-xs text-secondary opacity-50">\${item.createdDate}</span>
+            	</div>
+            </div>
+                \${dot}
+            </div>`;
+    });
+
+    $container.html(html);
+}
+</script>

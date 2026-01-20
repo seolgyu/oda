@@ -22,6 +22,8 @@ import com.hs.service.FollowService;
 import com.hs.service.FollowServiceImpl;
 import com.hs.service.MemberService;
 import com.hs.service.MemberServiceImpl;
+import com.hs.service.NotificationService;
+import com.hs.service.NotificationServiceImpl;
 import com.hs.service.PostService;
 import com.hs.service.PostServiceImpl;
 import com.hs.service.SettingService;
@@ -43,6 +45,7 @@ public class SettingController {
 	private SettingService settingService = new SettingServiceImpl();
 	private PostService postService = new PostServiceImpl();
 	private FollowService followService = new FollowServiceImpl();
+	private NotificationService notiService = NotificationServiceImpl.getInstance();
 	
 	@RequestMapping("")
 	public ModelAndView settings(HttpServletRequest req, HttpServletResponse resp)
@@ -653,7 +656,20 @@ public class SettingController {
 			Long userNum = (Long)info.getMemberIdx();
 	        Long postId = Long.parseLong(req.getParameter("postId"));
 	        
-			postService.insertPostLike(postId, userNum);
+	        PostDTO dto = postService.findById(postId);
+	        Long authorUserNum = dto.getUserNum();
+	        
+			boolean isLiked = postService.insertPostLike(postId, userNum);
+			
+			if(isLiked) {
+				Map<String, Object> noti = new HashMap<String, Object>();
+				noti.put("fromUserNum", userNum);
+				noti.put("toUserNum", authorUserNum);
+				noti.put("type", "POST_LIKE");
+				noti.put("target", postId);
+				
+				notiService.insertNotification(noti);
+			}
 			
 			int likeCount = postService.countPostLike(postId);
 			

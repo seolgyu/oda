@@ -139,11 +139,9 @@ public class PostServiceImpl implements PostService {
 			int check = mapper.checkPostLiked(map);
 
 			if (check > 0) {
-
 				mapper.deletePostLike(map);
 				isLiked = false;
 			} else {
-
 				mapper.insertPostLike(map);
 				isLiked = true;
 			}
