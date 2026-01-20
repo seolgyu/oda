@@ -306,12 +306,64 @@
     font-size: 18px;
 }
 
-/* 애니메이션 */
 @keyframes loading-expand { 
 	0% { width: 50px; opacity: 0.5; } 
 	50% { width:200px; opacity:1; }
 	100% { width:50px; opacity:0.5; }
 }
+
+    #join-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9990; 
+        background-color: rgba(0, 0, 0, 0.4); 
+        backdrop-filter: blur(3px);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .neon-card {
+        background: rgba(30, 30, 30, 0.8) !important; 
+        backdrop-filter: blur(20px) !important; 
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 2rem;
+        padding: 2rem;
+        width: 320px;
+        text-align: center;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .modal-btn {
+        flex: 1;
+        padding: 12px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.2s;
+        color: white;
+    }
+
+    .btn-cancel {
+        background: rgba(255, 255, 255, 0.1);
+        color: #d1d5db;
+    }
+    .btn-cancel:hover { background: rgba(255, 255, 255, 0.2); }
+    
+    .btn-confirm {
+        background: #3b82f6; /* 파란색 */
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    .btn-confirm:hover { 
+        background: #2563eb; 
+        transform: translateY(-2px); 
+    }
+
 </style>
 </head>
 <body>
@@ -461,6 +513,18 @@
 	        </div>
 	    </div>
 	</div>
+	
+	<div id="join-modal">
+	    <div class="neon-card">
+	        <h3 id="customModalTitle" class="text-white mb-4" style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">알림</h3>
+	        <p id="customModalMsg" style="color: #e5e7eb; margin-bottom: 2rem; line-height: 1.6; font-size: 0.95rem;">내용</p>
+	        
+	        <div style="display: flex; gap: 10px;">
+	            <button id="btnCustomCancel" onclick="closeJoinModal()" class="modal-btn btn-cancel">취소</button>
+	            <button id="btnCustomConfirm" class="modal-btn btn-confirm">확인</button>
+	        </div>
+	    </div>
+	</div>
 
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script
@@ -482,7 +546,7 @@
 		<c:remove var="toastMsg" scope="session" />
 		<c:remove var="toastType" scope="session" />
 	</c:if>
-
+	
 	<script>
 		const isLogin = "${not empty sessionScope.member ? 'true' : 'false'}";
 		const currentUserId = "${sessionScope.member.memberIdx}";
@@ -490,12 +554,13 @@
 
 		// Like Toggle
 		function toggleLike(postId, btn) {
-			if (isLogin === "false") {
-				if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
-					location.href = contextPath + '/member/login?redirect='
-							+ encodeURIComponent(location.href);
-				}
-				return;
+				if (isLogin === "false") {
+			    
+			    showCustomConfirm("로그인 필요", "로그인이 필요한 서비스입니다.<br>로그인 하시겠습니까?", function() {
+			        
+			        location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
+			    });
+			    return;
 			}
 
 			$.ajax({
@@ -957,12 +1022,14 @@
 		}
 		
 		function openReportModal(postId, authorId) {			
-			if (isLogin === "false") {
-		        if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
-		            location.href = contextPath + "/member/login";
-		        }
-		        return; 
-		    }
+				if (isLogin === "false") {
+			    
+			    showCustomConfirm("로그인 필요", "로그인이 필요한 서비스입니다.<br>로그인 하시겠습니까?", function() {
+			        
+			        location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
+			    });
+			    return;
+			}
 			if (currentUserId && authorId && String(currentUserId) === String(authorId)) {
 		        showToast("error", "본인의 게시물은 신고할 수 없습니다.");
 		        return; 
@@ -1021,12 +1088,14 @@
 		
 		
 		function toggleSave(postId, btn) {
-			if (isLogin === "false") {
-	            if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
-	                location.href = contextPath + "/member/login";
-	            }
-	            return;
-	        }
+				if (isLogin === "false") {
+			    
+			    showCustomConfirm("로그인 필요", "로그인이 필요한 서비스입니다.<br>로그인 하시겠습니까?", function() {
+			        
+			        location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
+			    });
+			    return;
+			}
 
 	        $.ajax({
 	            url: "${pageContext.request.contextPath}/post/insertPostSave",
@@ -1060,12 +1129,14 @@
 	    }
 	 
 	    function toggleRepost(postId, btn) {
-	    	if (isLogin === "false") {
-	            if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
-	                location.href = contextPath + "/member/login";
-	            }
-	            return;
-	        }
+				if (isLogin === "false") {
+			    
+			    showCustomConfirm("로그인 필요", "로그인이 필요한 서비스입니다.<br>로그인 하시겠습니까?", function() {
+			        
+			        location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
+			    });
+			    return;
+			}
 	        $.ajax({
 	            url: "${pageContext.request.contextPath}/post/insertPostRepost",
 	            type: "post",
@@ -1094,9 +1165,34 @@
 	        });
 	    }
 	    
+	    /* [모달 기능] */
+	    function closeJoinModal() {
+	        $('#join-modal').fadeOut(200);
+	    }
+
+	    function showCustomConfirm(title, msg, callback) {
+	        $('#customModalTitle').text(title);
+	        $('#customModalMsg').html(msg);
+	        $('#btnCustomCancel').show();
+	        
+	        $('#btnCustomConfirm').off('click').on('click', function() {
+	            closeJoinModal();
+	            if (callback) callback();
+	        });
+
+	        $('#join-modal').css('display', 'flex').hide().fadeIn(200);
+	    }
 	    
+	    function showCustomAlert(title, msg) {
+	        $('#customModalTitle').text(title);
+	        $('#customModalMsg').html(msg);
+	        $('#btnCustomCancel').hide();
+	        $('#btnCustomConfirm').off('click').on('click', closeJoinModal);
+	        
+	        $('#join-modal').css('display', 'flex').hide().fadeIn(200);
+	    }
 	    
-	    
+	  
 	</script>
 	
 	
