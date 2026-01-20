@@ -7,17 +7,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ODA Admin - 공지사항 상세페이지</title>
+    <title>ODA 상세페이지</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <%@ include file="/WEB-INF/views/home/head.jsp"%>
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminmain.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
+
+
 <style>
 :root {
 	--bs-body-font-family: 'Inter', sans-serif;
@@ -379,9 +380,21 @@
         .hover-pink:hover { 
         	color: #ec4899 !important; 
         }
-        
+    	.reply table.reply-form {
+    		background: #0f172a !important;
+    		width: 100% !important;
+    	}
+    	.reply-answer td {
+    		background: #0f172a !important;
+    	 }
+    	 
+    	 .reply .reply-dropdown {
+    	 	color: #fff;
+    	 	
+    	 }
         
 </style>
+
 
 </head> 
 <body class="bg-background-dark text-white">
@@ -394,10 +407,10 @@
         <div class="planet planet-2"></div>
     </div>
 
-    <%@ include file="../home/adminheader.jsp" %>
+    <%@ include file="../home/header.jsp"%>
 
     <div class="app-body">
-        <%@ include file="../home/adminsidebar.jsp" %>
+       <%@ include file="../home/sidebar.jsp"%>
         
 	<main class="app-main custom-scrollbar">
 			<div class="container-fluid p-4 p-md-5" style="max-width: 1100px;">
@@ -405,16 +418,15 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
    <nav aria-label="breadcrumb">   
       <ol class="breadcrumb mb-0">
-         <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin">홈</a></li>
+         <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/">홈</a></li>
          <li class="breadcrumb-item"><a href="#">서비스 관리</a></li>
-         <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin/events/list">리스트</a></li>
+         <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/events/list">리스트</a></li>
          <li aria-current="page" class="breadcrumb-item active">이벤트 상세</li>
       </ol>
    </nav>
    
    <div class="d-flex gap-2">
-      <button class="btn btn-action btn-outline-custom" onclick="location.href='${pageContext.request.contextPath}/admin/events/update?event_num=${dto.event_num}&page=${page}&size=${size}';">수정</button>
-      <button class="btn btn-action btn-outline-custom" onclick="deleteOk()">삭제</button>
+   		&nbsp;
    </div>
 </div>
 
@@ -449,7 +461,8 @@
 	</div>
 
 	<div class="like-button-container">
-	    <button type="button" class="btn btn-like ${isUserLiked ? 'active' : ''}" >
+	    <button type="button" class="btn btn-like ${isUserLiked ? 'active' : ''}" 
+	            onclick="sendLike('${dto.event_num}', this)">
 	        
 	        <span class="material-symbols-outlined" 
 	              style="font-variation-settings: 'FILL' ${isUserLiked ? 1 : 0}, 'wght' 400;">
@@ -462,73 +475,127 @@
 	
 	<div class="navigation-links">
 		<c:if test="${not empty prevDto}">
-			<a class="nav-item-link" href="${pageContext.request.contextPath}/admin/events/article?${query}&event_num=${prevDto.event_num}">
+			<a class="nav-item-link" href="${pageContext.request.contextPath}/events/article?${query}&event_num=${prevDto.event_num}">
 				<span class="nav-label">이전글 : <c:out value="${prevDto.event_title}"/></span>
 			</a>
 		</c:if>
 		
 		
 		<c:if test="${not empty nextDto}">
-			<a class="nav-item-link" href="${pageContext.request.contextPath}/admin/events/article?${query}&event_num=${nextDto.event_num}">
+			<a class="nav-item-link" href="${pageContext.request.contextPath}/events/article?${query}&event_num=${nextDto.event_num}">
 				<span class="nav-label">다음글 : <c:out value="${nextDto.event_title}"/></span>
 			</a>
 		</c:if>
 	</div>
-
 	
-	<div class="action-footer">
-		<button class="btn btn-action btn-list" onclick="location.href='${pageContext.request.contextPath}/admin/events/list';">
-		<span class="material-symbols-outlined">list</span>
-		</button>
-	</div>
 
-</div>
-	</div>
+               <div class="reply">
+                    <form name="replyForm" method="post">
+                        <div class="form-header">
+                            <span class="bold">
+                                <span class="material-symbols-outlined" style="font-size: 1.5rem; vertical-align: middle;">chat</span>
+                                댓글
+                            </span>
+                        </div>
+                        
+                        <table class="reply-form">
+                            <tr>
+                                <td>
+                                    <textarea class="form-control" name="content" placeholder="댓글을 입력해주세요. 타인을 비방하거나 개인정보를 유출하는 글의 게시를 삼가해 주세요...."></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                               <td align="right">
+                                    <button type="button" class="btn btn-light btnSendReply">
+                                        <span class="material-symbols-outlined" style="font-size: 1.1rem; vertical-align: middle;">send</span>
+                                        댓글 등록
+                                    </button>
+                                </td>
+                             </tr>
+                        </table>
+                    </form>
+                    
+                    <div id="listReply" data-contextPath="${pageContext.request.contextPath}" 
+                            data-postsUrl="${pageContext.request.contextPath}/events"
+                            data-event_num="${dto.event_num}"
+                            data-liked="1">
+                        <div class="reply-info">
+                            <span class="reply-count"></span>
+                            <span class="reply-page"></span>
+                        </div>
+                        
+                        <div class="list-content" data-pageNo="0" data-totalPage="0">
+                            <table class="table table-borderless">
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="list-footer">
+                            <div class="page-navigation"></div>
+                        </div>
+                    </div>
+                </div>
+                
+				<div class="action-footer">
+					<button class="btn btn-action btn-list" onclick="location.href='${pageContext.request.contextPath}/events/list';">
+					<span class="material-symbols-outlined">list</span>
+					</button>
+				</div>
+
+				</div>
+			</div>
 		</main>
 	</div>
 
 
-<script type="text/javascript">
-    // 1. 삭제 함수
-    function deleteOk() {
-    if (confirm('이벤트를 삭제하시겠습니까?')) {
-        // 1. 가상의 폼 생성
-        const form = document.createElement('form');
-        form.method = 'POST';
-        // 컨트롤러의 @PostMapping 주소에 맞게 설정 (현재 메서드명이 delete이므로 기본 주소 호출)
-        form.action = '${pageContext.request.contextPath}/admin/events/delete';
-
-        // 2. 컨트롤러에서 요구하는 파라미터들 추가
-        const params = {
-            'event_num': '${dto.event_num}',
-            'page': '${page}',
-            'size': '${size}',
-            'schType': '${schType}',
-            'kwd': '${kwd}'
-        };
-
-        for (const key in params) {
-            if (params.hasOwnProperty(key)) {
-                const hiddenField = document.createElement('input');
-                hiddenField.type = 'hidden';
-                hiddenField.name = key;
-                hiddenField.value = params[key];
-                form.appendChild(hiddenField);
-            }
-        }
-
-        // 3. 폼 전송
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-</script>
-
+	<script type="text/javascript">
+	    // 좋아요 함수 (독립적으로 위치)
+	    function sendLike(event_num, btnElement) {
+		    const isCurrentlyLiked = btnElement.classList.contains('active');
+		    const url = "${pageContext.request.contextPath}/events/insertBoardLike";
+		
+		    const params = new URLSearchParams();
+		    params.append('event_num', event_num);
+		    params.append('userLiked', isCurrentlyLiked ? 'true' : 'false');
+		
+		    fetch(url, {
+		        method: 'POST',
+		        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		        body: params
+		    })
+		    .then(response => response.json())
+		    .then(data => {
+		        if (data.state === "true") {
+		            const icon = btnElement.querySelector('.material-symbols-outlined');
+		            
+		            if (isCurrentlyLiked) {
+		                btnElement.classList.remove('active');
+		                icon.style.fontVariationSettings = "'FILL' 0, 'wght' 400";
+		            } else {
+		                btnElement.classList.add('active');
+		                icon.style.fontVariationSettings = "'FILL' 1, 'wght' 400";
+		            }
+		
+		            // 개수 업데이트 (class 기준)
+		            const countSpan = btnElement.querySelector('.like-count');
+		            if (countSpan) {
+		                countSpan.innerText = data.boardLikeCount;
+		            }
+		        } else if (data.state === "liked") {
+		            alert("이미 널~ 좋아해.");
+		        }
+		    })
+		    .catch(error => {
+		        console.error('Error:', error);
+		    });
+	        
+	    }
+	</script>
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
-    <script src="${pageContext.request.contextPath}/dist/js/admin_bbs_util.js"></script>
-    <!-- <script src="${pageContext.request.contextPath}/dist/js/admin_events.js"></script> -->
-
+ 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/util-jquery.js"></script>
+    <script src="${pageContext.request.contextPath}/dist/js/eventreply.js"></script>
+    
 </body>
 </html>

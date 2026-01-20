@@ -3,7 +3,8 @@ package com.hs.model.admin;
 public class EventReplyDTO {
 	private long comment_id;
 	private long event_num;
-	private String user_Id;
+	private String user_id;
+	private String user_nickname;
 	private long user_num;
 	private String userName;
 	private String userLevel;
@@ -18,7 +19,6 @@ public class EventReplyDTO {
 	
 	private int answerCount;
 	private int likeCount;
-	private int disLikeCount;
 	private int userLikedReply;
 	
 	
@@ -34,11 +34,11 @@ public class EventReplyDTO {
 	public void setEvent_num(long event_num) {
 		this.event_num = event_num;
 	}
-	public String getUser_Id() {
-		return user_Id;
+	public String getUser_id() {
+		return user_id;
 	}
-	public void setUser_Id(String user_Id) {
-		this.user_Id = user_Id;
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
 	}
 	public String getUserName() {
 		return userName;
@@ -100,12 +100,6 @@ public class EventReplyDTO {
 	public void setLikeCount(int likeCount) {
 		this.likeCount = likeCount;
 	}
-	public int getDisLikeCount() {
-		return disLikeCount;
-	}
-	public void setDisLikeCount(int disLikeCount) {
-		this.disLikeCount = disLikeCount;
-	}
 	public int getUserLikedReply() {
 		return userLikedReply;
 	}
@@ -129,6 +123,12 @@ public class EventReplyDTO {
 	}
 	public void setUserLevel(String userLevel) {
 		this.userLevel = userLevel;
+	}
+	public String getUser_nickname() {
+		return user_nickname;
+	}
+	public void setUser_nickname(String user_nickname) {
+		this.user_nickname = user_nickname;
 	}
 	
 	

@@ -148,7 +148,7 @@ public class EventServiceImpl implements EventService {
 		EventDTO dto = null;
 		
 		try {
-			// dto = mapper.findByPrev(map);
+			dto = mapper.findByPrev(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -162,7 +162,7 @@ public class EventServiceImpl implements EventService {
 		EventDTO dto = null;
 		
 		try {
-			// dto = mapper.findByPrev(map);
+			dto = mapper.findByNext(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

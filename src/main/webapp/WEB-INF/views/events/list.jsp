@@ -15,9 +15,7 @@
 <link
 	href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
 	rel="stylesheet">
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-	rel="stylesheet">
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <%@ include file="/WEB-INF/views/home/head.jsp"%>
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminmain.css">
@@ -234,17 +232,17 @@ input:-webkit-autofill:focus {
 		<div class="planet planet-2"></div>
 	</div>
 
-	<%@ include file="../home/adminheader.jsp"%>
+	<%@ include file="../home/header.jsp"%>
 
 	<div class="app-body">
-		<%@ include file="../home/adminsidebar.jsp"%>
+		<%@ include file="../home/sidebar.jsp"%>
 
 		<main class="app-main custom-scrollbar">
 			<div class="container-fluid p-4 p-md-5" style="max-width: 1300px;">
 			
 			 <nav aria-label="breadcrumb" class="mb-4">	
 				<ol class="breadcrumb">
-					<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin">홈</a></li>
+					<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/">홈</a></li>
 					<li class="breadcrumb-item"><a href="#">서비스 관리</a></li>
 					<li aria-current="page" class="breadcrumb-item active">이벤트</li>
 				</ol>
@@ -259,19 +257,11 @@ input:-webkit-autofill:focus {
 								<span class="material-icons-round fs-4">celebration</span>
 							</div>
 							<div>
-								<h1 class="h3 fw-bold mb-1 text-white">이벤트 관리</h1>
-								<p class="text-white-50 small mb-0">프로모션 일정을 확인하고 이벤트를 효율적으로
-									관리하세요.</p>
+								<h1 class="h3 fw-bold mb-1 text-white">이벤트</h1>
+								<p class="text-white-50 small mb-0">프로모션 일정을 확인하고 이벤트를 확인하세요.</p>
 							</div>
 							</div>
 							<div class="d-flex gap-2">
-							<button	
-								class="btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2" onclick="location.href='${pageContext.request.contextPath}/admin/events/write?size=${size}';">
-								<span class="material-icons-round fs-3">edit</span> <span>작성</span>
-							</button>
-							<button type = "button" id="btnDeleteList" class = "btn btn-primary btn-write d-flex align-items-center gap-2 px-4 py-2">
-								<span class="material-icons-round fs-3">delete</span> <span>삭제</span>
-							</button>
 						</div>
 					</div>
 				</div>
@@ -344,14 +334,9 @@ input:-webkit-autofill:focus {
 								</tr>
 								</c:forEach>
 								
-							<form name="deleteForm" id="deleteForm" method="post">
-								<input type="hidden" name="page" value="${page}">
-	    						<input type="hidden" name="size" value="${size}">
-    						
 								<c:forEach var="dto" items="${list}" varStatus="active_status">
 								<tr>
-									<td class="text-center">
-										<input type="checkbox" class="form-check-input" name="event_nums" value="${dto.event_num}">
+									<td class="text-center">&nbsp;</td>
 									<td class="text-white">${dto.event_num}</td>
 									<td>
 										<c:if test="${dto.active_status == '진행예정'}">
@@ -374,7 +359,7 @@ input:-webkit-autofill:focus {
 									<td class="text-center text-white-50">${dto.ev_hitcount}</td>
 								</tr>
 								</c:forEach>
-								</form>
+
 							</tbody>
 						</table>
 					</div>
@@ -415,50 +400,12 @@ function resetSearch() {
 
 // 기존 search 함수가 정의된 곳에 함께 두시면 됩니다.
 window.resetSearch = resetSearch;
-
-// 상세보기 삭제
-function deleteOk() {
-    if (!confirm('게시글을 삭제하시겠습니까?')) {
-        return;
-    }
-
-    const f = document.createElement('form');
-    f.method = 'POST';
-    f.action = '${pageContext.request.contextPath}/admin/events/deleteList';
-
-    // 컨트롤러의 String[] nn = req.getParameterValues("event_nums")와 매칭
-    const inputNum = document.createElement('input');
-    inputNum.type = 'hidden';
-    inputNum.name = 'event_nums'; 
-    inputNum.value = '${dto.event_num}';
-    f.appendChild(inputNum);
-
-    // 검색 및 페이지 정보 유지
-    const params = {
-        'page': '${page}',
-        'size': '${size}',
-        'schType': '${schType}',
-        'kwd': '${kwd}'
-    };
-
-    for (const key in params) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = params[key];
-        f.appendChild(input);
-    }
-
-    document.body.appendChild(f);
-    f.submit();
-}
-
 </script>
 
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
-	<script src="${pageContext.request.contextPath}/dist/js/admin_bbs_util.js"></script>
-	<script src="${pageContext.request.contextPath}/dist/js/admin_event.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/bbs_util.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/event.js"></script>
 </body>
 </html>

@@ -3,16 +3,13 @@ package com.hs.controller.admin;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.hs.model.ReplyDTO;
 import com.hs.model.SessionInfo;
 import com.hs.model.admin.EventDTO;
-import com.hs.model.admin.EventReplyDTO;
 import com.hs.mvc.annotation.Controller;
 import com.hs.mvc.annotation.GetMapping;
 import com.hs.mvc.annotation.PostMapping;
@@ -29,7 +26,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import oracle.jdbc.proxy.annotation.Post;
 
 @Controller
 @RequestMapping("/admin/events/*")
@@ -54,12 +50,18 @@ public class eventManageController {
 			
 			String schType = req.getParameter("schType");
 			String kwd = req.getParameter("kwd");
-			String state = req.getParameter("state");
+			String status = req.getParameter("status");
 			if(schType == null) {
 				schType = "all";
 				kwd = "";
 			}
+			
+			if(status == null) {
+				status = "";
+			}
+			
 			kwd = util.decodeUrl(kwd);
+			status = util.decodeUrl(status);
 			
 			// 한페이지 표시
 			String pageSize = req.getParameter("size");
@@ -68,7 +70,7 @@ public class eventManageController {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("schType", schType);
 			map.put("kwd", kwd);
-			map.put("state", state);
+			map.put("status", status);
 			
 			int dataCount = service.dataCount(map);
 			int total_page = util.pageCount(dataCount, size);
@@ -83,9 +85,9 @@ public class eventManageController {
 
 			List<EventDTO> list = service.listEvent(map);
 			
-			// 공지글 top
+			// top
 			List<EventDTO> listTop = null;
-			if(current_page == 1) {
+			if(status.isBlank() && current_page == 1) {
 				listTop = service.listEventTop();
 			}
 			
@@ -97,6 +99,11 @@ public class eventManageController {
 			if (! kwd.isBlank()) {  // if(kwd.length() != 0) { // 검색 상태인 경우
 				query += "&schType=" + schType + "&kwd=" + util.encodeUrl(kwd);
 			}
+			
+			if(! status.isBlank()) {
+				query += "&status=" + util.encodeUrl(status);
+			}
+			
 			listUrl = cp + "/admin/events/list?" + query;
 			
 			articleUrl = cp + "/admin/events/article?page=" + current_page + "&" + query;
@@ -114,10 +121,12 @@ public class eventManageController {
 			mav.addObject("paging", paging);
 			mav.addObject("schType", schType);
 			mav.addObject("kwd", kwd);
-						
+			mav.addObject("status", status);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		return mav;
 	}
 	
@@ -217,6 +226,7 @@ public class eventManageController {
 			map.put("schType", schType);
 			map.put("kwd", kwd);
 			map.put("update_date", dto.getUpdate_date());
+			map.put("event_num", dto.getEvent_num());
 				
 			// 이전, 다음 
 			EventDTO prevDto = service.findByPrev(map);
@@ -538,273 +548,5 @@ public class eventManageController {
 
 		return new ModelAndView("redirect:/admin/events/list?" + query);
 	}
-	
-	
-	
-	// 좋아요
-	@ResponseBody
-	@PostMapping("insertBoardLike")
-	public Map<String, Object> insertBoardLike(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Map<String, Object> mav = new HashMap<String, Object>();
-		
-		// 넘어오는 파리미터 : 글번호, 좋아요/취소 여부
-		
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo)session .getAttribute("member");
-		
-		String state = "false";
-		int boardLikeCount = 0;
-		
-		try {
-			long event_num = Long.parseLong(req.getParameter("event_num"));
-			String userLiked = req.getParameter("userLiked");
-			
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("event_num", event_num);
-			map.put("user_num", info.getMemberIdx());
-			
-			if(userLiked.equals("true")){
-				//좋아요 취소
-				service.deleteBoardLike(map);
-			} else {
-				//좋아요
-				service.insertBoardLike(map);
-			}
-			
-			boardLikeCount = service.boardLikeCount(event_num);
-			
-			state = "true";
-			
-		} catch(SQLException e) {
-			state = "liked";
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		mav.put("state", state);
-		mav.put("boardLikeCount", boardLikeCount);
-		
-		return mav;
-		
-		}
-		
-	
-	@ResponseBody
-	@PostMapping("insertReply")
-	public Map<String, Object> insertReply(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// 댓글 등록
-		Map<String, Object> mav = new HashMap<String, Object>();
-		
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo)session.getAttribute("member");
-		
-		String state = "false";
-		
-		try {
-			EventReplyDTO dto = new EventReplyDTO();
-			
-			dto.setUser_num(info.getMemberIdx());
-			dto.setUser_Id(info.getUserId());
-			dto.setComment_id(Long.parseLong(req.getParameter("comment_id")));
-			dto.setEvent_num(Long.parseLong(req.getParameter("event_num")));
-			dto.setContent(req.getParameter("content"));
-			dto.setParent_comment_id(Long.parseLong(req.getParameter("getParent_comment_id")));
-			
-			
-			service.insertReply(dto);
-			
-			state = "ture";		
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		mav.put("state", state);
-		
-		return mav;
-	}
-	
-	
-	@ResponseBody
-	@GetMapping("listReply")
-	public Map<String, Object> listReply(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// 댓글 리스트
-		// 넘어오는 파라미터 : 댓글 번호, 페이지
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo)session.getAttribute("member");
-		
-		try {
-			Map<String, Object> mav = new HashMap<String, Object>();
-			
-			long comment_id = Long.parseLong(req.getParameter("comment_id"));
-			String pageNo = req.getParameter("pageNo");
-			int current_page = 1;
-			if(pageNo != null) {
-				current_page = Integer.parseInt(pageNo);
-			}
-			
-			int size = 10;
-			int total_page = 0;
-			int replyCount = 0;
-			
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("comment_id", comment_id);
-			map.put("userId", info.getUserId());
-			map.put("userLevel", info.getUserLevel());
-			
-			replyCount = service.replyCount(map);
-			total_page = util.pageCount(replyCount, size);
-			current_page = Math.min(current_page, total_page);
-			
-			
-			int offset = (current_page - 1) * size;
-			if(offset < 0) offset = 0;
-			
-			map.put("offset", offset);
-			map.put("size", size);
-			
-			List<EventReplyDTO> listReply = service.listReply(map);
-			
-			for(EventReplyDTO dto : listReply) {
-				dto.setContent(util.htmlSymbols(dto.getContent()));
-				
-				
-				// 유저의 좋아요 유무
-				map.put("comment_id", dto.getComment_id());
-				dto.setUserLikedReply(service.hasUserReplyLiked(map));
-			}
-			
-			Map<String, Object> sessionMember = new HashMap<String, Object>();
-			sessionMember.put("userId", info.getUserId());
-			sessionMember.put("userLevel", info.getUserLevel());
-			
-			String paging = util.pagingMethod(current_page, total_page, "loadContent");
-			
-			mav.put("sessionMember", sessionMember);
-			mav.put("listReply", listReply);
-			mav.put("pageNo", current_page);
-			mav.put("replyCount", replyCount);
-			mav.put("total_page", total_page);
-			mav.put("paging", paging);
-			
-			
-			return mav;
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			resp.sendError(406);
-			
-			throw e;
-		}
-		
-	}
-	
-	
-	@ResponseBody
-	@PostMapping("deleteReply")
-	public Map<String, Object> deleteReply(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// 댓글 삭제
-		Map<String, Object> mav = new HashMap<String, Object>();
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo)session.getAttribute("member");
-		
-		String state = "false";
-		
-		try {
-			long comment_id = Long.parseLong(req.getParameter("comment_id"));
-			String mode = req.getParameter("mode");
-			
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("comment_id", comment_id);
-			map.put("userId", info.getUserId());
-			map.put("userLevel",info.getUserLevel());
-			map.put("mode",mode);
-			
-			service.deleteReply(map);
-			
-			state = "true";
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		mav.put("steate", state);
-		
-		return mav;
-	}
-	
-	// 댓글의 답글 리스트 : AJAX - JSON
-	@ResponseBody
-	@GetMapping("listReplyAnswer")
-	public Map<String, Object> listReplyAnswer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Map<String, Object> mav = new HashMap<String, Object>();
-		
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo)session.getAttribute("member");
-		
-		try {
-			long parent_comment_id = Long.parseLong(req.getParameter("parent_comment_id"));
-			
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("parent_comment_id", parent_comment_id);
-			map.put("user_Id", info.getUserId());
-			map.put("userLevel", info.getUserLevel());
-			
-			// 답글 개수
-			int count = service.replyAnswerCount(map);
-			// 답글
-			List<EventReplyDTO> listReplyAnswer = service.listReplyAnswer(map);
-			
-			for(EventReplyDTO dto : listReplyAnswer) {
-				dto.setContent(util.htmlSymbols(dto.getContent()));
-			}
-			
-			Map<String, Object> sessionMember = new HashMap<String, Object>();
-			sessionMember.put("user_Id", info.getUserId());
-			sessionMember.put("userLevel", info.getUserLevel());
-			
-			mav.put("sessionMember", sessionMember);
-			mav.put("count", count);
-			mav.put("listReplyAnswer", listReplyAnswer);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			
-			resp.sendError(406);
-			throw e;
-		}
-		
-		return mav;
-	}
-	
-	// 댓글 숨김 / 표시 : AJAX - JSON
-	@ResponseBody
-	@PostMapping("replyShowHide")
-	public Map<String, Object> replyShowHide(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Map<String, Object> model = new HashMap<String, Object>();
-		
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo) session.getAttribute("member");
-		
-		String state = "ture";
-		
-		try {
-			long comment_id = Long.parseLong(req.getParameter("comment_id"));
-			int showReply = Integer.parseInt(req.getParameter("showReply"));
-			
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("comment_id", comment_id);
-			map.put("showReply", showReply);
-			map.put("user_Id", info.getUserId());
-			
-			service.updateReplyShowHide(map);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			
-			state = "false";
-		}
-		
-		model.put("state", state);
-		
-		return model;
-	}
+
 }
