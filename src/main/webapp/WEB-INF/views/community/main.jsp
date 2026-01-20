@@ -98,13 +98,16 @@
 										        </button>
 										    </c:otherwise>
 										</c:choose>
-									    
-                                        <button class="btn-icon border border-white border-opacity-10 rounded-circle p-2">
-                                            <span class="material-symbols-outlined text-white">notifications</span>
-                                        </button>
-                                        <button class="btn-icon btn-favorite border border-white border-opacity-10 rounded-circle p-2 ${dto.is_favorite == 1 ? 'active' : ''}"
-											onclick="toggleFavorite(this, '${dto.community_id}')">
-											<span class="material-symbols-outlined text-white" style="${dto.is_favorite == 1 ? 'color: #ffca28 !important; font-variation-settings: \'FILL\' 1, \'wght\' 700 !important;' : ''}">kid_star</span>
+
+                                        <%-- 즐겨찾기 버튼: 항상 보이지만 가입 여부에 따라 동작이 달라짐 --%>
+										<button id="btn-favorite-wrapper" 
+										        class="btn-icon btn-favorite border border-white border-opacity-10 rounded-circle p-2 ${dto.is_favorite == 1 ? 'active' : ''}"
+										        onclick="handleFavoriteClick(this, '${dto.community_id}')"
+										        data-is-follow="${(dto.is_follow == 1 or sessionScope.member.memberIdx == dto.user_num) ? 'true' : 'false'}">
+										    <span class="material-symbols-outlined text-white" 
+										          style="${dto.is_favorite == 1 ? 'color: #ffca28 !important; font-variation-settings: \'FILL\' 1, \'wght\' 700 !important;' : ''}">
+										        kid_star
+										    </span>
 										</button>
                                     </div>
                                 </div>
@@ -414,7 +417,16 @@
 						        <div class="d-flex align-items-center gap-3 mb-3">
 						            <div class="rounded-circle overflow-hidden border border-white border-opacity-10 shadow-sm" style="width: 50px; height: 50px; background: linear-gradient(135deg, #e11d48, #4c1d95);">
 						                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white">
-						                    <span class="material-symbols-outlined">flare</span>
+						                    <c:choose>
+												<c:when test="${not empty dto.icon_image}">
+													<img
+														src="${dto.icon_image}"
+														class="w-100 h-100 object-fit-cover" alt="Profile">
+												</c:when>
+												<c:otherwise>
+	            									<span class="material-symbols-outlined">flare</span>
+	        									</c:otherwise>
+											</c:choose>
 						                </div>
 						            </div>
 						            <h4 class="text-white text-sm fw-bold mb-0">${dto.com_name}</h4>
@@ -485,7 +497,8 @@
     // JS 파일들이 참조할 전역 변수
     const contextPath = "${pageContext.request.contextPath}";
     window.cp = "${pageContext.request.contextPath}";
-    window.communityId = "${dto.community_id}"; 
+    window.communityId = "${dto.community_id}";
+    window.communityName = "${dto.com_name}";
     window.currentSort = "${currentSort}"; // 컨트롤러에서 넘겨받은 정렬 상태
     window.ownerIdx = "${dto.user_num}";
     window.currentUserIdx = "${sessionScope.member.memberIdx}";

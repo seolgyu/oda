@@ -54,6 +54,7 @@ $(function() {
     const joinStatus = params.get('join');
 	const leaveStatus = params.get('leave');
     const communityId = params.get('community_id');
+	const deleteStatus = params.get('delete');
 
     // 디버깅용 (브라우저 콘솔에서 확인 가능)
     console.log("Current Join Status:", joinStatus);
@@ -85,6 +86,22 @@ $(function() {
 	        // 주소창에서 ?leave=success 제거
 	        window.history.replaceState({}, '', window.location.pathname);
 	    }
+	
+		if (deleteStatus === 'success') {
+		        setTimeout(function() {
+		            if (typeof showToast === 'function') {
+		                showToast("success", "커뮤니티가 정상적으로 삭제되었습니다.");
+		            }
+		        }, 100);
+
+		        // 주소창에서 ?delete=success 제거 (깔끔하게 관리)
+		        window.history.replaceState({}, '', window.location.pathname);
+		    } else if (deleteStatus === 'fail') {
+		        setTimeout(function() {
+		            showToast("error", "커뮤니티 삭제 중 오류가 발생했습니다.");
+		        }, 100);
+		        window.history.replaceState({}, '', window.location.pathname);
+		    }
     
 });
 
@@ -119,6 +136,18 @@ function checkCommunityName() {
         $errorEl.text("커뮤니티 이름을 입력해주세요.").removeClass('text-green-500').addClass('text-red-500').show();
         return;
     }
+	
+	const byteLength = new TextEncoder().encode(com_name).length;
+	const maxByte = 50;
+
+	if (byteLength > maxByte) {
+		$errorEl.text(`이름이 너무 깁니다. (현재 ${byteLength}바이트 / 최대 ${maxByte}바이트)`)
+	    	.removeClass('text-green-500')
+	        .addClass('text-red-500')
+	        .show();
+		$nameInput.addClass('border-red-500/50');
+		return;
+	}
 	
 	const fn = function(data) {
 		if (data.isDuplicate) {
@@ -310,7 +339,7 @@ function checkJoinAndWrite() {
         }
         return;
     }
-	const comName = encodeURIComponent("${dto.com_name}");
+	const comName = encodeURIComponent(window.communityName || "");
     // 3. 통과 시 이동 (community_id 파라미터 포함)
     location.href = window.cp + "/post/write?community_id=" + window.communityId + "&com_name=" + comName;
 }
@@ -348,13 +377,17 @@ function toggleJoin(btn, community_id) {
     const url = isJoined ? "leave" : "join"; 
 	const fn = function(data) {
 		if(data.status === 'success') {
+			const $favBtn = $('#btn-favorite-wrapper');
+			
 			if (!isJoined) {
 				$btn.attr('data-joined', 'true').text('가입됨');
-		        $btn.css('background-color', '#9333ea'); 
+		        $btn.css('background-color', '#9333ea');
+				$favBtn.attr('data-is-follow', 'true');
 		        showToast("success", "커뮤니티에 가입되었습니다.");
 		    } else {
 				$btn.attr('data-joined', 'false').text('가입하기');
 		        $btn.css('background-color', '#a855f7');
+				$favBtn.attr('data-is-follow', 'false');
 		        showToast("success", "탈퇴 처리가 완료되었습니다.");
 		    }
 		} else {
@@ -362,6 +395,19 @@ function toggleJoin(btn, community_id) {
 		}
 	};
     ajaxRequest(url, 'GET', { community_id: community_id }, 'json', fn);
+}
+
+function handleFavoriteClick(btn, community_id) {
+    const $btn = $(btn);
+    const isFollow = $btn.attr('data-is-follow') === "true";
+
+    if (!isFollow) {
+        showToast("error", "커뮤니티 가입 후 즐겨찾기가 가능합니다.");
+        return;
+    }
+
+    // 가입된 상태라면 기존의 toggleFavorite 호출
+    toggleFavorite(btn, community_id);
 }
 
 function leaveCommunity(communityId) {
