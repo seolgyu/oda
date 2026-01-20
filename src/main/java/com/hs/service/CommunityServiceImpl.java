@@ -72,6 +72,7 @@ public class CommunityServiceImpl implements CommunityService{
 	@Override
 	public void deleteCommunity(Map<String, Object> map) throws Exception {
 		try {
+			mapper.deletePostsCommunity(map);
 			mapper.deleteFavorites(map);
 			mapper.deleteFollow(map);
 			

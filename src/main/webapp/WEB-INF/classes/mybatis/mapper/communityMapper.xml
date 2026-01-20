@@ -16,12 +16,18 @@
 	
 	<delete id="deleteFavorites" parameterType="map">
 		DELETE FROM COMMUNITY_FAVORITES
-		WHERE community_id = #{community_id} AND user_num = #{user_num}
+		WHERE community_id = #{community_id}
 	</delete>
 	
 	<delete id="deleteFollow" parameterType="map">
 		DELETE FROM COMMUNITY_FOLLOW
-		WHERE community_id = #{community_id} AND user_num = #{user_num}
+		WHERE community_id = #{community_id}
+	</delete>
+	
+	<delete id="deletePostsCommunity" parameterType="map">
+	    UPDATE POSTS 
+        SET IS_DELETED = '1' 
+        WHERE community_id = #{community_id}
 	</delete>
 	
 	<delete id="deleteCommunity" parameterType="Long">

@@ -268,9 +268,10 @@ public class CommunityController {
 			cservice.deleteCommunity(map);
 		} catch (Exception e) {
 			e.printStackTrace();
+			return new ModelAndView("redirect:/community/management?delete=fail");
 		}
 		
-		return new ModelAndView("redirect:/community/management");
+		return new ModelAndView("redirect:/community/management?delete=success");
 	}
 	
 	@GetMapping("management")

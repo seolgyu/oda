@@ -105,8 +105,8 @@
                                 <%-- 2. 커뮤니티 ID 전달 (등록/수정 공통) --%>
 							    <%-- 컨트롤러 파라미터(communityId) 혹은 DTO의 정보를 우선순위에 따라 hidden에 담음 --%>
 							    <c:set var="targetComid" value="${not empty communityId ? communityId : dto.communityId}"/>
-							    <c:if test="${not empty targetCid}">
-							        <input type="hidden" name="communityId" value="${targetComid}">
+							    <c:if test="${not empty targetComid}">
+							        <input type="hidden" name="community_id" value="${targetComid}">
 							    </c:if>
 
                                 <div class="mb-3">
@@ -168,7 +168,7 @@
 								    <div class="d-flex gap-2">
 								       	<c:set var="cancelUrl" value="${pageContext.request.contextPath}/main"/>
 						                
-						                <c:if test="${not empty targetCid}">
+						                <c:if test="${not empty targetComid}">
 							                <c:set var="cancelUrl" value="${pageContext.request.contextPath}/community/main?community_id=${targetComid}"/>
 							            </c:if>
 						                
