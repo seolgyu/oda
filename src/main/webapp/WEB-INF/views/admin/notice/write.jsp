@@ -411,6 +411,7 @@ select.glass-input-box {
 							                    <span class="file-name">${vo.originalFilename}</span>
 							                    <i class="material-symbols-outlined download-icon">download</i>
 							                </a>
+							                <a href="javascript:deleteFile('${vo.fileNum}');"><i class="bi bi-trash"></i></a>
 							            </c:forEach>
 							        </div>
 							    </div>
@@ -427,41 +428,41 @@ select.glass-input-box {
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
-<script type="text/javascript">
-function check() {
-	const f = document.noticeForm;
-	let str;
-	
-	str = f.title.value.trim();
-	if( ! str ) {
-		alert('제목을 입력하세요. ');
-		f.title.focus();
-		return false;
-	}
-
-	str = f.content.value.trim();
-	if( ! str || str === '<p><br></p>' ) {
-		alert('내용을 입력하세요. ');
-		return false;
-	}
-
-	f.action = '${pageContext.request.contextPath}/admin/notice/${mode}';
-	
-	return true;
-}
-
-<c:if test="${mode=='update'}">
-	function deleteFile(fileNum) {
-		if(! confirm('파일을 삭제 하시겠습니까 ? ')) {
-			return;
-		}
+	<script type="text/javascript">
+	function check() {
+		const f = document.noticeForm;
+		let str;
 		
-		let params = 'num=${dto.notice_num}&fileNum=' + fileNum + '&page=${page}&size=${size}';
-		let url = '${pageContext.request.contextPath}/admin/notice/deleteFile?' + params;
-		location.href = url;
+		str = f.title.value.trim();
+		if( ! str ) {
+			alert('제목을 입력하세요. ');
+			f.title.focus();
+			return false;
+		}
+	
+		str = f.content.value.trim();
+		if( ! str || str === '<p><br></p>' ) {
+			alert('내용을 입력하세요. ');
+			return false;
+		}
+	
+		f.action = '${pageContext.request.contextPath}/admin/notice/${mode}';
+		
+		return true;
 	}
-</c:if>
-</script>
+	
+	<c:if test="${mode=='update'}">
+		function deleteFile(fileNum) {
+			if(! confirm('파일을 삭제 하시겠습니까 ? ')) {
+				return;
+			}
+			
+			let params = 'num=${dto.notice_num}&fileNum=' + fileNum + '&page=${page}&size=${size}';
+			let url = '${pageContext.request.contextPath}/admin/notice/deleteFile?' + params;
+			location.href = url;
+		}
+	</c:if>
+	</script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/dist/vendor/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
 <script type="text/javascript">
