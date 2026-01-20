@@ -148,11 +148,12 @@
 								<c:choose>
 									<c:when test="${not empty post}">
 										<c:forEach var="item" items="${post}">
-											<div class="glass-card shadow-lg group mb-4 post-item-card" data-id="${item.postId}">
+											<div class="glass-card shadow-lg group mb-4 post-item-card">
 
 												<div class="list-view-item p-3" style="display: none;">
 													<div class="d-flex align-items-start gap-3 w-100">
-														<div class="flex-shrink-0 thumbnail-box"
+														<div class="flex-shrink-0 thumbnail-box app-user-trigger"
+															data-user-id="${item.authorId}"
 															style="width: 90px; height: 90px;">
 															<c:choose>
 																<c:when test="${not empty item.fileList}">
@@ -174,9 +175,11 @@
 															style="min-height: 90px;">
 															<div>
 																<div class="d-flex align-items-center gap-2 mb-1">
-																	<span class="text-white fw-bold text-sm">${item.authorNickname}</span>
+																	<span
+																		class="text-white fw-bold text-sm app-user-trigger"
+																		data-user-id="${item.authorId}">${item.authorNickname}</span>
 																	<span class="text-secondary text-xs opacity-75">c/${item.authorId}</span>
-																	<span class="ms-auto text-xs text-gray-500">${item.createdDate}</span>
+																	<span class="ms-auto text-xs text-gray-500">${item.timeAgo}</span>
 																</div>
 
 																<c:if test="${not empty item.title}">
@@ -200,24 +203,38 @@
 																			style="font-variation-settings: 'FILL' ${item.likedByUser ? 1 : 0};">favorite</span>
 																		<span class="text-xs opacity-75 like-count">${item.likeCount}</span>
 																	</button>
+
 																	<button
 																		class="btn-icon d-flex align-items-center gap-1 p-0"
 																		onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
 																		<span class="material-symbols-outlined fs-6">chat_bubble</span>
 																		<span class="text-xs opacity-75">${item.commentCount}</span>
 																	</button>
-																	<button class="btn-icon p-0" onclick="toggleRepost('${item.postId}', this);">
+
+																	<button
+																		class="btn-icon p-0 btn-repost ${item.repostedByUser ? 'text-success' : ''}"
+																		onclick="toggleRepost('${item.postId}', this);">
 																		<span class="material-symbols-outlined fs-6">repeat</span>
 																	</button>
 																</div>
+
 																<div class="d-flex gap-3 text-white-50">
-																	<button class="btn-icon p-0" title="공유하기">
+																	<button class="btn-icon p-0" title="공유하기"
+																		onclick="copyUrl('${item.postId}')">
 																		<span class="material-symbols-outlined fs-6">share</span>
 																	</button>
-																	<button class="btn-icon p-0" title="저장하기">
-																		<span class="material-symbols-outlined fs-6">bookmark</span>
+
+																	<button
+																		class="btn-icon p-0 btn-save ${item.savedByUser ? 'text-warning' : ''}"
+																		title="저장하기"
+																		onclick="toggleSave('${item.postId}', this);">
+																		<span class="material-symbols-outlined fs-6">
+																			${item.savedByUser ? 'bookmark' : 'bookmark_border'}
+																		</span>
 																	</button>
-																	<button class="btn-icon p-0" title="신고하기">
+
+																	<button class="btn-icon p-0" title="신고하기"
+																		onclick="openReportModal('${item.postId}');">
 																		<span class="material-symbols-outlined fs-6">report</span>
 																	</button>
 																</div>
@@ -231,8 +248,9 @@
 														class="p-3 d-flex align-items-center justify-content-between border-bottom border-white border-opacity-10">
 														<div class="d-flex align-items-center gap-3">
 															<div
-																class="avatar-md bg-info text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden"
-																style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #a855f7);">
+																class="avatar-md bg-info text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden app-user-trigger"
+																style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #a855f7);"
+																data-user-id="${item.authorId}">
 																<c:choose>
 																	<c:when test="${not empty item.authorProfileImage}">
 																		<img src="${item.authorProfileImage}"
@@ -242,8 +260,10 @@
 																</c:choose>
 															</div>
 															<div>
-																<h3 class="text-sm fw-medium text-white mb-0">${item.authorNickname}</h3>
-																<p class="text-xs text-gray-500 mb-0">${item.createdDate}</p>
+																<h3
+																	class="text-sm fw-medium text-white mb-0 app-user-trigger"
+																	data-user-id="${item.authorId}">${item.authorNickname}</h3>
+																<p class="text-xs text-gray-500 mb-0">${item.timeAgo}</p>
 															</div>
 														</div>
 														<button class="btn-icon text-white-50">
@@ -322,23 +342,36 @@
 																	style="font-variation-settings: 'FILL' ${item.likedByUser ? 1 : 0};">favorite</span>
 																<span class="text-xs opacity-75 like-count">${item.likeCount}</span>
 															</button>
+
 															<button class="btn-icon d-flex align-items-center gap-1"
 																onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
 																<span class="material-symbols-outlined fs-5">chat_bubble</span>
 																<span class="text-xs opacity-75">${item.commentCount}</span>
 															</button>
-															<button class="btn-icon" onclick="toggleRepost('${item.postId}', this)">
+
+															<button
+																class="btn-icon btn-repost ${item.repostedByUser ? 'text-success' : ''}"
+																onclick="toggleRepost('${item.postId}', this);">
 																<span class="material-symbols-outlined fs-5">repeat</span>
 															</button>
 														</div>
+
 														<div class="d-flex gap-3 text-white-50">
-															<button class="btn-icon" title="공유하기" onclick="copyUrl('${item.postId}')">
+															<button class="btn-icon" title="공유하기"
+																onclick="copyUrl('${item.postId}')">
 																<span class="material-symbols-outlined fs-5">share</span>
 															</button>
-															<button class="btn-icon" title="저장하기" onclick="toggleSave('${item.postId}', this)">
-																<span class="material-symbols-outlined fs-5">bookmark</span>
+
+															<button
+																class="btn-icon btn-save ${item.savedByUser ? 'text-warning' : ''}"
+																title="저장하기"
+																onclick="toggleSave('${item.postId}', this);">
+																<span class="material-symbols-outlined fs-5">
+																	${item.savedByUser ? 'bookmark' : 'bookmark_border'} </span>
 															</button>
-															<button class="btn-icon" title="신고하기" onclick="openReportModal('${item.postId}')">
+
+															<button class="btn-icon" title="신고하기"
+																onclick="openReportModal('${item.postId}');">
 																<span class="material-symbols-outlined fs-5">report</span>
 															</button>
 														</div>
@@ -355,7 +388,8 @@
 												<span
 													class="material-symbols-outlined text-secondary opacity-20"
 													style="font-size: 80px;">rocket_launch</span>
-												<h4 class="text-white mt-3 fw-bold opacity-75">등록된 게시글이 없습니다</h4>
+												<h4 class="text-white mt-3 fw-bold opacity-75">등록된 게시글이
+													없습니다</h4>
 												<c:if
 													test="${not empty sessionScope.member and sessionScope.member.userId eq user.userId}">
 													<button
@@ -449,12 +483,12 @@
 	
 	<script>
     // JS 파일들이 참조할 전역 변수
+    const contextPath = "${pageContext.request.contextPath}";
     window.cp = "${pageContext.request.contextPath}";
     window.communityId = "${dto.community_id}"; 
     window.currentSort = "${currentSort}"; // 컨트롤러에서 넘겨받은 정렬 상태
     window.ownerIdx = "${dto.user_num}";
     window.currentUserIdx = "${sessionScope.member.memberIdx}";
-    const contextPath = "${pageContext.request.contextPath}";
     const isLogin = "${empty sessionScope.member ? 'false' : 'true'}";
 	</script>
 	

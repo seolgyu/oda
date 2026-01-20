@@ -193,7 +193,12 @@
 .text-warning, .text-warning span { color: #ffca28 !important; }
 .text-success, .text-success span { color: #2ed573 !important; }
 
-/* 머티리얼 아이콘 채우기 효과 */
-.text-danger span, .text-warning span, .text-success span {
+/* 저장 활성화 */
+.btn-save.text-warning .material-symbols-outlined {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
+}
+
+/* 리그램 활성화 */
+.btn-repost.text-success .material-symbols-outlined {
     font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
 }

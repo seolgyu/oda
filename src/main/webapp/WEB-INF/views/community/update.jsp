@@ -48,9 +48,6 @@
                             <h1 class="text-3xl font-bold text-white">커뮤니티 설정 편집</h1>
                             <p class="text-gray-400 mt-1">커뮤니티의 정보와 설정을 관리하세요.</p>
                         </div>
-                        <button type="button" class="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-sm font-semibold transition-all backdrop-blur-md border border-white/10">
-                            커뮤니티 미리보기
-                        </button>
                     </div>
 
                     <div class="neon-card rounded-[2.5rem] overflow-hidden">
