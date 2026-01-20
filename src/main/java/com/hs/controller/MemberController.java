@@ -23,6 +23,9 @@ import com.hs.service.FollowService;
 import com.hs.service.FollowServiceImpl;
 import com.hs.service.MemberService;
 import com.hs.service.MemberServiceImpl;
+import com.hs.service.NotificationService;
+import com.hs.service.NotificationServiceImpl;
+import com.hs.service.admin.NoticeServiceImpl;
 import com.hs.util.MyUtil;
 
 import jakarta.servlet.ServletException;
@@ -36,6 +39,7 @@ public class MemberController {
 	private MemberService service = new MemberServiceImpl();
 	private CommunityService communityService = new CommunityServiceImpl();
 	private FollowService followService = new FollowServiceImpl();
+	private NotificationService noticeService = NotificationServiceImpl.getInstance();
 
 	// @RequestMapping(value = "login", method = RequestMethod.GET)
 	@GetMapping("login")
@@ -160,6 +164,7 @@ public class MemberController {
 			service.insertLoginlog(dto.getUserIdx());
 
 			session.setAttribute("toastMsg", dto.getUserName() + "님, 환영합니다!");
+			session.setAttribute("notiMsg", "확인하지 않은 알림이 " + noticeService.getUncheckedCount(dto.getUserIdx()) + "개 있습니다.");
 		    session.setAttribute("toastType", "success");
 		    
 		    model.put("status", "success");

@@ -253,7 +253,7 @@ body {
 /* 1. 토스트들을 담는 전체 바구니 설정 */
 .toast-container {
     position: fixed;
-    top: 30px; /* 화면 상단에서 시작 */
+    top: 60px; /* 화면 상단에서 시작 */
     left: 50%;
     transform: translateX(-50%);
     z-index: 10000;
