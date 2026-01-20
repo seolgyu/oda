@@ -536,10 +536,10 @@
 		$(document).ready(function() {
 		    const toastType = "${sessionScope.toastType}";
 		    const toastMsg = "${sessionScope.toastMsg}";
+		    const notiMsg = "${sessionScope.notiMsg}";
 		    
-		    if(toastMsg) {
-		        showToast(toastType, toastMsg);
-		    }
+		    if(toastMsg) { showToast(toastType, toastMsg); }
+		    if(notiMsg) { showToast(toastType, notiMsg); }
 		});
 		</script>
 		

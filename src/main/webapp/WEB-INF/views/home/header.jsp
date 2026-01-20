@@ -8,7 +8,7 @@
     position: fixed;
     top: 75px;      /* 헤더(60px)에서 15px 정도 떨어뜨려 '떠 있는 느낌' 부여 */
     right: 20px;
-    width: 380px;   
+    width: 480px;   
     background: rgba(25, 25, 25, 0.98);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -47,6 +47,7 @@
     transition: background 0.2s;
     position: relative;
     padding: 0.5rem 1rem !important; 
+    will-change: transform, opacity;
 }
 .noti-item:last-child { border-bottom: none; } /* 마지막 아이템 선 제거 */
 .noti-item:hover { background: rgba(255, 255, 255, 0.05); }
@@ -114,22 +115,31 @@
     box-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
+/* 배지 컨테이너 (기존 디자인 유지) */
 .noti-type-badge {
     position: absolute;
-    bottom: -2px;
-    right: -2px;
+    bottom: -3px;
+    right: -3px;
     z-index: 5;
+    
+    width: 22px;
+    height: 22px;
+    background: #191919; 
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1.5px solid #191919; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
-/* 부트스트랩 아이콘 스타일 */
+/* 폰트어썸 아이콘 전용 스타일 */
 .noti-type-badge i {
-    font-size: 15px; /* 아이콘 크기 */
-    /* 아이콘 테두리 효과 (프사 위에서 잘 보이게 함) */
-    -webkit-text-stroke: 1px #191919; 
-    filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
+    font-size: 11px !important; /* 폰트어썸은 작아도 존재감이 확실합니다 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
 }
 </style>
 <header class="app-header">
@@ -417,27 +427,31 @@ function renderNotiList(list) {
         const unreadClass = isUnread ? 'unread' : '';
         const dot = isUnread ? '<div class="unread-dot-indicator"></div>' : '';
         
-        let typeIconHtml = "";
+        let faIconClass = "";
         let typeColor = "";
+        let extraStyle = ""; // 아이콘별 맞춤 스타일
 
         switch(item.type) {
             case 'POST_LIKE':
-                typeIconHtml = `<i class="bi bi-heart-fill"></i>`;
-                typeColor = '#f43f5e';
+                faIconClass = "fa-heart";
+                typeColor = "#f43f5e";
+                extraStyle = "font-size: 13px !important; transform: translateY(1.5px);";
                 break;
             case 'FOLLOW':
-                typeIconHtml = `<i class="bi bi-person-plus-fill"></i>`;
-                typeColor = '#6366f1';
+                faIconClass = "fa-user-plus";
+                typeColor = "#6366f1";
+                extraStyle = "font-size: 11px !important;"; 
                 break;
             case 'COMMENT':
-                typeIconHtml = `<i class="bi bi-chat-fill"></i>`;
-                typeColor = '#10b981';
+                faIconClass = "fa-comment-dots";
+                typeColor = "#10b981";
+                extraStyle = "font-size: 11px !important;";
                 break;
         }
 
         const typeBadgeHtml = `
-            <div class="noti-type-badge" style="color: \${typeColor};">
-                \${typeIconHtml}
+            <div class="noti-type-badge">
+                <i class="fa-solid \${faIconClass}" style="color: \${typeColor}; \${extraStyle}"></i>
             </div>`;
         
         const initial = item.fromUserInfo.userNickname ? item.fromUserInfo.userNickname.charAt(0).toUpperCase() : '';
@@ -451,21 +465,22 @@ function renderNotiList(list) {
                
                
         const postTitleHtml = item.targetPost && item.targetPost.title 
-        ? `<div class="text-xs text-white-50 text-truncate mt-1" style="max-width: 250px;">
-            <span class="opacity-50">글 제목: </span> "\${item.targetPost.title}"
+        ? `<div class="text-xs text-white-50 text-truncate mt-1" style="max-width: 350px;">
+           		"\${item.targetPost.title}"
            </div>` 
         : "";
 
         html += `
-            <div class="noti-item \${unreadClass} d-flex align-items-center gap-3 py-2 px-3" 
-                 onclick="" style="cursor:pointer;">
+        	<div class="noti-item \${unreadClass} d-flex align-items-start gap-3 py-3 px-3" 
+            	onclick="handleNotiClick(event, this, \${item.notiId}, '\${item.type}', '\${item.targetPost ? item.targetPost.postId : 0}')" 
+            	style="cursor:pointer; transition: all 0.4s ease;">
                 <div class="noti-avatar-wrapper flex-shrink-0 app-user-trigger" data-user-id="\${item.fromUserInfo.userId}" style="width: 44px; height: 44px; position: relative;">
                     \${profileHtml}
                     \${typeBadgeHtml}
                 </div>
                 <div class="noti-info flex-grow-1 min-w-0">
                 <div class="mb-1 text-white text-sm text-wrap d-flex align-items-baseline gap-1">
-                	<span class="fw-bold flex-shrink-0" style="color: #efefff;">
+                	<span class="fw-bold flex-shrink-0 app-user-trigger" data-user-id="\${item.fromUserInfo.userId}" style="color: #efefff;">
                 		\${item.fromUserInfo.userNickname}
             		</span>
             		<span class="opacity-75">
@@ -473,7 +488,7 @@ function renderNotiList(list) {
             		</span>
                 </div>
                 \${postTitleHtml}
-                <div class="mt-1">
+                <div>
                 	<span class="text-xs text-secondary opacity-50">\${item.createdDate}</span>
             	</div>
             </div>
@@ -482,5 +497,56 @@ function renderNotiList(list) {
     });
 
     $container.html(html);
+}
+
+function handleNotiClick(e, element, notiId, type, postId) {
+	if ($(e.target).closest('.app-user-trigger').length > 0) return;
+	
+	const $el = $(element);
+	
+    $.ajax({
+        url: contextPath + '/notification/readNoti',
+        type: 'POST',
+        data: { notiId: notiId },
+        success: function() {
+            if (type === 'POST_LIKE' || type === 'FOLLOW') {
+            	const currentHeight = $el.outerHeight();
+                $el.css({
+                    'height': currentHeight + 'px',
+                    'max-height': currentHeight + 'px',
+                    'transition': 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                    'overflow': 'hidden'
+                });
+
+                requestAnimationFrame(() => {
+                    $el.css({
+                        'opacity': '0',
+                        'max-height': '0',
+                        'margin-top': '0',
+                        'margin-bottom': '0',
+                        'padding-top': '0',
+                        'padding-bottom': '0',
+                        'transform': 'scale(0.95)' // 살짝 작아지며 사라지는 효과 추가
+                    });
+                });
+
+                $el.one('transitionend', function() {
+                    $(this).remove();
+                    updateUnreadCount();
+                    
+                    if ($('.noti-list .noti-item').length === 0) {
+                        $('.noti-list').html('<div class="text-center p-5 opacity-50 text-white text-sm">새로운 알림이 없습니다.</div>');
+                    }
+                });
+            } else {
+                location.href = `${contextPath}/post/article?postId=${postId}`;
+            }
+        },
+        error: function() {
+            if (type !== 'POST_LIKE' || type !== 'FOLLOW') {
+                location.href = `${contextPath}/post/article?postId=${postId}`;
+            }
+        }
+    });
 }
 </script>

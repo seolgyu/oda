@@ -81,5 +81,54 @@ public class NotificationController {
     	return model;
     }
 	
+	@PostMapping("readNoti")
+    @ResponseBody
+    public Map<String, Object> readNoti(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	Map<String, Object> model = new HashMap<String, Object>();
+
+		try {
+			Long notiId = Long.parseLong(req.getParameter("notiId"));
+			
+			notiService.updateChecked(notiId);
+			
+			model.put("status", "success");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("status", "error");
+		}
+		
+    	return model;
+    }
+	
+	@PostMapping("readNotiAll")
+    @ResponseBody
+    public Map<String, Object> readNotiAll(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	HttpSession session = req.getSession();
+
+		try {
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			
+			if (info == null) {
+				model.put("status", "error");
+	            return model;
+	        }
+			
+			Long userNum = (Long)info.getMemberIdx();
+			
+			notiService.updateCheckedAll(userNum);
+			
+			model.put("status", "success");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("status", "error");
+		}
+		
+    	return model;
+    }
+	
+	
 
 }

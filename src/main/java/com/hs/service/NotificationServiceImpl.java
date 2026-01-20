@@ -30,13 +30,14 @@ public class NotificationServiceImpl implements NotificationService {
 			
 			for(NotificationDTO item : list) {
 				String type = item.getType();
-				Long target = Long.parseLong(item.getTarget());
 				
 				switch (type) {
 		        case "FOLLOW":
+		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
 		            break;
 		            
 		        case "POST_LIKE":
+		        	Long target = Long.parseLong(item.getTarget());
 		        	item.setTarget("/member/page?id=" + item.getTarget());
 		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
 		        	item.setTargetPost(postService.findById(target));
