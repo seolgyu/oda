@@ -64,20 +64,28 @@
 					</span>
 				</div>
 
-				<div id="comment-edit-${dto.commentId}" style="display: none;"
-					class="mt-1">
+				<div id="comment-edit-${dto.commentId}" style="display: none;" class="mt-1">
+				
+				
 					<div class="d-flex gap-2 align-items-center">
 						<input type="text" id="editContent-${dto.commentId}"
 							class="form-control form-control-sm bg-transparent text-white border-secondary rounded-0 border-top-0 border-start-0 border-end-0 px-0"
 							value="${dto.content}" style="font-size: 0.85rem;">
-						<%-- 수정 저장 버튼 --%>
-						<button type="button" class="btn btn-sm text-primary fw-bold p-0"
-							onclick="updateReply('${dto.commentId}')">저장</button>
-						<%-- 수정 취소 버튼 --%>
-						<button type="button" class="btn btn-sm text-white-50 p-0"
-							onclick="toggleEdit('${dto.commentId}')">취소</button>
+						<div class="d-flex dgap-1 flex-shrink-0">
+							<%-- 수정 취소 버튼 --%>
+							<button type="button" class="btn btn-sm text-white-50 p-0"
+								style="font-size: 0.8rem; white-space: nowrap;"
+								onclick="toggleEdit('${dto.commentId}')">취소</button>
+							<%-- 수정 저장 버튼 --%>
+							<button type="button" class="btn btn-sm text-primary fw-bold p-0"
+								style="font-size: 0.8rem; white-space: nowrap;"
+								onclick="updateReply('${dto.commentId}')">저장</button>
+						</div>
 					</div>
+					
+									
 				</div>
+				
 
 				<div class="d-flex align-items-center gap-3 mt-1">
 					<span class="text-white-50" style="font-size: 0.7rem;">${dto.timeAgo}</span>

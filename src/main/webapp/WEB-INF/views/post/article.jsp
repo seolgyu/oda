@@ -211,7 +211,7 @@
 									
 									    <button type="button" class="btn btn-link text-decoration-none text-white-50 p-0 hover-red"
 									            style="transition: color 0.3s;"
-									            onclick="openReportModal('${dto.postId}');">
+									            onclick="openReportModal('${dto.postId}', '${dto.userNum}');">
 									        <span class="material-symbols-outlined fs-5">campaign</span>
 									    </button>
 									</div>                                                            
@@ -243,7 +243,7 @@
 
                                         <div class="flex-grow-1 position-relative">
                                             <input type="text" id="replyContent" class="form-control comment-input text-white border-0 border-bottom border-secondary rounded-0 px-0 py-1" style="background: transparent; font-size: 0.9rem; box-shadow: none;" placeholder="댓글을 입력하세요...">
-                                            <button type="button" onclick="sendReply();" class="btn btn-sm btn-link text-decoration-none text-primary fw-bold position-absolute top-50 end-0 translate-middle-y p-0" style="font-size: 0.85rem;">게시</button>
+                                            <button type="button" onclick="sendReply();" class="btn btn-sm btn-link text-decoration-none text-primary fw-bold position-absolute top-50 end-0 translate-middle-y p-0" style="font-size: 0.85rem;">등록</button>
                                         </div>
                                     </div>
 
@@ -551,6 +551,12 @@
                 }
                 return; 
             }
+            
+            if (currentUserId && authorId && String(currentUserId) === String(authorId)) {
+                showToast("error", "본인의 게시물은 신고할 수 없습니다.");
+                return;
+            }
+            
             $("#reportPostId").val(postId);
             $("#reportReasonSelect").val("");
             $("#reportReasonText").val("").hide();

@@ -116,7 +116,7 @@
 					    </button>
 					
 					    <button class="card-action-btn action-btn-hover btn-report" 
-					         onclick="openReportModal('${dto.postId}'); event.stopPropagation();">
+					         onclick="openReportModal('${dto.postId}', '${dto.userNum}'); event.stopPropagation();">
 					        <span class="material-symbols-outlined">campaign</span> <span>신고</span>
 					    </button>
 					</div>
@@ -207,7 +207,7 @@
     					</button>
                         
                         <button class="compact-action-btn action-btn-hover btn-report p-0 border-0"
-                            onclick="openReportModal('${dto.postId}'); event.stopPropagation();">
+                            onclick="openReportModal('${dto.postId}', '${dto.userNum}'); event.stopPropagation();">
                             <span class="material-symbols-outlined">campaign</span> <span>신고</span>
                         </button>
                         

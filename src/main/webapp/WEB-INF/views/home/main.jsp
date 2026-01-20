@@ -485,6 +485,7 @@
 
 	<script>
 		const isLogin = "${not empty sessionScope.member ? 'true' : 'false'}";
+		const currentUserId = "${sessionScope.member.memberIdx}";
 		const contextPath = "${pageContext.request.contextPath}";
 
 		// Like Toggle
@@ -955,11 +956,15 @@
 		    document.body.removeChild(textArea);
 		}
 		
-		function openReportModal(postId) {			
+		function openReportModal(postId, authorId) {			
 			if (isLogin === "false") {
 		        if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
 		            location.href = contextPath + "/member/login";
 		        }
+		        return; 
+		    }
+			if (currentUserId && authorId && String(currentUserId) === String(authorId)) {
+		        showToast("error", "본인의 게시물은 신고할 수 없습니다.");
 		        return; 
 		    }
 			
