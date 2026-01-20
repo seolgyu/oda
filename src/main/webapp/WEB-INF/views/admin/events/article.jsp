@@ -15,8 +15,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <%@ include file="/WEB-INF/views/home/head.jsp"%>
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminmain.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/eventarticle.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/eventreply.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
 <style>
 :root {

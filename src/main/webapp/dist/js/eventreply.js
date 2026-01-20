@@ -21,15 +21,8 @@ function loadContent(page) {
    ajaxRequest(url, 'get', params, 'json', fn);
 }
 
-function addNewContent(data) {
-	
-	console.log("받은 데이터 전체:", data); // 1. 데이터가 통째로 잘 왔나?
-	   console.log("댓글 개수:", data.replyCount); // 2. 개수가 0은 아닌가?
-	   
-	   const listReply = data.listReply;
-	   console.log("리스트 배열:", listReply); // 3. 배열에 8개가 들어있나?
-	
-   // const listReply = data.listReply;
+function addNewContent(data) {	
+   const listReply = data.listReply;
    const replyCount = Number(data.replyCount) || 0;
    const pageNo = Number(data.pageNo) || 0;
    const total_page = Number(data.total_page) || 0;
@@ -38,13 +31,12 @@ function addNewContent(data) {
    
    const htmlText = renderReplies(listReply, sessionMember, pageNo);
    
-   $('div#listReply .reply-count').html(`<span class="material-symbols-outlined" style="font-size: 1.2rem; vertical-align: middle;">comment</span> 댓글 ${replyCount}개`);
-   $('div#listReply .reply-page').html(`${pageNo} / ${total_page} 페이지`);
+   $('div#listReply .reply-count').html(`<span class="material-symbols-outlined" style="font-size: 1.5rem; vertical-align: middle;">chat</span> ${replyCount}`);
    
    $('div#listReply .list-content').attr('data-pageNo', pageNo);
    $('div#listReply .list-content').attr('data-totalPage', total_page);
    
-   if(replyCount.length === 0) {
+   if(replyCount.length === 0) { // if(replyCount === 0) - 이걸하면 인서트는 되나, 리스트가 출력이 안됨..
       $('div#listReply').hide();
       $('div#listReply .list-content > table > tbody').empty();
       
@@ -164,7 +156,6 @@ $(function(){
          
          if(state === 'true'){
             let likeCount = data.likeCount;
-            let disLikeCount = data.disLikeCount;
 			
 			console.log('댓글 좋아요 개수' + likeCount);
             
@@ -172,7 +163,7 @@ $(function(){
             $btn.find('i').css('color', '#ef4444');
             
             $btn.parent('td').children().eq(0).find('span').html(likeCount);
-            $btn.parent('td').children().eq(1).find('span').html(disLikeCount);
+
          } else if(state === 'liked'){
             alert('공감 여부는 한번만 가능합니다.');
          } else {
@@ -319,46 +310,6 @@ $(function(){
 	});
 });
 
-// 답글 숨김기능
-$(function(){
-	$('div.reply').on('click', '.hideReplyAnswer', function(){
-		let $menu = $(this);
-		
-		let comment_id = $(this).attr('data-comment_id');
-		let showReply = $(this).attr('data-showReply');
-		
-		let msg = '답글을 숨김 하시겠습니까?';
-		if(showReply === '0') {
-			msg = '답글 숨김을 해제 하시겠습니까?';
-		}
-		if(! confirm(msg)) {
-			return false;
-		}
-		
-		showReply = showReply === '1' ? '0' : '1';
-		
-		const url = `${postsUrl}/replyShowHide`;
-		let params = {comment_id:comment_id, showReply:showReply};
-		
-		const fn = function(data){
-			if(data.state === 'true') {
-				let $item = $menu.closest('.reply-answer-item').find('.reply-answer-content');
-				if(showReply === '1') {
-					$item.removeClass('reply-hidden');
-					$menu.attr('data-showReply', '1');
-					$menu.html('숨김');
-				} else {
-					$item.addClass('reply-hidden');
-					$menu.attr('data-showReply', '0');
-					$menu.html('표시');
-				}
-			}
-		};
-		
-		ajaxRequest(url, 'post', params, 'json', fn);
-	});
-});
-
 
 // ---------------------------------------------
 // 댓글 및 답글 리스트 HTML
@@ -410,9 +361,12 @@ function renderReplies(listReply, sessionMember, pageNo) {
       const likeColor = vo.userLikedReply == 1 ? 'color:#ef4444;' : '';
       
       likedHTML = `
-         <button type="button" class="btn btnSendReplyLike" data-comment_id="${vo.comment_id}" data-replyLike="1" title="좋아요">
-            <i class="bi bi-hand-thumbs-up" style="${likeColor}"></i> <span>${vo.likeCount}</span>
-         </button>
+	  <button type="button" class="btn btnSendReplyLike" data-comment_id="${vo.comment_id}" data-replyLike="1" title="좋아요">
+	      <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 1.1rem; ${likeColor}">
+	          favorite
+	      </span> 
+	      <span class="like-count">${vo.likeCount}</span>
+	  </button>
       `;
    }
 
@@ -426,7 +380,7 @@ function renderReplies(listReply, sessionMember, pageNo) {
                      <div class="name">${vo.user_nickname}</div>
                      <div class="date">
                         <span class="material-symbols-outlined" style="font-size: 0.875rem;">schedule</span>
-                        ${vo.updated_date}
+                        ${vo.created_date}
                      </div>
                   </div>
                </div>
@@ -531,7 +485,7 @@ function renderReplyAnswers(listReplyAnswer, sessionMember) {
                   <div class="name">${vo.user_nickname}</div>
                   <div class="date">
                      <span class="material-symbols-outlined" style="font-size: 0.875rem;">schedule</span>
-                     ${vo.reg_date}
+                     ${vo.created_date}
                   </div>
                </div>
             </div>

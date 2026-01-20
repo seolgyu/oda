@@ -413,11 +413,11 @@ public class EventController {
 		String state = "false";
 		
 		try {
-			long event_num = Long.parseLong(req.getParameter("event_num"));
+			long comment_id = Long.parseLong(req.getParameter("comment_id"));
 			String mode = req.getParameter("mode");
 			
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("event_num", event_num);
+			map.put("comment_id", comment_id);
 			map.put("user_id", info.getUserId());
 			map.put("userLevel",info.getUserLevel());
 			map.put("mode",mode);
@@ -429,7 +429,7 @@ public class EventController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		mav.put("steate", state);
+		mav.put("state", state);
 		
 		return mav;
 	}
@@ -490,11 +490,11 @@ public class EventController {
 		String state = "ture";
 		
 		try {
-			long event_num = Long.parseLong(req.getParameter("event_num"));
+			long comment_id = Long.parseLong(req.getParameter("comment_id"));
 			int showReply = Integer.parseInt(req.getParameter("showReply"));
 			
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("event_num", event_num);
+			map.put("comment_id", comment_id);
 			map.put("showReply", showReply);
 			map.put("user_id", info.getUserId());
 			

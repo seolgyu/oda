@@ -9,20 +9,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ODA Admin - 이벤트/프로모션 관리</title>
 
-<link
-	href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
-	rel="stylesheet">
-<link
-	href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
-	rel="stylesheet">
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-	rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <%@ include file="/WEB-INF/views/home/head.jsp"%>
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminmain.css">
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
+	
 <style>
 /* [1] 공지사항 전용 글래스모피즘 보정 스타일  */
 .glass-table-container {
@@ -220,6 +215,7 @@ input:-webkit-autofill:focus {
     text-decoration: underline; /* 마우스를 올렸을 때만 밑줄이 생기게 하고 싶다면 추가 */
     color: #ccc;               /* 살짝 밝게 변하는 효과 */
 }
+
 
 </style>
 
