@@ -111,7 +111,19 @@ function loadNextPage(url, renderFunc, isRefresh = false) {
                 }
             } else {
                 window.isEnd = true;
-                if(isRefresh) $('#post-list-container').html('<div class="text-white text-center py-5 w-100">게시글이 없습니다.</div>');
+				if(isRefresh) {
+					const emptyHtml = `
+							<div class="glass-card py-5 text-center shadow-lg border-0"
+								style="background: rgba(255, 255, 255, 0.02); border-radius: 1rem !important; width: 100%;">
+								<div class="py-4">
+									<span class="material-symbols-outlined text-secondary opacity-20"
+										style="font-size: 80px;">rocket_launch</span>
+										<h4 class="text-white mt-3 fw-bold opacity-75">등록된 게시글이 없습니다</h4>
+								</div>
+							</div>
+							`;
+					$('#post-list-container').html(emptyHtml);
+				}
             }
         },
         complete: function() {
@@ -126,12 +138,78 @@ function renderCommunityPost(item) {
 
     const $newItem = window.itemTemplate.clone();
     $newItem.attr('data-id', item.postId);
-
+	
+	const $profileImgArea = $newItem.find('.avatar-md'); // 카드뷰 프로필
+	const $listThumbArea = $newItem.find('.thumbnail-box'); // 리스트뷰 썸네일
+	    
+	    if (item.authorProfileImage) {
+	        $profileImgArea.html(`<img src="${item.authorProfileImage}" class="w-100 h-100 object-fit-cover">`);
+	    } else {
+	        const firstChar = item.authorNickname ? item.authorNickname.substring(0, 1) : '?';
+	        $profileImgArea.html(firstChar);
+	    }
+		
     // 1. 텍스트 매핑
     $newItem.find('h4').text(item.title || "");
     $newItem.find('p.text-light').first().text(item.content || "");
     $newItem.find('.author-name, h3.text-sm').first().text(item.authorNickname);
     $newItem.find('.created-date, .text-gray-500').first().text(item.createdDate);
+	
+	    if (item.fileList && item.fileList.length > 0) {
+	        $listThumbArea.html(`<img src="${item.fileList[0].filePath}" class="w-100 h-100 object-fit-cover rounded-3 border border-white border-opacity-10">`);
+	    } else {
+	        $listThumbArea.html(`
+	            <div class="w-100 h-100 rounded-3 d-flex align-items-center justify-content-center border border-white border-opacity-10" style="background: rgba(255, 255, 255, 0.05);">
+	                <span class="material-symbols-outlined opacity-20">image</span>
+	            </div>
+	        `);
+	    }
+
+		    if (item.fileList && item.fileList.length > 0) {
+		        $listThumbArea.html(`<img src="${item.fileList[0].filePath}" class="w-100 h-100 object-fit-cover rounded-3 border border-white border-opacity-10">`);
+		    } else {
+		        $listThumbArea.html(`
+		            <div class="w-100 h-100 rounded-3 d-flex align-items-center justify-content-center border border-white border-opacity-10" style="background: rgba(255, 255, 255, 0.05);">
+		                <span class="material-symbols-outlined opacity-20">image</span>
+		            </div>
+		        `);
+		    }
+
+		    // --- 3. 이미지 처리 (카드뷰용 캐러셀) ---
+		    const $cardImgArea = $newItem.find('.card-view-item > .p-3.pt-0');
+		    if (item.fileList && item.fileList.length > 0) {
+		        $cardImgArea.show();
+		        let imageHtml = '';
+		        if (item.fileList.length > 1) {
+		            const carouselId = `carousel-ajax-${item.postId}-${Math.floor(Math.random() * 1000)}`;
+		            imageHtml = `
+		                <div id="${carouselId}" class="carousel slide post-carousel" data-bs-ride="false">
+		                    <div class="carousel-indicators">
+		                        ${item.fileList.map((_, i) => `<button type="button" data-bs-target="#${carouselId}" data-bs-slide-to="${i}" class="${i === 0 ? 'active' : ''}"></button>`).join('')}
+		                    </div>
+		                    <div class="carousel-inner">
+		                        ${item.fileList.map((file, i) => `
+		                            <div class="carousel-item ${i === 0 ? 'active' : ''}">
+		                                <div class="ratio ratio-16x9"><img src="${file.filePath}" class="d-block w-100 object-fit-cover"></div>
+		                            </div>
+		                        `).join('')}
+		                    </div>
+		                    <button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev"><span class="material-symbols-outlined fs-4">chevron_left</span></button>
+		                    <button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next"><span class="material-symbols-outlined fs-4">chevron_right</span></button>
+		                </div>`;
+		            $cardImgArea.html(imageHtml);
+		            
+		            // 핵심: 부트스트랩 캐러셀 수동 초기화 (작동 안 함 방지)
+		            setTimeout(() => {
+		                new bootstrap.Carousel(document.getElementById(carouselId));
+		            }, 10);
+		        } else {
+		            imageHtml = `<div class="post-carousel"><div class="ratio ratio-16x9"><img src="${item.fileList[0].filePath}" class="d-block w-100 object-fit-cover"></div></div>`;
+		            $cardImgArea.html(imageHtml);
+		        }
+		    } else {
+		        $cardImgArea.hide().empty();
+		    }
 
     // 2. 좋아요 처리 (상태에 따라 클래스 추가/제거 확실히)
     const $likeBtn = $newItem.find('[onclick^="toggleLike"]');
@@ -164,15 +242,6 @@ function renderCommunityPost(item) {
     } else {
         $saveBtn.removeClass('text-warning');
         $saveIcon.text('bookmark_border').css('font-variation-settings', "'FILL' 0");
-    }
-
-    // 6. 이미지 처리
-    const $imgArea = $newItem.find('.post-carousel, .ratio').closest('.p-3');
-    if (item.fileList && item.fileList.length > 0) {
-        $newItem.find('img').first().attr('src', item.fileList[0].filePath);
-        $imgArea.show();
-    } else {
-        $imgArea.hide();
     }
 
     // 7. 이벤트 재바인딩
