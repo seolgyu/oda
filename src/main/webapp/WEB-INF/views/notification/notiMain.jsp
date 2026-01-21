@@ -234,9 +234,21 @@
 								onclick="handleNotiPageClick(event, this, '${dto.notiId}', '${dto.type}', '${dto.targetPost.postId}')">
 
 								<div class="noti-avatar-box">
-									<img
-										src="${not empty dto.fromUserInfo.profile_photo ? dto.fromUserInfo.profile_photo : pageContext.request.contextPath + '/dist/images/default-profile.png'}"
-										class="noti-avatar-img">
+									<c:choose>
+										<c:when test="${not empty dto.fromUserInfo.profile_photo}">
+											<img src="${dto.fromUserInfo.profile_photo}"
+												class="noti-avatar-img">
+										</c:when>
+
+										<c:otherwise>
+											<div
+												class="noti-avatar-img d-flex align-items-center justify-content-center text-white fw-bold"
+												style="background: linear-gradient(135deg, #6366f1, #a855f7); font-size: 1.2rem; border: none;">
+												<c:out
+													value="${fn:substring(dto.fromUserInfo.userNickname, 0, 1).toUpperCase()}" />
+											</div>
+										</c:otherwise>
+									</c:choose>
 
 									<div class="noti-type-icon-badge">
 										<c:choose>
