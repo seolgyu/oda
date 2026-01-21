@@ -157,9 +157,14 @@
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </c:when>
-                                                <c:otherwise>
-                                                    <span class="material-symbols-outlined fs-3">person</span>
-                                                </c:otherwise>
+                                                
+												<c:otherwise>
+												    <%-- [수정] 프로필 사진 없을 때 닉네임(또는 아이디)의 첫 글자 출력 --%>
+												    <span class="text-white fw-bold fs-4">
+												        ${fn:substring(not empty memberdto.userNickname ? memberdto.userNickname : memberdto.userId, 0, 1)}
+												    </span>
+												</c:otherwise>                                                
+                                                
                                             </c:choose>
                                         </div>
 
