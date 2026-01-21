@@ -252,6 +252,40 @@ function updateImageImmediate(type, action) {
 }
 
 function submitCommunity($form) {
+	const $nameInput = $form.find('input[name="com_name"]');
+	const $descInput = $form.find('textarea[name="com_description"]');
+	const $categoryInput = $form.find('#category_id_input'); // 카테고리 선택 여부도 확인 가능
+
+	const nameVal = $nameInput.val() ? $nameInput.val().trim() : "";
+	const descVal = $descInput.val() ? $descInput.val().trim() : "";
+
+	// 1. 이름 빈 값 체크
+	if (!nameVal) {
+		showToast("error", "커뮤니티 이름을 입력해주세요.");
+	    $nameInput.focus();
+	    return; // 함수 종료 (AJAX 실행 안 됨)
+	}
+
+    // 2. 설명 빈 값 체크
+	if (!descVal) {
+		showToast("error", "커뮤니티 소개글을 입력해주세요.");
+	    $descInput.focus();
+	    return; // 함수 종료
+	}
+	    
+    // 3. 카테고리 선택 체크 (필요한 경우)
+	if (!$categoryInput.val()) {
+		showToast("error", "커뮤니티 주제를 선택해주세요.");
+	    return;
+	}
+
+    // 이름 중복 에러 메시지가 떠 있는 상태인지 확인 (선택 사항)
+	if ($('#error-com_name').hasClass('text-red-500')) {
+		showToast("error", "커뮤니티 이름을 확인해주세요.");
+		$nameInput.focus();
+		return;
+	}
+	
     const mode = $form.attr('id') === 'updateForm' ? 'update' : 'create';
     let params;
     let isFile = false;
