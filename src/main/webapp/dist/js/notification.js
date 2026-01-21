@@ -29,7 +29,7 @@ function loadMoreNoti() {
 
     $.ajax({
         // 변수 없이 경로 직접 주입
-        url: '${pageContext.request.contextPath}/notification/loadAllNotiList',
+        url: '/oda/notification/loadAllNotiList',
         type: 'POST',
         data: { page: notiPage + 1 }, // 다음 페이지 번호 전송
         dataType: 'json',

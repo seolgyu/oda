@@ -164,7 +164,11 @@ public class MemberController {
 			service.insertLoginlog(dto.getUserIdx());
 
 			session.setAttribute("toastMsg", dto.getUserName() + "님, 환영합니다!");
-			session.setAttribute("notiMsg", "확인하지 않은 알림이 " + noticeService.getUncheckedCount(dto.getUserIdx()) + "개 있습니다.");
+			
+			int notiCount = noticeService.getUncheckedCount(dto.getUserIdx());
+			if(notiCount > 0) {
+				session.setAttribute("notiMsg", "확인하지 않은 알림이 " + notiCount + "개 있습니다.");
+			}
 		    session.setAttribute("toastType", "success");
 		    
 		    model.put("status", "success");

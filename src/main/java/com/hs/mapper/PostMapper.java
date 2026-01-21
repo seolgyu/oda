@@ -53,4 +53,9 @@ public interface PostMapper {
 	public void deletePostRepost(Map<String, Object> map) throws Exception;
 	public List<PostDTO> listSavedPost(Map<String, Object> map);
     public List<PostDTO> listRepostedPost(Map<String, Object> map);
+    
+    public Long getPostAuthorNum(Long postId) throws Exception;
+    public Long getCommentWriterNum(Long commentId) throws Exception;
+    
+    public CommentDTO getCommentInfo(Long commentId) throws Exception;
 }

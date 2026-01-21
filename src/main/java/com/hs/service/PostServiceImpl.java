@@ -460,4 +460,37 @@ public class PostServiceImpl implements PostService {
         return mapper.listRepostedPost(map);
     }
 
+	@Override
+	public Long getPostAuthorNum(Long postId) throws Exception {
+		Long userNum = null;
+		try {
+			userNum = mapper.getPostAuthorNum(postId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return userNum;
+	}
+
+	@Override
+	public Long getCommentWriterNum(Long commentId) throws Exception {
+		Long userNum = null;
+		try {
+			userNum = mapper.getCommentWriterNum(commentId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return userNum;
+	}
+
+	@Override
+	public CommentDTO getCommentInfo(Long commentId) throws Exception {
+		CommentDTO dto = null;
+		try {
+			dto = mapper.getCommentInfo(commentId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dto;
+	}
+
 }

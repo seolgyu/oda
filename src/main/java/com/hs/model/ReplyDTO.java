@@ -4,6 +4,7 @@ public class ReplyDTO {
 	private Long postId;
 	private Long commentId;
 	private Long userNum;
+	private String userProfile;
 	private String content;
 	private String createdDate;
 	private int depth;
@@ -93,6 +94,12 @@ public class ReplyDTO {
 	}
 	public void setParentUserNickname(String parentUserNickname) {
 		this.parentUserNickname = parentUserNickname;
+	}
+	public String getUserProfile() {
+		return userProfile;
+	}
+	public void setUserProfile(String userProfile) {
+		this.userProfile = userProfile;
 	}
 	
 }

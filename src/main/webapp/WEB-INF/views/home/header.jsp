@@ -236,9 +236,10 @@
     	</div>
 
 		<div class="noti-footer py-1 px-2 text-center border-top border-white border-opacity-10">
-    		<button class="btn btn-link text-xs text-decoration-none text-secondary hover-white">
-        		전체 알림 보기
-    		</button>
+			<button type="button"
+				class="btn btn-link text-xs text-decoration-none text-secondary hover-white"
+				onclick="location.href='${pageContext.request.contextPath}/notification';">
+				모든 알림 보기</button>
 		</div>
 	</div>
 </header>
@@ -265,12 +266,15 @@ function updateUnreadCount() {
             if (data.status === "success") {
                 const count = data.count;
                 const $badge = $('#noti-badge');
+                const $sidebarDot = $('#sidebar-noti-dot');
 
                 if (count > 0) {
                     $badge.text(count > 99 ? '99+' : count);
                     $badge.css('display', 'flex');
+                    $sidebarDot.show();
                 } else {
                     $badge.hide();
+                    $sidebarDot.hide();
                 }
             }
         }
@@ -440,6 +444,11 @@ function renderNotiList(list) {
                 typeColor = "#10b981";
                 extraStyle = "font-size: 11px !important;";
                 break;
+            case 'REPLY':
+                faIconClass = "fa-reply";
+                typeColor = "#3b82f6";
+                extraStyle = "font-size: 11px !important;";
+                break;
         }
 
         const typeBadgeHtml = `
@@ -456,12 +465,19 @@ function renderNotiList(list) {
                    ${initial}
                </div>`;
                
+        const commentPreviewHtml = (item.type === 'COMMENT' || item.type === 'REPLY') && item.commentInfo && item.commentInfo.content
+            ? `<div class="text-xs mt-1" style="max-width: 350px; color: #a8a8b3; display: flex; gap: 4px;">
+                    <span style="flex-shrink: 0;">ㄴ</span>
+                    <span class="text-truncate" style="opacity: 0.9;">"\${item.commentInfo.content}"</span>
+               </div>`
+            : "";
                
         const postTitleHtml = item.targetPost && item.targetPost.title 
-        ? `<div class="text-xs text-white-50 text-truncate mt-1" style="max-width: 350px;">
-           		"\${item.targetPost.title}"
-           </div>` 
-        : "";
+            ? `<div class="text-xs text-truncate mt-1" style="max-width: 350px; color: rgba(255, 255, 255, 0.35);">
+                    <span style="font-size: 0.7rem; margin-right: 4px; border: 1px solid rgba(255,255,255,0.15); padding: 0px 3px; border-radius: 3px;">원문</span>
+                    \${item.targetPost.title}
+               </div>` 
+            : "";
 
         html += `
         	<div class="noti-item \${unreadClass} d-flex align-items-start gap-3 py-3 px-3" 
@@ -481,6 +497,7 @@ function renderNotiList(list) {
             		</span>
                 </div>
                 \${postTitleHtml}
+                \${commentPreviewHtml}
                 <div>
                 	<span class="text-xs text-secondary opacity-50">\${item.createdDate}</span>
             	</div>

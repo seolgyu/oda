@@ -34,7 +34,6 @@ public class NotificationController {
 
 		try {
 			SessionInfo info = (SessionInfo) session.getAttribute("member");
-			Map<String, Object> model = new HashMap<String, Object>();
 			
 			if (info == null) {
 				mav.addObject("status", "error");
@@ -217,6 +216,34 @@ public class NotificationController {
 			
 			Long notiId = Long.parseLong(req.getParameter("notiId"));
 			notiService.deleteNotification(notiId);
+			
+			model.put("status", "success");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("status", "error");
+		}
+		
+    	return model;
+    }
+	
+	@PostMapping("deleteNotiAll")
+    @ResponseBody
+    public Map<String, Object> deleteNotiAll(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Map<String, Object> model = new HashMap<String, Object>();
+    	HttpSession session = req.getSession();
+
+		try {
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			
+			if (info == null) {
+				model.put("status", "error");
+	            return model;
+	        }
+			
+			Long userNum = (Long)info.getMemberIdx();
+			
+			notiService.deleteAllNotification(userNum);
 			
 			model.put("status", "success");
 			

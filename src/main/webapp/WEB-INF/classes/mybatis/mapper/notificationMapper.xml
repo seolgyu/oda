@@ -71,4 +71,9 @@
       	AND checked = 1 
       	AND created_date &lt; SYSDATE - 30
     </delete>
+    
+    <delete id="deleteAllNotification" parameterType="Long">
+    	DELETE FROM notifications
+    	WHERE to_user = #{userNum} 
+    </delete>
 </mapper>

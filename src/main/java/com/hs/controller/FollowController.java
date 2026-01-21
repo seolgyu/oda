@@ -9,7 +9,6 @@ import com.hs.model.FollowDTO;
 import com.hs.model.MemberDTO;
 import com.hs.model.SessionInfo;
 import com.hs.mvc.annotation.Controller;
-import com.hs.mvc.annotation.GetMapping;
 import com.hs.mvc.annotation.PostMapping;
 import com.hs.mvc.annotation.RequestMapping;
 import com.hs.mvc.annotation.ResponseBody;

@@ -323,6 +323,9 @@
     </select>
 
     <insert id="insertComment" parameterType="com.hs.model.CommentDTO">
+    	<selectKey keyProperty="commentId" resultType="long" order="AFTER">
+        	SELECT COMMENTS_SEQ.CURRVAL FROM DUAL
+    	</selectKey>
         INSERT INTO COMMENTS (
             COMMENT_ID, POST_ID, USER_NUM,
             USER_ID, CONTENT,
@@ -560,6 +563,32 @@
           AND p.IS_DELETED = '0'
         ORDER BY r.REPOST_DATE DESC
         OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+    </select>
+    
+    <select id="getPostAuthorNum" parameterType="Long" resultType="Long">
+    	SELECT user_num
+    	FROM posts
+    	WHERE post_id = #{postId}
+    </select>
+    
+    <select id="getCommentWriterNum" parameterType="Long" resultType="Long">
+    	SELECT user_num
+    	FROM comments
+    	WHERE comment_id = #{commentId}
+    </select>
+    
+    <select id="getCommentInfo" parameterType="Long" resultType="com.hs.model.CommentDTO">
+	    SELECT 
+	        COMMENT_ID AS commentId, 
+	        POST_ID AS postId, 
+	        USER_NUM AS userNum,
+	        USER_ID AS userId, 
+	        CONTENT AS content,
+	        CREATED_DATE AS createdDate,
+	        PARENT_COMMENT_ID AS parentCommentId,
+	        IS_DELETED AS isDeleted
+	    FROM COMMENTS c
+	    WHERE COMMENT_ID = #{commentId}
     </select>
 	
 

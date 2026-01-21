@@ -13,6 +13,7 @@
 		</button>
 		<button class="nav-item" onclick="location.href='${pageContext.request.contextPath}/notification';">
 			<span class="material-symbols-outlined">notifications</span> <span>알림</span>
+			<span id="sidebar-noti-dot" class="unread-dot"></span>
 		</button>
 
 		<hr class="my-3 border-secondary opacity-25">

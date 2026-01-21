@@ -469,14 +469,28 @@ public class PostController {
 			dto.setContent(req.getParameter("content"));
 			dto.setUserNum(info.getMemberIdx());
 			dto.setUserId(info.getUserId());
+			
+			Map<String, Object> noti = new HashMap<String, Object>();
 
 			String parentId = req.getParameter("parentCommentId");
 			if (parentId != null && !parentId.isEmpty()) {
 				dto.setParentCommentId(Long.parseLong(parentId));
+				noti.put("type", "REPLY");
+				noti.put("toUserNum", service.getCommentWriterNum(Long.parseLong(parentId)));
+			} else {
+				noti.put("type", "COMMENT");
+				noti.put("toUserNum", service.getPostAuthorNum(Long.parseLong(req.getParameter("postId"))));
 			}
 
 			service.insertComment(dto);
-
+			
+			noti.put("fromUserNum", info.getMemberIdx());
+			noti.put("target", dto.getCommentId());
+			
+			if (!info.getMemberIdx().equals(noti.get("toUserNum"))) {
+				notiService.insertNotification(noti);
+		    }
+			
 			resp.getWriter().print("success");
 
 		} catch (Exception e) {

@@ -14,6 +14,7 @@
 
 /* 네비게이션 아이템 */
 .nav-item {
+	position: relative;
 	display: flex;
 	align-items: center;
 	gap: 12px;
@@ -56,4 +57,16 @@
 .sidebar-btn:hover {
 	background-color: #27272a;
 	color: #fff;
+}
+
+.unread-dot {
+    position: absolute;
+    top: 8px;      /* 아이콘 위치에 맞춰 조절 */
+    left: 28px;    /* 아이콘 바로 옆 혹은 위에 오도록 조절 */
+    width: 7px;
+    height: 7px;
+    background-color: #ff3b30;
+    border-radius: 50%;
+    border: 1.5px solid #1a1a1a; /* 배경색과 분리되도록 테두리 추가 */
+    display: none; /* JS에서 count > 0 일 때 show() */
 }

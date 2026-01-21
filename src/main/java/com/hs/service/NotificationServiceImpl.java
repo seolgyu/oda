@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hs.mapper.NotificationMapper;
+import com.hs.model.CommentDTO;
 import com.hs.model.NotificationDTO;
 import com.hs.mybatis.support.MapperContainer;
 
@@ -32,19 +33,37 @@ public class NotificationServiceImpl implements NotificationService {
 				String type = item.getType();
 				
 				switch (type) {
-		        case "FOLLOW":
+				case "FOLLOW":
 		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
 		            break;
 		            
 		        case "POST_LIKE":
-		        	Long target = Long.parseLong(item.getTarget());
+		        	Long targetPostId = Long.parseLong(item.getTarget());
+		        	
 		        	item.setTarget("/member/page?id=" + item.getTarget());
 		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
-		        	item.setTargetPost(postService.findById(target));
+		        	item.setTargetPost(postService.findById(targetPostId));
 		            break;
 		            
 		        case "COMMENT":
+		        	Long targetCommentId = Long.parseLong(item.getTarget());
+		        	CommentDTO com_dto = postService.getCommentInfo(targetCommentId);
+		        	
+		        	item.setToUserInfo(memberService.findByIdx(item.getToUserNum()));
+		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
+		        	item.setTargetPost(postService.findById(com_dto.getPostId()));
+		        	item.setCommentInfo(com_dto);
 		            break;
+				
+				case "REPLY":
+					Long targetReplyId = Long.parseLong(item.getTarget());
+		        	CommentDTO rep_dto = postService.getCommentInfo(targetReplyId);
+		        	
+		        	item.setToUserInfo(memberService.findByIdx(item.getToUserNum()));
+		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
+		        	item.setTargetPost(postService.findById(rep_dto.getPostId()));
+		        	item.setCommentInfo(rep_dto);
+					break;
 				}
 			}
 		} catch (Exception e) {
@@ -68,16 +87,35 @@ public class NotificationServiceImpl implements NotificationService {
 		            break;
 		            
 		        case "POST_LIKE":
-		        	Long target = Long.parseLong(item.getTarget());
+		        	Long targetPostId = Long.parseLong(item.getTarget());
+		        	
 		        	item.setTarget("/member/page?id=" + item.getTarget());
 		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
-		        	item.setTargetPost(postService.findById(target));
+		        	item.setTargetPost(postService.findById(targetPostId));
 		            break;
 		            
 		        case "COMMENT":
+		        	Long targetCommentId = Long.parseLong(item.getTarget());
+		        	CommentDTO com_dto = postService.getCommentInfo(targetCommentId);
+		        	
+		        	item.setToUserInfo(memberService.findByIdx(item.getToUserNum()));
+		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
+		        	item.setTargetPost(postService.findById(com_dto.getPostId()));
+		        	item.setCommentInfo(com_dto);
 		            break;
+				
+				case "REPLY":
+					Long targetReplyId = Long.parseLong(item.getTarget());
+		        	CommentDTO rep_dto = postService.getCommentInfo(targetReplyId);
+		        	
+		        	item.setToUserInfo(memberService.findByIdx(item.getToUserNum()));
+		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
+		        	item.setTargetPost(postService.findById(rep_dto.getPostId()));
+		        	item.setCommentInfo(rep_dto);
+					break;
 				}
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -104,7 +142,11 @@ public class NotificationServiceImpl implements NotificationService {
 	            break;
 	            
 	        case "COMMENT":
-	            content = "님이 게시글에 댓글을 남겼습니다.";
+	            content = "님이 회원님의 게시글에 댓글을 남겼습니다.";
+	            break;
+	            
+	        case "REPLY":
+	            content = "님이 회원님의 댓글에 답글을 남겼습니다.";
 	            break;
 	    }
 
@@ -160,6 +202,15 @@ public class NotificationServiceImpl implements NotificationService {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+
+	@Override
+	public void deleteAllNotification(Long userNum) throws Exception {
+		try {
+			mapper.deleteAllNotification(userNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

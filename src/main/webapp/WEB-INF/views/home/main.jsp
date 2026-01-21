@@ -590,8 +590,15 @@
 		    const toastMsg = "${sessionScope.toastMsg}";
 		    const notiMsg = "${sessionScope.notiMsg}";
 		    
-		    if(toastMsg) { showToast(toastType, toastMsg); }
-		    if(notiMsg) { showToast(toastType, notiMsg); }
+		    if(toastMsg) { 
+		        showToast(toastType, toastMsg); 
+		    }
+		    
+		    if(notiMsg) { 
+		        setTimeout(function() {
+		            showToast("info", notiMsg);
+		        }, 800);
+		    }
 		});
 		</script>
 		

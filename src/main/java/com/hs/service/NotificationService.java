@@ -17,6 +17,7 @@ public interface NotificationService {
 
     public void deleteNotification(Long notiId) throws Exception;
     public void deleteOldNotification(Long userNum) throws Exception;
+    public void deleteAllNotification(Long userNum) throws Exception;
     
     public int getUncheckedCount(Long userNum) throws Exception;
 }

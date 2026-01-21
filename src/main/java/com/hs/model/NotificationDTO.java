@@ -1,7 +1,5 @@
 package com.hs.model;
 
-import java.util.Date;
-
 public class NotificationDTO {
 	
 	// Notification DB Attributes
@@ -15,14 +13,38 @@ public class NotificationDTO {
 	private Long fromUserNum;
 	
 	// 게시글 좋아요 알림
+	private MemberDTO toUserInfo;
 	private MemberDTO fromUserInfo;
+	
 	private PostDTO targetPost;
+	
+	private CommentDTO commentInfo;
+	private CommentDTO replyInfo;
 	
 	// 댓글 알림
 	
 	// 리포스트 알림
 	
 	// 신고 알림
+	
+	public MemberDTO getToUserInfo() {
+		return toUserInfo;
+	}
+	public void setToUserInfo(MemberDTO toUserInfo) {
+		this.toUserInfo = toUserInfo;
+	}
+	public CommentDTO getCommentInfo() {
+		return commentInfo;
+	}
+	public void setCommentInfo(CommentDTO commentInfo) {
+		this.commentInfo = commentInfo;
+	}
+	public CommentDTO getReplyInfo() {
+		return replyInfo;
+	}
+	public void setReplyInfo(CommentDTO replyInfo) {
+		this.replyInfo = replyInfo;
+	}
 	
 	public Long getNotiId() {
 		return notiId;
