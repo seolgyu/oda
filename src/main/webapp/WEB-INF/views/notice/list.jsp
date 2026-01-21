@@ -188,7 +188,7 @@
     <div class="app-body flex h-[calc(100vh-56px)] overflow-hidden">
         <%@ include file="/WEB-INF/views/home/sidebar.jsp"%>
 
-		<main class="app-main custom-scrollbar">
+		<main class="app-main feed-scroll-container custom-scrollbar">
 			<div class="container-fluid p-4 p-md-5" style="max-width: 1300px;">
 			
 			<nav aria-label="breadcrumb" class="mb-4">	

@@ -11,6 +11,9 @@
 		<button class="nav-item">
 			<span class="material-symbols-outlined">trending_up</span> <span>인기</span>
 		</button>
+		<button class="nav-item" onclick="location.href='${pageContext.request.contextPath}/notification';">
+			<span class="material-symbols-outlined">notifications</span> <span>알림</span>
+		</button>
 
 		<hr class="my-3 border-secondary opacity-25">
 		<div class="text-xs text-secondary px-3 mb-2 text-uppercase fw-bold">Community</div>

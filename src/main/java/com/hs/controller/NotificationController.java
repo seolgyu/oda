@@ -8,9 +8,11 @@ import java.util.Map;
 import com.hs.model.NotificationDTO;
 import com.hs.model.SessionInfo;
 import com.hs.mvc.annotation.Controller;
+import com.hs.mvc.annotation.GetMapping;
 import com.hs.mvc.annotation.PostMapping;
 import com.hs.mvc.annotation.RequestMapping;
 import com.hs.mvc.annotation.ResponseBody;
+import com.hs.mvc.view.ModelAndView;
 import com.hs.service.NotificationService;
 import com.hs.service.NotificationServiceImpl;
 
@@ -23,6 +25,12 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/notification/*")
 public class NotificationController {
 	private NotificationService notiService = NotificationServiceImpl.getInstance();
+	
+	@GetMapping("")
+	public ModelAndView notiMain(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		return new ModelAndView("/notification/notiMain");
+	}
 	
 	@PostMapping("loadNotiCount")
     @ResponseBody
