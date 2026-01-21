@@ -5,6 +5,10 @@ $(function() {
     $('input[name="com_name"]').on('input', function() {
         checkCommunityName();
     });
+	
+	$('textarea[name="com_description"]').on('input', function() {
+		checkDescriptionLength();
+	});
 
     $(document).on('click', '.privacy-card', function() {
         selectPrivacyCard($(this));
@@ -128,38 +132,61 @@ function initFormState() {
 
 function checkCommunityName() {
     const $nameInput = $('input[name="com_name"]');
-    const com_name = $nameInput.val().trim();
+    let com_name = $nameInput.val();
     const $errorEl = $('#error-com_name, #nameError');
-	const community_id = $('input[name="community_id"]').val() || "";
+    const community_id = $('input[name="community_id"]').val() || "";
 
-    if (!com_name) {
+    const maxLength = 20; // 이름 글자 수 제한
+
+    if (!com_name.trim()) {
         $errorEl.text("커뮤니티 이름을 입력해주세요.").removeClass('text-green-500').addClass('text-red-500').show();
         return;
     }
-	
-	const byteLength = new TextEncoder().encode(com_name).length;
-	const maxByte = 50;
 
-	if (byteLength > maxByte) {
-		$errorEl.text(`이름이 너무 깁니다. (현재 ${byteLength}바이트 / 최대 ${maxByte}바이트)`)
-	    	.removeClass('text-green-500')
-	        .addClass('text-red-500')
-	        .show();
-		$nameInput.addClass('border-red-500/50');
-		return;
-	}
-	
-	const fn = function(data) {
-		if (data.isDuplicate) {
-			$errorEl.text("이미 사용 중인 이름입니다.").removeClass('text-green-500').addClass('text-red-500').show();
-		    $nameInput.addClass('border-red-500/50');
-		} else {
-			$errorEl.text("사용 가능한 이름입니다.").removeClass('text-red-500').addClass('text-green-500').show();
-		    $nameInput.removeClass('border-red-500/50');
-		}
-	};
+    // 1. 글자 수 초과 시 즉시 절삭 (설명글과 동일한 방식)
+    if (com_name.length > maxLength) {
+        com_name = com_name.substring(0, maxLength);
+        $nameInput.val(com_name);
+        
+        $errorEl.text(`이름은 최대 ${maxLength}자까지 입력 가능합니다.`)
+            .removeClass('text-green-500')
+            .addClass('text-red-500')
+            .show();
+        $nameInput.addClass('border-red-500/50');
+        return; 
+    }
 
-    ajaxRequest('checkName', 'GET', { com_name: com_name, community_id: community_id }, 'json', fn);
+    // 2. 중복 체크 Ajax
+    const fn = function(data) {
+        if (data.isDuplicate) {
+            $errorEl.text("이미 사용 중인 이름입니다.").removeClass('text-green-500').addClass('text-red-500').show();
+            $nameInput.addClass('border-red-500/50');
+        } else {
+            $errorEl.text("사용 가능한 이름입니다.").removeClass('text-red-500').addClass('text-green-500').show();
+            $nameInput.removeClass('border-red-500/50');
+        }
+    };
+
+    ajaxRequest('checkName', 'GET', { com_name: com_name.trim(), community_id: community_id }, 'json', fn);
+}
+
+function checkDescriptionLength() {
+    const $descInput = $('textarea[name="com_description"]');
+    const $errorEl = $('#error-com_description');
+    const content = $descInput.val();
+    const maxLength = 100;
+
+    if (content.length > maxLength) {
+        $descInput.val(content.substring(0, maxLength));
+        
+        $errorEl.text(`소개글은 최대 ${maxLength}자까지 입력 가능합니다.`)
+               .removeClass('hidden')
+               .show();
+        $descInput.addClass('border-red-500/50');
+    } else {
+        $errorEl.hide().addClass('hidden');
+        $descInput.removeClass('border-red-500/50');
+    }
 }
 
 

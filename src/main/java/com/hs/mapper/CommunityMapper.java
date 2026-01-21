@@ -15,6 +15,7 @@ public interface CommunityMapper {
 	public void deletePostsCommunity(Map<String, Object> map) throws SQLException;
 	public void deleteFollow(Map<String, Object> map) throws SQLException;
 	public void deleteFavorites(Map<String, Object> map) throws SQLException;
+	public void updateCommunityHitCount(Map<String, Object> map) throws SQLException;
 	
 	public int checkJoinCommunity(Map<String, Object> map);
 	public void joinCommunity(Map<String, Object> map) throws SQLException;

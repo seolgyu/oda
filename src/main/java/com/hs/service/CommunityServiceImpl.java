@@ -192,5 +192,15 @@ public class CommunityServiceImpl implements CommunityService{
 		}
 		return list;
 	}
+
+	@Override
+	public void updateCommunityHitCount(Map<String, Object> map) throws Exception {
+		try {
+			mapper.updateCommunityHitCount(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
 	
 }

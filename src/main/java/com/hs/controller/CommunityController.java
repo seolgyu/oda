@@ -98,6 +98,8 @@ public class CommunityController {
 			map.put("community_id", Long.parseLong(com_id));
 			map.put("user_num", user_num);
 			
+			cservice.updateCommunityHitCount(map);
+			
 			CommunityDTO dto = cservice.findById(map);
 			
 			if(dto != null) {

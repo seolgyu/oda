@@ -50,6 +50,11 @@
 		WHERE community_id = #{community_id}
 	</update>
 	
+	<update id="updateCommunityHitCount">
+		UPDATE COMMUNITY SET today_visit = today_visit + 1, total_visit = total_visit + 1
+		WHERE community_id = #{community_id}
+	</update>
+	
 	<delete id="leaveCommunity" parameterType="map">
 		DELETE FROM community_follow 
 		WHERE community_id = #{community_id} AND user_num = #{user_num}
@@ -83,7 +88,7 @@
 	<select id="selectManagementList" parameterType="map" resultType="com.hs.model.CommunityDTO">
 	    SELECT 
 	        c.community_id, c.com_name, c.com_description, c.icon_image, c.banner_image, c.is_private, 
-	        c.member_count, c.post_count, TO_CHAR(c.created_date, 'YYYY-MM-DD') created_date, 
+	        c.member_count, TO_CHAR(c.created_date, 'YYYY-MM-DD') created_date, 
 	        c.today_visit, c.total_visit, c.user_num, c.category_id,
 	        (SELECT COUNT(*) FROM community_favorites f 
          		WHERE f.community_id = c.community_id AND f.user_num = #{user_num}) is_favorite
@@ -127,7 +132,7 @@
 	         WHERE f.community_id = c.community_id AND f.user_num = #{user_num}) is_follow
 	    FROM (
 	        SELECT community_id, com_name, com_description, icon_image, banner_image, 
-	               is_private, member_count, post_count, created_date, today_visit, 
+	               is_private, member_count, created_date, today_visit, 
 	               total_visit, user_num, category_id
 	        FROM COMMUNITY
 	        <where>
@@ -146,7 +151,7 @@
 	
 	<select id="findByName" parameterType="String" resultType="com.hs.model.CommunityDTO">
 		SELECT community_id, com_name, com_description, icon_image, banner_image, is_private, 
-			member_count, post_count, TO_CHAR(created_date, 'YYYY-MM-DD') created_date, 
+			member_count, TO_CHAR(created_date, 'YYYY-MM-DD') created_date, 
 			today_visit, total_visit, user_num, category_id
 		FROM COMMUNITY 
 		WHERE com_name = #{com_name, jdbcType=VARCHAR}
@@ -154,7 +159,7 @@
 	
 	<select id="findById" parameterType="map" resultType="com.hs.model.CommunityDTO">
 		SELECT community_id, com_name, com_description, icon_image, banner_image, is_private, 
-			member_count, post_count, TO_CHAR(created_date, 'YYYY-MM-DD') created_date, 
+			member_count, TO_CHAR(created_date, 'YYYY-MM-DD') created_date, 
 			today_visit, total_visit, user_num, category_id,
 			(SELECT COUNT(*) FROM community_favorites
 			 WHERE community_id = COMMUNITY.community_id AND user_num = #{user_num, jdbcType=NUMERIC}) is_favorite
@@ -172,7 +177,6 @@
 			c.BANNER_IMAGE    AS banner_image,
 			c.IS_PRIVATE      AS is_private,
 			c.MEMBER_COUNT    AS member_count,
-			c.POST_COUNT      AS post_count,
 			c.CREATED_DATE    AS created_date,
 			c.USER_NUM        AS user_num,
 			c.CATEGORY_ID     AS category_id,

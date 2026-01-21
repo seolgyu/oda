@@ -67,7 +67,7 @@
                                     </div>
                                     <div class="pb-2">
                                         <h1 class="text-white fs-2 fw-bold mb-1">${dto.com_name}</h1>
-                                        <p class="text-secondary mb-0">• 가입자 수 ${dto.member_count} • 방문자 수 ${dto.today_visit}</p>
+                                        <p class="text-secondary mb-0">• 가입자 수 ${dto.member_count} • 오늘 방문자 수 ${dto.today_visit}</p>
                                     </div>
                                     <div class="ms-auto pb-2 d-flex gap-2">
                                     
@@ -229,7 +229,6 @@
 
 																	<button
 																		class="btn-icon p-0 btn-save ${item.savedByUser ? 'text-warning' : ''}"
-																		title="저장하기"
 																		onclick="toggleSave('${item.postId}', this);">
 																		<span class="material-symbols-outlined fs-6">
 																			${item.savedByUser ? 'bookmark' : 'bookmark_border'}
@@ -415,7 +414,7 @@
 						        <h3 class="text-white text-xs fw-bold text-uppercase tracking-widest mb-3 opacity-75">커뮤니티 자세히 보기</h3>
 						        
 						        <div class="d-flex align-items-center gap-3 mb-3">
-						            <div class="rounded-circle overflow-hidden border border-white border-opacity-10 shadow-sm" style="width: 50px; height: 50px; background: linear-gradient(135deg, #e11d48, #4c1d95);">
+						            <div class="rounded-circle overflow-hidden border border-white border-opacity-10 shadow-sm flex-shrink-0" style="width: 50px; height: 50px; background: linear-gradient(135deg, #e11d48, #4c1d95);">
 						                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white">
 						                    <c:choose>
 												<c:when test="${not empty dto.icon_image}">
@@ -435,10 +434,15 @@
 						        <p class="text-secondary text-xs lh-relaxed mb-4">${dto.com_description}</p>
 						        
 						        <div class="d-flex gap-4 mb-4 pt-3 border-top border-white border-opacity-10">
+						        
 						            <div class="d-flex flex-column">
-						                <span class="text-white text-sm fw-bold">${dto.member_count}</span>
+						            	<div class="d-flex align-items-center gap-1">
+						                    <span class="material-symbols-outlined text-info" style="font-size: 12px;">group</span>
+						                    <span class="text-white text-sm fw-bold">${dto.member_count}</span>
+						                </div>
 						                <span class="text-secondary" style="font-size: 10px;">가입자수</span>
 						            </div>
+						            
 						            <div class="d-flex flex-column">
 						                <div class="d-flex align-items-center gap-1">
 						                    <span class="material-symbols-outlined text-info" style="font-size: 12px;">visibility</span>
@@ -446,6 +450,7 @@
 						                </div>
 						                <span class="text-secondary" style="font-size: 10px;">총방문자수</span>
 						            </div>
+						            
 						        </div>
 						
 						        <div class="d-flex flex-column gap-2 mb-4">

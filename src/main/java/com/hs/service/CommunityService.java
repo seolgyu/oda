@@ -15,6 +15,7 @@ public interface CommunityService {
 	public void updateCommunity(CommunityDTO dto) throws Exception;
 	public void deleteCommunity(Map<String, Object> map) throws Exception;
 	
+	public void updateCommunityHitCount(Map<String, Object> map) throws Exception;
 	public String checkFavorite(Map<String, Object> map);
 	public void removeFavorite(Map<String, Object> map);
 	public int checkJoinCommunity(Map<String, Object> map);
