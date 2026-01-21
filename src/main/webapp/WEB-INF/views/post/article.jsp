@@ -28,9 +28,8 @@
 .image-wrapper { width: 100%; background-color: rgba(0, 0, 0, 0.2); }
 .form-control-sm { background-color: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; }
 .form-control-sm:focus { border-color: #a855f7 !important; box-shadow: none !important; }
-.text-repost-green {
-    color: #4ade80 !important;
-}
+.text-repost-green { color: #4ade80 !important; }
+
 #join-modal {
         display: none;
         position: fixed;
@@ -82,6 +81,13 @@
         background: #2563eb; 
         transform: translateY(-2px); 
     }
+    
+    .feed-container-center {
+        max-width: 800px !important;
+        width: 90% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
 </style>
 
 <script>
@@ -124,9 +130,9 @@
             </div>
 
             <div class="feed-scroll-container custom-scrollbar">
-                <div class="container py-5">
+                <div class="container-fluid pt-2 pb-5">
                     <div class="row justify-content-center">
-                        <div class="col-12 col-lg-8 col-xl-7">
+                        <div class="col-12 col-lg-11 col-xl-10 mx-auto feed-container-center">
 
                             <div class="d-flex align-items-center gap-2 mb-3 px-1">
                                 <button type="button" class="btn-icon text-white" onclick="history.back()">
@@ -486,7 +492,7 @@
         }
 
         function deleteReply(commentId) {
-            if (!confirm("댓글을 완전히 삭제하시겠습니까? (대댓글도 함께 삭제됩니다)")) return;
+        	showCustomConfirm("댓글 삭제", "댓글을 완전히 삭제하시겠습니까?<br>(대댓글도 함께 삭제됩니다)", function() {
             $.ajax({
                 url : contextPath + "/post/deleteReply",
                 type : "post",
@@ -496,10 +502,10 @@
                         listReply();
                         showToast("success", "댓글이 삭제되었습니다.");
                     } else {
-                        alert("삭제 실패했습니다.");
                         showToast("error", "삭제 실패했습니다.");
-                    }
-                }
+                    	}
+               		}
+                });
             });
         }
 
@@ -532,7 +538,7 @@
                             $icon.text("favorite_border");
                             $btn.removeClass("text-pink");
                             $btn.addClass("text-white-50");
-                            showToast("success", "좋아요를 취소했습니다.");
+                            showToast("info", "좋아요를 취소했습니다.");
                         }
                     } else if (data.state === "login_required") {
                         location.href = contextPath + '/member/login?redirect=' + encodeURIComponent(location.href);
@@ -566,10 +572,12 @@
                             $icon.text("favorite");
                             $btn.addClass("text-pink");
                             $btn.removeClass("text-secondary");
+                            showToast("success", "댓글을 좋아합니다.");
                         } else {
                             $icon.text("favorite_border");
                             $btn.removeClass("text-pink");
                             $btn.addClass("text-secondary");
+                            showToast("info", "좋아요를 취소했습니다.");
                         }
                     }
                 }
@@ -752,7 +760,7 @@
                         } else {
                            
                             $btn.removeClass("text-repost-green").addClass("text-white-50");
-                            showToast("error", "리그렘을 취소했습니다.");
+                            showToast("info", "리그렘을 취소했습니다.");
                         }
                     } else if (data.state === "login_required") {
                         location.href = contextPath + "/member/login";

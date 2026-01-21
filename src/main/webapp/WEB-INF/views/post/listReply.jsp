@@ -17,10 +17,11 @@
 
 		<div class="d-flex align-items-start gap-2">
 			<div class="flex-shrink-0 mt-1">
-
+			
 				<div
-					class="rounded-circle overflow-hidden d-flex align-items-center justify-content-center shadow-sm"
-					style="width: 28px; height: 28px; background: linear-gradient(45deg, #a855f7, #6366f1);">
+					class="rounded-circle overflow-hidden d-flex align-items-center justify-content-center shadow-sm app-user-trigger"
+					style="width: 28px; height: 28px; background: linear-gradient(45deg, #a855f7, #6366f1); cursor: pointer;"
+					data-user-id="${dto.userId}">
 					<c:choose>
 						<c:when test="${not empty dto.profileImage}">
 							<c:choose>
@@ -122,15 +123,15 @@
 					</c:if>
 				</div>
 
-				<div id="replyForm-${dto.commentId}" class="mt-2"
-					style="display: none;">
-					<div class="d-flex gap-2">
+				<div id="replyForm-${dto.commentId}" class="mt-2" style="display: none;">
+					<div class="d-flex gap-2 align-items-center">
 						<input type="text" id="replyContent-${dto.commentId}"
-							class="form-control form-control-sm bg-transparent text-white border-secondary rounded-0 border-top-0 border-start-0 border-end-0 px-0"
-							placeholder="답글 입력..." style="font-size: 0.8rem;">
+							class="form-control comment-input text-white border-0 border-bottom border-secondary rounded-0 px-0 py-1"
+							placeholder="답글을 입력하세요..." 
+							style="background: transparent; font-size: 0.9rem; box-shadow: none;">
 						<button type="button"
-							class="btn btn-sm btn-link text-decoration-none text-primary fw-bold p-0"
-							onclick="sendReplyAnswer('${dto.commentId}')">게시</button>
+							class="btn btn-sm btn-link text-decoration-none text-primary fw-bold p-0 flex-shrink-0"
+							onclick="sendReplyAnswer('${dto.commentId}')" style="font-size: 0.85rem; white-space: nowrap;">등록</button>
 					</div>
 				</div>
 

@@ -356,6 +356,7 @@
             c.IS_DELETED AS isDeleted,
             m.USER_NICKNAME AS userNickName,
             m.USER_PROFILE AS profileImage,
+            m.USER_ID AS userId,
             (SELECT COUNT(*) FROM COMMENTS_LIKES cl WHERE cl.COMMENT_ID = c.COMMENT_ID) AS likeCount,
             NVL((SELECT COUNT(*) FROM COMMENTS_LIKES cl WHERE cl.COMMENT_ID = c.COMMENT_ID AND cl.USER_NUM = #{userNum}), 0) AS likedByUser
         FROM COMMENTS c

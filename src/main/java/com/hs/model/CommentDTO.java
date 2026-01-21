@@ -16,6 +16,7 @@ public class CommentDTO {
 	private int likeCount;
 	private boolean likedByUser;
 	private String timeAgo;
+	
 
 	public String getTimeAgo() {
 		return timeAgo;
