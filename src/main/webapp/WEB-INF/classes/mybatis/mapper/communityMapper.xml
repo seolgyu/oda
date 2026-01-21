@@ -169,7 +169,7 @@
 	
 	<select id="getMyCommunity" parameterType="Long" resultType="com.hs.model.CommunityDTO">
 		SELECT DISTINCT 
-            f.COMMUNITY_ID AS community_id,
+            c.COMMUNITY_ID AS community_id,
 			f.FOLLOW_DATE     AS follow_date,
 			c.COM_DESCRIPTION AS com_description,
 			c.COM_NAME        AS com_name,
