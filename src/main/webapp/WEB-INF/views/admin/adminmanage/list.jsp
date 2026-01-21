@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ODA Admin - 회원 관리</title>
+    <title>ODA Admin - 관리자 관리</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
@@ -721,7 +721,8 @@ body {
         <div class="planet planet-2"></div>
     </div>
 
-    <%@ include file="../home/adminheader.jsp" %>
+    <%-- <%@ include file="../home/adminheader.jsp" %> --%>
+    <%@ include file="/WEB-INF/views/home/header.jsp" %>
 
     <div class="app-body">
         <%@ include file="../home/adminsidebar.jsp" %>

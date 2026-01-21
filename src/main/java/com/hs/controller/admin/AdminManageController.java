@@ -48,6 +48,8 @@ public class AdminManageController {
 		if (page != null) {
 			current_page = Integer.parseInt(page);
 		}
+		//최근 신고된 게시물 리스트
+		List<MainDTO> declList = service.declList();
 			
 		//전체 회원 수 
 		List<MainDTO> mblist = service.memberCountList();

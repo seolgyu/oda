@@ -46,15 +46,15 @@
       
       <div class="nav-sub">
         <a href="${pageContext.request.contextPath}/admin/notice/list" class="nav-sub-item">공지사항</a>
-        <a href="${pageContext.request.contextPath}/admin/inqu/list" class="nav-sub-item">문의사항</a>
+        <%-- <a href="${pageContext.request.contextPath}/admin/inqu/list" class="nav-sub-item">문의사항</a> --%>
         <a href="${pageContext.request.contextPath}/admin/events/list" class="nav-sub-item">이벤트</a>
       </div>
     </div>
       
-		<button class="nav-item">
+		<!-- <button class="nav-item">
 			<span class="material-symbols-outlined">groups_2</span>
 			<span>개설 커뮤니티 관리</span>
-		</button>
+		</button> -->
 
 		<hr class="my-3 border-secondary opacity-25">
 		<div class="text-xs text-secondary px-3 mb-2 text-uppercase fw-bold">system</div>

@@ -379,7 +379,7 @@ public class memberManageController {
 	    	        	    + "    "
 	    	        	    + "    <div style='background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 35px 0; margin-bottom: 40px; text-align: center;'>"
 	    	        	    + "      <div style='font-size: 11px; color: #818cf8; font-weight: bold; letter-spacing: 2px; margin-bottom: 12px; text-transform: uppercase;'>계정상태 변경 알림</div>"
-	    	        	    + "      <div style='font-size: 20px; font-weight: 200; color: #ffffff; letter-spacing: 12px; margin-left: 12px; display: inline-block; vertical-align: middle;'>" + statusText + "</div>"
+	    	        	    + "      <div style='font-size: 11px; font-weight: 200; color: #ffffff; letter-spacing: 12px; margin-left: 12px; display: inline-block; vertical-align: middle;'>" + statusText + "</div>"
 	    	        	    + "    </div>"
 	    	        	    
 	    	        	    + "    <p style='font-size: 13px; color: #64748b; line-height: 1.6; margin: 0;'>"

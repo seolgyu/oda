@@ -185,5 +185,16 @@ public class MainServiceImpl implements MainService{
 		}
 		return stopmembercount;
 	}
+
+	@Override
+	public List<MainDTO> declList() {
+		List<MainDTO> declList = null;
+		try {
+			declList = mapper.declList();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return declList;
+	}
 	
 }

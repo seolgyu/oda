@@ -976,12 +976,18 @@ function suspendMember() {
         data: params,
         dataType: 'json',
         success: function(data) {
-            if(data.success) {
+        	if(data.success) {
                 alert('회원 정지가 완료되었습니다.');
-                /* location.reload(); */
-                sendStatusMail('${memberDto.user_email }', 4);
-            } else {
-                alert(data.message || '회원 정지에 실패했습니다.');
+                
+                // 이메일 전송 후 콜백에서 reload
+                sendStatusMail('${memberDto.user_email}', 4, function(emailResult) {
+                    if(emailResult.success) {
+                        console.log('이메일 전송 완료');
+                    } else {
+                        console.error('이메일 전송 실패');
+                    }
+                    location.reload();
+                });
             }
         },
         error: function(xhr, status, error) {

@@ -21,5 +21,6 @@ public interface MainService {
 	public MainDTO comPriCount();
 	public MainDTO loginPercentage();
 	public MainDTO stopMemberCount();
+	public List<MainDTO> declList();
 }
 

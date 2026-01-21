@@ -290,7 +290,8 @@ select.glass-input-box {
 		<div class="planet planet-2"></div>
 	</div>
 
-	<%@ include file="../home/adminheader.jsp"%>
+	<%-- <%@ include file="../home/adminheader.jsp" %> --%>
+    <%@ include file="/WEB-INF/views/home/header.jsp" %>
 
 	<div class="app-body">
 		<%@ include file="../home/adminsidebar.jsp"%>

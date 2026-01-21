@@ -30,7 +30,8 @@
         <div class="planet planet-2"></div>
     </div>
 
-	<%@ include file="adminheader.jsp"%>
+	<%-- <%@ include file="../home/adminheader.jsp" %> --%>
+    <%@ include file="/WEB-INF/views/home/header.jsp" %>
 
 	<div class="app-body">
 
@@ -66,7 +67,7 @@
 									<p class="stat-label">총 가입자 수</p>
 									<div class="d-flex align-items-baseline gap-2">
 										<span class="stat-value">${list[0].memberCountList}</span> <span
-											class="stat-badge bg-blue-soft">${dayDto.memberdaycount}+</span>
+											class="stat-badge bg-blue-soft">${dayDto.memberdaycount}+ (1일 이내)</span>
 									</div>
 								</div>
 								<div class="stat-icon-wrapper">
@@ -84,7 +85,7 @@
 											class="stat-badge text-green d-flex align-items-center p-0">
 											<span class="material-icons-round"
 											style="font-size: 14px; margin-right: 2px;">trending_up</span>
-											${logPerDto.loginPercentage }%
+											${logPerDto.loginPercentage }% (10분이내)
 										</span>
 									</div>
 								</div>
@@ -230,137 +231,6 @@
 					</div>
 					<div class="graph-container" style="position: relative; height: 280px;">
 						<canvas id="visitorChart"></canvas>
-					</div>
-				</section>
-				<section class="card-dark overflow-hidden p-0">
-					<div
-						class="p-3 border-bottom border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
-						<div class="d-flex align-items-center gap-2">
-							<span
-								class="material-icons-round text-light bg-purple-soft p-1 rounded fs-6">help_outline</span>
-							<h2 class="h6 fw-bold mb-0">새로 등록된 문의사항</h2>
-						</div>
-						<span
-							class="text-decoration-none small text-primary d-flex align-items-center">
-							<a href="${pageContext.request.contextPath}/admin/inqu" class="nav-sub-item">전체보기</a>
-						</span>
-					</div>
-					<div class="table-responsive">
-						<table class="table-dark-custom">
-							<thead>
-								<tr>
-									<th style="min-width: 200px;">문의 제목</th>
-									<th>작성자</th>
-									<th>작성일</th>
-									<th>상태</th>
-									<th class="text-end">유형</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>
-										<div class="d-flex align-items-center gap-2">
-											<span class="fw-medium text-light">로그인이 자꾸 풀립니다</span>
-										</div>
-									</td>
-									<td>
-										<div class="d-flex align-items-center gap-2">
-											<span class="avatar-initials bg-primary">KM</span> <span
-												class="text-light text-opacity-75">kim_minsu</span>
-										</div>
-									</td>
-									<td class="text-light">2023.10.25</td>
-									<td><span class="status-badge status-yellow">답변 대기</span></td>
-									<td class="text-end">
-										<div
-											class="d-flex align-items-center justify-content-end gap-1 text-light">
-											<span class="small">비공개</span> <span
-												class="material-icons-round" style="font-size: 14px;">lock</span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="d-flex align-items-center gap-2">
-											<span class="fw-medium text-light">결제 내역 확인 부탁드립니다</span>
-										</div>
-									</td>
-									<td>
-										<div class="d-flex align-items-center gap-2">
-											<span class="avatar-initials bg-info">LJ</span> <span
-												class="text-light text-opacity-75">lee_jiwon</span>
-										</div>
-									</td>
-									<td class="text-light">2023.10.24</td>
-									<td><span class="status-badge status-blue">처리중</span></td>
-									<td class="text-end">
-										<div
-											class="d-flex align-items-center justify-content-end gap-1 text-light">
-											<span class="small">비공개</span> <span
-												class="material-icons-round" style="font-size: 14px;">lock</span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="d-flex align-items-center gap-2">
-											<span class="ps-3 ms-1 fw-medium text-light">새로운 커뮤니티
-												개설 요청</span>
-										</div>
-									</td>
-									<td>
-										<div class="d-flex align-items-center gap-2">
-											<span class="avatar-initials bg-success">PJ</span> <span
-												class="text-light text-opacity-75">park_jun</span>
-										</div>
-									</td>
-									<td class="text-light">2023.10.23</td>
-									<td><span class="status-badge status-blue">처리중</span></td>
-									<td class="text-end">
-										<div
-											class="d-flex align-items-center justify-content-end gap-1 text-primary">
-											<span class="small">공개</span> <span
-												class="material-icons-round" style="font-size: 14px;">public</span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="d-flex align-items-center gap-2">
-											<span class="ps-3 ms-1 fw-medium text-light">앱 다크모드
-												설정이 안보여요</span>
-										</div>
-									</td>
-									<td>
-										<div class="d-flex align-items-center gap-2">
-											<span class="avatar-initials bg-warning text-dark">CS</span>
-											<span class="text-light text-opacity-75">choi_sora</span>
-										</div>
-									</td>
-									<td class="text-light">2023.10.22</td>
-									<td><span class="status-badge status-green">답변완료</span></td>
-									<td class="text-end">
-										<div
-											class="d-flex align-items-center justify-content-end gap-1 text-primary">
-											<span class="small">공개</span> <span
-												class="material-icons-round" style="font-size: 14px;">public</span>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-					<div
-						class="px-3 py-3 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center text-light small">
-						<span>1-4 of 24</span>
-						<div class="d-flex gap-2">
-							<button class="pagination-btn">
-								<span class="material-icons-round fs-6">chevron_left</span>
-							</button>
-							<button class="pagination-btn">
-								<span class="material-icons-round fs-6">chevron_right</span>
-							</button>
-						</div>
 					</div>
 				</section>
 			</div>

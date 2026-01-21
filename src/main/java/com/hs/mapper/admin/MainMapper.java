@@ -21,4 +21,5 @@ public interface MainMapper {
 	public MainDTO comPriCount();
 	public MainDTO loginPercentage();
 	public MainDTO stopmembercount();
+	public List<MainDTO> declList();
 }
