@@ -24,6 +24,8 @@ import com.hs.mvc.annotation.RequestMapping;
 import com.hs.mvc.view.ModelAndView;
 import com.hs.service.MemberService;
 import com.hs.service.MemberServiceImpl;
+import com.hs.service.NotificationService;
+import com.hs.service.NotificationServiceImpl;
 import com.hs.service.PostService;
 import com.hs.service.PostServiceImpl;
 
@@ -45,6 +47,7 @@ public class PostController {
 
 	private PostService service = new PostServiceImpl();
 	private MemberService memberservice = new MemberServiceImpl();
+	private NotificationService notiService = NotificationServiceImpl.getInstance();
 
 	// 1. 글쓰기 폼 (GET)
 	@GetMapping("write")
@@ -418,6 +421,21 @@ public class PostController {
 			long postId = Long.parseLong(req.getParameter("postId"));
 
 			boolean liked = service.insertPostLike(postId, info.getMemberIdx());
+			
+			PostDTO dto = service.findById(postId);
+			
+			Long userNum = info.getMemberIdx();
+			Long authorUserNum = dto.getUserNum();
+			
+			if(liked) {
+				Map<String, Object> noti = new HashMap<String, Object>();
+				noti.put("fromUserNum", userNum);
+				noti.put("toUserNum", authorUserNum);
+				noti.put("type", "POST_LIKE");
+				noti.put("target", postId);
+				
+				notiService.insertNotification(noti);
+			}
 
 			int likeCount = service.countPostLike(postId); 
 
