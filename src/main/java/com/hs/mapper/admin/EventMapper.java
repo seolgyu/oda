@@ -45,6 +45,10 @@ public interface EventMapper {
 	// 리스트에서 1개 이상 삭제 시 첨부파일 
 	public void deletelistEventFile(List<Long> list) throws SQLException;
 	
+	// 리스트에서 댓글 있는 이벤트 삭제
+	public void deleteEventReply(long num) throws SQLException;
+	public void deleteEventReplys(List<Long> list) throws SQLException;
+	
 	// 첨부파일 리스트(ok)
 	public List<EventDTO> listEventFile(long num);
 	// 첨부파일 검색
@@ -74,4 +78,8 @@ public interface EventMapper {
 	public Map<String, Object> replyLikeCount(Map<String, Object> map);
 	public Integer  hasUserReplyLiked(Map<String, Object> map);
 	
+	// 댓글 좋아요 삭제
+	public void deleteReplyLike(long comment_id) throws SQLException;
+	// 댓글 좋아요 리스트
+	public List<Long> listEventNumAsCommentId(long event_num) throws SQLException;
 }

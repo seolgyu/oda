@@ -69,6 +69,13 @@ public class EventServiceImpl implements EventService {
 			map.put("num", event_num);
 			
 			mapper.deleteEventFile(map);
+			
+			List<Long> list = mapper.listEventNumAsCommentId(event_num);
+			for(Long n : list) {
+				mapper.deleteReplyLike(n);
+			}
+			
+			mapper.deleteEventReply(event_num);
 			mapper.deleteBoardLikeAll(event_num);
 			mapper.deleteEvent(event_num);
 		} catch (Exception e) {
@@ -84,7 +91,16 @@ public class EventServiceImpl implements EventService {
 		try {
 			
 			mapper.deletelistEventFile(list);
+			
+			for(Long event_num : list) {
+				List<Long> listCommint = mapper.listEventNumAsCommentId(event_num);
+				for(Long n : listCommint) {
+					mapper.deleteReplyLike(n);
+				}
+			}
+			
 			mapper.deleteBoardLikeList(list);
+			mapper.deleteEventReplys(list);
 			mapper.deleteListEvent(list);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -37,6 +37,7 @@
 		</foreach>
 	</delete>
 	
+	
 	<!-- 데이터 개수 -->
 	<select id="dataCount" parameterType="map" resultType="Integer">
 		SELECT NVL(COUNT(*), 0)
@@ -329,11 +330,24 @@
 	<delete id="deleteReply" parameterType="map">
 		DELETE FROM EVENT_COMMENTS
 		WHERE comment_id = #{comment_id}
-		<if test="mode == 'relpt'">
+		<if test="mode == 'reply'">
 			OR parent_comment_id = #{comment_id}
 		</if>
 	</delete>
 	
+	<!-- 댓글 달린 게시물 삭제 -->
+	<delete id="deleteEventReply" parameterType="Long">
+	 	DELETE FROM EVENT_COMMENTS
+	 	WHERE event_num = #{num}	
+	</delete>
+	
+	<delete id="deleteEventReplys" parameterType="java.util.List">
+		DELETE FROM EVENT_COMMENTS
+		WHERE event_num IN
+		<foreach collection="list" item="event_num" open="(" separator="," close=")">
+        	#{event_num} 
+    	</foreach>
+	</delete>
 	
 	<!-- 대댓글 리스트 -->
 	<select id="listReplyAnswer" parameterType="map" resultType="com.hs.model.admin.EventReplyDTO">
@@ -370,6 +384,15 @@
 		INSERT INTO EVENT_COMMENTS_LIKES (comment_id, user_num, comment_like, CREATED_DATE)
 			VALUES(#{comment_id}, #{user_num}, #{comment_like}, SYSDATE)
 	</insert>
+	
+	<!-- 댓글에 눌린 좋아요 리스트 -->
+	<select id="listEventNumAsCommentId" parameterType="Long" resultType="Long">
+		SELECT comment_id FROM EVENT_COMMENTS WHERE event_num = #{event_num}
+	</select>
+
+	<delete id="deleteReplyLike" parameterType="Long">
+		DELETE FROM EVENT_COMMENTS_LIKES WHERE comment_id = #{comment_id}
+	</delete>
 	
 	<!-- 좋아요 / 싫어요 개수 -->
 	<select id="replyLikeCount" parameterType="map" resultType="map">

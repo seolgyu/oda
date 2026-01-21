@@ -473,13 +473,6 @@ public class eventManageController {
 				fileManager.doFiledelete(pathname, vo.getFile_path());
 			}
 			
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("field", "event_num");
-			map.put("num", event_num);
-			
-			// 파일이름 등의 정보 삭제
-			service.deleteEventFile(map);		
-
 			// 게시글 삭제
 			service.deleteEvent(event_num);
 
