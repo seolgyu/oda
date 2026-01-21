@@ -207,9 +207,9 @@
 	</insert>
 	
 	<!-- 첨부파일 삭제 -->
-	<delete id="deleteEventFile" parameterType="Long">
+	<delete id="deleteEventFile" parameterType="map">
 		DELETE FROM EVENT_FILEAT
-		WHERE file_at_id = #{file_at_id}
+		WHERE ${field} = #{num}
 	</delete>
 	
 	<!-- 이벤트 첨부파일 리스트 출력 -->
@@ -230,9 +230,9 @@
 	<delete id="deletelistEventFile" parameterType="java.util.List">
 		DELETE FROM EVENT_FILEAT
 		WHERE event_num IN 
-    <foreach collection="list" item="event_num" open="(" separator="," close=")">
-        #{event_num}
-    </foreach>
+	    <foreach collection="list" item="event_num" open="(" separator="," close=")">
+	        #{event_num}
+	    </foreach>
 	</delete>
 	
   <!-- 좋아요 -->
@@ -248,6 +248,19 @@
 		WHERE event_num = #{event_num} AND user_num = #{user_num}
 	</delete>
 	
+	<delete id="deleteBoardLikeAll" parameterType="Long">
+		DELETE FROM EVENT_LIKES
+		WHERE event_num = #{event_num}
+	</delete>
+	
+	<delete id="deleteBoardLikeList" parameterType="java.util.List">
+		DELETE FROM EVENT_LIKES
+		WHERE event_num IN
+		<foreach collection="list" item="event_num" open="(" separator="," close=")">
+        	#{event_num} 
+    	</foreach>
+	</delete>
+		
 	<!-- 좋아요 개수 -->
 	<select id="boardLikeCount" parameterType="Long" resultType="Integer">
 		SELECT NVL(COUNT(*), 0)
@@ -273,10 +286,11 @@
 	<!--  댓글 개수 -->
 	<select id="replyCount" parameterType="map" resultType="Integer">
 		SELECT NVL(COUNT(*), 0)
-		FROM EVENT_COMMENTS
+		FROM EVENT_COMMENTS e
+		JOIN member m ON e.user_id = m.user_id
 		WHERE event_num = #{event_num} AND parent_comment_id = 0 AND block = 0
 		<if test="userLevel lt 51">
-			AND (showReply = 1 OR user_id = #{user_id})
+			AND (showReply = 1 OR m.user_id = #{user_id})
 		</if>
 	</select>
 	
@@ -287,21 +301,26 @@
            NVL(a.answerCount, 0) answerCount,
            NVL(c.likeCount, 0) likeCount
     FROM EVENT_COMMENTS e
-    LEFT OUTER JOIN member m ON e.user_id = m.user_id
+    JOIN member m ON e.user_id = m.user_id
     LEFT OUTER JOIN (
         SELECT parent_comment_id, COUNT(*) answerCount
         FROM EVENT_COMMENTS
-        WHERE parent_comment_id != 0
+        WHERE parent_comment_id != 0 AND block = 0
+        <if test="userLevel lt 51">
+        	AND (showReply = 1 OR user_id = #{user_id})
+        </if>
         GROUP BY parent_comment_id
     ) a ON e.comment_id = a.parent_comment_id
     LEFT OUTER JOIN (
-        SELECT comment_id, COUNT(comment_id) likeCount
+        SELECT comment_id, 
+        	COUNT(DECODE(comment_like, 1, 1)) likeCount
         FROM EVENT_COMMENTS_LIKES
         GROUP BY comment_id
     ) c ON e.comment_id = c.comment_id
-    WHERE e.event_num = #{event_num} 
-      AND e.parent_comment_id = 0
-
+    WHERE e.event_num = #{event_num} AND e.parent_comment_id = 0
+        <if test="userLevel lt 51">
+        	AND (showReply = 1 OR m.user_id = #{user_id})
+        </if>
     ORDER BY e.comment_id DESC
     OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 </select>
@@ -348,20 +367,20 @@
 	
 	<!-- 댓글 좋아요. 싫어요 추가 -->
 	<insert id="insertReplyLike" parameterType="map">
-		INSERT INTO EVENT_COMMENTS_LIKES (comment_id, user_id, replyLike, created_date)
-			VALUES(#{comment_id}, #{user_id}, #{replyLike}, SYSDATE)
+		INSERT INTO EVENT_COMMENTS_LIKES (comment_id, user_num, comment_like, CREATED_DATE)
+			VALUES(#{comment_id}, #{user_num}, #{comment_like}, SYSDATE)
 	</insert>
 	
 	<!-- 좋아요 / 싫어요 개수 -->
 	<select id="replyLikeCount" parameterType="map" resultType="map">
-		SELECT COUNT(comment_id) likeCount
+		SELECT COUNT(DECODE(comment_like, 1, 1)) likeCount
 		FROM EVENT_COMMENTS_LIKES
 		WHERE comment_id = #{comment_id}
 	</select>
 	
 	<!-- 유저 좋아요/싫어요 여부 -->
 	<select id="hasUserReplyLiked" parameterType="map" resultType="Integer">
-		SELECT COUNT(comment_id) likeCount
+		SELECT comment_like
 		FROM EVENT_COMMENTS_LIKES
 		WHERE comment_id = #{comment_id} AND user_num = #{user_num}
 	</select>

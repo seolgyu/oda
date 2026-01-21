@@ -18,8 +18,8 @@
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <%@ include file="/WEB-INF/views/home/head.jsp"%>
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminmain.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/main3.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/style2.css">
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
 <style>
 /* [1] 공지사항 전용 글래스모피즘 보정 스타일  */

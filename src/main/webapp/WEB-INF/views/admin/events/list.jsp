@@ -412,49 +412,12 @@ function resetSearch() {
 // 기존 search 함수가 정의된 곳에 함께 두시면 됩니다.
 window.resetSearch = resetSearch;
 
-// 상세보기 삭제
-function deleteOk() {
-    if (!confirm('게시글을 삭제하시겠습니까?')) {
-        return;
-    }
-
-    const f = document.createElement('form');
-    f.method = 'POST';
-    f.action = '${pageContext.request.contextPath}/admin/events/deleteList';
-
-    // 컨트롤러의 String[] nn = req.getParameterValues("event_nums")와 매칭
-    const inputNum = document.createElement('input');
-    inputNum.type = 'hidden';
-    inputNum.name = 'event_nums'; 
-    inputNum.value = '${dto.event_num}';
-    f.appendChild(inputNum);
-
-    // 검색 및 페이지 정보 유지
-    const params = {
-        'page': '${page}',
-        'size': '${size}',
-        'schType': '${schType}',
-        'kwd': '${kwd}'
-    };
-
-    for (const key in params) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = params[key];
-        f.appendChild(input);
-    }
-
-    document.body.appendChild(f);
-    f.submit();
-}
-
 </script>
 
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
 	<script src="${pageContext.request.contextPath}/dist/js/admin_bbs_util.js"></script>
-	<script src="${pageContext.request.contextPath}/dist/js/admin_event.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/event.js"></script>
 </body>
 </html>

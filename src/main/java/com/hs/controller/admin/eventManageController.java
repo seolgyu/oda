@@ -408,7 +408,11 @@ public class eventManageController {
 				// 파일삭제
 				fileManager.doFiledelete(pathname, dto.getFile_path());
 				
-				service.deleteEventFile(file_at_id);
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("field", "file_at_id");
+				map.put("num", file_at_id);
+				
+				service.deleteEventFile(map);
 				
 				// 테이블 파일 정보 삭제
 				// mav.put("event_num", event_num);
@@ -470,11 +474,11 @@ public class eventManageController {
 			}
 			
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("field", event_num);
-			map.put("event_num", event_num);
+			map.put("field", "event_num");
+			map.put("num", event_num);
 			
 			// 파일이름 등의 정보 삭제
-			service.deleteEventFile(event_num);		
+			service.deleteEventFile(map);		
 
 			// 게시글 삭제
 			service.deleteEvent(event_num);
@@ -523,7 +527,7 @@ public class eventManageController {
 			}
 
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("field", event_nums);
+			map.put("field", "event_num");
 			for (Long n : event_nums) {
 				
 				List<EventDTO> filelist = service.listEventFile(n);
@@ -533,10 +537,10 @@ public class eventManageController {
 					fileManager.doFiledelete(pathname, vo.getFile_path());
 				}
 				
-				map.put("event_nums", n);
+				map.put("num", n);
 				
 				// 파일이름 등의 정보 삭제
-				// service.deleteEventFile(event_nums);
+				service.deleteEventFile(map);
 			}
 
 			// 게시글 다중 삭제

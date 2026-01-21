@@ -70,7 +70,7 @@ $(function(){
          if(state === 'true') {
             loadContent(1);
          } else if(state === 'false') {
-            alert('댓글 등록이 실패 했습니다.');
+            showToast("error", '댓글 등록이 실패 했습니다.');
          }
       };
       
@@ -130,44 +130,35 @@ $(function(){
       
       let isUserLiked = $btn.parent('td').attr('data-userLikedReply') !== '-1';
       if(isUserLiked) {
-         alert('댓글 공감여부가 등록되었습니다.');
+         showToast("success", '댓글 "좋아요"가 등록되었습니다.');
          return false;
       }
       
       let comment_id = $btn.attr('data-comment_id');
-      let replyLike = $btn.attr('data-replyLike');
-	  
-	  console.log('댓글 넘버' + comment_id + ' : ' + '댓글 좋아요여부' + ' : ' + replyLike);
-      
-      let msg = '댓글이 마음에 들지 않으십니까?';
-      if(replyLike === '1') {
-         msg = '댓글에 공감하십니까?';
-      }
-      
-      if(! confirm(msg)) {
-         return false;
-      }
+      let comment_like = $btn.attr('data-comment_like');
+
+	  if(! confirm('댓글 "좋아요"는 취소가 되지않습니다. 댓글에 "좋아요"를 누르시겠습니까?')) {
+	     return false;
+	  }
       
       const url = `${postsUrl}/insertReplyLike`;
-      let params = {comment_id: comment_id, replyLike: replyLike};
+      let params = {comment_id: comment_id, comment_like: comment_like};
       
       const fn = function(data){
          let state = data.state;
          
-         if(state === 'true'){
+         if(data.state === 'true'){
             let likeCount = data.likeCount;
-			
-			console.log('댓글 좋아요 개수' + likeCount);
             
-            $btn.parent('td').attr('data-userLikedReply', replyLike);
-            $btn.find('i').css('color', '#ef4444');
+            $btn.attr('data-userLikedReply', comment_like);
+            $btn.find('span').eq(0).css('color', '#ef4444');
             
-            $btn.parent('td').children().eq(0).find('span').html(likeCount);
+            $btn.find('span').eq(1).html(likeCount);
 
          } else if(state === 'liked'){
-            alert('공감 여부는 한번만 가능합니다.');
+            showToast("error", '공감 여부는 한번만 가능합니다.');
          } else {
-            alert('공감여부 처리가 실패했습니다.');
+            showToast("error", '공감여부 처리가 실패했습니다.');
          }
       }
       
@@ -361,7 +352,7 @@ function renderReplies(listReply, sessionMember, pageNo) {
       const likeColor = vo.userLikedReply == 1 ? 'color:#ef4444;' : '';
       
       likedHTML = `
-	  <button type="button" class="btn btnSendReplyLike" data-comment_id="${vo.comment_id}" data-replyLike="1" title="좋아요">
+	  <button type="button" class="btn btnSendReplyLike" data-comment_id="${vo.comment_id}" data-comment_like="1" title="좋아요">
 	      <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 1.1rem; ${likeColor}">
 	          favorite
 	      </span> 

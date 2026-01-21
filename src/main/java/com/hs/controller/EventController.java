@@ -3,6 +3,7 @@ package com.hs.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -509,5 +510,53 @@ public class EventController {
 		model.put("state", state);
 		
 		return model;
+	}
+
+	@ResponseBody
+	@PostMapping("insertReplyLike")
+	public Map<String, Object> insertReplyLike(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Map<String, Object> mav = new HashMap<String, Object>();
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		String state = "false";
+		int likeCount = 0;
+		
+		try {
+			long comment_id = Long.parseLong(req.getParameter("comment_id"));
+			int comment_like = Integer.parseInt(req.getParameter("comment_like"));
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("comment_id", comment_id);
+			map.put("comment_like", comment_like);
+			map.put("user_num", info.getMemberIdx());
+
+			service.insertReplyLike(map);
+			
+			Map<String, Object> countMap = service.replyLikeCount(map);
+			//마이바티스에서 resultType이 map 인경우
+			// : int 는 BigDecimal로 넘어온다,
+			// : oracle 은 컬럼명을 모두 대문자로  map에 저장한다.
+			// : countMap을 model에 담아 JSON으로 바로 넘겨도 가능
+			
+			if(countMap.containsKey("LIKECOUNT")) {
+				likeCount = ((BigDecimal)countMap.get("LIKECOUNT")).intValue();
+			} 
+	
+			state = "true";
+		} catch (SQLException e) {
+			if(e.getErrorCode() == 1) {
+				state = "liked";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		mav.put("state", state);
+		mav.put("likeCount", likeCount);
+	
+		
+		return mav;
 	}
 }

@@ -1,0 +1,508 @@
+@charset "UTF-8";
+
+:root {
+	--primary-color: #3b82f6;
+	--background-dark: #020617;
+	--surface-dark: #1e293b;
+	--surface-dark-lighter: #334155;
+	--text-light: #f1f5f9;
+	--text-muted: #94a3b8;
+	--border-color: #334155;
+}
+
+body {
+	font-family: 'Noto Sans KR', sans-serif;
+	background-color: #050505 !important;
+	color: var(--text-light);
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #334155;
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #475569;
+}
+
+.navbar {
+	background-color: var(--surface-dark);
+	border-bottom: 1px solid var(--border-color);
+	height: 64px;
+	padding: 0 1rem;
+}
+
+.navbar-brand {
+	font-weight: 700;
+	font-size: 1.25rem;
+	color: var(--text-light);
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.navbar-brand .text-primary {
+	color: var(--primary-color) !important;
+}
+
+.search-container {
+	position: relative;
+	max-width: 500px;
+	width: 100%;
+}
+
+.search-icon {
+	position: absolute;
+	left: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--text-muted);
+	pointer-events: none;
+}
+
+.search-input {
+	background-color: rgba(15, 23, 42, 0.5);
+	border: none;
+	border-radius: 0.5rem;
+	padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+	color: var(--text-light);
+	width: 100%;
+}
+
+.search-input:focus {
+	outline: none;
+	box-shadow: 0 0 0 2px var(--primary-color);
+	background-color: rgba(15, 23, 42, 0.8);
+	color: var(--text-light);
+}
+
+.search-input::placeholder {
+	color: #64748b;
+}
+
+.nav-icon-btn {
+	background: none;
+	border: none;
+	color: var(--text-muted);
+	padding: 0.5rem;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s;
+}
+
+.nav-icon-btn:hover {
+	background-color: var(--surface-dark-lighter);
+	color: var(--text-light);
+}
+
+.notification-dot {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+	width: 8px;
+	height: 8px;
+	background-color: #ef4444;
+	border-radius: 50%;
+}
+
+.profile-img {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 1px solid var(--border-color);
+	background-color: var(--surface-dark-lighter);
+}
+
+.main-container {
+	max-width: 1280px;
+	margin: 0 auto;
+	padding: 2rem 1rem;
+	width: 100%;
+	flex-grow: 1;
+	position: relative;
+	z-index: 10; /* 우주 위로 올림 */
+}
+
+.card-dark {
+	background-color: rgba(30, 41, 59, 0.4) !important; /* 반투명 배경 */
+	backdrop-filter: blur(12px); /* 글래스모피즘의 핵심 */
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.1) !important;
+	border-radius: 1rem;
+	padding: 1.25rem;
+	box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.app-main {
+	flex: 1;
+	position: relative;
+	overflow-y: auto;
+	background: transparent !important; /* 배경을 투명하게 해서 우주가 보이게 함 */
+}
+
+.stat-label {
+	color: var(--text-muted);
+	font-size: 0.875rem;
+	margin-bottom: 0.25rem;
+}
+
+.stat-value {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--text-light);
+}
+
+.stat-badge {
+	font-size: 0.75rem;
+	font-weight: 500;
+	padding: 0.125rem 0.375rem;
+	border-radius: 0.25rem;
+	margin-left: 0.5rem;
+	display: inline-flex;
+	align-items: center;
+}
+
+.stat-icon-wrapper {
+	padding: 0.5rem;
+	border-radius: 0.25rem;
+	background-color: rgba(51, 65, 85, 0.5);
+	color: var(--text-muted);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.big-stat-card {
+	padding: 1.5rem;
+	position: relative;
+	overflow: hidden;
+	height: 100%;
+}
+
+.big-stat-bg-icon {
+	position: absolute;
+	right: -1rem;
+	bottom: -2rem;
+	font-size: 8rem;
+	opacity: 0.1;
+	pointer-events: none;
+	transition: transform 0.5s;
+}
+
+.big-stat-card:hover .big-stat-bg-icon {
+	transform: scale(1.1);
+}
+
+.big-stat-value {
+	font-size: 3rem;
+	font-weight: 800;
+	margin-bottom: 1.5rem;
+	line-height: 1;
+	color: var(--text-light);
+}
+
+.graph-container {
+	position: relative;
+	height: 250px;
+	width: 100%;
+	background-color: rgba(15, 23, 42, 0.3) !important;
+	backdrop-filter: blur(4px);
+	border: 1px solid #1e293b;
+	border-radius: 0.5rem;
+	overflow: hidden;
+}
+
+.graph-grid-line {
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 1px;
+	background-color: #334155;
+	opacity: 0.3;
+}
+
+.graph-labels {
+	position: absolute;
+	bottom: 8px;
+	left: 16px;
+	right: 16px;
+	display: flex;
+	justify-content: space-between;
+	color: var(--text-muted);
+	font-size: 0.625rem;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.table-dark-custom {
+	width: 100%;
+	font-size: 0.875rem;
+	text-align: left;
+	color: var(--text-light);
+	margin-bottom: 0;
+}
+
+.table-dark-custom thead {
+	background-color: rgba(255, 255, 255, 0.05);
+	color: var(--text-muted);
+	font-weight: 500;
+}
+
+.table-dark-custom th, .table-dark-custom td {
+	padding: 1rem 1.5rem;
+	border-bottom: 1px solid var(--border-color);
+	vertical-align: middle;
+}
+
+.table-dark-custom tr:last-child td {
+	border-bottom: none;
+}
+
+.table-dark-custom tbody tr:hover {
+	background-color: rgba(51, 65, 85, 0.3);
+}
+
+.status-badge {
+	padding: 0.25rem 0.625rem;
+	border-radius: 9999px;
+	font-size: 0.75rem;
+	font-weight: 500;
+	display: inline-block;
+}
+
+.avatar-initials {
+	width: 24px;
+	height: 24px;
+	border-radius: 0.25rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 10px;
+	font-weight: 700;
+	color: white;
+}
+
+.pagination-btn {
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--border-color);
+	background: transparent;
+	color: var(--text-muted);
+	border-radius: 0.25rem;
+	transition: all 0.2s;
+}
+
+.pagination-btn:hover {
+	background-color: var(--surface-dark-lighter);
+	color: var(--text-light);
+}
+
+footer {
+	border-top: 1px solid var(--border-color);
+	padding: 1.5rem 1rem;
+	margin-top: auto;
+	color: var(--text-muted);
+	font-size: 0.875rem;
+}
+
+footer a {
+	color: var(--text-muted);
+	text-decoration: none;
+	transition: color 0.2s;
+}
+
+footer a:hover {
+	color: var(--text-light);
+}
+
+.text-primary {
+	color: #3b82f6 !important;
+}
+
+.bg-blue-soft {
+	background-color: rgba(59, 130, 246, 0.2);
+	color: #60a5fa;
+}
+
+.text-green {
+	color: #22c55e;
+}
+
+.text-orange {
+	color: #f97316;
+}
+
+.text-red {
+	color: #ef4444;
+}
+
+.bg-yellow-soft {
+	background-color: rgba(234, 179, 8, 0.1);
+	color: #facc15;
+	border: 1px solid rgba(234, 179, 8, 0.2);
+}
+
+.bg-purple-soft {
+	background-color: rgba(168, 85, 247, 0.1);
+	color: #c084fc;
+	border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.bg-red-soft {
+	background-color: rgba(239, 68, 68, 0.1);
+	color: #f87171;
+	border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.status-yellow {
+	background-color: rgba(234, 179, 8, 0.2);
+	color: #facc15;
+	border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.status-blue {
+	background-color: rgba(59, 130, 246, 0.2);
+	color: #60a5fa;
+	border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.status-green {
+	background-color: rgba(34, 197, 94, 0.2);
+	color: #4ade80;
+	border: 1px solid rgba(34, 197, 94, 0.3);
+}
+.space-background { position : fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: -1; /* 모든 요소보다 뒤에 위치 */
+	background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+	overflow: hidden;
+}
+
+/* [2] 흐르는 별 효과 (3단계 레이어) */
+.stars, .stars2, .stars3 {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+
+/* 작은 별 */
+.stars {
+	width: 1px;
+	height: 1px;
+	background: transparent;
+	box-shadow: 100px 200px #fff, 400px 500px #fff, 800px 100px #fff, 1200px
+		800px #fff, 1600px 300px #fff, 200px 900px #fff; /* 별 위치 추가 가능 */
+	animation: animStar 50s linear infinite;
+}
+
+/* 중간 별 */
+.stars2 {
+	width: 2px;
+	height: 2px;
+	background: transparent;
+	box-shadow: 150px 250px #fff, 450px 550px #fff, 850px 150px #fff, 1250px
+		850px #fff;
+	animation: animStar 100s linear infinite;
+}
+
+/* 큰 별 */
+.stars3 {
+	width: 3px;
+	height: 3px;
+	background: transparent;
+	box-shadow: 200px 350px #fff, 500px 650px #fff, 900px 250px #fff;
+	animation: animStar 150s linear infinite;
+}
+
+/* 별 애니메이션 (위로 이동) */
+@keyframes animStar {
+	from { transform:translateY(0px) ;}
+	to { transform: translateY(-2000px) ;}
+}
+
+/* [3] 장식용 행성 */
+.planet {
+	position: absolute;
+	border-radius: 50%;
+	opacity: 0.5;
+	filter: blur(2px);
+}
+
+.planet-1 {
+	width: 350px;
+	height: 350px;
+	top: -100px;
+	right: -50px;
+	background: radial-gradient(circle at 30% 30%, #4c1d95, #000);
+	box-shadow: inset -20px -20px 50px rgba(0, 0, 0, 0.5), 0 0 80px
+		rgba(139, 92, 246, 0.2);
+}
+
+.planet-2 {
+	width: 200px;
+	height: 200px;
+	bottom: 15%;
+	left: 5%;
+	background: radial-gradient(circle at 30% 30%, #1e3a8a, #000);
+	box-shadow: inset -10px -10px 30px rgba(0, 0, 0, 0.5), 0 0 50px
+		rgba(59, 130, 246, 0.2);
+}
+
+.glass-select {
+    background: transparent;
+    border: none;
+    color: #f1f5f9;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff80' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    cursor: pointer;
+}
+
+.glass-select:focus {
+    box-shadow: none;
+    background: rgba(255, 255, 255, 0.05);
+    color: #f1f5f9;
+    border-color: rgba(255, 255, 255, 0.2);
+    outline: none;
+}
+
+.glass-select option {
+    background: #1e293b;
+    color: #f1f5f9;
+    padding: 0.75rem 1rem;
+}
+
+.glass-select option:hover,
+.glass-select option:checked {
+    background: #334155;
+    color: white;
+    font-weight: 500;
+}

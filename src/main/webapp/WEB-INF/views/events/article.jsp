@@ -15,8 +15,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <%@ include file="/WEB-INF/views/home/head.jsp"%>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminmain.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/adminstyle.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/main3.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/style2.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/eventarticle.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/eventreply.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
@@ -110,13 +110,13 @@
 					</div>
 					
 					<div class="like-button-container">
-					    <button type="button" class="btn btn-like ${dto.boardLikeCount > 0 ? 'active' : ''}" 
+					    <button type="button" class="btn btn-like ${isUserLiked ? 'active' : ''}" 
 					            onclick="sendLike('${dto.event_num}', this)">
 					        <span class="material-symbols-outlined" 
-					              style="font-variation-settings: 'FILL' ${dto.boardLikeCount > 0 ? 1 : 0}, 'wght' 400;">
+					              style="font-variation-settings: 'FILL' ${isUserLiked ? 1 : 0}, 'wght' 400;">
 					            favorite
 					        </span>
-								<span class="like-count">${dto.boardLikeCount}</span>
+								<span class="like-count">${boardLikeCount}</span>
 					    </button>
 					</div>
 				
@@ -218,22 +218,24 @@
                 if (isCurrentlyLiked) {
                     btnElement.classList.remove('active');
                     icon.style.fontVariationSettings = "'FILL' 0, 'wght' 400";
+                    showToast("success", '이벤트 "좋아요"가 취소되었습니다.');
+                    
                 } else {
                     btnElement.classList.add('active');
                     icon.style.fontVariationSettings = "'FILL' 1, 'wght' 400";
-                }
+                    showToast("success", '이벤트에 "좋아요"를 눌렀습니다');
+                } 
 
                 const countSpan = btnElement.querySelector('.like-count');
                 if (countSpan) {
                     countSpan.innerText = data.boardLikeCount;
                 }
             } else if (data.state === "liked") {
-                alert("이미 처리된 요청입니다.");
+            	showToast("error", '이미 요청된 상황입니다.');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            alert("오류가 발생했습니다. 다시 시도해주세요.");
+        	showToast("error", '오류가 발생했습니다. 다시 시도해주세요.');
         });
     }
 </script>

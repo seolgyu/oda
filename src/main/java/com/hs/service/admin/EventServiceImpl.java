@@ -1,5 +1,6 @@
 package com.hs.service.admin;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -63,8 +64,12 @@ public class EventServiceImpl implements EventService {
 	public void deleteEvent(long event_num) throws Exception {
 		// 이벤트 삭제(1개씩)
 		try {
-			mapper.deleteEventFile(event_num);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("field", "event_num");
+			map.put("num", event_num);
 			
+			mapper.deleteEventFile(map);
+			mapper.deleteBoardLikeAll(event_num);
 			mapper.deleteEvent(event_num);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -79,6 +84,7 @@ public class EventServiceImpl implements EventService {
 		try {
 			
 			mapper.deletelistEventFile(list);
+			mapper.deleteBoardLikeList(list);
 			mapper.deleteListEvent(list);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -212,10 +218,10 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
-	public void deleteEventFile(Long file_at_id) throws Exception {
+	public void deleteEventFile(Map<String, Object> map) throws Exception {
 		// 첨부파일
 		try {
-			mapper.deleteEventFile(file_at_id);
+			mapper.deleteEventFile(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 			

@@ -12,7 +12,7 @@ public class EventReplyDTO {
 	private String created_date;
 	private int hitCount;
 	private long parent_comment_id;
-	private int replyLike;
+	private int comment_like;
 	private int showReply;
 	private int block;
 	private String profile_photo;
@@ -64,12 +64,7 @@ public class EventReplyDTO {
 	public void setParent_comment_id(long parent_comment_id) {
 		this.parent_comment_id = parent_comment_id;
 	}
-	public int getReplyLike() {
-		return replyLike;
-	}
-	public void setReplyLike(int replyLike) {
-		this.replyLike = replyLike;
-	}
+
 	public int getShowReply() {
 		return showReply;
 	}
@@ -129,6 +124,12 @@ public class EventReplyDTO {
 	}
 	public void setUser_nickname(String user_nickname) {
 		this.user_nickname = user_nickname;
+	}
+	public int getComment_like() {
+		return comment_like;
+	}
+	public void setComment_like(int comment_like) {
+		this.comment_like = comment_like;
 	}
 	
 	

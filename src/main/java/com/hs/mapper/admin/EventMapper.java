@@ -40,7 +40,7 @@ public interface EventMapper {
 	// 첨부파일 등록
 	public void insertEventFile(EventDTO dto) throws SQLException;
 	// 첨부파일 삭제
-	public void deleteEventFile(long event_num) throws SQLException;
+	public void deleteEventFile(Map<String, Object> map) throws SQLException;
 	
 	// 리스트에서 1개 이상 삭제 시 첨부파일 
 	public void deletelistEventFile(List<Long> list) throws SQLException;
@@ -55,6 +55,8 @@ public interface EventMapper {
 	public int hasUserBoardLiked(Map<String, Object> map);
 	public void insertBoardLike(Map<String, Object> map) throws SQLException;
 	public void deleteBoardLike(Map<String, Object> map) throws SQLException;
+	public void deleteBoardLikeAll(long num) throws SQLException;
+	public void deleteBoardLikeList(List<Long> list) throws SQLException;
 	public int boardLikeCount(long num);
 	
 	// 댓글

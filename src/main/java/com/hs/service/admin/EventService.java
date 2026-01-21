@@ -35,7 +35,7 @@ public interface EventService {
 	
 
 	// 첨부파일 삭제
-	public void deleteEventFile(Long file_at_id) throws Exception;
+	public void deleteEventFile(Map<String, Object> map) throws Exception;
 	
 	public List<EventDTO> listEventFile(long num);
 	EventDTO findByFileId(long fileid);
