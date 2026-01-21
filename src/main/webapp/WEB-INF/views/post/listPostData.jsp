@@ -20,7 +20,7 @@
                                     style="width: 100%; height: 100%; object-fit: cover;">
                             </c:when>
                             <c:otherwise>
-                                <span class="fs-5">${fn:substring(dto.authorNickname, 0, 1)}</span>
+                                <span class="text-white fw-bold" style="font-size: 11px;">${fn:substring(dto.authorNickname, 0, 1)}</span>
                             </c:otherwise>
                         </c:choose>
                     </div>
@@ -46,8 +46,8 @@
             </div>
 
             <div class="px-3 pb-2">
-                <h5 class="text-white fw-bold fs-6 mb-1">${dto.title}</h5>
-                <p class="text-gray-300 text-sm mb-2 text-ellipsis">${dto.content}</p>
+                <h5 class="text-white fw-bold fs-4 mb-1">${dto.title}</h5>
+                <p class="text-gray-300 fs-6 mb-2 text-ellipsis">${dto.content}</p>
             </div>
 
             <c:if test="${not empty dto.fileList}">

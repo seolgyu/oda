@@ -40,7 +40,7 @@
 						</c:when>
 						<%-- 3. 프로필 사진 없으면 닉네임 첫 글자 --%>
 						<c:otherwise>
-							<span class="text-white fw-bold" style="font-size: 10px;">${fn:substring(dto.userNickName, 0, 1)}</span>
+							<span class="text-white fw-bold" style="font-size: 12px;">${fn:substring(dto.userNickName, 0, 1)}</span>
 						</c:otherwise>
 					</c:choose>
 				</div>
