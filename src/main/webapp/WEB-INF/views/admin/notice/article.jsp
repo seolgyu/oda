@@ -242,7 +242,7 @@
                 </div>
                 
                 <div class="action-footer">
-                    <button class="btn btn-list" onclick="location.href='${pageContext.request.contextPath}/admin/notice/list?${query}';">
+                    <button class="btn btn-list" onclick="location.href='${pageContext.request.contextPath}/notice/list?${query}';">
                         <span class="material-symbols-outlined" style="font-size: 1.1rem; vertical-align: middle;">list</span>
                         리스트
                     </button>

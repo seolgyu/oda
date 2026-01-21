@@ -132,7 +132,7 @@
                             </div>
                             <div class="attachment-list">
                                 <c:forEach var="vo" items="${listFile}" varStatus="status">
-                                    <a href="${pageContext.request.contextPath}/admin/notice/download?fileNum=${vo.fileNum}" 
+                                    <a href="${pageContext.request.contextPath}/notice/download?fileNum=${vo.fileNum}" 
                                        class="attachment-item">
                                         <span class="material-symbols-outlined">description</span>
                                         <span class="file-name">${vo.originalFilename}</span>
@@ -218,7 +218,7 @@
                     </form>
                     
                     <div id="listReply" data-contextPath="${pageContext.request.contextPath}" 
-                            data-postsUrl="${pageContext.request.contextPath}/admin/notice"
+                            data-postsUrl="${pageContext.request.contextPath}/notice"
                             data-num="${dto.notice_num}"
                             data-liked="1">
                         <div class="reply-info">
