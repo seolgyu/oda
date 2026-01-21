@@ -103,3 +103,10 @@
         justify-content: space-between;
     }
 }
+
+/* 2. '내 계정' 헤더의 상하 여백 줄이기 */
+.dropdown-header {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    margin-bottom: 0 !important;
+}

@@ -2,11 +2,14 @@ package com.hs.controller;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.hs.model.FollowDTO;
 import com.hs.model.MemberDTO;
 import com.hs.model.SessionInfo;
 import com.hs.mvc.annotation.Controller;
+import com.hs.mvc.annotation.GetMapping;
 import com.hs.mvc.annotation.PostMapping;
 import com.hs.mvc.annotation.RequestMapping;
 import com.hs.mvc.annotation.ResponseBody;
@@ -26,6 +29,7 @@ public class FollowController {
 	private FollowService service = new FollowServiceImpl();
 	private com.hs.service.MemberServiceImpl memberService = new com.hs.service.MemberServiceImpl();
 	private NotificationService notiService = NotificationServiceImpl.getInstance();
+	private FollowService followService = new FollowServiceImpl();
 	
 	@ResponseBody
 	@PostMapping("followApply")
@@ -89,4 +93,68 @@ public class FollowController {
 	    
 	    return result;
 	}
+	
+	@PostMapping("getFollowCount")
+    @ResponseBody
+    public Map<String, Object> getFollowCount(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	HttpSession session = req.getSession();
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	
+    	try {
+	    	SessionInfo info = (SessionInfo) session.getAttribute("member");
+	    	if (info == null) {
+	    		model.put("status", "error");
+	    		return model;
+	    	}
+	    	String userId = req.getParameter("userId");
+	    	MemberDTO dto = memberService.findById(userId);
+	    	Long userNum = dto.getUserIdx();
+	    	
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("userNum", userNum);
+	        
+	        model.put("followerCount", followService.followerCount(userNum));
+	        model.put("followingCount", followService.followingCount(userNum));
+	        model.put("status", "success");
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    		model.put("status", "error");
+    	}
+    	
+        return model;
+    }
+	
+	@PostMapping("getFollowList")
+    @ResponseBody
+    public Map<String, Object> getFollowList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	HttpSession session = req.getSession();
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	
+    	try {
+	    	SessionInfo info = (SessionInfo) session.getAttribute("member");
+	    	if (info == null) {
+	    		model.put("status", "error");
+	    		return model;
+	    	}
+	    	String userId = req.getParameter("userId");
+	    	String type = req.getParameter("type");
+	    	MemberDTO dto = memberService.findById(userId);
+	    	Long userNum = dto.getUserIdx();
+	    	
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("userNum", userNum);
+	        map.put("mode", "modal");
+	        map.put("type", type);
+	        
+	        List<FollowDTO> list = followService.getUserFollowList(map);
+	        
+	        model.put("list", list);
+	        model.put("status", "success");
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    		model.put("status", "error");
+    	}
+    	
+        return model;
+    }
 }

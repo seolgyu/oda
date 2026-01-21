@@ -211,10 +211,10 @@
 
 /* 팔로잉 중인 버튼 (회색/반투명) */
 .btn-following {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    color: rgba(255, 255, 255, 0.6) !important;
-    box-shadow: none !important;
+	background: rgba(255, 255, 255, 0.1) !important;
+	border: 1px solid rgba(255, 255, 255, 0.2) !important;
+	color: rgba(255, 255, 255, 0.6) !important;
+	box-shadow: none !important;
 }
 
 .btn-following:hover {
@@ -224,16 +224,16 @@
 
 /* 팔로우 버튼 기본 스타일 (보라색 그라디언트) */
 .btn-follow-action {
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
-    border: none !important;
-    color: white !important;
-    transition: all 0.3s ease;
+	background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
+	border: none !important;
+	color: white !important;
+	transition: all 0.3s ease;
 }
 
 .btn-follow-action:hover {
-    filter: brightness(1.1);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
+	filter: brightness(1.1);
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
 }
 
 /* 모달 전용 커스텀 스크롤바 */
@@ -301,38 +301,39 @@
 
 /* 로고 레이아웃 박스 */
 .community-logo-box {
-    position: relative;
-    width: 42px;
-    height: 42px;
-    flex-shrink: 0;
+	position: relative;
+	width: 42px;
+	height: 42px;
+	flex-shrink: 0;
 }
 
 /* 왕관 리더 뱃지 스타일 - 테두리 제거 버전 */
 .community-leader-badge {
-    position: absolute;
-    top: -5px;
-    left: -5px;
-    width: 20px;
-    height: 20px;
-    /* 황금색 그라디언트 유지 */
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    /* 검정 테두리(border)를 제거하고 은은한 외부 광채만 추가 */
-    border: none; 
-    box-shadow: 0 0 12px rgba(255, 215, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.5);
-    pointer-events: none;
+	position: absolute;
+	top: -5px;
+	left: -5px;
+	width: 20px;
+	height: 20px;
+	/* 황금색 그라디언트 유지 */
+	background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10;
+	/* 검정 테두리(border)를 제거하고 은은한 외부 광채만 추가 */
+	border: none;
+	box-shadow: 0 0 12px rgba(255, 215, 0, 0.6), 0 2px 4px
+		rgba(0, 0, 0, 0.5);
+	pointer-events: none;
 }
 
 /* 아이콘 스타일 */
 .community-leader-badge .material-symbols-outlined {
-    font-size: 13px !important;
-    color: #ffffff !important;
-    font-weight: 900 !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+	font-size: 13px !important;
+	color: #ffffff !important;
+	font-weight: 900 !important;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 </style>
 </head>
@@ -397,15 +398,14 @@
 										</c:choose>
 									</div>
 									<div class="pb-2">
-										<h1 class="text-white fs-2 fw-bold mb-1">${user.userNickname}
-										</h1>
+										<h1 class="text-white fs-2 fw-bold mb-1">${user.userNickname}</h1>
 										<p class="text-secondary mb-0">
-											c/${user.userId} | <span
+											c/${user.userId} | <span id="follower-count"
 												class="text-white fw-bold cursor-pointer hover-underline"
-												onclick="openFollowModal('Followers')">14.2k</span> Follower
-											| <span
+												onclick="openFollowModal('Followers')">0</span> Follower | <span
+												id="following-count"
 												class="text-white fw-bold cursor-pointer hover-underline"
-												onclick="openFollowModal('Following')">8.5k</span> Following
+												onclick="openFollowModal('Following')">0</span> Following
 										</p>
 									</div>
 									<div class="ms-auto pb-2 d-flex gap-2">
@@ -943,36 +943,8 @@
 				</div>
 
 				<div class="modal-body p-0 custom-scrollbar"
-					style="max-height: 480px; overflow-y: auto;">
-					<div class="d-flex flex-column" id="follow-list-container">
-
-						<div
-							class="follow-item d-flex align-items-center p-2 px-4 cursor-pointer"
-							style="border-bottom: 1px solid rgba(255, 255, 255, 0.03); height: 48px;">
-							<div
-								class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
-								style="width: 32px; height: 32px; background: linear-gradient(135deg, #4f46e5, #7c3aed); flex-shrink: 0; font-size: 0.75rem;">1</div>
-							<div class="ms-3 d-flex align-items-center gap-2 overflow-hidden">
-								<span class="text-white fw-bold text-truncate"
-									style="font-size: 0.8rem; opacity: 0.85;">Explorer_01</span> <span
-									class="text-secondary" style="font-size: 0.7rem; opacity: 0.4;">@user_01</span>
-							</div>
-						</div>
-						<div
-							class="follow-item d-flex align-items-center p-2 px-4 cursor-pointer"
-							style="height: 48px;">
-							<div
-								class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
-								style="width: 32px; height: 32px; background: linear-gradient(135deg, #f59e0b, #d97706); flex-shrink: 0; font-size: 0.75rem;">11</div>
-							<div class="ms-3 d-flex align-items-center gap-2 overflow-hidden">
-								<span class="text-white fw-bold text-truncate"
-									style="font-size: 0.8rem; opacity: 0.85;">Last_Target_11</span>
-								<span class="text-secondary"
-									style="font-size: 0.7rem; opacity: 0.4;">@user_11</span>
-							</div>
-						</div>
-
-					</div>
+					style="max-height: 240px; overflow-y: auto;">
+					<div class="d-flex flex-column" id="follow-list-container"></div>
 				</div>
 			</div>
 		</div>
@@ -1061,7 +1033,29 @@
         } else if (counterEl) {
             counterEl.innerText = "0";
         }
+        
+        loadFollowCounts();
     });
+    
+    function loadFollowCounts() {
+        const targetUserId = "${user.userId}"; // 현재 마이페이지 주인 ID
+        
+        $.ajax({
+            url: "${pageContext.request.contextPath}/follow/getFollowCount",
+            type: "POST",
+            data: { userId: targetUserId },
+            dataType: "json",
+            success: function(data) {
+                if (data.status === "success") {
+                    $('#follower-count').text(data.followerCount);
+                    $('#following-count').text(data.followingCount);
+                }
+            },
+            error: function(err) {
+                showToast("error", "팔로우 카운트 로드 실패");
+            }
+        });
+    }
 	
 		function toggleLike(btn, postId) {
 			if ($(btn).data('loading'))
@@ -1372,10 +1366,55 @@
 		}
 		
 		function openFollowModal(type) {
-		    // 헤더 텍스트만 바꿔주고 모달 오픈!
 		    document.getElementById('followModalLabel').innerText = type;
-		    const followModal = new bootstrap.Modal(document.getElementById('followModal'));
-		    followModal.show();
+		    
+		    const container = document.getElementById('follow-list-container');
+		    container.innerHTML = ''; 
+
+		    $.ajax({
+		        url: "${pageContext.request.contextPath}/follow/getFollowList",
+		        type: "POST",
+		        data: { 
+		            userId: "${user.userId}", 
+		            type: type.toLowerCase()
+		        },
+		        dataType: "json",
+		        success: function(data) {
+		            if (data.status === "success" && data.list && data.list.length > 0) {
+		                let html = '';
+		                data.list.forEach((item, index) => {
+		                    const initial = item.userNickname ? item.userNickname.charAt(0).toUpperCase() : '?';
+		                    
+		                    const profileArea = item.userProfile 
+		                        ? `<img src="\${item.userProfile}" class="rounded-circle object-fit-cover" style="width: 32px; height: 32px;">`
+		                        : `<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" 
+		                                style="width: 32px; height: 32px; background: linear-gradient(135deg, #4f46e5, #7c3aed); flex-shrink: 0; font-size: 0.75rem;">\${initial}</div>`;
+
+		                    html += `
+		                        <div class="follow-item d-flex align-items-center p-2 px-4 cursor-pointer"
+		                             onclick="location.href='${pageContext.request.contextPath}/member/page?id=\${item.userId}'"
+		                             style="border-bottom: 1px solid rgba(255, 255, 255, 0.03); height: 48px;">
+		                            \${profileArea}
+		                            <div class="ms-3 d-flex align-items-center gap-2 overflow-hidden">
+		                                <span class="text-white fw-bold text-truncate"
+		                                      style="font-size: 0.8rem; opacity: 0.85;">\${item.userNickname}</span>
+		                                <span class="text-secondary" style="font-size: 0.7rem; opacity: 0.4;">@\${item.userId}</span>
+		                            </div>
+		                        </div>`;
+		                });
+		                container.innerHTML = html;
+		            } else {
+		                container.innerHTML = '<div class="text-white opacity-50 text-center py-5" style="font-size: 0.8rem;">목록이 존재하지 않습니다.</div>';
+		            }
+		            
+		            const modalEl = document.getElementById('followModal');
+		            const followModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+		            followModal.show();
+		        },
+		        error: function() {
+		            showToast("error", "팔로우 목록을 불러오는 중 오류가 발생했습니다.");
+		        }
+		    });
 		}
 	</script>
 </body>

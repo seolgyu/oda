@@ -212,20 +212,13 @@
 				<ul
 					class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow-lg mt-2">
 					<li><h6 class="dropdown-header">내 계정</h6></li>
+					<li><hr class="dropdown-divider border-secondary opacity-25"></li>
 					<li><a class="dropdown-item d-flex align-items-center gap-2"
 						href="${pageContext.request.contextPath}/member/page?id=${sessionScope.member.userId}"><span
 							class="material-symbols-outlined fs-6">person</span> 내 피드</a></li>
 					<li><a class="dropdown-item d-flex align-items-center gap-2"
-						href="#"><span class="material-symbols-outlined fs-6">favorite</span>
-							좋아요 누른 게시물</a></li>
-					<li><hr class="dropdown-divider border-secondary opacity-25"></li>
-					<li><a class="dropdown-item d-flex align-items-center gap-2"
-						href="#"><span class="material-symbols-outlined fs-6">settings</span>
-							설정</a></li>
-					<li><a
-						class="dropdown-item d-flex align-items-center gap-2 text-danger"
-						href="#"><span class="material-symbols-outlined fs-6">logout</span>
-							로그아웃</a></li>
+						href="${pageContext.request.contextPath}/member/settings"><span
+						 class="material-symbols-outlined fs-6">settings</span> 설정</a></li>
 				</ul>
 			</div>
 		</c:if>
