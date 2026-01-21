@@ -366,9 +366,59 @@
         transform: translateY(-2px); 
     }
 
+
+/* 스플래시 스크린 전체 스타일 */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000000; /* 배경색 (검정 또는 원하시는 색상) */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* 다른 요소보다 무조건 위에 뜨게 설정 */
+    transition: opacity 0.5s ease-out, visibility 0.5s; /* 사라질 때 부드럽게 */
+}
+
+/* 로고 스타일 및 애니메이션 */
+.splash-logo {
+    width: 500px; /* 로고 크기 조절 */
+    height: auto;
+    opacity: 0; /* 처음엔 안 보임 */
+    transform: scale(1.5); /* 약간 작게 시작 */
+    animation: logoFadeIn 1.5s ease-out forwards; /* 0.8초 동안 나타나기 */
+}
+
+/* 로고 애니메이션 정의 */
+@keyframes logoFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 스플래시가 사라질 때 적용할 클래스 */
+.hidden-splash {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; /* 클릭 방지 */
+}
 </style>
 </head>
 <body>
+
+<div id="splash-screen">
+    <div class="splash-content">
+        <img src="${pageContext.request.contextPath}/dist/images/ODA.png" alt="ODA Logo" class="splash-logo">
+        </div>
+</div>
+
 
 	<%@ include file="header.jsp"%>
 
@@ -1194,6 +1244,30 @@
 	        $('#join-modal').css('display', 'flex').hide().fadeIn(200);
 	    }
 	    
+	    document.addEventListener("DOMContentLoaded", function() {
+	        // 세션 스토리지 체크 (브라우저를 닫기 전까지는 다시 안 뜨게 하려면 사용)
+	        // 매번 뜨게 하고 싶다면 if문 없이 내부 코드만 사용하세요.
+	        if (!sessionStorage.getItem('splashShown')) {
+	            
+	            const splash = document.getElementById('splash-screen');
+	            
+	            // 2초 뒤에 스플래시 화면을 서서히 없앰
+	            setTimeout(() => {
+	                splash.classList.add('hidden-splash');
+	                
+	                // 애니메이션이 끝난 뒤(0.5초) DOM에서 완전히 제거하거나 상태 저장
+	                setTimeout(() => {
+	                    sessionStorage.setItem('splashShown', 'true'); // 봤다는 표시 저장
+	                }, 500);
+	                
+	            }, 2000); // 2000ms = 2초 유지
+
+	        } else {
+	            // 이미 본 경우 바로 숨김
+	            const splash = document.getElementById('splash-screen');
+	            if(splash) splash.style.display = 'none';
+	        }
+	    });
 	  
 	</script>
 	
