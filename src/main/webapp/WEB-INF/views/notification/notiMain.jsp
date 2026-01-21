@@ -1,213 +1,363 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page trimDirectiveWhitespaces="true"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
-<%@ taglib prefix="fn" uri="jakarta.tags.functions"%>
 
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <%@ include file="/WEB-INF/views/home/head.jsp"%>
-    <style type="text/css">
-        /* 1. 알림 페이지 전용 레이아웃 */
-        .noti-page-container {
-            max-width: 800px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
+<%@ include file="/WEB-INF/views/home/head.jsp"%>
+<style type="text/css">
+/* 1. 페이지 메인 컨테이너 - 1000px에서 850px로 슬림화 */
+.noti-page-container {
+    width: 850px !important; 
+    margin: 0 auto;
+    padding: 3rem 1.5rem; /* 상하 여백 살짝 조절 */
+    box-sizing: border-box;
+}
 
-        /* 2. 섹션 타이틀 (오늘, 어제 등) */
-        .noti-date-label {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #a855f7; /* 마이페이지 포인트 컬러 */
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 2rem 0 1rem 0.5rem;
-            opacity: 0.8;
-        }
+/* 2. 상단 헤더 영역 스타일 */
+.noti-header-title {
+    font-size: 1.8rem; /* 2.2rem -> 1.8rem */
+    letter-spacing: -1.2px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.2rem;
+}
 
-        /* 3. 전체 알림 아이템 (Glassmorphism) */
-        .full-noti-item {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 1.25rem;
-            padding: 1.25rem 1.5rem;
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 1.25rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            position: relative;
-        }
+.noti-header-subtitle {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.95rem;
+    margin-bottom: 0;
+}
 
-        .full-noti-item:hover {
-            background: rgba(255, 255, 255, 0.06);
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.15);
-        }
+/* 3. 전체 읽음 처리 버튼 */
+.btn-read-all {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 700 !important;
+    padding: 0.5rem 1.2rem !important; /* 패딩 슬림화 */
+    border-radius: 50px !important;
+    font-size: 0.8rem !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+}
 
-        /* 안읽음 상태 강조 */
-        .full-noti-item.unread {
-            background: rgba(99, 102, 241, 0.05); /* 인디고 빛 */
-            border-left: 3px solid #6366f1;
-        }
+.btn-read-all:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.6);
+}
 
-        /* 4. 아바타 및 타입 배지 (마이페이지 스타일 계승) */
-        .noti-avatar-box {
-            position: relative;
-            flex-shrink: 0;
-            width: 52px;
-            height: 52px;
-        }
+/* 4. 알림 카드 공통 스타일 */
+.full-noti-item {
+    position: relative;
+    display: flex;
+    align-items: center; /* 요소들 수직 중앙 정렬 */
+    gap: 1.2rem; /* 1.5rem -> 1.2rem */
+    padding: 1.2rem 3rem 1.2rem 1.2rem; /* 패딩 슬림화 */
+    margin-bottom: 0.8rem; /* 카드 간격 축소 */
+    border-radius: 16px; /* 20px -> 16px */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+    overflow: hidden;
+}
 
-        .noti-type-icon-badge {
-            position: absolute;
-            bottom: -2px;
-            right: -2px;
-            width: 24px;
-            height: 24px;
-            background: #0f0f14;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1.5px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-        }
+/* 호버 애니메이션 */
+.full-noti-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
 
-        /* 5. 텍스트 요소 */
-        .noti-user-name {
-            color: #ffffff;
-            font-weight: 700;
-            margin-right: 4px;
-        }
+/* 5. 상태별 스타일 (unread) */
+.full-noti-item.unread {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
 
-        .noti-post-quote {
-            display: block;
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.4);
-            font-style: italic;
-            margin-top: 4px;
-            padding-left: 8px;
-            border-left: 2px solid rgba(255, 255, 255, 0.1);
-        }
+.full-noti-item.unread::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 25%;
+    height: 50%;
+    width: 3px; /* 4px -> 3px */
+    background: #6366f1;
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 0 15px #6366f1;
+}
 
-        .noti-time-text {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.3);
-            margin-top: 8px;
-        }
+.full-noti-item.read {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
 
-        /* 6. 안읽음 점 */
-        .unread-glow-dot {
-            width: 8px;
-            height: 8px;
-            background: #6366f1;
-            border-radius: 50%;
-            margin-top: 1.5rem;
-            box-shadow: 0 0 12px rgba(99, 102, 241, 0.8);
-        }
-    </style>
+/* 6. 아바타 및 이미지 - 80px에서 64px로 슬림화 */
+.noti-avatar-box {
+    position: relative;
+    width: 64px; 
+    height: 64px;
+    flex-shrink: 0;
+}
+
+.noti-avatar-img {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 14px; /* 18px -> 14px */
+    object-fit: cover;
+    display: block;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 아이콘 타입 배지 - 28px에서 24px로 슬림화 */
+.noti-type-icon-badge {
+    position: absolute;
+    bottom: -3px;
+    right: -3px;
+    width: 24px;
+    height: 24px;
+    background: #0f0f14;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 2;
+}
+
+/* 7. 텍스트 영역 및 인용구 */
+.noti-content-area {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.noti-text {
+    color: #efefff;
+    font-size: 0.95rem; /* 1.05rem -> 0.95rem */
+    margin: 0;
+    line-height: 1.4;
+}
+
+.noti-text b {
+    color: #fff;
+    font-weight: 700;
+}
+
+.noti-post-quote {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin-top: 4px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-left: 2px solid #a855f7;
+    padding-left: 10px;
+}
+
+.noti-time-text {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.2);
+    margin-top: 8px;
+    display: block;
+}
+
+/* 8. 삭제 버튼 - 원래 디자인 및 위치 복구 */
+.btn-delete-noti {
+    position: absolute; 
+    top: 0.6rem; 
+    right: 0.6rem;
+    background: none; 
+    border: none; 
+    color: rgba(255, 255, 255, 0.2);
+    padding: 6px; 
+    transition: all 0.2s ease; 
+    opacity: 0; /* 평소엔 숨김 */
+    z-index: 10;
+}
+
+.full-noti-item:hover .btn-delete-noti {
+    opacity: 1; /* 호버 시 등장 */
+}
+
+.btn-delete-noti:hover {
+    color: #f43f5e;
+    transform: scale(1.2);
+}
+
+/* 안읽음 글로우 점 */
+.unread-glow-dot {
+    width: 8px; /* 10px -> 8px */
+    height: 8px;
+    background: #6366f1;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #6366f1;
+    flex-shrink: 0;
+    margin-left: auto; 
+    margin-right: 0.4rem;
+}
+</style>
 </head>
 <body>
+	<%@ include file="/WEB-INF/views/home/header.jsp"%>
+	<div class="app-body">
+		<%@ include file="/WEB-INF/views/home/sidebar.jsp"%>
+		<main class="app-main">
+			<div class="space-background">
+				<div class="stars"></div>
+				<div class="stars2"></div>
+				<div class="stars3"></div>
+				<div class="planet planet-1"></div>
+				<div class="planet planet-2"></div>
+			</div>
 
-    <%@ include file="/WEB-INF/views/home/header.jsp"%>
+			<div class="feed-scroll-container custom-scrollbar">
+				<div class="noti-page-container">
+					<div class="d-flex justify-content-between align-items-center mb-5">
+						<div>
+							<h2 class="text-white fw-bold mb-1"
+								style="font-size: 2.2rem; letter-spacing: -1.5px;">Notifications</h2>
+							<p class="text-secondary mb-0">당신의 우주에서 일어난 새로운 활동들입니다.</p>
+						</div>
+						<button class="btn btn-read-all">전체 읽음 처리</button>
+					</div>
 
-    <div class="app-body">
-        <%@ include file="/WEB-INF/views/home/sidebar.jsp"%>
+					<div id="fullNotiList">
+						<%-- 컨트롤러에서 담아준 "list" 변수를 직접 사용 --%>
+						<c:forEach var="dto" items="${list}">
+							<div id="noti-${dto.notiId}"
+								class="full-noti-item ${dto.checked ? 'read' : 'unread'}"
+								onclick="handleNotiPageClick(event, this, '${dto.notiId}', '${dto.type}', '${dto.targetPost.postId}')">
 
-        <main class="app-main">
-            <div class="space-background">
-                <div class="stars"></div>
-                <div class="stars2"></div>
-                <div class="stars3"></div>
-                <div class="planet planet-1"></div>
-                <div class="planet planet-2"></div>
-            </div>
+								<div class="noti-avatar-box">
+									<img
+										src="${not empty dto.fromUserInfo.profile_photo ? dto.fromUserInfo.profile_photo : pageContext.request.contextPath + '/dist/images/default-profile.png'}"
+										class="noti-avatar-img">
 
-            <div class="feed-scroll-container custom-scrollbar">
-                <div class="noti-page-container">
-                    
-                    <div class="d-flex justify-content-between align-items-end mb-4 px-2">
-                        <div>
-                            <h2 class="text-white fw-bold mb-1" style="font-size: 2rem; letter-spacing: -1px;">Notifications</h2>
-                            <p class="text-secondary text-sm mb-0">새로운 소식을 확인하세요.</p>
-                        </div>
-                        <button class="btn btn-sm btn-outline-light border-white border-opacity-10 rounded-pill px-3 opacity-50 hover-white">
-                            전체 읽음 처리
-                        </button>
-                    </div>
+									<div class="noti-type-icon-badge">
+										<c:choose>
+											<c:when test="${dto.type == 'POST_LIKE'}">
+												<span class="material-symbols-outlined text-danger"
+													style="font-size: 16px; font-variation-settings: 'FILL' 1;">favorite</span>
+											</c:when>
+											<c:when test="${dto.type == 'FOLLOW'}">
+												<span class="material-symbols-outlined text-primary"
+													style="font-size: 16px; font-variation-settings: 'FILL' 1;">person_add</span>
+											</c:when>
+											<c:when test="${dto.type == 'COMMENT'}">
+												<span class="material-symbols-outlined text-success"
+													style="font-size: 16px; font-variation-settings: 'FILL' 1;">chat_bubble</span>
+											</c:when>
+											<c:otherwise>
+												<span class="material-symbols-outlined text-info"
+													style="font-size: 16px; font-variation-settings: 'FILL' 1;">notifications</span>
+											</c:otherwise>
+										</c:choose>
+									</div>
+								</div>
 
-                    <div id="fullNotiList">
-                        
-                        <div class="noti-date-label">Today</div>
+								<div class="noti-content-area">
+									<div class="noti-text">
+										<b>${dto.fromUserInfo.userNickname}</b>님이 ${dto.content}
+									</div>
+									<c:if test="${not empty dto.targetPost.title}">
+										<div class="noti-post-quote text-truncate">"${dto.targetPost.title}"</div>
+									</c:if>
+									<div class="noti-time-text">${dto.createdDate}</div>
+								</div>
 
-                        <div class="full-noti-item unread">
-                            <div class="noti-avatar-box">
-                                <div class="rounded-circle w-100 h-100 overflow-hidden border border-white border-opacity-10" style="background: linear-gradient(135deg, #6366f1, #a855f7);">
-                                    <img src="https://i.pravatar.cc/150?u=12" class="w-100 h-100 object-fit-cover">
-                                </div>
-                                <div class="noti-type-icon-badge">
-                                    <span class="material-symbols-outlined text-danger" style="font-size: 15px; font-variation-settings: 'FILL' 1;">favorite</span>
-                                </div>
-                            </div>
-                            <div class="flex-grow-1 overflow-hidden">
-                                <p class="text-white text-sm mb-0">
-                                    <span class="noti-user-name">Nova_Explorer</span>님이 내 게시글을 좋아합니다.
-                                </p>
-                                <span class="noti-post-quote text-truncate">"안드로메다 은하에서 발견된 새로운 성운에 대하여..."</span>
-                                <p class="noti-time-text">방금 전</p>
-                            </div>
-                            <div class="unread-glow-dot"></div>
-                        </div>
+								<c:if test="${!dto.checked}">
+									<div class="unread-glow-dot"></div>
+								</c:if>
 
-                        <div class="full-noti-item unread">
-                            <div class="noti-avatar-box">
-                                <div class="rounded-circle w-100 h-100 overflow-hidden d-flex align-items-center justify-content-center text-white fw-bold" style="background: #4338ca; font-size: 1.2rem;">
-                                    S
-                                </div>
-                                <div class="noti-type-icon-badge">
-                                    <span class="material-symbols-outlined text-primary" style="font-size: 15px; font-variation-settings: 'FILL' 1;">person_add</span>
-                                </div>
-                            </div>
-                            <div class="flex-grow-1">
-                                <p class="text-white text-sm mb-0">
-                                    <span class="noti-user-name">StarLord_99</span>님이 나를 팔로우하기 시작했습니다.
-                                </p>
-                                <p class="noti-time-text">2시간 전</p>
-                            </div>
-                            <div class="unread-glow-dot"></div>
-                        </div>
+								<button class="btn-delete-noti"
+									onclick="event.stopPropagation(); removeNotiPage('${dto.notiId}', this);">
+									<span class="material-symbols-outlined"
+										style="font-size: 18px;">close</span>
+								</button>
+							</div>
+						</c:forEach>
+					</div>
 
-                        <div class="noti-date-label">Earlier</div>
+					<div id="notiSentinel" style="height: 50px;"></div>
+					<div id="notiLoader" class="text-center py-3"
+						style="display: none;">
+						<div class="spinner-border text-primary opacity-50" role="status"
+							style="width: 1.5rem; height: 1.5rem;">
+							<span class="visually-hidden">Loading...</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
 
-                        <div class="full-noti-item">
-                            <div class="noti-avatar-box">
-                                <div class="rounded-circle w-100 h-100 overflow-hidden border border-white border-opacity-10">
-                                    <img src="https://i.pravatar.cc/150?u=5" class="w-100 h-100 object-fit-cover">
-                                </div>
-                                <div class="noti-type-icon-badge">
-                                    <span class="material-symbols-outlined text-success" style="font-size: 15px; font-variation-settings: 'FILL' 1;">chat_bubble</span>
-                                </div>
-                            </div>
-                            <div class="flex-grow-1 overflow-hidden">
-                                <p class="text-white text-sm mb-0">
-                                    <span class="noti-user-name">Cosmos_Watcher</span>님이 댓글을 남겼습니다: 
-                                    <span class="text-white-50">"사진 정보 공유 감사합니다! 정말 멋지네요."</span>
-                                </p>
-                                <span class="noti-post-quote text-truncate">"화성 탐사 로봇 퍼서비어런스의 최신 사진 공유"</span>
-                                <p class="noti-time-text">어제 오후 11:45</p>
-                            </div>
-                        </div>
+	<script type="text/javascript">
+    	window.contextPath = '${pageContext.request.contextPath}';
+	</script>
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/notification.js"></script>
+	<script type="text/javascript">
+	
+	function handleNotiPageClick(e, element, notiId, type, postId) {
+	    const $el = $(element);
+	    
+	    $.ajax({
+	        url: '${pageContext.request.contextPath}/notification/readNoti',
+	        type: 'POST',
+	        data: { notiId: notiId },
+	        success: function() {
+	            $el.removeClass('unread').addClass('read');
+	            $el.find('.unread-glow-dot').remove();
 
-                    </div> </div>
-            </div>
-        </main>
-    </div>
+	            if (type === 'REPLY' || type === 'COMMENT') {
+	                location.href = '${pageContext.request.contextPath}/post/article?postId=' + postId;
+	            }
+	        },
+	        error: function() {
+	            if (type === 'REPLY' || type === 'COMMENT') {
+	                location.href = '${pageContext.request.contextPath}/post/article?postId=' + postId;
+	            }
+	        }
+	    });
+	}
 
-    <script src="${pageContext.request.contextPath}/dist/js/stars.js"></script>
+	function removeNotiPage(notiId, btn) {
+	    const $item = $(btn).closest('.full-noti-item');
+
+	    $.ajax({
+	        url: '${pageContext.request.contextPath}/notification/deleteNoti',
+	        type: 'POST',
+	        data: { notiId: notiId },
+	        dataType: 'json',
+	        success: function(data) {
+	            if (data.status === "success") {
+	                $item.animate({ 
+	                    opacity: 0, 
+	                    left: '20px' 
+	                }, 300, function() {
+	                    $(this).slideUp(250, function() { 
+	                        $(this).remove(); 
+	                        
+	                        if ($('.full-noti-item').length === 0) {
+	                            $('#fullNotiList').html('<div class="text-center py-5 opacity-50 text-white">표시할 알림이 없습니다.</div>');
+	                        }
+	                    });
+	                });
+	            } else {
+	                alert("알림 삭제에 실패했습니다.");
+	            }
+	        },
+	        error: function() {
+	            alert("서버 통신 중 오류가 발생했습니다.");
+	        }
+	    });
+	}
+    </script>
 </body>
 </html>

@@ -25,6 +25,22 @@
     	OFFSET 0 ROWS FETCH FIRST 10 ROWS ONLY
     </select>
     
+    <select id="listAllNotification" parameterType="map" resultType="com.hs.model.NotificationDTO">
+        SELECT
+        	noti_id AS notiId,
+        	type,
+        	content,
+        	target,
+        	checked,
+        	created_date AS createdDate,
+        	from_user AS fromUserNum,
+        	to_user AS toUserNum
+    	FROM notifications
+    	WHERE to_user = #{userNum}
+    	ORDER BY checked ASC, created_date DESC
+        OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+    </select>
+    
     <select id="getUncheckedCount" parameterType="Long" resultType="Integer">
         SELECT
         	COUNT(*)

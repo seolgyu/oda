@@ -8,6 +8,7 @@ import com.hs.model.NotificationDTO;
 public interface NotificationMapper {
 	
 	public List<NotificationDTO> listNotification(Long userNum) throws Exception;
+	public List<NotificationDTO> listAllNotification(Map<String, Object> map) throws Exception;
 	
 	public void insertNotification(Map<String, Object> map) throws Exception;
 

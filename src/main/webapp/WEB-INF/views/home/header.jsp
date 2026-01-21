@@ -265,7 +265,7 @@ $(function() {
 
 function updateUnreadCount() {
     $.ajax({
-        url: contextPath + '/notification/loadNotiCount',
+        url: '${pageContext.request.contextPath}/notification/loadNotiCount',
         type: 'POST',
         dataType: 'json',
         success: function(data) {
@@ -401,7 +401,7 @@ function loadNotiList() {
         </div>`;
 
     $.ajax({
-        url: contextPath + '/notification/loadNotiList',
+        url: '${pageContext.request.contextPath}/notification/loadNotiList',
         type: 'POST',
         dataType: 'json',
         success: function(data) {
@@ -505,7 +505,7 @@ function handleNotiClick(e, element, notiId, type, postId) {
 	const $el = $(element);
 	
     $.ajax({
-        url: contextPath + '/notification/readNoti',
+        url: '${pageContext.request.contextPath}/notification/readNoti',
         type: 'POST',
         data: { notiId: notiId },
         success: function() {

@@ -52,6 +52,37 @@ public class NotificationServiceImpl implements NotificationService {
 		}
 		return list;
 	}
+	
+	@Override
+	public List<NotificationDTO> listAllNotification(Map<String, Object> map) throws Exception {
+		List<NotificationDTO> list = null;
+		try {
+			list = mapper.listAllNotification(map);
+			
+			for(NotificationDTO item : list) {
+				String type = item.getType();
+				
+				switch (type) {
+		        case "FOLLOW":
+		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
+		            break;
+		            
+		        case "POST_LIKE":
+		        	Long target = Long.parseLong(item.getTarget());
+		        	item.setTarget("/member/page?id=" + item.getTarget());
+		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
+		        	item.setTargetPost(postService.findById(target));
+		            break;
+		            
+		        case "COMMENT":
+		            break;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
 	@Override
 	public void insertNotification(Map<String, Object> map) throws Exception {
