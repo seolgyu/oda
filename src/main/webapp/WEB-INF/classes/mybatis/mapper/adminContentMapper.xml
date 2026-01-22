@@ -40,7 +40,7 @@
         mem.user_nickname as userNickname,
         title,
         content,
-        CASE WHEN post_type = 'community' THEN '커뮤니티'
+        CASE WHEN post_type = 'COMMUNITY' THEN '커뮤니티'
             WHEN post_type = 'PERSONAL' THEN '개인'
             else '기타' end as postType,
         TO_CHAR(pos.created_date, 'YYYY-MM-DD') as createdDate,
