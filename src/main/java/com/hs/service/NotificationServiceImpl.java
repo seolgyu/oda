@@ -6,6 +6,7 @@ import java.util.Map;
 import com.hs.mapper.NotificationMapper;
 import com.hs.model.CommentDTO;
 import com.hs.model.NotificationDTO;
+import com.hs.model.NotificationOptionDTO;
 import com.hs.mybatis.support.MapperContainer;
 
 public class NotificationServiceImpl implements NotificationService {
@@ -129,25 +130,36 @@ public class NotificationServiceImpl implements NotificationService {
 			return;
 		}
 		
+		Long userNum = Long.valueOf(String.valueOf(map.get("toUserNum")));
+		NotificationOptionDTO options = getNotiOptions(userNum);
+		
 		String type = (String) map.get("type");
+		if (type == null) return;
+		
 	    String content = "";
 
-	    switch (type) {
+	    switch (type.toUpperCase()) {
 	        case "FOLLOW":
+	            if (!options.isAllowFollow()) return;
 	            content = "님이 회원님을 팔로우하기 시작했습니다.";
 	            break;
 	            
 	        case "POST_LIKE":
+	            if (!options.isAllowLike()) return;
 	            content = "님이 회원님의 게시글을 좋아합니다.";
 	            break;
 	            
 	        case "COMMENT":
+	            if (!options.isAllowComment()) return;
 	            content = "님이 회원님의 게시글에 댓글을 남겼습니다.";
 	            break;
 	            
 	        case "REPLY":
+	            if (!options.isAllowComment()) return;
 	            content = "님이 회원님의 댓글에 답글을 남겼습니다.";
 	            break;
+	        default:
+	            return;
 	    }
 
 	    map.put("content", content);
@@ -211,6 +223,17 @@ public class NotificationServiceImpl implements NotificationService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public NotificationOptionDTO getNotiOptions(Long userNum) throws Exception {
+		NotificationOptionDTO dto = null;
+		try {
+			dto = mapper.getNotiOptions(userNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dto;
 	}
 
 }

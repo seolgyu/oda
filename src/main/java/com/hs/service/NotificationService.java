@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hs.model.NotificationDTO;
+import com.hs.model.NotificationOptionDTO;
 
 public interface NotificationService {
 	
@@ -20,4 +21,6 @@ public interface NotificationService {
     public void deleteAllNotification(Long userNum) throws Exception;
     
     public int getUncheckedCount(Long userNum) throws Exception;
+    
+    public NotificationOptionDTO getNotiOptions(Long userNum) throws Exception;
 }
