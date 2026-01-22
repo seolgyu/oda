@@ -11,10 +11,14 @@
 		<button class="nav-item">
 			<span class="material-symbols-outlined">trending_up</span> <span>인기</span>
 		</button>
-		<button class="nav-item" onclick="location.href='${pageContext.request.contextPath}/notification';">
-			<span class="material-symbols-outlined">notifications</span> <span>알림</span>
-			<span id="sidebar-noti-dot" class="unread-dot"></span>
-		</button>
+
+		<c:if test="${not empty sessionScope.member}">
+			<button class="nav-item"
+				onclick="location.href='${pageContext.request.contextPath}/notification';">
+				<span class="material-symbols-outlined">notifications</span> <span>알림</span>
+				<span id="sidebar-noti-dot" class="unread-dot"></span>
+			</button>
+		</c:if>
 
 		<hr class="my-3 border-secondary opacity-25">
 		<div class="text-xs text-secondary px-3 mb-2 text-uppercase fw-bold">Community</div>
@@ -31,12 +35,9 @@
 				onclick="location.href='${pageContext.request.contextPath}/community/create';">
 			<span class="material-symbols-outlined">add_circle</span> <span>커뮤니티 개설</span>
 		</button>
-		<button class="nav-item">
-			<span class="material-symbols-outlined">group</span> <span>팔로잉</span>
-		</button>
 
 		<hr class="my-3 border-secondary opacity-25">
-		<div class="text-xs text-secondary px-3 mb-2 text-uppercase fw-bold">Resources</div>
+		<div class="text-xs text-secondary px-3 mb-2 text-uppercase fw-bold">NOTICE</div>
 
 		<button class="nav-item" onclick="location.href='${pageContext.request.contextPath}/notice/list';">
 			<span class="material-symbols-outlined">campaign</span> <span>공지사항</span>

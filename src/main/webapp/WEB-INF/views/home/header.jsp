@@ -141,6 +141,123 @@
     justify-content: center;
     line-height: 1;
 }
+
+/* [추가] 회원가입 버튼 동적 디자인 */
+/* 1. 공통 뼈대 (수치 강제 고정) */
+.btn-login-sync, 
+.btn-signup-dynamic {
+    all: unset;
+    box-sizing: border-box;
+    height: 36px !important;
+    padding: 0 25px !important;
+    font-family: 'Pretendard', sans-serif !important;
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.02em !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 100px !important;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: all 0.4s ease !important; /* 크기 변화(scale) 없음 */
+}
+
+/* 2. 로그인 버튼: [기본: 진짜 보라색] -> [호버: 반투명 다크(회원가입 기본형)] */
+.btn-login-sync {
+    background-color: #7C3AED !important; /* 진짜 보라색 */
+    border: 1px solid transparent !important;
+    color: #ffffff !important;
+    min-width: 100px;
+}
+
+.btn-login-sync:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important; /* 회원가입 평소 배경 */
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;  /* 회원가입 평소 테두리 */
+    color: #ffffff !important;
+}
+
+/* 3. 회원가입 버튼: [기본: 반투명 다크] -> [호버: 확장 및 그라데이션] */
+.btn-signup-dynamic {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: #fff !important;
+    min-width: 115px;
+}
+
+.btn-signup-dynamic:hover {
+    min-width: 280px; 
+    border-color: rgba(139, 92, 246, 0.6) !important;
+    box-shadow: 0 0 25px rgba(124, 58, 237, 0.4);
+}
+
+/* --- [중요] 애니메이션 필수 구조 --- */
+
+/* 슬롯머신 텍스트 래퍼 */
+.btn-text-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.6, -0.2, 0.2, 1.2) !important;
+}
+
+.btn-text-wrapper span {
+    display: block;
+    height: 36px;
+    line-height: 34px !important;
+    white-space: nowrap;
+    text-align: center;
+    width: 100%;
+}
+
+/* 위쪽 대기 중인 영문 문구 */
+.text-hover {
+    position: absolute;
+    bottom: 100%; /* 부모 래퍼 기준으로 위로 100% 밀어냄 */
+    left: 0;
+    right: 0;
+    opacity: 0;
+    font-size: 0.95rem;
+}
+
+/* 호버 시 래퍼 전체를 아래로 36px 이동 (슬롯머신 효과) */
+.btn-signup-dynamic:hover .btn-text-wrapper {
+    transform: translateY(36px); /* 버튼 높이만큼 정확히 아래로 */
+}
+
+.btn-signup-dynamic:hover .text-hover {
+    opacity: 1;
+}
+
+.btn-signup-dynamic:hover .text-default {
+    opacity: 0;
+}
+
+/* 화려한 성운 그라데이션 배경 */
+.btn-signup-dynamic::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(90deg, #7C3AED, #A855F7, #EC4899, #7C3AED);
+    background-size: 200% auto; /* 200%로 설정하여 이동 공간 확보 */
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.btn-signup-dynamic:hover::before {
+    opacity: 1;
+    animation: cosmicFlow 2.2s linear infinite;
+}
+
+@keyframes cosmicFlow {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
 </style>
 <header class="app-header">
 	<a href="${pageContext.request.contextPath}/" class="brand-logo">ODA</a>
@@ -167,10 +284,17 @@
 
 		<c:choose>
 			<c:when test="${empty sessionScope.member}">
-				<button class="btn btn-custom-outline btn-sm d-none d-lg-block"
-					onclick="location.href='${pageContext.request.contextPath}/member/signup';">회원가입</button>
-				<button class="btn btn-custom-primary btn-sm d-none d-lg-block"
-					onclick="location.href='${pageContext.request.contextPath}/member/login'">로그인</button>
+				<button class="btn btn-signup-dynamic d-none d-lg-block me-1"
+					onclick="location.href='${pageContext.request.contextPath}/member/signup';">
+					<div class="btn-text-wrapper">
+						<span class="text-hover">EXPLORE ODA COMMUNITY 🚀</span> <span
+							class="text-default">회원가입</span>
+					</div>
+				</button>
+				<button
+					class="btn btn-custom-primary btn-login-sync btn-sm d-none d-lg-block"
+					onclick="location.href='${pageContext.request.contextPath}/member/login'">
+					로그인</button>
 			</c:when>
 			<c:otherwise>
 				<button class="btn btn-custom-primary btn-sm d-none d-lg-block"
@@ -178,18 +302,17 @@
 			</c:otherwise>
 		</c:choose>
 
-		<div class="vr mx-2 text-secondary" style="height: 24px;"></div>
-
-		<button class="btn-icon" title="게시물 작성">
-			<span class="material-symbols-outlined">add</span>
-		</button>
-		<div class="noti-btn-wrapper">
-    		<button class="btn-icon" title="알림" onclick="toggleNoti(event)">
-        		<span class="material-symbols-outlined">notifications</span>
-        
-        		<span id="noti-badge" class="noti-badge-circle">0</span>
-    		</button>
-		</div>
+		<c:if test="${not empty sessionScope.member}">
+			<div class="vr mx-2 text-secondary" style="height: 24px;"></div>
+			
+			<div class="noti-btn-wrapper">
+	    		<button class="btn-icon" title="알림" onclick="toggleNoti(event)">
+	        		<span class="material-symbols-outlined">notifications</span>
+	        
+	        		<span id="noti-badge" class="noti-badge-circle">0</span>
+	    		</button>
+			</div>
+		</c:if>
 
 		<c:if test="${not empty sessionScope.member}">
 			<div class="dropdown">

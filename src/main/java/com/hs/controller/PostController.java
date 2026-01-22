@@ -392,6 +392,7 @@ public class PostController {
 		        session.setAttribute("toastMsg", "게시글이 삭제되었습니다.");
 		        session.setAttribute("toastType", "success");
 		        
+		        System.out.println("복귀 커뮤니티 아이디 : " + dto.getCommunityId());
 		        if (dto.getCommunityId() != null && dto.getCommunityId() != 0) {
 	                return new ModelAndView("redirect:/community/main?community_id=" + dto.getCommunityId());
 	            }
