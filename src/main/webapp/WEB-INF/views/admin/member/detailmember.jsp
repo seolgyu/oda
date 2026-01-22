@@ -890,10 +890,10 @@ body {
 				            <span class="material-symbols-outlined">bedtime</span>
 				            휴면 전환
 				        </button>
-				        <button type="button" class="btn-action btn-action-danger" onclick="deleteMember()">
+				        <!-- <button type="button" class="btn-action btn-action-danger" onclick="deleteMember()">
 				            <span class="material-symbols-outlined">delete</span>
 				            회원 탈퇴
-				        </button>
+				        </button> -->
 				    </div>
 				</div>
             </div>
