@@ -76,4 +76,15 @@
     	DELETE FROM notifications
     	WHERE to_user = #{userNum} 
     </delete>
+    
+    <select id="getNotiOptions" parameterType="Long" resultType="com.hs.model.NotificationOptionDTO">
+    	SELECT
+    		user_num AS userNum,
+    		allow_like AS allowLike,
+    		allow_comment AS allowComment,
+    		allow_follow AS allowFollow,
+    		allow_repost AS allowRepost
+    	FROM notification_options
+    	WHERE user_num = #{userNum}
+    </select>
 </mapper>
