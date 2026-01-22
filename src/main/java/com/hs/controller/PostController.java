@@ -829,6 +829,16 @@ public class PostController {
             long postId = Long.parseLong(req.getParameter("postId"));
  
             boolean reposted = service.insertPostRepost(postId, info.getMemberIdx());
+            
+            if(reposted) {
+				Map<String, Object> noti = new HashMap<String, Object>();
+				noti.put("fromUserNum", info.getMemberIdx());
+				noti.put("toUserNum", service.getPostAuthorNum(postId));
+				noti.put("type", "REPOST");
+				noti.put("target", postId);
+				
+				notiService.insertNotification(noti);
+			}
 
             jobj.put("state", "success");
             jobj.put("reposted", reposted);

@@ -558,6 +558,11 @@ function renderNotiList(list) {
                 typeColor = "#f43f5e";
                 extraStyle = "font-size: 13px !important; transform: translateY(1.5px);";
                 break;
+            case 'REPOST':
+                faIconClass = "fa-retweet";
+                typeColor = "#10b981";
+                extraStyle = "font-size: 13px !important; transform: translateY(1px);";
+                break;
             case 'FOLLOW':
                 faIconClass = "fa-user-plus";
                 typeColor = "#6366f1";

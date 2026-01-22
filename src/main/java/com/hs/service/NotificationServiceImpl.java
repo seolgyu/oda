@@ -46,6 +46,14 @@ public class NotificationServiceImpl implements NotificationService {
 		        	item.setTargetPost(postService.findById(targetPostId));
 		            break;
 		            
+		        case "REPOST":
+		        	Long targetRepostId = Long.parseLong(item.getTarget());
+		        	
+		        	item.setTarget("/member/page?id=" + item.getTarget());
+		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
+		        	item.setTargetPost(postService.findById(targetRepostId));
+		            break;
+		            
 		        case "COMMENT":
 		        	Long targetCommentId = Long.parseLong(item.getTarget());
 		        	CommentDTO com_dto = postService.getCommentInfo(targetCommentId);
@@ -78,7 +86,6 @@ public class NotificationServiceImpl implements NotificationService {
 		List<NotificationDTO> list = null;
 		try {
 			list = mapper.listAllNotification(map);
-			
 			for(NotificationDTO item : list) {
 				String type = item.getType();
 				
@@ -93,6 +100,14 @@ public class NotificationServiceImpl implements NotificationService {
 		        	item.setTarget("/member/page?id=" + item.getTarget());
 		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
 		        	item.setTargetPost(postService.findById(targetPostId));
+		            break;
+		            
+		        case "REPOST":
+		        	Long targetRepostId = Long.parseLong(item.getTarget());
+		        	
+		        	item.setTarget("/member/page?id=" + item.getTarget());
+		        	item.setFromUserInfo(memberService.findByIdx(item.getFromUserNum()));
+		        	item.setTargetPost(postService.findById(targetRepostId));
 		            break;
 		            
 		        case "COMMENT":
@@ -137,7 +152,6 @@ public class NotificationServiceImpl implements NotificationService {
 		if (type == null) return;
 		
 	    String content = "";
-
 	    switch (type.toUpperCase()) {
 	        case "FOLLOW":
 	            if (!options.isAllowFollow()) return;
@@ -147,6 +161,11 @@ public class NotificationServiceImpl implements NotificationService {
 	        case "POST_LIKE":
 	            if (!options.isAllowLike()) return;
 	            content = "님이 회원님의 게시글을 좋아합니다.";
+	            break;
+	            
+	        case "REPOST":
+	            if (!options.isAllowRepost()) return;
+	            content = "님이 회원님의 게시글을 리포스트했습니다.";
 	            break;
 	            
 	        case "COMMENT":

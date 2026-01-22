@@ -82,23 +82,26 @@ function appendNotiItems(list) {
                 </div>`;
         }
         
-        let iconHtml = "";
-        switch (dto.type) {
-            case 'POST_LIKE':
-                iconHtml = `<i class="fa-solid fa-heart" style="color: #f43f5e; font-size: 13px;"></i>`;
-                break;
-            case 'FOLLOW':
-                iconHtml = `<i class="fa-solid fa-user-plus" style="color: #6366f1; font-size: 11px;"></i>`;
-                break;
-            case 'COMMENT':
-                iconHtml = `<i class="fa-solid fa-comment-dots" style="color: #10b981; font-size: 11px;"></i>`;
-                break;
-            case 'REPLY':
-                iconHtml = `<i class="fa-solid fa-reply" style="color: #3b82f6; font-size: 11px;"></i>`;
-                break;
-            default:
-                iconHtml = `<i class="fa-solid fa-bell" style="color: #0ea5e9; font-size: 11px;"></i>`;
-        }
+		let iconHtml = "";
+		switch (dto.type) {
+		    case 'POST_LIKE':
+		        iconHtml = `<i class="fa-solid fa-heart" style="color: #f43f5e; font-size: 13px;"></i>`;
+		        break;
+		    case 'REPOST': // REPOST 분기 추가
+		        iconHtml = `<i class="fa-solid fa-retweet" style="color: #10b981; font-size: 13px;"></i>`;
+		        break;
+		    case 'FOLLOW':
+		        iconHtml = `<i class="fa-solid fa-user-plus" style="color: #6366f1; font-size: 11px;"></i>`;
+		        break;
+		    case 'COMMENT':
+		        iconHtml = `<i class="fa-solid fa-comment-dots" style="color: #10b981; font-size: 11px;"></i>`;
+		        break;
+		    case 'REPLY':
+		        iconHtml = `<i class="fa-solid fa-reply" style="color: #3b82f6; font-size: 11px;"></i>`;
+		        break;
+		    default:
+		        iconHtml = `<i class="fa-solid fa-bell" style="color: #0ea5e9; font-size: 11px;"></i>`;
+		}
 
         const commentPreviewHtml = (dto.type === 'COMMENT' || dto.type === 'REPLY') && dto.commentInfo && dto.commentInfo.content
             ? `<div class="noti-comment-preview mt-1" style="font-size: 0.8rem; color: #a8a8b3; font-style: italic; display: flex; gap: 4px; max-width: 100%;">

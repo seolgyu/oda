@@ -265,6 +265,11 @@
 															style="color: #f43f5e; font-size: 13px;"></i>
 													</c:when>
 
+													<c:when test="${dto.type == 'REPOST'}">
+														<i class="fa-solid fa-retweet"
+															style="color: #10b981; font-size: 13px;"></i>
+													</c:when>
+
 													<c:when test="${dto.type == 'FOLLOW'}">
 														<i class="fa-solid fa-user-plus"
 															style="color: #6366f1; font-size: 11px;"></i>
