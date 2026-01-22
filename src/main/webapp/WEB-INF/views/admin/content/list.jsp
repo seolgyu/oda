@@ -32,6 +32,21 @@
     --warning-color: #F59E0B;
     --danger-color: #EF4444;
 }
+ /* 내용 말줄임 */
+.content-ellipsis {
+    max-width: 500px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+/* 제목 말줄임 추가 */
+.title-ellipsis {
+    display: block;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
 /* ==========================================
    기본 레이아웃
@@ -821,7 +836,7 @@ body {
                 <div class="member-table-card">
                     <div class="table-header">
                         <div class="table-title">
-                            게시물 목록 <span style="color: var(--text-muted); font-size: 0.875rem;">(총 ${countDto}명)</span>
+                            게시물 목록 <span style="color: var(--text-muted); font-size: 0.875rem;">(총 ${countDto}개)</span>
                         </div>
                         <div class="col-12 col-lg-6">
 						    <div class="btn-group glass-btn-group">
@@ -865,8 +880,10 @@ body {
                                         <input type="checkbox" class="custom-checkbox chk" value="${dto.postId}">
                                     </td>
                                     <td>${dto.userNickname }</td>
-                                    <td><a href="${dto.postsUrl}" style="color: #E2E8F0; text-decoration: none; cursor: pointer;">${dto.title}</a></td>
-                                    <td>${dto.content }</td>
+                                    <td><a href="${dto.postsUrl}" class="title-ellipsis" style="color: #E2E8F0; text-decoration: none; cursor: pointer;">${dto.title}</a></td>
+                                    <td>
+                                    	<div class="content-ellipsis">${dto.content}</div>
+                                    </td>
                                     <td>${dto.postType }</td>
                                     <td>${dto.createdDate }</td>
                                     <td>

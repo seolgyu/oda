@@ -43,7 +43,7 @@
         CASE WHEN post_type = 'community' THEN '커뮤니티'
             WHEN post_type = 'PERSONAL' THEN '개인'
             else '기타' end as postType,
-        TO_CHAR(pos.created_date, 'YYYY-MM-DD HH24:MI:SS') as createdDate,
+        TO_CHAR(pos.created_date, 'YYYY-MM-DD') as createdDate,
         state
 		from posts pos, member mem
 	    <where>

@@ -8,7 +8,7 @@
 <meta charset="utf-8" />
 <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 <title>ODA Admin - 공지사항 작성</title>
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
 	rel="stylesheet" />
@@ -406,14 +406,26 @@ select.glass-input-box {
 							        </div>
 							        <div class="attachment-list">
 							            <c:forEach var="vo" items="${listFile}" varStatus="status">
-							                <a href="${pageContext.request.contextPath}/admin/notice/download?fileNum=${vo.fileNum}" 
-							                   class="attachment-item">
-							                    <i class="material-symbols-outlined">description</i>
-							                    <span class="file-name">${vo.originalFilename}</span>
-							                    <i class="material-symbols-outlined download-icon">download</i>
-							                </a>
-							                <a href="javascript:deleteFile('${vo.fileNum}');"><i class="bi bi-trash"></i></a>
-							            </c:forEach>
+										    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+										        <!-- 삭제 버튼 -->
+										        <a href="javascript:deleteFile('${vo.fileNum}');" 
+										           style="display: inline-flex; align-items: center; justify-content: center;
+										                  width: 36px; height: 36px; flex-shrink: 0;
+										                  background-color: rgba(239, 68, 68, 0.1);
+										                  border: 1px solid rgba(239, 68, 68, 0.3);
+										                  border-radius: 0.375rem; transition: all 0.2s;">
+										            <span class="material-symbols-outlined" style="color: #EF4444; font-size: 1.125rem;">delete</span>
+										        </a>
+										        
+										        <!-- 다운로드 링크 -->
+										        <a href="${pageContext.request.contextPath}/admin/notice/download?fileNum=${vo.fileNum}"
+										           class="attachment-item" style="flex: 1; margin-bottom: 0;">
+										            <i class="material-symbols-outlined">description</i>
+										            <span class="file-name">${vo.originalFilename}</span>
+										            <i class="material-symbols-outlined download-icon">download</i>
+										        </a>
+										    </div>
+										</c:forEach>
 							        </div>
 							    </div>
 							</c:if>
