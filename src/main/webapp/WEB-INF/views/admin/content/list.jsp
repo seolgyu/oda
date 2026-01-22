@@ -865,7 +865,7 @@ body {
                                         <input type="checkbox" class="custom-checkbox chk" value="${dto.postId}">
                                     </td>
                                     <td>${dto.userNickname }</td>
-                                    <td><a href="${dto.postsUrl}">${dto.title}</a></td>
+                                    <td><a href="${dto.postsUrl}" style="color: #E2E8F0; text-decoration: none; cursor: pointer;">${dto.title}</a></td>
                                     <td>${dto.content }</td>
                                     <td>${dto.postType }</td>
                                     <td>${dto.createdDate }</td>
