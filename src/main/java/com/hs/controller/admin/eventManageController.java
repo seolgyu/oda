@@ -273,6 +273,9 @@ public class eventManageController {
 		String page = req.getParameter("page");
 		String size = req.getParameter("size");
 		
+		if (page == null || page.equals("")) page = "1";
+	    if (size == null || size.equals("")) size = "10";
+		
 		try {
 			long event_num = Long.parseLong(req.getParameter("event_num"));
 			
@@ -291,6 +294,7 @@ public class eventManageController {
 			mav.addObject("filelist", filelist);
 			mav.addObject("page", page);
 			mav.addObject("size", size);
+			
 			mav.addObject("mode", "update");
 			
 			return mav;

@@ -287,6 +287,7 @@ select.glass-input-box {
 							    </div>
 							</div>
 							
+							<!--  
 							<c:if test="${mode=='update'}">
 							    <div class="mt-3 d-flex flex-wrap gap-3">
 							        <c:forEach var="vo" items="${filelist}">
@@ -305,9 +306,10 @@ select.glass-input-box {
 							                    <i class="bi bi-x"></i>
 							                </a>
 							            </div>
-							        </c:forEach>
+							        </c:forEach>  
 							    </div>
 							</c:if>
+							-->
 
 					</div>
 				</form>
@@ -327,7 +329,7 @@ function sendOk() {
     if (!str) {
         alert('제목을 입력하세요.');
         f.event_title.focus();
-        return;
+        return ;
     }
 
 
@@ -335,9 +337,8 @@ function sendOk() {
     if (!str) {
         alert('내용을 입력하세요.');
         f.event_content.focus();
-        return;
+        return ;
     }
-
 
     const startDateVal = f.start_date.value;
     const endDateVal = f.end_date.value;
@@ -345,14 +346,13 @@ function sendOk() {
     if (!startDateVal) {
         alert('시작일을 선택하세요.');
         f.start_date.focus();
-        return;
+        return ;
     }
     if (!endDateVal) {
         alert('종료일을 선택하세요.');
         f.end_date.focus();
-        return;
+        return ;
     }
-
 
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -364,7 +364,7 @@ function sendOk() {
     if (startDate < today) {
         alert('이벤트 시작일이 잘못되었습니다. 확인해주세요.');
         f.start_date.focus();
-        return;
+        return  ;
     }
 
 
@@ -373,8 +373,10 @@ function sendOk() {
         f.end_date.focus();
         return;
     }
+    
 
     f.submit();
+
 }
 
 </script>
