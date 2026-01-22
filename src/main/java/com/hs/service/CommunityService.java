@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hs.model.CommunityDTO;
+import com.hs.model.MemberDTO;
 
 public interface CommunityService {
 	
@@ -12,6 +13,7 @@ public interface CommunityService {
 	public List<CommunityDTO> getCategoryList();
 	public CommunityDTO findById(Map<String, Object> map);
 	public CommunityDTO isCommunityName(String com_name);
+	public MemberDTO selectUserNum(Map<String, Object> map);
 	public void updateCommunity(CommunityDTO dto) throws Exception;
 	public void deleteCommunity(Map<String, Object> map) throws Exception;
 	
