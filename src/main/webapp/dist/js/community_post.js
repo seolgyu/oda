@@ -150,6 +150,10 @@ function renderCommunityPost(item) {
 	    }
 		
     // 1. 텍스트 매핑
+	$newItem.find('.list-view-item .app-user-trigger.text-white').text(item.authorNickname);
+	$newItem.find('.card-view-item h3.text-sm').text(item.authorNickname);
+	$newItem.find('.text-secondary.text-xs.opacity-75').text('c/' + item.authorId);
+	
     $newItem.find('h4').text(item.title || "");
     $newItem.find('p.text-light').first().text(item.content || "");
     $newItem.find('.author-name, h3.text-sm').first().text(item.authorNickname);
