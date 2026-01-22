@@ -386,15 +386,19 @@ public class PostController {
 			long postId = Long.parseLong(req.getParameter("postId"));
 
 			PostDTO dto = service.findById(postId);
+			MemberDTO userDto = memberservice.findByIdx(dto.getUserNum());
 			if (dto != null && dto.getUserNum() == info.getMemberIdx()) {
 				service.deletePost(postId); // 서비스 호출
 				
 		        session.setAttribute("toastMsg", "게시글이 삭제되었습니다.");
 		        session.setAttribute("toastType", "success");
 		        
-		        System.out.println("복귀 커뮤니티 아이디 : " + dto.getCommunityId());
 		        if (dto.getCommunityId() != null && dto.getCommunityId() != 0) {
 	                return new ModelAndView("redirect:/community/main?community_id=" + dto.getCommunityId());
+	            }
+		        
+		        if (userDto.getUserId() != null) {
+	                return new ModelAndView("redirect:/member/page?id=" + userDto.getUserId());
 	            }
 			}
 
