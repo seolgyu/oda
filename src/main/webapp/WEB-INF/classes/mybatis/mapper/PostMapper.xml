@@ -209,7 +209,7 @@
         <result property="state" column="state" />
         <result property="savedByUser" column="savedByUser" />
         <result property="repostedByUser" column="repostedByUser" />
-        
+        <result property="communityId" column="communityId" />
         
         <collection property="fileList" ofType="com.hs.model.FileAtDTO">
             <id property="fileAtId" column="fileAtId" />
