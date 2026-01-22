@@ -420,6 +420,7 @@ function renderNotiList(list) {
     }
 
     list.forEach(item => {
+    	console.log(item.targetPost.postId);
         const isUnread = item.checked === 0;
         const unreadClass = isUnread ? 'unread' : '';
         const dot = isUnread ? '<div class="unread-dot-indicator"></div>' : '';
@@ -481,7 +482,7 @@ function renderNotiList(list) {
 
         html += `
         	<div class="noti-item \${unreadClass} d-flex align-items-start gap-3 py-3 px-3" 
-            	onclick="handleNotiClick(event, this, \${item.notiId}, '\${item.type}', '\${item.targetPost ? item.targetPost.postId : 0}')" 
+            	onclick="handleNotiClick(event, this, \${item.notiId}, '\${item.type}', '\${item.targetPost ? item.targetPost.postId : 0}', '\${item.commentInfo ? item.commentInfo.commentId : 0}')" 
             	style="cursor:pointer; transition: all 0.4s ease;">
                 <div class="noti-avatar-wrapper flex-shrink-0 app-user-trigger" data-user-id="\${item.fromUserInfo.userId}" style="width: 44px; height: 44px; position: relative;">
                     \${profileHtml}
@@ -509,9 +510,9 @@ function renderNotiList(list) {
     $container.html(html);
 }
 
-function handleNotiClick(e, element, notiId, type, postId) {
-	if ($(e.target).closest('.app-user-trigger').length > 0) return;
+function handleNotiClick(e, element, notiId, type, postId, targetId) {
 	
+	if ($(e.target).closest('.app-user-trigger').length > 0) return;
 	const $el = $(element);
 	
     $.ajax({
@@ -549,12 +550,12 @@ function handleNotiClick(e, element, notiId, type, postId) {
                     }
                 });
             } else {
-                location.href = `${contextPath}/post/article?postId=${postId}`;
+            	location.href = '${pageContext.request.contextPath}/post/article?postId=' + postId + '&commentId=' + targetId;
             }
         },
         error: function() {
             if (type !== 'POST_LIKE' || type !== 'FOLLOW') {
-                location.href = `${contextPath}/post/article?postId=${postId}`;
+            	location.href = '${pageContext.request.contextPath}/post/article?postId=' + postId + '&commentId=' + targetId;
             }
         }
     });

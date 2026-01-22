@@ -88,6 +88,15 @@
         margin-left: auto !important;
         margin-right: auto !important;
     }
+    
+    .comment-item {
+    	transition: background-color 0.8s ease, border-left 0.5s ease;
+    	border-left: 3px solid transparent; /* 기본 상태는 투명한 선 */
+	}
+	
+	.comment-item.highlight-active {
+	    background-color: rgba(99, 102, 241, 0.15) !important; /* 내 테마의 보라색/파란색 계열 */
+	}
 </style>
 
 <script>
@@ -383,6 +392,34 @@
                 const newCount = $("#dynamicCommentCount").val();
                 if (newCount) {
                     $("#postCommentCount").text(newCount);
+                }
+                
+                const targetId = "${targetCommentId}"; 
+                
+                if (targetId && targetId !== "0") {
+                    const $targetView = $("#comment-view-" + targetId.trim());
+                    
+                    if ($targetView.length > 0) {
+                        const $commentItem = $targetView.closest('.comment-item');
+                        const $container = $('.feed-scroll-container'); // 스크롤 주체
+
+                        setTimeout(function() {
+                            const targetPos = $commentItem.offset().top - $container.offset().top + $container.scrollTop();
+                            
+                            if ($container[0]) {
+                                $container[0].scrollTo({
+                                    top: targetPos - 120, // 상단 여백 120px
+                                    behavior: 'smooth'    // 이 속성이 '물리 엔진'급 부드러움을 만듭니다.
+                                });
+                            }
+                            
+                            $commentItem.addClass('highlight-active');
+                            setTimeout(() => {
+                                $commentItem.removeClass('highlight-active');
+                            }, 3000);
+                            
+                        }, 400);
+                    }
                 }
             });
         }

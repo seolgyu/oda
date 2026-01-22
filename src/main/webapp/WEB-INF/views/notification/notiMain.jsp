@@ -9,204 +9,196 @@
 <style type="text/css">
 /* 1. 페이지 메인 컨테이너 */
 .noti-page-container {
-    width: 850px !important; 
-    margin: 0 auto;
-    padding: 3rem 1.5rem;
-    box-sizing: border-box;
+	width: 850px !important;
+	margin: 0 auto;
+	padding: 3rem 1.5rem;
+	box-sizing: border-box;
 }
 
 /* 2. 상단 헤더 및 버튼 그룹 */
 .noti-header-title {
-    font-size: 1.8rem;
-    letter-spacing: -1.2px;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 0.2rem;
+	font-size: 1.8rem;
+	letter-spacing: -1.2px;
+	font-weight: 700;
+	color: #fff;
+	margin-bottom: 0.2rem;
 }
 
 .noti-action-group {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+	display: flex;
+	gap: 10px;
+	align-items: center;
 }
-
-/* 3. 버튼 스타일 (붕 뜨는 모션 제거 버전) */
-알림 페이지의 두 버튼을 모두 차분한 회색조(Muted Gray) 스타일로 통일하고, 요청하신 대로 붕 뜨는 애니메이션 없이 호버 시 색상만 선명해지는 방식으로 전체 CSS와 코드를 정리해 드립니다.
-
-1. 수정된 통합 CSS (notiMain.jsp 상단)
-두 버튼의 스타일을 .btn-read-all, .btn-delete-all로 묶어 동일하게 정의했습니다.
-
-CSS
 
 /* 1. 버튼 그룹 레이아웃 */
 .noti-action-group {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+	display: flex;
+	gap: 10px;
+	align-items: center;
 }
 
 /* 2. 전체 읽음 & 전체 삭제 공통 스타일 (회색조) */
 .btn-read-all, .btn-delete-all {
-    /* 기본 상태: 반투명하고 차분한 회색조 */
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: rgba(255, 255, 255, 0.5) !important;
-    font-weight: 700 !important;
-    padding: 0.5rem 1.2rem !important;
-    border-radius: 50px !important;
-    font-size: 0.8rem !important;
-    cursor: pointer;
-    
-    /* 붕 뜨는 transform 효과 제외, 색상 변화에만 집중 */
-    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+	/* 기본 상태: 반투명하고 차분한 회색조 */
+	background: rgba(255, 255, 255, 0.05) !important;
+	border: 1px solid rgba(255, 255, 255, 0.1) !important;
+	color: rgba(255, 255, 255, 0.5) !important;
+	font-weight: 700 !important;
+	padding: 0.5rem 1.2rem !important;
+	border-radius: 50px !important;
+	font-size: 0.8rem !important;
+	cursor: pointer;
+	/* 붕 뜨는 transform 효과 제외, 색상 변화에만 집중 */
+	transition: background 0.2s ease, color 0.2s ease, border-color 0.2s
+		ease !important;
 }
 
 /* 3. Hover 시 시각적 피드백 (회색조 내에서 선명해짐) */
 .btn-read-all:hover, .btn-delete-all:hover {
-    background: rgba(255, 255, 255, 0.12) !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
+	background: rgba(255, 255, 255, 0.12) !important;
+	color: #ffffff !important;
+	border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 /* 개별 버튼 호버 시 포인트 컬러 (선택 사항) */
 .btn-read-all:hover {
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.2); /* 은은한 보라색 광채 */
+	box-shadow: 0 0 15px rgba(99, 102, 241, 0.2); /* 은은한 보라색 광채 */
 }
 
 .btn-delete-all:hover {
-    box-shadow: 0 0 15px rgba(244, 63, 94, 0.2); /* 은은한 빨간색 광채 */
+	box-shadow: 0 0 15px rgba(244, 63, 94, 0.2); /* 은은한 빨간색 광채 */
 }
 
 /* 클릭 시 피드백 */
 .btn-read-all:active, .btn-delete-all:active {
-    background: rgba(255, 255, 255, 0.2) !important;
-    transform: scale(0.97); /* 제자리에서 아주 살짝 눌림 */
+	background: rgba(255, 255, 255, 0.2) !important;
+	transform: scale(0.97); /* 제자리에서 아주 살짝 눌림 */
 }
 
 /* 4. 알림 카드 (Glassmorphism) */
 .full-noti-item {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-    padding: 1.2rem;
-    margin-bottom: 0.8rem;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    overflow: hidden;
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 1.2rem;
+	padding: 1.2rem;
+	margin-bottom: 0.8rem;
+	border-radius: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.05);
+	backdrop-filter: blur(20px);
+	transition: all 0.3s ease;
+	cursor: pointer;
+	overflow: hidden;
 }
 
 .full-noti-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
+	background: rgba(255, 255, 255, 0.08);
+	border-color: rgba(255, 255, 255, 0.2);
 }
 
 .full-noti-item.unread::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 25%;
-    height: 50%;
-    width: 3px;
-    background: #6366f1;
-    border-radius: 0 4px 4px 0;
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 25%;
+	height: 50%;
+	width: 3px;
+	background: #6366f1;
+	border-radius: 0 4px 4px 0;
 }
 
 /* 5. 아바타 및 내부 요소 */
 .noti-avatar-box {
-    position: relative;
-    width: 64px;
-    height: 64px;
-    flex-shrink: 0;
+	position: relative;
+	width: 64px;
+	height: 64px;
+	flex-shrink: 0;
 }
 
 .noti-avatar-img {
-    width: 100% !important;
-    height: 100% !important;
-    border-radius: 14px;
-    object-fit: cover;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+	width: 100% !important;
+	height: 100% !important;
+	border-radius: 14px;
+	object-fit: cover;
+	border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .noti-type-icon-badge {
-    position: absolute;
-    bottom: -3px;
-    right: -3px;
-    width: 24px;
-    height: 24px;
-    background: #0f0f14;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+	position: absolute;
+	bottom: -3px;
+	right: -3px;
+	width: 24px;
+	height: 24px;
+	background: #0f0f14;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .noti-content-area {
-    flex-grow: 1;
-    min-width: 0;
+	flex-grow: 1;
+	min-width: 0;
 }
 
 .noti-text {
-    color: rgba(255, 255, 255, 0.75);
-    font-size: 0.95rem;
-    line-height: 1.4;
+	color: rgba(255, 255, 255, 0.75);
+	font-size: 0.95rem;
+	line-height: 1.4;
 }
 
 .noti-time-text {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.2);
-    margin-top: 8px;
+	font-size: 0.75rem;
+	color: rgba(255, 255, 255, 0.2);
+	margin-top: 8px;
 }
 
 /* 6. 삭제 버튼 (개별 알림용) */
 .btn-delete-noti {
-    position: absolute;
-    top: 0.6rem;
-    right: 0.6rem;
-    background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.2);
-    opacity: 0;
-    transition: opacity 0.2s ease, color 0.2s ease;
+	position: absolute;
+	top: 0.6rem;
+	right: 0.6rem;
+	background: none;
+	border: none;
+	color: rgba(255, 255, 255, 0.2);
+	opacity: 0;
+	transition: opacity 0.2s ease, color 0.2s ease;
 }
 
 .full-noti-item:hover .btn-delete-noti {
-    opacity: 1;
+	opacity: 1;
 }
 
 .btn-delete-noti:hover {
-    color: #f43f5e;
+	color: #f43f5e;
 }
 
 /* 7. 알림 없음 (Empty State) */
 .empty-noti-glass {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    padding: 4rem 2rem;
-    margin: 2rem 0;
+	background: rgba(255, 255, 255, 0.03);
+	backdrop-filter: blur(15px);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 24px;
+	padding: 4rem 2rem;
+	margin: 2rem 0;
 }
 
 .empty-noti-icon {
-    font-size: 64px !important;
-    background: linear-gradient(135deg, #6366f1, #a855f7);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+	font-size: 64px !important;
+	background: linear-gradient(135deg, #6366f1, #a855f7);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
 }
 
 .noti-user-name {
-    color: #efefff;             /* 일반 텍스트보다 살짝 더 밝은 연보라빛 화이트 */
-    font-weight: 800 !important; /* 아주 두껍게 */
-    letter-spacing: -0.3px;
-    /* 은은한 네온 효과로 시선 집중 */
-    text-shadow: 0 0 8px rgba(168, 85, 247, 0.3); 
-    margin-right: 2px;
+	color: #efefff; /* 일반 텍스트보다 살짝 더 밝은 연보라빛 화이트 */
+	font-weight: 800 !important; /* 아주 두껍게 */
+	letter-spacing: -0.3px;
+	/* 은은한 네온 효과로 시선 집중 */
+	text-shadow: 0 0 8px rgba(168, 85, 247, 0.3);
+	margin-right: 2px;
 }
 </style>
 </head>
@@ -245,7 +237,7 @@ CSS
 								<c:forEach var="dto" items="${list}">
 									<div id="noti-${dto.notiId}"
 										class="full-noti-item ${dto.checked ? 'read' : 'unread'}"
-										onclick="handleNotiPageClick(event, this, '${dto.notiId}', '${dto.type}', '${dto.targetPost.postId}')">
+										onclick="handleNotiPageClick(event, this, '${dto.notiId}', '${dto.type}', '${dto.targetPost.postId}', '${dto.commentInfo.commentId}')">
 
 										<div class="noti-avatar-box">
 											<c:choose>
@@ -269,20 +261,28 @@ CSS
 											<div class="noti-type-icon-badge">
 												<c:choose>
 													<c:when test="${dto.type == 'POST_LIKE'}">
-														<span class="material-symbols-outlined text-danger"
-															style="font-size: 16px; font-variation-settings: 'FILL' 1;">favorite</span>
+														<i class="fa-solid fa-heart"
+															style="color: #f43f5e; font-size: 13px;"></i>
 													</c:when>
+
 													<c:when test="${dto.type == 'FOLLOW'}">
-														<span class="material-symbols-outlined text-primary"
-															style="font-size: 16px; font-variation-settings: 'FILL' 1;">person_add</span>
+														<i class="fa-solid fa-user-plus"
+															style="color: #6366f1; font-size: 11px;"></i>
 													</c:when>
-													<c:when test="${dto.type == 'COMMENT' || dto.type == 'REPLY'}">
-														<span class="material-symbols-outlined text-success"
-															style="font-size: 16px; font-variation-settings: 'FILL' 1;">chat_bubble</span>
+
+													<c:when test="${dto.type == 'COMMENT'}">
+														<i class="fa-solid fa-comment-dots"
+															style="color: #10b981; font-size: 11px;"></i>
 													</c:when>
+
+													<c:when test="${dto.type == 'REPLY'}">
+														<i class="fa-solid fa-reply"
+															style="color: #3b82f6; font-size: 11px;"></i>
+													</c:when>
+
 													<c:otherwise>
-														<span class="material-symbols-outlined text-info"
-															style="font-size: 16px; font-variation-settings: 'FILL' 1;">notifications</span>
+														<i class="fa-solid fa-bell"
+															style="color: #0ea5e9; font-size: 11px;"></i>
 													</c:otherwise>
 												</c:choose>
 											</div>
@@ -290,12 +290,31 @@ CSS
 
 										<div class="noti-content-area">
 											<div class="noti-text">
-												<span class="noti-user-name">${dto.fromUserInfo.userNickname}</span>님이
+												<span class="noti-user-name app-user-trigger" data-user-id="${dto.fromUserInfo.userId}">
+												${dto.fromUserInfo.userNickname}</span>님이
 												${dto.content}
 											</div>
+
 											<c:if test="${not empty dto.targetPost.title}">
-												<div class="noti-post-quote text-truncate">"${dto.targetPost.title}"</div>
+												<div class="noti-post-quote text-truncate"
+													style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.35); margin-top: 4px;">
+													<span
+														style="font-size: 0.65rem; margin-right: 4px; border: 1px solid rgba(255, 255, 255, 0.15); padding: 0px 3px; border-radius: 3px;">원문</span>
+													${dto.targetPost.title}
+												</div>
 											</c:if>
+
+											<c:if
+												test="${(dto.type == 'COMMENT' || dto.type == 'REPLY') && not empty dto.commentInfo.content}">
+												<div class="noti-comment-preview mt-1"
+													style="font-size: 0.8rem; color: #a8a8b3; display: flex; gap: 4px; max-width: 100%;">
+													<span style="flex-shrink: 0;">ㄴ</span> <span
+														class="text-truncate" style="opacity: 0.9;"> "<c:out
+															value="${dto.commentInfo.content}" />"
+													</span>
+												</div>
+											</c:if>
+
 											<div class="noti-time-text">${dto.createdDate}</div>
 										</div>
 
@@ -312,7 +331,8 @@ CSS
 								</c:forEach>
 							</c:when>
 							<c:otherwise>
-								<div class="text-center py-5 opacity-50 text-white">표시할 알림이 없습니다.</div>
+								<div class="text-center py-5 opacity-50 text-white">표시할
+									알림이 없습니다.</div>
 							</c:otherwise>
 						</c:choose>
 					</div>
@@ -338,7 +358,11 @@ CSS
 		src="${pageContext.request.contextPath}/dist/js/notification.js"></script>
 	<script type="text/javascript">
 	
-	function handleNotiPageClick(e, element, notiId, type, postId) {
+	function handleNotiPageClick(e, element, notiId, type, postId, targetId) {
+		if (e.target.closest('.app-user-trigger')) {
+	        return;
+	    }
+		
 	    const $el = $(element);
 	    
 	    $.ajax({
@@ -350,12 +374,12 @@ CSS
 	            $el.find('.unread-glow-dot').remove();
 
 	            if (type === 'REPLY' || type === 'COMMENT') {
-	                location.href = '${pageContext.request.contextPath}/post/article?postId=' + postId;
+	            	location.href = '${pageContext.request.contextPath}/post/article?postId=' + postId + '&commentId=' + targetId;
 	            }
 	        },
 	        error: function() {
 	            if (type === 'REPLY' || type === 'COMMENT') {
-	                location.href = '${pageContext.request.contextPath}/post/article?postId=' + postId;
+	            	location.href = '${pageContext.request.contextPath}/post/article?postId=' + postId + '&commentId=' + targetId;
 	            }
 	        }
 	    });

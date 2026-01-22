@@ -334,6 +334,7 @@ public class PostController {
 	public ModelAndView article(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 		long postId = 0;
+		String commentId = req.getParameter("commentId");
 
 		try {
 			String postIdStr = req.getParameter("postId");
@@ -365,6 +366,7 @@ public class PostController {
 		mav.addObject("dto", dto);
 		mav.addObject("memberdto", memberdto);
 		mav.addObject("listFile", dto.getFileList());
+		mav.addObject("targetCommentId", commentId);
 		
 		return mav;
 	}

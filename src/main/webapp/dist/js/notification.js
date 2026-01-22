@@ -67,59 +67,71 @@ function appendNotiItems(list) {
         const isUnread = dto.checked === false || dto.checked === 0;
         const statusClass = isUnread ? 'unread' : 'read';
         
-        // 1. 프로필 처리 (그라데이션 또는 이미지)
         let profileHtml = "";
-        if (dto.fromUserInfo && dto.fromUserInfo.profile_photo) {
-            profileHtml = `<img src="${dto.fromUserInfo.profile_photo}" class="noti-avatar-img">`;
+        const fromUser = dto.fromUserInfo || { userNickname: 'U', profile_photo: null, userId: '' };
+        
+        if (fromUser.profile_photo) {
+            profileHtml = `<img src="${fromUser.profile_photo}" data-user-id="${fromUser.userId}" class="noti-avatar-img app-user-trigger">`;
         } else {
-            const nickname = dto.fromUserInfo ? dto.fromUserInfo.userNickname : 'U';
-            const initial = nickname.charAt(0).toUpperCase();
+            const initial = fromUser.userNickname.charAt(0).toUpperCase();
             profileHtml = `
-                <div class="noti-avatar-img d-flex align-items-center justify-content-center text-white fw-bold" 
-                     style="background: linear-gradient(135deg, #6366f1, #a855f7); font-size: 1.5rem; border: none;">
+                <div class="noti-avatar-img d-flex align-items-center justify-content-center text-white fw-bold app-user-trigger" 
+                     data-user-id="${fromUser.userId}"
+                     style="background: linear-gradient(135deg, #6366f1, #a855f7); font-size: 1.2rem; border: none;">
                     ${initial}
                 </div>`;
         }
         
-        // 2. [수정됨] 아이콘 및 색상 분기 처리 로직 복구
-        let iconName = "notifications";
-        let iconColor = "text-info";
-        
-        if (dto.type === 'POST_LIKE') {
-            iconName = "favorite";
-            iconColor = "text-danger";
-        } else if (dto.type === 'FOLLOW') {
-            iconName = "person_add";
-            iconColor = "text-primary";
-        } else if (dto.type === 'COMMENT') {
-            iconName = "chat_bubble";
-            iconColor = "text-success";
+        let iconHtml = "";
+        switch (dto.type) {
+            case 'POST_LIKE':
+                iconHtml = `<i class="fa-solid fa-heart" style="color: #f43f5e; font-size: 13px;"></i>`;
+                break;
+            case 'FOLLOW':
+                iconHtml = `<i class="fa-solid fa-user-plus" style="color: #6366f1; font-size: 11px;"></i>`;
+                break;
+            case 'COMMENT':
+                iconHtml = `<i class="fa-solid fa-comment-dots" style="color: #10b981; font-size: 11px;"></i>`;
+                break;
+            case 'REPLY':
+                iconHtml = `<i class="fa-solid fa-reply" style="color: #3b82f6; font-size: 11px;"></i>`;
+                break;
+            default:
+                iconHtml = `<i class="fa-solid fa-bell" style="color: #0ea5e9; font-size: 11px;"></i>`;
         }
 
-        const nickname = dto.fromUserInfo ? dto.fromUserInfo.userNickname : '알 수 없음';
-        const quoteHtml = (dto.targetPost && dto.targetPost.title) 
-                          ? `<div class="noti-post-quote text-truncate">"${dto.targetPost.title}"</div>` 
-                          : '';
+        const commentPreviewHtml = (dto.type === 'COMMENT' || dto.type === 'REPLY') && dto.commentInfo && dto.commentInfo.content
+            ? `<div class="noti-comment-preview mt-1" style="font-size: 0.8rem; color: #a8a8b3; font-style: italic; display: flex; gap: 4px; max-width: 100%;">
+                <span style="flex-shrink: 0;">ㄴ</span>
+                <span class="text-truncate" style="opacity: 0.9;">"${dto.commentInfo.content}"</span>
+               </div>`
+            : "";
 
-        // 3. 최종 HTML 조립
+        const postTitleHtml = dto.targetPost && dto.targetPost.title 
+            ? `<div class="noti-post-quote text-truncate" style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.35); margin-top: 4px;">
+                <span style="font-size: 0.65rem; margin-right: 4px; border: 1px solid rgba(255,255,255,0.15); padding: 0px 3px; border-radius: 3px;">원문</span>
+                ${dto.targetPost.title}
+               </div>` 
+            : "";
+
         html += `
             <div id="noti-${dto.notiId}"
                 class="full-noti-item ${statusClass}"
-                onclick="handleNotiPageClick(event, this, '${dto.notiId}', '${dto.type}', '${dto.targetPost ? dto.targetPost.postId : 0}')">
+                onclick="handleNotiPageClick(event, this, '${dto.notiId}', '${dto.type}', '${dto.targetPost ? dto.targetPost.postId : 0}', '${dto.commentInfo ? dto.commentInfo.commentId : 0}')">
 
                 <div class="noti-avatar-box">
                     ${profileHtml}
-                    <div class="noti-type-icon-badge">
-                        <span class="material-symbols-outlined ${iconColor}"
-                            style="font-size: 16px; font-variation-settings: 'FILL' 1;">${iconName}</span>
+                    <div class="noti-type-icon-badge" style="display: flex; align-items: center; justify-content: center;">
+                        ${iconHtml}
                     </div>
                 </div>
 
                 <div class="noti-content-area">
                     <div class="noti-text">
-                        <b>${nickname}</b>님이 ${dto.content}
+                        <span class="noti-user-name" style="font-weight: bold;">${fromUser.userNickname}</span>님이 ${dto.content}
                     </div>
-                    ${quoteHtml}
+                    ${postTitleHtml}
+                    ${commentPreviewHtml}
                     <div class="noti-time-text">${dto.createdDate}</div>
                 </div>
 
