@@ -122,6 +122,8 @@
 				
 					
 					<div class="navigation-links">
+					&nbsp;
+					<!-- 
 						<c:if test="${not empty prevDto}">
 							<a class="nav-item-link" href="${pageContext.request.contextPath}/events/article?${query}&event_num=${prevDto.event_num}">
 								<span class="nav-label">이전글 : <c:out value="${prevDto.event_title}"/></span>
@@ -134,15 +136,18 @@
 								<span class="nav-label">다음글 : <c:out value="${nextDto.event_title}"/></span>
 							</a>
 						</c:if>
+						-->
 					</div>
+					
 				</div>
+				
 
                <div class="reply">
                     <form name="replyForm" method="post">
                         <div class="form-header">
                             <span class="bold">
                                 <span class="material-symbols-outlined" style="font-size: 1.5rem; vertical-align: middle;">chat</span>
-                                댓글(<span class="reply-count">)</span>
+                                댓글<span class="reply-count"></span>
                             </span>
                         </div>
                         
