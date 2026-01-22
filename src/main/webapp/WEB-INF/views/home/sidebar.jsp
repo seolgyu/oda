@@ -44,9 +44,9 @@
 		<button class="nav-item" onclick="location.href='${pageContext.request.contextPath}/events/list';">
 			<span class="material-symbols-outlined">celebration</span> <span>이벤트</span>
 		</button>
-		<button class="nav-item">
+		<!-- <button class="nav-item">
 			<span class="material-symbols-outlined">help</span> <span>문의하기</span>
-		</button>
+		</button> -->
 
 		<c:if
 			test="${not empty sessionScope.member and sessionScope.member.userLevel >= 51}">
