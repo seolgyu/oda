@@ -214,5 +214,16 @@ public class CommunityServiceImpl implements CommunityService{
 		}
 		return dto;
 	}
+
+	@Override
+	public CommunityDTO getCommunity(Long communityId) throws SQLException {
+		CommunityDTO dto = null;
+		try {
+			dto = mapper.getCommunity(communityId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dto;
+	}
 	
 }

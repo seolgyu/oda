@@ -55,6 +55,7 @@ public interface PostMapper {
     public List<PostDTO> listRepostedPost(Map<String, Object> map);
     
     public Long getPostAuthorNum(Long postId) throws Exception;
+    public Long getComId(Long postId) throws Exception;
     public Long getCommentWriterNum(Long commentId) throws Exception;
     
     public CommentDTO getCommentInfo(Long commentId) throws Exception;

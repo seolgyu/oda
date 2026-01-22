@@ -223,8 +223,10 @@
         SELECT
             p.POST_ID AS postId,
             p.USER_NUM AS userNum,
+            p.COMMUNITY_ID AS communityId,
             p.TITLE AS title,
             p.CONTENT AS content,
+            p.POST_TYPE AS postType,
             p.VIEW_COUNT AS viewCount,
             p.LIKE_COUNT AS likeCount,
             (SELECT COUNT(*) FROM COMMENTS WHERE POST_ID = p.POST_ID AND IS_DELETED = '0') AS commentCount,
@@ -589,6 +591,10 @@
 	        IS_DELETED AS isDeleted
 	    FROM COMMENTS c
 	    WHERE COMMENT_ID = #{commentId}
+    </select>
+    
+    <select id="getComId" parameterType="Long" resultType="Long">
+    	SELECT community_id FROM posts WHERE post_id = #{postId}
     </select>
 	
 </mapper>

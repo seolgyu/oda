@@ -29,4 +29,5 @@ public interface CommunityService {
 	public List<CommunityDTO> getPopularCategoryList();
 	
 	public List<CommunityDTO> getMyCommunity(Long userNum) throws SQLException;
+	public CommunityDTO getCommunity(Long communityId) throws SQLException;
 }

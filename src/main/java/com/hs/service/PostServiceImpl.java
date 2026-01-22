@@ -15,6 +15,7 @@ import com.hs.mybatis.support.MapperContainer;
 public class PostServiceImpl implements PostService {
 
 	private PostMapper mapper = MapperContainer.get(PostMapper.class);
+	private CommunityService communityService = new CommunityServiceImpl();
 
 	@Override
 	public void insertPost(PostDTO dto) throws Exception {
@@ -491,6 +492,17 @@ public class PostServiceImpl implements PostService {
 			e.printStackTrace();
 		}
 		return dto;
+	}
+
+	@Override
+	public Long getComId(Long postId) throws Exception {
+		Long communityId = null;
+		try {
+			communityId = mapper.getComId(postId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return communityId;
 	}
 
 }

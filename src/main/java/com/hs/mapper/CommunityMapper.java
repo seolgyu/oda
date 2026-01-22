@@ -40,4 +40,5 @@ public interface CommunityMapper {
 	public void memberRemoveCount(Map<String, Object> map) throws SQLException;
 	
 	public List<CommunityDTO> getMyCommunity(Long userNum) throws SQLException;
+	public CommunityDTO getCommunity(Long communityId) throws SQLException;
 }

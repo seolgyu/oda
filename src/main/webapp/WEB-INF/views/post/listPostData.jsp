@@ -9,43 +9,38 @@
         <div class="glass-card shadow-lg feed-card rounded-4"
             onclick="goArticle('${dto.postId}')"
             style="background: rgba(30, 30, 30, 0.6);">
-            <div class="p-2 d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-2">
-
-                    <div class="avatar-md text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden shadow-sm"
-                        style="background: linear-gradient(45deg, #a855f7, #6366f1); border-radius: 50%; width: 24px; height: 24px;">
-                        <c:choose>
-                            <c:when test="${not empty dto.authorProfileImage}">
-                                <img src="${dto.authorProfileImage}"
-                                    style="width: 100%; height: 100%; object-fit: cover;">
-                            </c:when>
-                            <c:otherwise>
-                                <span class="text-white fw-bold" style="font-size: 11px;">${fn:substring(dto.authorNickname, 0, 1)}</span>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                    
-                    <div>
-                        <div class="fs-6 d-flex align-items-center gap-1">
-                            ${dto.authorNickname}
-                            <%-- [추가] 나만 보기 상태면 자물쇠 아이콘 표시 --%>
-                            <c:if test="${dto.state == '나만보기'}">
-                                <span class="material-symbols-outlined text-warning" style="font-size: 1rem;">lock</span>
-                            </c:if>
-                        </div>
-                        
-                        <p class="text-sm text-gray-400 mb-0">
-                            ${dto.timeAgo}
-                            <%-- [추가] 조회수 표시 및 숨김 처리 (공개 '1'이거나 작성자 본인이면 보임) --%>
-                            <c:if test="${dto.showViews == '1' or sessionScope.member.memberIdx == dto.userNum}">
-                                &bull; 조회 ${dto.viewCount}
-                            </c:if>
-                        </p>
-                    </div>
-                </div>
+            <div class="p-3 d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-3"> <div class="avatar-lg text-white fw-bold d-flex align-items-center justify-content-center overflow-hidden shadow-sm"
+                style="background: linear-gradient(45deg, #a855f7, #6366f1);">
+                <c:choose>
+                    <c:when test="${not empty dto.authorProfileImage}">
+                        <img src="${dto.authorProfileImage}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </c:when>
+                    <c:otherwise>
+                        <span class="text-white fw-bold" style="font-size: 14px;">${fn:substring(dto.authorNickname, 0, 1)}</span>
+                    </c:otherwise>
+                </c:choose>
             </div>
+            
+            <div>
+                <div class="fs-6 d-flex align-items-center gap-1 fw-bold"> ${dto.authorNickname}
+                    <c:if test="${dto.state == '나만보기'}">
+                        <span class="material-symbols-outlined text-warning" style="font-size: 1rem;">lock</span>
+                    </c:if>
+                </div>
+                <p class="text-sm text-gray-400 mb-0">
+                    ${dto.timeAgo}
+                    <c:if test="${dto.showViews == '1' or sessionScope.member.memberIdx == dto.userNum}">
+                        &bull; 조회 ${dto.viewCount}
+                    </c:if>
+                </p>
+            </div>
+        </div>
+    </div>
+            
+            <hr class="mx-3">
 
-            <div class="px-3 pb-2">
+            <div class="px-3 pb-2 pt-3">
                 <h5 class="text-white fw-bold fs-4 mb-1">${dto.title}</h5>
                 <p class="text-gray-300 fs-6 mb-2 text-ellipsis">${dto.content}</p>
             </div>

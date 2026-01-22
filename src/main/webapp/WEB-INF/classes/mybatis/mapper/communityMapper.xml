@@ -179,9 +179,8 @@
 	</select>
 	
 	<select id="getMyCommunity" parameterType="Long" resultType="com.hs.model.CommunityDTO">
-		SELECT DISTINCT 
+		SELECT
             c.COMMUNITY_ID AS community_id,
-			f.FOLLOW_DATE     AS follow_date,
 			c.COM_DESCRIPTION AS com_description,
 			c.COM_NAME        AS com_name,
 			c.ICON_IMAGE      AS icon_image,
@@ -192,11 +191,36 @@
 			c.USER_NUM        AS user_num,
 			c.CATEGORY_ID     AS category_id,
 			c.TODAY_VISIT     AS today_visit,
-			c.TOTAL_VISIT     AS total_visit
+			c.TOTAL_VISIT     AS total_visit,
+			(SELECT f.FOLLOW_DATE FROM COMMUNITY_FOLLOW f 
+         	 WHERE f.community_id = c.community_id AND f.user_num = #{userNum}) AS followDate
 		FROM COMMUNITY c
-		LEFT OUTER JOIN COMMUNITY_FOLLOW f ON c.community_id = f.community_id
-		WHERE c.user_num = #{userNum} OR f.user_num = #{userNum}
-		ORDER BY CASE WHEN c.user_num = #{userNum} THEN 0 ELSE 1 END
+		WHERE c.user_num = #{userNum} 
+        OR EXISTS (
+           SELECT 1 
+           FROM COMMUNITY_FOLLOW f 
+           WHERE f.community_id = c.community_id 
+             AND f.user_num = #{userNum}
+        )
+		ORDER BY CASE WHEN c.user_num = #{userNum} THEN 0 ELSE 1 END, c.CREATED_DATE DESC
+	</select>
+	
+	<select id="getCommunity" parameterType="Long" resultType="com.hs.model.CommunityDTO">
+		SELECT
+            COMMUNITY_ID AS community_id,
+			COM_DESCRIPTION AS com_description,
+			COM_NAME        AS com_name,
+			ICON_IMAGE      AS icon_image,
+			BANNER_IMAGE    AS banner_image,
+			IS_PRIVATE      AS is_private,
+			MEMBER_COUNT    AS member_count,
+			CREATED_DATE    AS created_date,
+			USER_NUM        AS user_num,
+			CATEGORY_ID     AS category_id,
+			TODAY_VISIT     AS today_visit,
+			TOTAL_VISIT     AS total_visit
+		FROM COMMUNITY
+		WHERE COMMUNITY_ID = #{communityId} 
 	</select>
 	
 </mapper>

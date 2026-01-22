@@ -77,6 +77,12 @@
 	width: 100%; /* 꽉 채우기 */
 }
 
+.feed-card .text-gray-300 {
+    white-space: pre-wrap;    /* 엔터와 공백을 그대로 표시 */
+    word-break: break-all;    /* 너무 긴 단어는 강제로 줄바꿈 */
+}
+
+
 /* 캐러셀(이미지 슬라이더) */
 .carousel-inner {
 	background-color: #000;
@@ -133,6 +139,26 @@
 }
 .card-action-btn .material-symbols-outlined {
 	font-size: 1.2rem;
+}
+
+.feed-card hr {
+    margin: 0 !important; /* 위아래 여백 제거하여 정교하게 배치 */
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* 연한 구분선 */
+    opacity: 1;
+}
+
+.avatar-lg {
+    width: 48px !important;  /* 기존 24px에서 42px로 확장 */
+    height: 48px !important;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* (추가) 구분선 아래 본문 영역의 여백 조정 */
+.feed-content-area {
+    padding-top: 1rem !important; /* 구분선과 제목 사이의 여백 */
 }
 
 /* =========================================

@@ -29,6 +29,8 @@ public class PostDTO {
 	private boolean savedByUser;
     private boolean repostedByUser;
     private String repostDate;
+    
+    private CommunityDTO communityInfo;
 
 	public Long getPostId() {
 		return postId;
@@ -246,6 +248,14 @@ public class PostDTO {
 
 	public void setRepostDate(String repostDate) {
 		this.repostDate = repostDate;
+	}
+
+	public CommunityDTO getCommunityInfo() {
+		return communityInfo;
+	}
+
+	public void setCommunityInfo(CommunityDTO communityInfo) {
+		this.communityInfo = communityInfo;
 	}
 
 }
