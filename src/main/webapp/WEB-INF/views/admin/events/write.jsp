@@ -229,7 +229,7 @@ select.glass-input-box {
 					</div>
 				</div>
 
-				<form name="eventForm" action="${pageContext.request.contextPath}/admin/events/write" method="post" enctype="multipart/form-data">
+				<form name="eventForm" action="${pageContext.request.contextPath}/admin/events/${mode}" method="post" enctype="multipart/form-data">
 					<input type="hidden" name="size" value="${size}">
 						<c:if test="${mode=='update'}">
 							<input type="hidden" name="event_num" value="${dto.event_num}">
