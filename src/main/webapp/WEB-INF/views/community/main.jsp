@@ -176,7 +176,7 @@
 														<div
 															class="flex-grow-1 overflow-hidden d-flex flex-column justify-content-between"
 															style="min-height: 90px;">
-															<div>
+															<div style="cursor:pointer;" onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
 																<div class="d-flex align-items-center gap-2 mb-1">
 																	<span
 																		class="text-white fw-bold text-sm app-user-trigger"
@@ -268,12 +268,10 @@
 																<p class="text-xs text-gray-500 mb-0">${item.timeAgo}</p>
 															</div>
 														</div>
-														<button class="btn-icon text-white-50">
-															<span class="material-symbols-outlined">more_horiz</span>
-														</button>
+														
 													</div>
 
-													<div class="p-3 pb-2">
+													<div class="p-3 pb-2" style="cursor:pointer;" onclick="location.href='${pageContext.request.contextPath}/post/article?postId=${item.postId}';">
 														<c:if test="${not empty item.title}">
 															<h4 class="text-white fs-6 fw-bold mb-1">${item.title}</h4>
 														</c:if>
