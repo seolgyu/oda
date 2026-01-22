@@ -101,6 +101,7 @@ public class CommunityController {
 			cservice.updateCommunityHitCount(map);
 			
 			CommunityDTO dto = cservice.findById(map);
+			MemberDTO mdto = cservice.selectUserNum(map);
 			
 			if(dto != null) {
 				int is_follow = cservice.checkJoinCommunity(map);
@@ -117,6 +118,7 @@ public class CommunityController {
 				
 				ModelAndView mav = new ModelAndView("community/main");
 				mav.addObject("dto", dto);
+				mav.addObject("mdto", mdto);
 				mav.addObject("post", list);    // JSP에서 <c:forEach>로 뿌릴 데이터
 	            mav.addObject("currentSort", sort); // 현재 어떤 정렬인지 UI 표시용
 				return mav;

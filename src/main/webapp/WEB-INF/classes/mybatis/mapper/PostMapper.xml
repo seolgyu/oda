@@ -591,5 +591,4 @@
 	    WHERE COMMENT_ID = #{commentId}
     </select>
 	
-
 </mapper>

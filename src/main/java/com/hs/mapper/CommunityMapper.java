@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hs.model.CommunityDTO;
+import com.hs.model.MemberDTO;
 import com.hs.model.PostDTO;
 
 public interface CommunityMapper {
@@ -33,6 +34,7 @@ public interface CommunityMapper {
 	public List<CommunityDTO> selectManagementList(Map<String, Object> map);
 	public List<CommunityDTO> selectCommunityList(Map<String, Object> map);
 	public List<PostDTO> listCommunityPost(Map<String, Object> map);
+	public MemberDTO selectUserNum(Map<String, Object> map);
 	
 	public void memberAddCount(Map<String, Object> map) throws SQLException;
 	public void memberRemoveCount(Map<String, Object> map) throws SQLException;

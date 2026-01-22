@@ -415,20 +415,21 @@
 						        
 						        <div class="d-flex align-items-center gap-3 mb-3">
 						            <div class="rounded-circle overflow-hidden border border-white border-opacity-10 shadow-sm flex-shrink-0" style="width: 50px; height: 50px; background: linear-gradient(135deg, #e11d48, #4c1d95);">
-						                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white">
+						                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white" style="cursor:pointer;" onclick="location.href='${pageContext.request.contextPath}/member/page?id=${mdto.userId}';">
 						                    <c:choose>
-												<c:when test="${not empty dto.icon_image}">
+												<c:when test="${not empty mdto.profile_photo}">
 													<img
-														src="${dto.icon_image}"
+														src="${mdto.profile_photo}"
 														class="w-100 h-100 object-fit-cover" alt="Profile">
 												</c:when>
 												<c:otherwise>
-	            									<span class="material-symbols-outlined">flare</span>
+	            									${fn:substring(mdto.userId, 0, 1)}
 	        									</c:otherwise>
 											</c:choose>
 						                </div>
 						            </div>
-						            <h4 class="text-white text-sm fw-bold mb-0">${dto.com_name}</h4>
+						            <h4 class="text-white text-sm fw-bold mb-0" style="cursor:pointer;" onclick="location.href='${pageContext.request.contextPath}/member/page?id=${mdto.userId}';">
+						            	${mdto.userNickname}</h4>
 						        </div>
 						        
 						        <p class="text-secondary text-xs lh-relaxed mb-4">${dto.com_description}</p>
@@ -461,6 +462,10 @@
 								    <div class="d-flex align-items-center gap-2 text-secondary">
 								        <span class="material-symbols-outlined" style="font-size: 18px;">${dto.is_private == '0' ? 'public' : 'lock'}</span>
 								        <span style="font-size: 0.85rem;">${dto.is_private == '0' ? '전체공개' : '비공개'}</span>
+								    </div>
+								    <div class="d-flex align-items-center gap-2 text-secondary">
+								        <span class="material-symbols-outlined" style="font-size: 18px;">tag</span>
+								        <span style="font-size: 0.85rem;">${dto.category_name}</span>
 								    </div>
 								</div>
 						

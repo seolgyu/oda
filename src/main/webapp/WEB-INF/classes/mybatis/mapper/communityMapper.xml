@@ -162,9 +162,20 @@
 			member_count, TO_CHAR(created_date, 'YYYY-MM-DD') created_date, 
 			today_visit, total_visit, user_num, category_id,
 			(SELECT COUNT(*) FROM community_favorites
-			 WHERE community_id = COMMUNITY.community_id AND user_num = #{user_num, jdbcType=NUMERIC}) is_favorite
+			 WHERE community_id = COMMUNITY.community_id AND user_num = #{user_num, jdbcType=NUMERIC}) is_favorite,
+			 (SELECT category_name FROM community_category WHERE category_id = community.category_id) category_name
 		FROM COMMUNITY 
 		WHERE community_id = #{community_id}
+	</select>
+	
+	<select id="selectUserNum" parameterType="map" resultType="com.hs.model.MemberDTO">
+		SELECT 
+		    m.user_id AS userId,
+		    m.user_nickname AS userNickname,
+		    m.user_profile AS profile_photo
+		FROM COMMUNITY c
+		JOIN MEMBER m ON c.user_num = m.user_num
+		WHERE c.community_id = #{community_id}
 	</select>
 	
 	<select id="getMyCommunity" parameterType="Long" resultType="com.hs.model.CommunityDTO">

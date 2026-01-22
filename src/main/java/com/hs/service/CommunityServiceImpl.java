@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.hs.mapper.CommunityMapper;
 import com.hs.model.CommunityDTO;
+import com.hs.model.MemberDTO;
 import com.hs.mybatis.support.MapperContainer;
 
 public class CommunityServiceImpl implements CommunityService{
@@ -201,6 +202,17 @@ public class CommunityServiceImpl implements CommunityService{
 			e.printStackTrace();
 		}
 		
+	}
+
+	@Override
+	public MemberDTO selectUserNum(Map<String, Object> map) {
+		MemberDTO dto = null;
+		try {
+			dto = mapper.selectUserNum(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dto;
 	}
 	
 }
