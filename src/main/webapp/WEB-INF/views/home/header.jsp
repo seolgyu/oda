@@ -543,7 +543,6 @@ function renderNotiList(list) {
     }
 
     list.forEach(item => {
-    	console.log(item.targetPost.postId);
         const isUnread = item.checked === 0;
         const unreadClass = isUnread ? 'unread' : '';
         const dot = isUnread ? '<div class="unread-dot-indicator"></div>' : '';
