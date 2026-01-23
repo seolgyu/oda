@@ -155,7 +155,7 @@ function renderCommunityPost(item) {
 	$newItem.find('.text-secondary.text-xs.opacity-75').text('c/' + item.authorId);
 	
     $newItem.find('h4').text(item.title || "");
-    $newItem.find('p.text-light').first().text(item.content || "");
+    $newItem.find('p.text-light').text(item.content || "");
     $newItem.find('.author-name, h3.text-sm').first().text(item.authorNickname);
     $newItem.find('.created-date, .text-gray-500').first().text(item.createdDate);
 	
